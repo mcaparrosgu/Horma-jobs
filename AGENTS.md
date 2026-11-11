@@ -28,6 +28,14 @@ están en `specs/system.md`.
 ## Flujo de trabajo
 Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementación (TDD) → Validación → Cambio
 
+## Specs y cambios
+- Spec-anchored: la spec es la referencia viva del proyecto. Se divide en spec de sistema
+  (lo global: `specs/system.md`) y spec de feature (la de cada cambio: `specs/NNN-<feature>/`).
+- Constitución mínima: solo principios y líneas rojas (`specs/constitution.md`).
+- Cuando un pedido de la persona contradiga una spec, el pedido gana. Propón el cambio en la spec
+  y enséñaselo antes de tocar código. Con su visto bueno, actualiza la spec y regenera `tasks.md`.
+- Regenera la spec en lugar de emparcharla.
+
 ## Git
 - NO hagas commits salvo que la persona lo pida expresamente.
 - Nunca añadas a Claude ni a ninguna IA como coautor o colaborador. Sin líneas `Co-Authored-By`.

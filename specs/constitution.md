@@ -19,6 +19,8 @@ stale_after: null
 - Fronteras limpias: la lógica de dominio no depende de frameworks, ORM ni E/S.
 - Una sola aplicación: los agentes son código Python dentro de la web desde la fase 0 y se pueden
   ejecutar uno a uno desde la consola.
+- Spec-anchored: spec de sistema para lo global y spec de feature para cada cambio.
+- Constitución mínima: solo principios y líneas rojas.
 - Idioma: toda la documentación y todo lo generado, en español de España.
 
 ## Líneas rojas
