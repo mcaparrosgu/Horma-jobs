@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado: andamiaje listo; aún no hay código de la aplicación. La fase 0 espera el gate de Clarify.
+> Estado: andamiaje listo; aún no hay código de la aplicación. El gate de Clarify de la fase 0 está respondido y verificado (Postgres en Docker Compose, Google OAuth 2.0); siguen la spec, el plan y las tareas.
 
 ## Cómo trabajamos (SDD)
 
@@ -58,7 +58,7 @@ Pendiente de la fase 0; previsto:
 
 1. `cp .env.example .env` y rellenar valores.
 2. `uv sync`
-3. `docker compose up` (Postgres) o `npx neon@latest init` (Neon).
+3. `docker compose up` (Postgres local; Neon queda fuera de la fase 0).
 4. `pytest`
 
 ## Consola

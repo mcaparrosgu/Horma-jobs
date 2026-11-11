@@ -3,10 +3,10 @@ type: clarifications
 title: cimientos — Aclaraciones
 description: Preguntas abiertas resueltas con la persona antes de escribir la spec, más los supuestos.
 tags: [clarify, cimientos]
-status: draft
+status: active
 sources: [https://claude.ai/artifact/XgsxiP5gLvaR34W8QeqDoj]
 generated: { by: claude-code, at: 2026-11-11 }
-verified: { by: human, at: null }
+verified: { by: human, at: 2026-11-11 }
 stale_after: null
 ---
 
@@ -22,6 +22,10 @@ stale_after: null
 - Herramientas: `uv`, `Typer`, `import-linter`, `pytest`, `ruff`.
 - Flujos desde la API siempre por cola y worker, con flag de desarrollo para ejecutarlos en línea.
 - Diseño de pantallas de las fases 2 y 3 (primero móvil): se pospone a esas fases.
+
+## Decisiones derivadas
+- Variables de entorno: `POSTGRES_*` y `DATABASE_URL` para Compose; `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` y `SESSION_SECRET` para el acceso. Se eliminan `DIRECT_URL` y `NEON_API_KEY`.
+- Constitución, `.env.example`, README e índice actualizados con P1 y P2.
 
 ## Supuestos
 - Fuentes de la primera pasada de `horma fuente calificar`: las cinco candidatas (EURES, Adzuna, Arbeitnow, The Hub, InfoJobs); se descartan las que no superen la calificación.

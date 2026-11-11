@@ -14,10 +14,10 @@ stale_after: null
 
 ## Transversales
 - [Constitución](./constitution.md) — principios y líneas rojas.
-- `system.md` — spec de sistema (contrato, arquitectura, RT-01…RT-14). **Pendiente**: se redacta tras el gate de Clarify.
+- `system.md` — spec de sistema (contrato, arquitectura, RT-01…RT-14). **Pendiente**: Clarify ya respondido; se redacta a continuación.
 
 ## Features (una por fase)
-- `000-cimientos/` — fase 0. [Aclaraciones](./000-cimientos/clarifications.md) (pendiente de respuestas); `spec.md`, `plan.md` y `tasks.md` aún no creados.
+- `000-cimientos/` — fase 0. [Aclaraciones](./000-cimientos/clarifications.md) (respondidas y verificadas); `spec.md`, `plan.md` y `tasks.md` aún no creados.
 - `001-ofertas/` — fase 1 (vacía).
 - `002-perfil-recomendacion/` — fase 2 (vacía).
 - `003-candidatura/` — fase 3 (vacía).

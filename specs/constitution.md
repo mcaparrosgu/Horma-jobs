@@ -36,7 +36,8 @@ stale_after: null
 
 ## Restricciones
 - Stack: Python (uv) · Pydantic · SDK anthropic detrás de `horma.llm` · FastAPI + HTML/CSS/JS planos ·
-  consola Typer · PostgreSQL (RLS + cola de tareas) · Docker Compose · LangGraph (fase 4).
+  consola Typer · PostgreSQL en Docker Compose (RLS + cola de tareas; sin Neon) · LangGraph (fase 4).
+- Identidad: Google OAuth 2.0 (sin email ni contraseña propios).
 - Sin RAG: ni embeddings ni búsqueda híbrida.
 - Todos los secretos viven en `.env` (nunca se versiona).
 
