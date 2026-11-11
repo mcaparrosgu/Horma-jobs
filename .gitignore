@@ -1,0 +1,28 @@
+# Secretos / entorno
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Neon / base de datos
+.neon*
+*.sqlite3
+
+# Trazas de flujos (pueden contener salidas del modelo; los fixtures sí se versionan)
+trazas/
+
+# Sistema operativo / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Node (si aplica, p. ej. herramientas de Neon)
+node_modules/
