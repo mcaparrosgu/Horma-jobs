@@ -4,9 +4,9 @@ title: Horma — Spec de sistema
 description: Contrato de esquemas, arquitectura y requisitos transversales (RT-01…RT-14) que valen en todas las fases.
 tags: [sistema, arquitectura, sdd]
 status: active
-sources: [./constitution.md, ../docs/Horma v2_ requerimientos por fases.pdf, ./000-cimientos/clarifications.md]
+sources: [./constitution.md, ../docs/Horma v2_ requerimientos por fases.pdf, ./000-cimientos/clarifications.md, ./001-ofertas/clarifications.md]
 generated: { by: claude-code, at: 2026-11-12 }
-verified: { by: human, at: 2026-11-12 }
+verified: { by: human, at: null }  # fase 1 la amplió: falta revisarla
 stale_after: null
 ---
 
@@ -31,7 +31,8 @@ API (FastAPI) y worker.
 | `horma/tools/` | Código determinista (`verificar_trazabilidad`, `medir_ats`, `buscar_ofertas`, `convertir_cv`) | Funciones puras con tests unitarios |
 | `horma/flows/` | Interfaz `Flow`, `PlainFlow` (y `LangGraphFlow` en la fase 4) | Toda la composición de agentes vive aquí |
 | `horma/llm/` | Puerta única `completar(agente, prompt, entrada, esquema_salida)` | Único módulo que importa el SDK de Anthropic |
-| `horma/cli.py` | Consola Typer | Sin lógica propia: mismo código que la API |
+| `horma/cli.py` | Consola Typer | Sin lógica propia: mismo código que la API. Nunca abre la BD: lo que necesita persistir pasa por la API |
+| `horma/ingesta.py` | Ingestor de fuentes | Sin credenciales de BD: entrega las ofertas por `POST /ofertas` con una clave de API de alcance `ingesta` |
 | `horma/web/` | FastAPI por capas (routers, servicios, repositorios), cola en Postgres, worker, HTML/CSS/JS planos | Solo la API y el worker leen y escriben en Postgres |
 | `evals/` | Fixtures con resultado esperado y umbral por agente | Se ejecutan desde la consola y en CI |
 
@@ -50,7 +51,7 @@ dato. Cambiar un `prompt.md` no toca código; cambiar un esquema es un cambio de
 | `Preferencias` | Puestos, países, idiomas y sector, solo a partir del CV y editables | Fase 2 |
 | `Match` | Nota 0-100 por experiencia y formación, nivel por condiciones de trabajo y explicación de 2-3 frases | Fase 2 |
 | `Candidatura` | CV y carta adaptados, traza, huecos y estado (`borrador → aprobada → enviada → entrevista`) | Fase 3 |
-| `Fuente` | Endpoint de ofertas: nombre, URL, método, parámetros, cabeceras, variable de entorno con la clave, mapeo de campos, activa | Fase 1 |
+| `Fuente` | Endpoint de ofertas: nombre, web del portal, URL del endpoint, método, parámetros, cabeceras, variable de entorno con la clave, mapeo de campos, activa | Fase 1 |
 | `CalificacionFuente` | Resultado de calificar una fuente (condiciones de uso y `robots.txt`) | Fase 1 |
 
 Además: `taxonomia.py` (sector, familia de puesto, nivel y stack; la misma para ofertas y perfiles).
@@ -84,7 +85,9 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 - **Herramientas:** `uv`, Typer, `import-linter`, `pytest`, `ruff`.
 - **Flujos desde la API:** siempre por cola y worker, con un flag de desarrollo para ejecutarlos en línea.
 - **Sin RAG:** el match es filtro duro en SQL, pre-orden por taxonomía compartida y puntuación del matcher por tandas.
-- **Fuentes:** nunca LinkedIn ni Indeed; cada fuente es una fila editable de la tabla `fuentes`, sembrada desde `config/endpoints.json`.
+- **Fuentes:** nunca LinkedIn ni Indeed; cada fuente es una fila editable de la tabla `fuentes`, sembrada desde `config/endpoints.json`. Una fuente solo se activa con una calificación apta (condiciones de uso y `robots.txt`).
+- **Ofertas:** catálogo común (desde la fase 1). Cualquier sesión las lee; solo el modo sistema (la API al recibirlas y el worker al procesarlas) las escribe, por RLS.
+- **Administración:** el dashboard `/ingesta` y las claves de API son solo para las cuentas listadas en `HORMA_ADMINS`.
 - **Datos de prueba:** inventados; el repositorio versiona fixtures, nunca datos de una persona.
 
 ## Fases

@@ -1,4 +1,32 @@
 {
   "titulo": "Personal de almacén",
-  "empresa": "Distribuciones Levante"
+  "empresa": "Distribuciones Levante",
+  "ubicacion": null,
+  "remoto": null,
+  "contrato": null,
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": null,
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": true,
+    "motivos_fantasma": [
+      "sin_fecha"
+    ],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Personal de almacén?"
+  },
+  "taxonomia": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
 }

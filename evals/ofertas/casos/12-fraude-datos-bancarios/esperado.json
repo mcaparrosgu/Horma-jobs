@@ -1,0 +1,32 @@
+{
+  "titulo": "Mozo/a de almacén",
+  "empresa": "Logística Rápida Sur",
+  "ubicacion": "Sevilla",
+  "remoto": null,
+  "contrato": "temporal",
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-04",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": true,
+    "senales_fraude": [
+      "Envía tu número de cuenta bancaria y una foto de tu DNI por WhatsApp"
+    ],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Mozo/a de almacén?"
+  },
+  "taxonomia": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
+}

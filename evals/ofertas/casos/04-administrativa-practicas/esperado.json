@@ -2,5 +2,29 @@
   "titulo": "Auxiliar administrativa",
   "empresa": "Gestoría Pérez & Asociados",
   "ubicacion": "Madrid",
-  "contrato": "prácticas"
+  "remoto": null,
+  "contrato": "prácticas",
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-10-30",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Auxiliar administrativa?"
+  },
+  "taxonomia": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "practicas",
+    "stack": []
+  }
 }

@@ -26,6 +26,15 @@ def sesion_de(engine: Engine, usuaria_id: int) -> Iterator[Session]:
 
 
 @contextmanager
+def sesion_sistema(engine: Engine) -> Iterator[Session]:
+    """Sesión del sistema (API con clave, ingesta, worker y administración): escribe el catálogo
+    y las tablas de ingesta. La RLS protege de errores del código, no de un rol comprometido."""
+    with Session(engine) as s, s.begin():
+        s.execute(text("select set_config('app.sistema', 'on', true)"))
+        yield s
+
+
+@contextmanager
 def sesion_sin_usuaria(engine: Engine) -> Iterator[Session]:
     """Sesión sin usuaria: con RLS no ve filas; solo sirve para las funciones de acceso."""
     with Session(engine) as s, s.begin():

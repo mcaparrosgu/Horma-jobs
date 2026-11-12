@@ -10,10 +10,22 @@ function nodo(etiqueta, texto, clase) {
   return el;
 }
 
+const MOTIVOS_FANTASMA = { sin_fecha: "sin fecha", repetida: "repetida", generica: "genérica" };
+
+function etiquetas(o) {
+  const fila = nodo("div", null, "fila");
+  fila.append(nodo("span", o.estado, o.estado === "error" ? "estado error" : "estado"));
+  if (o.estado !== "procesada") return fila;
+  if (o.recomendable) fila.append(nodo("span", "recomendable", "estado bien"));
+  if (o.fraude) fila.append(nodo("span", "posible fraude", "estado error"));
+  if (o.fantasma) fila.append(nodo("span", "posible fantasma", "estado apagado"));
+  if (o.empresa_validada === false) fila.append(nodo("span", "dominio sin validar", "estado apagado"));
+  return fila;
+}
+
 function tarjeta(o) {
   const li = nodo("li", null, "tarjeta");
-  const estado = nodo("span", o.estado, o.estado === "error" ? "estado error" : "estado");
-  li.append(estado);
+  li.append(etiquetas(o));
   li.append(nodo("h3", o.titulo || "Oferta sin procesar todavía"));
   const detalle = [o.empresa, o.ubicacion, o.contrato].filter(Boolean).join(" · ");
   if (detalle) li.append(nodo("p", detalle));
@@ -21,8 +33,23 @@ function tarjeta(o) {
     const rango = [o.salario_minimo, o.salario_maximo].filter((v) => v !== null).join(" – ");
     li.append(nodo("p", `Salario: ${rango} ${o.salario_moneda || ""}`.trim()));
   }
+  if (o.salario_publicado === false && o.frase_pedir_salario) {
+    li.append(nodo("p", `Sin salario publicado. Para pedirlo: «${o.frase_pedir_salario}»`, "suave"));
+  }
   if (o.remoto !== null && o.remoto !== undefined) li.append(nodo("p", o.remoto ? "Remoto" : "Presencial"));
   if (o.idiomas && o.idiomas.length) li.append(nodo("p", `Idiomas: ${o.idiomas.join(", ")}`));
+  if (o.sector) {
+    const tax = [o.sector, o.familia, o.nivel].filter(Boolean).join(" · ");
+    li.append(nodo("p", `Clasificación: ${tax}`, "suave"));
+  }
+  if (o.stack && o.stack.length) li.append(nodo("p", `Stack: ${o.stack.join(", ")}`, "suave"));
+  if (o.fantasma && o.motivos_fantasma && o.motivos_fantasma.length) {
+    li.append(nodo("p", `Fantasma: ${o.motivos_fantasma.map((m) => MOTIVOS_FANTASMA[m] || m).join(", ")}`, "suave"));
+  }
+  if (o.fraude && o.senales_fraude) {
+    for (const s of o.senales_fraude) li.append(nodo("p", `Señal de fraude: «${s}»`, "alerta"));
+  }
+  if (o.fuente) li.append(nodo("p", `Fuente: ${o.fuente}`, "suave"));
   if (o.instrucciones_embebidas && o.instrucciones_embebidas.length) {
     li.append(nodo("p", `Instrucciones detectadas y no ejecutadas: ${o.instrucciones_embebidas.length}`, "alerta"));
   }
@@ -47,9 +74,12 @@ async function iniciar() {
     $("entrada").hidden = false;
     return;
   }
-  csrf = (await r.json()).csrf;
+  const yo = await r.json();
+  csrf = yo.csrf;
   $("aplicacion").hidden = false;
   $("salir").hidden = false;
+  $("ir-ingesta").hidden = !yo.admin;
+  if (yo.sub) $("mi-sub").textContent = `Tu identificador de Google (para HORMA_ADMINS): ${yo.sub}`;
   await cargarLista();
 }
 

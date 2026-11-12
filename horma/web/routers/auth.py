@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy import text
 
 from horma.config import ajustes
-from horma.web.auth.sesion import exigir_csrf, usuaria_actual
+from horma.web.auth.sesion import es_admin, exigir_csrf, usuaria_actual
 from horma.web.db import sesion_sin_usuaria
 
 router = APIRouter()
@@ -28,13 +28,15 @@ async def callback(request: Request):
         usuaria_id = s.execute(text("select obtener_o_crear_usuaria(:s)"), {"s": sub}).scalar_one()
     request.session.clear()  # sesión nueva: evita fijación de sesión
     request.session["usuaria_id"] = usuaria_id
+    request.session["sub"] = sub  # para comprobar HORMA_ADMINS (RF-1.10)
     request.session["csrf"] = secrets.token_urlsafe(32)
     return RedirectResponse("/", status_code=302)
 
 
 @router.get("/api/yo")
 def yo(request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    return {"usuaria_id": usuaria_id, "csrf": request.session["csrf"]}
+    return {"usuaria_id": usuaria_id, "csrf": request.session["csrf"],
+            "admin": es_admin(request), "sub": request.session.get("sub")}
 
 
 @router.post("/auth/logout", status_code=204, dependencies=[Depends(exigir_csrf)])

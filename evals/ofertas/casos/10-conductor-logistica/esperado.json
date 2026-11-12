@@ -2,13 +2,37 @@
   "titulo": "Conductor/a de camión",
   "empresa": "Transportes Ebro",
   "ubicacion": "Zaragoza",
+  "remoto": null,
   "contrato": "indefinido",
   "salario": {
-    "minimo": 1700,
-    "maximo": 1900,
+    "minimo": 1700.0,
+    "maximo": 1900.0,
     "moneda": "EUR"
   },
+  "idiomas": [],
   "requisitos": [
     "carné C"
-  ]
+  ],
+  "fecha_publicacion": "2026-11-05",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": true,
+    "salario_rango": "1700–1900 EUR",
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "sin_especificar",
+    "stack": [
+      "carné c"
+    ]
+  }
 }

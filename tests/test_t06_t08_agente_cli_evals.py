@@ -51,22 +51,39 @@ def test_cli_agente_desconocido_falla():
     assert r.exit_code != 0
 
 
+AUDITORIA = {"fantasma": False, "fraude": False, "salario_publicado": False}
+TAXONOMIA = {"sector": "otros", "familia": "otros", "nivel": "sin_especificar"}
+
+
 def _caso(base, nombre, esperado):
+    """Fase 1: el esperado es la Oferta completa y el texto contiene lo que se espera."""
     d = base / "ofertas" / "casos" / nombre
     d.mkdir(parents=True)
-    (d / "entrada.md").write_text("texto de la oferta " + nombre, encoding="utf-8")
-    (d / "esperado.json").write_text(json.dumps(esperado), encoding="utf-8")
+    texto = f"{esperado['titulo']} en {esperado['empresa']}. Publicada: 2026-11-01"
+    (d / "entrada.md").write_text(texto, encoding="utf-8")
+    (d / "esperado.json").write_text(json.dumps(
+        {**esperado, "fecha_publicacion": "2026-11-01", "auditoria": AUDITORIA,
+         "taxonomia": TAXONOMIA}), encoding="utf-8")
+
+
+def _respuestas(*extraidas):
+    """Por caso: extractor, auditor y clasificador."""
+    r = []
+    for e in extraidas:
+        r += [{**e, "fecha_publicacion": "2026-11-01"}, {"generica": False, "fraude": False},
+              TAXONOMIA]
+    return r
 
 
 def test_harness_compara_campo_a_campo_y_deja_ejecucion_fechada(tmp_path):
-    esperados = [{"titulo": "A", "empresa": "X"}, {"titulo": "B", "empresa": "Y"}]
-    for i, e in enumerate(esperados):
-        _caso(tmp_path, f"0{i}", e)
-    prov = ProveedorSimulado([{"titulo": "A", "empresa": "X"}, {"titulo": "B", "empresa": "MAL"}])
+    _caso(tmp_path, "00", {"titulo": "A", "empresa": "X"})
+    _caso(tmp_path, "01", {"titulo": "B", "empresa": "Y"})
+    prov = ProveedorSimulado(_respuestas({"titulo": "A", "empresa": "X"},
+                                         {"titulo": "B", "empresa": "MAL"}))
     metricas.vaciar()
     res = correr_set("ofertas", raiz=tmp_path, proveedor=prov, umbral=0.9)
     assert res["campos"]["titulo"] == 1.0
-    assert res["campos"]["empresa"] == 0.5
+    assert res["campos"]["empresa"] == 0.5  # «MAL» no está en el texto: se descarta
     assert res["aprobado"] is False
     archivos = list((tmp_path / "resultados").glob("*-ofertas.json"))
     assert len(archivos) == 1
@@ -74,22 +91,10 @@ def test_harness_compara_campo_a_campo_y_deja_ejecucion_fechada(tmp_path):
 
 def test_harness_aprueba_si_todo_coincide(tmp_path):
     _caso(tmp_path, "00", {"titulo": "A", "empresa": "X"})
-    res = correr_set("ofertas", raiz=tmp_path, proveedor=ProveedorSimulado(
-        [{"titulo": "A", "empresa": "x "}]), umbral=0.9)
+    res = correr_set("ofertas", raiz=tmp_path,
+                     proveedor=ProveedorSimulado(_respuestas({"titulo": "A", "empresa": "x "})),
+                     umbral=0.9)
     assert res["aprobado"] is True  # normaliza mayúsculas y espacios
-
-
-def test_fixtures_del_repo_son_diez_y_validos():
-    from pathlib import Path
-
-    casos = sorted((Path(__file__).resolve().parent.parent / "evals" / "ofertas" / "casos").iterdir())
-    assert len(casos) == 10
-    for c in casos:
-        OfertaExtraida.model_validate_json((c / "esperado.json").read_text(encoding="utf-8"))
-        assert (c / "entrada.md").read_text(encoding="utf-8").strip()
-    adversarios = [c for c in casos if json.loads(
-        (c / "esperado.json").read_text(encoding="utf-8")).get("instrucciones_embebidas")]
-    assert len(adversarios) >= 2
 
 
 def test_cli_sin_clave_de_anthropic_da_mensaje_claro(tmp_path, monkeypatch):

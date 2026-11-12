@@ -1,0 +1,15 @@
+{
+  "url": "https://empleos-abiertos.test/",
+  "apta": true,
+  "excluida_por_regla": false,
+  "permite_uso_automatizado": true,
+  "robots_permite": true,
+  "requiere_clave": false,
+  "motivos": [
+    "Las condiciones permiten el acceso automatizado a la API citando la fuente."
+  ],
+  "citas": [
+    "Se permite el acceso automatizado a la API pública siempre que se cite la fuente."
+  ],
+  "instrucciones_embebidas": []
+}

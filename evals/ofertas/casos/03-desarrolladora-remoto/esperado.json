@@ -3,9 +3,10 @@
   "empresa": "Tecnosur SL",
   "ubicacion": "España",
   "remoto": true,
+  "contrato": null,
   "salario": {
-    "minimo": 38000,
-    "maximo": 45000,
+    "minimo": 38000.0,
+    "maximo": 45000.0,
     "moneda": "EUR"
   },
   "idiomas": [
@@ -16,5 +17,28 @@
     "FastAPI",
     "PostgreSQL"
   ],
-  "fecha_publicacion": "2026-10-28"
+  "fecha_publicacion": "2026-10-28",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": true,
+    "salario_rango": "38000–45000 EUR",
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "sin_especificar",
+    "stack": [
+      "python",
+      "fastapi",
+      "postgresql"
+    ]
+  }
 }

@@ -1,0 +1,52 @@
+{
+  "_comentario": "Semilla de la tabla fuentes (RF-1.1). Todas empiezan inactivas: solo se activan con una calificación apta. Nunca LinkedIn ni Indeed.",
+  "fuentes": [
+    {
+      "nombre": "arbeitnow",
+      "web": "https://www.arbeitnow.com",
+      "url": "https://www.arbeitnow.com/api/job-board-api",
+      "metodo": "GET",
+      "parametros": {},
+      "cabeceras": {},
+      "variable_clave": null,
+      "mapeo": {
+        "lista": "data",
+        "id": "slug",
+        "titulo": "title",
+        "empresa": "company_name",
+        "ubicacion": "location",
+        "remoto": "remote",
+        "contrato": "job_types",
+        "fecha": "created_at",
+        "url": "url",
+        "descripcion": "description"
+      },
+      "activa": false
+    },
+    {
+      "nombre": "adzuna",
+      "web": "https://www.adzuna.es",
+      "url": "https://api.adzuna.com/v1/api/jobs/es/search/1",
+      "metodo": "GET",
+      "parametros": {
+        "app_id": "${ADZUNA_APP_ID}",
+        "app_key": "${ADZUNA_APP_KEY}",
+        "results_per_page": 50
+      },
+      "cabeceras": {},
+      "variable_clave": "ADZUNA_APP_ID,ADZUNA_APP_KEY",
+      "mapeo": {
+        "lista": "results",
+        "id": "id",
+        "titulo": "title",
+        "empresa": "company.display_name",
+        "ubicacion": "location.display_name",
+        "contrato": "contract_time",
+        "fecha": "created",
+        "url": "redirect_url",
+        "descripcion": "description"
+      },
+      "activa": false
+    }
+  ]
+}

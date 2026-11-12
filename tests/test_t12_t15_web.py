@@ -14,6 +14,8 @@ TEXTO = ("Se busca camarera en Bar La Marina, Valencia.\nContrato indefinido, pr
 OFERTA = {"titulo": "Camarera", "empresa": "Bar La Marina", "ubicacion": "Valencia",
           "contrato": "indefinido", "remoto": False,
           "salario": {"minimo": 16000, "maximo": 18000, "moneda": "EUR"}}
+AUDITOR = {"generica": False, "fraude": False}
+TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "sin_especificar"}
 
 
 class IdentidadFalsa:
@@ -82,13 +84,14 @@ def test_texto_vacio_o_enorme_se_rechaza(cliente):
     assert cliente.post("/ofertas", json={"texto": "a" * 20001}, headers=h).status_code == 422
 
 
-def test_cada_usuaria_lista_solo_sus_ofertas(cliente):
+def test_el_catalogo_es_comun_a_todas_las_usuarias(cliente):
+    """Fase 1 (catálogo común): lo que publica A también lo ve B."""
     csrf_a = entrar(cliente, "google-A")
     cliente.post("/ofertas", json={"texto": TEXTO}, headers={"X-CSRF-Token": csrf_a})
     assert len(cliente.get("/ofertas").json()) == 1
     cliente.post("/auth/logout", headers={"X-CSRF-Token": csrf_a})
     entrar(cliente, "google-B")
-    assert cliente.get("/ofertas").json() == []
+    assert len(cliente.get("/ofertas").json()) == 1
 
 
 # --- T14: web plana, CSP y escape ------------------------------------------------------------
@@ -118,18 +121,21 @@ def test_camino_completo_oferta_pegada_worker_y_lista(cliente, motor_app):
     assert r.status_code == 201 and r.json()["estado"] == "pendiente"
     assert cliente.get("/ofertas").json()[0]["estado"] == "pendiente"
 
-    assert worker.procesar_una(motor_app, ProveedorSimulado([OFERTA])) == "hecha"
+    assert worker.procesar_una(motor_app, ProveedorSimulado([OFERTA, AUDITOR, TAX]),
+                               resolver=None) == "hecha"
 
     oferta = cliente.get("/ofertas").json()[0]
     assert oferta["estado"] == "procesada" and oferta["titulo"] == "Camarera"
     assert oferta["empresa"] == "Bar La Marina" and oferta["salario_minimo"] == 16000
+    assert oferta["sector"] == "hosteleria_turismo" and oferta["salario_publicado"] is True
 
 
 def test_una_oferta_con_script_se_guarda_como_texto_y_no_rompe_nada(cliente, motor_app):
     csrf = entrar(cliente)
     cliente.post("/ofertas", json={"texto": "<script>alert(1)</script> Cajero en Tienda X"},
                  headers={"X-CSRF-Token": csrf})
-    worker.procesar_una(motor_app, ProveedorSimulado([{"titulo": "<script>alert(1)</script>"}]))
+    worker.procesar_una(motor_app, ProveedorSimulado(
+        [{"titulo": "<script>alert(1)</script>"}, AUDITOR, TAX]), resolver=None)
     r = cliente.get("/ofertas")
     assert r.headers["content-type"].startswith("application/json")
     assert r.json()[0]["titulo"] == "<script>alert(1)</script>"  # dato inerte; el JS lo pinta como texto

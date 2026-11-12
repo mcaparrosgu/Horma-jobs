@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado: fase 0 (cimientos) construida: puerta única al modelo, agente `extractor-oferta`, consola, evals, Postgres con RLS, cola y worker, acceso con Google y web mínima. Pendiente para cerrarla: credenciales de Google y clave de Anthropic (ver «Puesta en marcha»).
+> Estado: fase 1 (ofertas) construida: catálogo común de ofertas, agentes `auditor-oferta`, `clasificador-oferta` y `auditor-fuentes`, flujos `procesar_oferta` y `calificar_fuente` sobre la interfaz `Flow`, ingestor por API, claves de API y dashboard `/ingesta`. Evals probadas solo en modo simulado: falta medirlas con el modelo real para cerrar la puerta de salida.
 
 ## Cómo trabajamos (SDD)
 
@@ -58,18 +58,32 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 2. `uv sync`
 3. `docker compose up -d postgres` (Postgres local en el puerto 5434; Neon queda fuera de la fase 0).
 4. `uv run alembic upgrade head` (migraciones con el rol `horma_migrador`).
-5. `docker compose up -d` levanta también la API (http://localhost:8000) y el worker.
+5. `docker compose up -d --build` levanta también la API (http://localhost:8000) y el worker.
 6. `uv run pytest` (los tests de base de datos necesitan el paso 3), `uv run ruff check .` y `uv run lint-imports`.
+
+### Fase 1: fuentes e ingesta
+
+1. Entra en la web: debajo del catálogo sale tu identificador de Google (`sub`). Ponlo en
+   `HORMA_ADMINS` del `.env` y reinicia la API. Ya verás el enlace «Ingesta».
+2. En `/ingesta`, califica la web de la fuente (p. ej. `https://www.arbeitnow.com`). Solo una
+   calificación APTA permite activarla.
+3. Crea una clave de alcance `ingesta`, cópiala (solo se enseña una vez) en `HORMA_CLAVE_INGESTA`
+   y arranca el ingestor: `docker compose --profile ingesta up -d`. El ingestor no tiene
+   credenciales de la base de datos.
+4. Lanza la ingesta desde el dashboard o con `uv run horma ingestar arbeitnow --limite 20`.
 
 ## Consola
 
-Puerta de salida de la fase 0:
-
-- `uv run horma agente listar`
-- `uv run horma agente correr extractor-oferta --entrada oferta.md [--salida salida.json]`
+- `uv run horma agente listar` · `uv run horma agente correr <agente> --entrada x [--salida y]`
   (con `--simulado --respuesta r.json` no llama al modelo).
-- `uv run horma eval correr ofertas` corre los 10 casos de `evals/ofertas/casos/` y deja la ejecución en
-  `evals/resultados/`. Con `--simulado` solo prueba el harness: no mide el modelo.
+- `uv run horma flujo listar` · `uv run horma flujo correr procesar_oferta --entrada oferta.md
+  --paso-a-paso --traza trazas/` enseña la entrada y la salida de cada paso y guarda la traza.
+- `uv run horma ingestar <fuente> [--limite N] [--en-seco]`: `--en-seco` lee la fuente de
+  `config/endpoints.json` y enseña las ofertas normalizadas sin entregarlas.
+- `uv run horma fuente calificar <url>`: pide la calificación a la API y espera el veredicto.
+- `uv run horma eval correr ofertas|fuentes` corre los casos de `evals/<set>/casos/` y deja la
+  ejecución en `evals/resultados/`. Con `--simulado` solo prueba el harness: no mide el modelo.
+  Sin `--simulado` llama al modelo real y **gasta saldo de Anthropic**.
 
 ## Git
 

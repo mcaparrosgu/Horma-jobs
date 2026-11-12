@@ -1,0 +1,36 @@
+{
+  "titulo": "Oficial de primera albañil",
+  "empresa": "Construcciones Teide",
+  "ubicacion": "Santa Cruz de Tenerife",
+  "remoto": null,
+  "contrato": null,
+  "salario": {
+    "minimo": 1800.0,
+    "maximo": 2100.0,
+    "moneda": "EUR"
+  },
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-04",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": true,
+    "salario_rango": "1800–2100 EUR",
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "construccion",
+    "familia": "construccion_oficios",
+    "nivel": "intermedio",
+    "stack": [
+      "carné b"
+    ]
+  }
+}

@@ -64,7 +64,25 @@ allow_indirect_imports = true
 [[tool.importlinter.contracts]]
 name = "Los agentes no se importan entre sí (RT-13)"
 type = "independence"
-modules = ["horma.agents.extractor_oferta"]
+modules = [
+  "horma.agents.extractor_oferta",
+  "horma.agents.auditor_oferta",
+  "horma.agents.clasificador_oferta",
+  "horma.agents.auditor_fuentes",
+]
+
+[[tool.importlinter.contracts]]
+name = "Flujos y herramientas no tocan la BD ni la web (fase 1)"
+type = "forbidden"
+source_modules = ["horma.flows", "horma.tools"]
+forbidden_modules = ["horma.web", "sqlalchemy", "psycopg"]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "La consola y el ingestor pasan por la API, nunca por la BD (RF-1.2)"
+type = "forbidden"
+source_modules = ["horma.cli", "horma.ingesta"]
+forbidden_modules = ["horma.web", "sqlalchemy", "psycopg"]
 
 [tool.ruff.lint.per-file-ignores]
 "horma/cli.py" = ["B008"]

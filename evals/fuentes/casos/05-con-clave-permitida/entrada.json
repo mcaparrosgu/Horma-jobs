@@ -1,0 +1,5 @@
+{
+  "url": "https://empleo-europa.test/",
+  "condiciones": "API de empleo: los desarrolladores pueden integrar nuestras ofertas en sus aplicaciones.\nEs necesario solicitar una clave de API gratuita.\nEl uso de la API implica aceptar estas condiciones.",
+  "robots": "User-agent: *\nDisallow: /admin"
+}
