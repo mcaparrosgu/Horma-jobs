@@ -31,10 +31,10 @@ todo lo que viene después. Los requisitos transversales (RT-xx) están en [syst
 - **RF-0.11** SI la salida del modelo no valida contra el esquema tras el reintento, ENTONCES el sistema DEBERÁ lanzar `SalidaInvalida` y no persistir nada (RT-03).
 
 ## Criterios de aceptación (puerta de salida)
-- [ ] CI en verde con el eval de `extractor-oferta` sobre 10 fixtures inventados, incluidos casos con instrucciones embebidas (RT-07).
-- [ ] `horma agente correr` y `horma eval correr` documentados en el README.
-- [ ] Test de RLS pasando (leer datos de otra usuaria falla).
-- [ ] Métricas de cada llamada al modelo registradas sin guardar texto (RT-06).
+- [x] CI en verde con el eval de `extractor-oferta` sobre 10 fixtures inventados, incluidos casos con instrucciones embebidas (RT-07). Cumplido en modo simulado; falta medir con el modelo real (requiere `ANTHROPIC_API_KEY`).
+- [x] `horma agente correr` y `horma eval correr` documentados en el README.
+- [x] Test de RLS pasando (leer datos de otra usuaria falla).
+- [x] Métricas de cada llamada al modelo registradas sin guardar texto (RT-06).
 
 ## Fuera de alcance
 - Ingesta real desde fuentes, perfil, recomendación y candidaturas (fases 1-3).
