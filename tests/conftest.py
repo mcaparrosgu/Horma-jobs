@@ -76,5 +76,10 @@ def motor_migrador(bd_migrada):
 
 @pytest.fixture(autouse=False)
 def bd_limpia(motor_migrador):
+    """Tablas vacías y la semilla de fuentes recién sembrada."""
+    from horma.web.semilla import sembrar_fuentes
+
     with motor_migrador.begin() as c:
-        c.execute(text("TRUNCATE origen, ofertas, tareas, llm_llamadas, usuarias RESTART IDENTITY CASCADE"))
+        c.execute(text("TRUNCATE origen, ofertas, tareas, llm_llamadas, usuarias, fuentes, "
+                       "calificaciones_fuente, ejecuciones_ingesta, claves_api RESTART IDENTITY CASCADE"))
+        sembrar_fuentes(c)

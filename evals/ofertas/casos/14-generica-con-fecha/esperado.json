@@ -1,0 +1,32 @@
+{
+  "titulo": "Oferta de empleo",
+  "empresa": null,
+  "ubicacion": null,
+  "remoto": null,
+  "contrato": null,
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-06",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": true,
+    "motivos_fantasma": [
+      "generica"
+    ],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Oferta de empleo?"
+  },
+  "taxonomia": {
+    "sector": "otros",
+    "familia": "otros",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
+}

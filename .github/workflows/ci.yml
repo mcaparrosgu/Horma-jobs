@@ -45,15 +45,17 @@ jobs:
           docker compose up -d --wait postgres
       - name: Tests (incluye RLS, cola y camino completo)
         run: uv run pytest -q
-      - name: Eval de extractor-oferta
+      - name: Evals de ofertas y fuentes
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           if [ -n "$ANTHROPIC_API_KEY" ]; then
             uv run horma eval correr ofertas
+            uv run horma eval correr fuentes
           else
             echo "::warning::Sin ANTHROPIC_API_KEY: solo se prueba el harness en modo simulado; NO se mide el modelo."
             uv run horma eval correr ofertas --simulado
+            uv run horma eval correr fuentes --simulado
           fi
       - uses: actions/upload-artifact@v4
         if: always()

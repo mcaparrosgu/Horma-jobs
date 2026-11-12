@@ -11,7 +11,10 @@
   <main>
     <header class="cabecera">
       <h1>Horma</h1>
-      <button id="salir" class="secundario" type="button" hidden>Salir</button>
+      <div class="fila">
+        <a id="ir-ingesta" class="boton secundario" href="/ingesta" hidden>Ingesta</a>
+        <button id="salir" class="secundario" type="button" hidden>Salir</button>
+      </div>
     </header>
 
     <section id="entrada" hidden>
@@ -28,9 +31,10 @@
           <span id="aviso" role="status"></span>
         </div>
       </form>
-      <h2>Ofertas procesadas</h2>
+      <h2>Catálogo de ofertas</h2>
       <ul id="lista" class="lista"></ul>
       <p id="vacio" hidden>Todavía no hay ofertas.</p>
+      <p id="mi-sub" class="suave"></p>
     </section>
   </main>
   <script src="/static/app.js"></script>

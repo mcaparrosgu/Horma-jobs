@@ -4,5 +4,27 @@
   "ubicacion": "Sevilla",
   "remoto": false,
   "contrato": "media jornada",
-  "fecha_publicacion": "2026-10-20"
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-10-20",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Dependienta?"
+  },
+  "taxonomia": {
+    "sector": "comercio_retail",
+    "familia": "ventas_comercial",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
 }

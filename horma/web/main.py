@@ -4,20 +4,22 @@ import secrets
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import Engine
 from starlette.middleware.sessions import SessionMiddleware
 
 from horma.config import ajustes
+from horma.web.auth.claves import Limitador
 from horma.web.auth.identidad import Identidad, crear_identidad
 from horma.web.db import motor
-from horma.web.routers import auth, ofertas
+from horma.web.routers import auth, ingesta, ofertas
 
 ESTATICOS = Path(__file__).parent / "static"
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
        "connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; "
        "frame-ancestors 'none'")
+MAX_CUERPO = 64 * 1024  # RF-1.3: límite de tamaño de cualquier petición
 
 
 def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) -> FastAPI:
@@ -33,13 +35,18 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     app = FastAPI(title="Horma", docs_url=None, redoc_url=None, openapi_url=None)
     app.state.engine = engine or motor()
     app.state.identidad = identidad or crear_identidad(a)
+    app.state.limitador = Limitador()
 
     app.add_middleware(SessionMiddleware, secret_key=secreto, session_cookie="horma_sesion",
                        same_site="lax", https_only=not en_desarrollo, max_age=7 * 24 * 3600)
 
     @app.middleware("http")
     async def cabeceras_de_seguridad(request, call_next):
-        r = await call_next(request)
+        longitud = request.headers.get("content-length", "0")
+        if not longitud.isdigit() or int(longitud) > MAX_CUERPO:
+            r = JSONResponse({"detail": "Petición demasiado grande"}, status_code=413)
+        else:
+            r = await call_next(request)
         r.headers["Content-Security-Policy"] = CSP
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["Referrer-Policy"] = "no-referrer"
@@ -48,6 +55,7 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
 
     app.include_router(auth.router)
     app.include_router(ofertas.router)
+    app.include_router(ingesta.router)
     app.mount("/static", StaticFiles(directory=ESTATICOS), name="static")
 
     @app.get("/", include_in_schema=False)

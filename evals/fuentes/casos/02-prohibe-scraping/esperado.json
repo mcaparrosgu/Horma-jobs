@@ -1,0 +1,15 @@
+{
+  "url": "https://bolsa-cerrada.test/",
+  "apta": false,
+  "excluida_por_regla": false,
+  "permite_uso_automatizado": false,
+  "robots_permite": true,
+  "requiere_clave": false,
+  "motivos": [
+    "Las condiciones prohíben extraer ofertas de forma automatizada."
+  ],
+  "citas": [
+    "Queda prohibido el uso de robots, arañas o cualquier medio automatizado para extraer ofertas de este sitio."
+  ],
+  "instrucciones_embebidas": []
+}

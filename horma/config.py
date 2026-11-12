@@ -28,6 +28,16 @@ class Ajustes(BaseSettings):
     tope_coste_tarea: float = 0.50
     tope_reintentos_tarea: int = 3
 
+    # Fase 1
+    horma_admins: str = ""  # identificadores `sub` de Google separados por comas
+    limite_ofertas_por_minuto: int = 60  # por clave de API
+    # Ingestor y consola: hablan con la API, nunca con la base de datos (RF-1.2)
+    horma_api_url: str = "http://127.0.0.1:8000"
+    horma_clave_ingesta: str = ""
+
+    def admins(self) -> set[str]:
+        return {s.strip() for s in self.horma_admins.split(",") if s.strip()}
+
 
 @lru_cache
 def ajustes() -> Ajustes:

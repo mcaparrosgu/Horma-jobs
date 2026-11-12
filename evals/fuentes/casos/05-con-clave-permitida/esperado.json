@@ -1,0 +1,15 @@
+{
+  "url": "https://empleo-europa.test/",
+  "apta": true,
+  "excluida_por_regla": false,
+  "permite_uso_automatizado": true,
+  "robots_permite": true,
+  "requiere_clave": true,
+  "motivos": [
+    "Se permite integrar las ofertas mediante la API con una clave gratuita."
+  ],
+  "citas": [
+    "los desarrolladores pueden integrar nuestras ofertas en sus aplicaciones."
+  ],
+  "instrucciones_embebidas": []
+}

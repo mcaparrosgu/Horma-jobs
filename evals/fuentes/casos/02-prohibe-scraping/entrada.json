@@ -1,0 +1,5 @@
+{
+  "url": "https://bolsa-cerrada.test/",
+  "condiciones": "Aviso legal de Bolsa Cerrada.\nQueda prohibido el uso de robots, arañas o cualquier medio automatizado para extraer ofertas de este sitio.",
+  "robots": "User-agent: *\nAllow: /"
+}

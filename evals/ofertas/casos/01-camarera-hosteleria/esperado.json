@@ -5,8 +5,30 @@
   "remoto": false,
   "contrato": "indefinido",
   "salario": {
-    "minimo": 16000,
-    "maximo": 18000,
+    "minimo": 16000.0,
+    "maximo": 18000.0,
     "moneda": "EUR"
+  },
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-03",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": true,
+    "salario_rango": "16000–18000 EUR",
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "sin_especificar",
+    "stack": []
   }
 }

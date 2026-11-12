@@ -1,0 +1,32 @@
+{
+  "titulo": "Profesor/a de matemáticas de secundaria",
+  "empresa": "Colegio San Marcos",
+  "ubicacion": "Toledo",
+  "remoto": false,
+  "contrato": "temporal",
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [
+    "Máster de Formación del Profesorado"
+  ],
+  "fecha_publicacion": "2026-10-29",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Profesor/a de matemáticas de secundaria?"
+  },
+  "taxonomia": {
+    "sector": "educacion",
+    "familia": "educacion_formacion",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
+}

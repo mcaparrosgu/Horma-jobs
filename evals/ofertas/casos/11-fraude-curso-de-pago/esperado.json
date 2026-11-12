@@ -1,0 +1,36 @@
+{
+  "titulo": "Teleoperador/a",
+  "empresa": "Contacta Global",
+  "ubicacion": null,
+  "remoto": true,
+  "contrato": null,
+  "salario": {
+    "minimo": 1800.0,
+    "maximo": 2000.0,
+    "moneda": "EUR"
+  },
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-05",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": true,
+    "senales_fraude": [
+      "debes abonar 90 euros por el curso de formación obligatorio"
+    ],
+    "dominio_empresa": "gmail.com",
+    "empresa_validada": null,
+    "salario_publicado": true,
+    "salario_rango": "1800–2000 EUR",
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "servicios_profesionales",
+    "familia": "atencion_cliente",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
+}

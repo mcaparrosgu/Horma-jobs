@@ -1,0 +1,40 @@
+{
+  "titulo": "Analista de datos junior",
+  "empresa": "DataMar Analytics",
+  "ubicacion": "Valencia",
+  "remoto": false,
+  "contrato": null,
+  "salario": {
+    "minimo": 24000.0,
+    "maximo": 27000.0,
+    "moneda": "EUR"
+  },
+  "idiomas": [],
+  "requisitos": [
+    "SQL",
+    "Power BI"
+  ],
+  "fecha_publicacion": "2026-10-31",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": true,
+    "salario_rango": "24000–27000 EUR",
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "junior",
+    "stack": [
+      "sql",
+      "power bi"
+    ]
+  }
+}

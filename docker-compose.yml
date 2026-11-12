@@ -43,5 +43,21 @@ services:
       postgres:
         condition: service_healthy
 
+  # Ingestor (RF-1.2): SIN env_file y SIN credenciales de la base de datos. Solo conoce la API,
+  # su clave de ingesta (créala en /ingesta) y las claves de las fuentes. Arranca con
+  # `docker compose --profile ingesta up -d` cuando HORMA_CLAVE_INGESTA ya está en .env.
+  ingestor:
+    build: .
+    profiles: ["ingesta"]
+    command: horma ingestar --escuchar
+    environment:
+      HORMA_API_URL: http://api:8000
+      HORMA_CLAVE_INGESTA: ${HORMA_CLAVE_INGESTA:-}
+      ADZUNA_APP_ID: ${ADZUNA_APP_ID:-}
+      ADZUNA_APP_KEY: ${ADZUNA_APP_KEY:-}
+    restart: unless-stopped
+    depends_on:
+      - api
+
 volumes:
   horma_pgdata:

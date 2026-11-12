@@ -1,0 +1,5 @@
+{
+  "url": "https://portal-norte.test/",
+  "condiciones": "Puedes consultar nuestras ofertas mediante nuestra API con registro previo.\nEl acceso automatizado está permitido a usuarios registrados con clave.",
+  "robots": "User-agent: *\nDisallow: /"
+}

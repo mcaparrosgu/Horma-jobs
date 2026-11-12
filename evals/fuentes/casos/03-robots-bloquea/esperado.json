@@ -1,0 +1,16 @@
+{
+  "url": "https://portal-norte.test/",
+  "apta": false,
+  "excluida_por_regla": false,
+  "permite_uso_automatizado": true,
+  "robots_permite": false,
+  "requiere_clave": true,
+  "motivos": [
+    "Las condiciones permiten la API a usuarios registrados con clave.",
+    "El robots.txt no permite el acceso automático a esta URL."
+  ],
+  "citas": [
+    "El acceso automatizado está permitido a usuarios registrados con clave."
+  ],
+  "instrucciones_embebidas": []
+}

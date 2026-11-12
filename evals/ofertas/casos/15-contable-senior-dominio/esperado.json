@@ -1,0 +1,36 @@
+{
+  "titulo": "Contable sénior",
+  "empresa": "Asesoría Miramar",
+  "ubicacion": "Alicante",
+  "remoto": null,
+  "contrato": "indefinido",
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [
+    "Más de 6 años de experiencia en contabilidad",
+    "Manejo de A3 y Excel"
+  ],
+  "fecha_publicacion": "2026-11-02",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": "asesoriamiramar.es",
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Contable sénior?"
+  },
+  "taxonomia": {
+    "sector": "servicios_profesionales",
+    "familia": "finanzas_contabilidad",
+    "nivel": "senior",
+    "stack": [
+      "a3",
+      "excel"
+    ]
+  }
+}

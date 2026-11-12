@@ -2,8 +2,33 @@
   "titulo": "Enfermera/o",
   "empresa": "Clínica Norte",
   "ubicacion": "Bilbao",
+  "remoto": null,
   "contrato": "temporal",
+  "salario": null,
   "idiomas": [
     "inglés"
-  ]
+  ],
+  "requisitos": [
+    "título de Enfermería"
+  ],
+  "fecha_publicacion": "2026-11-01",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": "¿Podríais indicarme la banda salarial prevista para el puesto de Enfermera/o?"
+  },
+  "taxonomia": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
 }

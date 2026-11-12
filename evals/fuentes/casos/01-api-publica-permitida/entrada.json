@@ -1,0 +1,5 @@
+{
+  "url": "https://empleos-abiertos.test/",
+  "condiciones": "Condiciones de uso de Empleos Abiertos.\n1. Ofrecemos una API pública de ofertas.\n2. Se permite el acceso automatizado a la API pública siempre que se cite la fuente.\n3. No se permite revender los datos.",
+  "robots": "User-agent: *\nDisallow: /cuenta/"
+}

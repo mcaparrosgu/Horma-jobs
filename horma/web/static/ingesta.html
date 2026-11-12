@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horma · Ingesta</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main class="ancho">
+    <header class="cabecera">
+      <h1>Ingesta</h1>
+      <a class="boton secundario" href="/">Ofertas</a>
+    </header>
+    <p id="aviso" role="status"></p>
+
+    <section aria-labelledby="t-estado">
+      <h2 id="t-estado">Ofertas por estado</h2>
+      <ul id="estados" class="chips"></ul>
+    </section>
+
+    <section aria-labelledby="t-fuentes">
+      <h2 id="t-fuentes">Fuentes</h2>
+      <ul id="fuentes" class="lista"></ul>
+      <button id="nueva-fuente" class="secundario" type="button">Añadir fuente</button>
+    </section>
+
+    <section id="editor" class="tarjeta" hidden aria-labelledby="t-editor">
+      <h2 id="t-editor">Fuente</h2>
+      <form id="form-fuente">
+        <div class="rejilla">
+          <label>Nombre <input name="nombre" required pattern="[a-z0-9][a-z0-9_\-]{1,40}"></label>
+          <label>Método
+            <select name="metodo"><option>GET</option><option>POST</option></select>
+          </label>
+          <label>Web del portal <input name="web" type="url" required placeholder="https://"></label>
+          <label>URL del endpoint <input name="url" type="url" required placeholder="https://"></label>
+          <label>Variables con la clave <input name="variable_clave" placeholder="ADZUNA_APP_ID,ADZUNA_APP_KEY"></label>
+          <label class="casilla"><input name="activa" type="checkbox"> Activa (exige calificación apta)</label>
+        </div>
+        <label>Parámetros (JSON) <textarea name="parametros" rows="3">{}</textarea></label>
+        <label>Cabeceras (JSON) <textarea name="cabeceras" rows="2">{}</textarea></label>
+        <label>Mapeo de campos (JSON) <textarea name="mapeo" rows="6">{}</textarea></label>
+        <div class="fila">
+          <button type="submit">Guardar</button>
+          <button id="cancelar" class="secundario" type="button">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <section aria-labelledby="t-calificar">
+      <h2 id="t-calificar">Calificar una fuente</h2>
+      <form id="form-calificar" class="fila">
+        <input name="url" type="url" required placeholder="https://www.portal-de-empleo.com" aria-label="URL del portal">
+        <button type="submit">Calificar</button>
+      </form>
+      <ul id="calificaciones" class="lista"></ul>
+    </section>
+
+    <section aria-labelledby="t-errores">
+      <h2 id="t-errores">Errores recientes</h2>
+      <ul id="errores" class="lista"></ul>
+      <p id="sin-errores" hidden>Sin errores.</p>
+    </section>
+
+    <section aria-labelledby="t-claves">
+      <h2 id="t-claves">Claves de API</h2>
+      <form id="form-clave" class="fila">
+        <input name="nombre" required maxlength="80" placeholder="Nombre (p. ej. ingestor local)" aria-label="Nombre de la clave">
+        <select name="alcance" aria-label="Alcance">
+          <option value="ingesta">ingesta</option>
+          <option value="ofertas">ofertas (empresa)</option>
+        </select>
+        <button type="submit">Crear clave</button>
+      </form>
+      <p id="clave-nueva" class="alerta" hidden></p>
+      <ul id="claves" class="lista"></ul>
+    </section>
+  </main>
+  <script src="/static/ingesta.js"></script>
+</body>
+</html>

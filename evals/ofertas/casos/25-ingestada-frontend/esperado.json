@@ -1,0 +1,37 @@
+{
+  "titulo": "Frontend Developer (React)",
+  "empresa": "Nube Azul Software",
+  "ubicacion": "Madrid",
+  "remoto": true,
+  "contrato": "indefinido",
+  "salario": {
+    "minimo": 40000.0,
+    "maximo": 48000.0,
+    "moneda": "EUR"
+  },
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-06",
+  "url": "https://ejemplo.test/ofertas/frontend-react",
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": true,
+    "salario_rango": "40000–48000 EUR",
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "react",
+      "typescript"
+    ]
+  }
+}

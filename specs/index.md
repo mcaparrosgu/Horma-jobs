@@ -18,7 +18,7 @@ stale_after: null
 
 ## Features (una por fase)
 - `000-cimientos/` — fase 0. [Aclaraciones](./000-cimientos/clarifications.md) (respondidas y verificadas); [Spec](./000-cimientos/spec.md) y [plan](./000-cimientos/plan.md) (borradores); `tasks.md` aún no creado.
-- `001-ofertas/` — fase 1 (vacía).
+- `001-ofertas/` — fase 1. [Aclaraciones](./001-ofertas/clarifications.md) (respondidas), [spec](./001-ofertas/spec.md), [plan](./001-ofertas/plan.md) y [tareas](./001-ofertas/tasks.md) (borradores, pendientes de verificar por Mar).
 - `002-perfil-recomendacion/` — fase 2 (vacía).
 - `003-candidatura/` — fase 3 (vacía).
 - `004-langgraph-salida/` — fase 4 (vacía).

@@ -3,3 +3,4 @@ Empresa: Bar La Marina.
 Contrato indefinido, jornada completa, presencial.
 Salario: entre 16000 y 18000 euros brutos anuales.
 Se valora experiencia previa.
+Publicada el 2026-11-03.
