@@ -1,0 +1,95 @@
+/* ── Tokens (un solo sitio). Colores del marco PROVISIONALES: Horma aún no tiene logo. ── */
+:root{
+  --pp-linea-ext: #6b3f2a;   /* cuero */
+  --pp-linea-int: #b88a44;   /* latón */
+  --pp-fondo:     #f4efe8;
+  --pp-grosor: 2.5px; --pp-margen: 7px; --pp-hueco: 4px; --pp-radio: 16px;
+
+  --texto:   #2a211c;
+  --suave:   #6a5d54;
+  --tarjeta: #fffdf9;
+  --borde:   #d9cfc3;
+  --acento:  #6b3f2a;
+  --acento-texto: #fffdf9;
+  --error:   #9b2c2c;
+  --radio: 12px;
+  --fuente: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fuente-titulo: Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --pp-linea-ext: #c98f63; --pp-linea-int: #d9b56f; --pp-fondo: #1d1a17;
+    --texto: #efe6dc; --suave: #b3a699; --tarjeta: #26221e; --borde: #3a342e;
+    --acento: #c98f63; --acento-texto: #1d1a17; --error: #f0a0a0;
+  }
+}
+:root[data-theme="dark"]{
+  --pp-linea-ext: #c98f63; --pp-linea-int: #d9b56f; --pp-fondo: #1d1a17;
+  --texto: #efe6dc; --suave: #b3a699; --tarjeta: #26221e; --borde: #3a342e;
+  --acento: #c98f63; --acento-texto: #1d1a17; --error: #f0a0a0;
+}
+
+/* ── Marco Passe-Partout (forma fija del sello) ── */
+.pp, .pp::before, .pp::after { box-sizing: border-box; }
+.pp{ position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; }
+.pp::before, .pp::after{
+  content: ""; position: fixed; padding: var(--pp-grosor);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.pp::before{ inset: var(--pp-margen); border-radius: var(--pp-radio); background: var(--pp-linea-ext); }
+.pp::after{
+  inset: calc(var(--pp-margen) + var(--pp-grosor) + var(--pp-hueco));
+  border-radius: max(0px, calc(var(--pp-radio) - var(--pp-grosor) - var(--pp-hueco)));
+  background: var(--pp-linea-int);
+}
+
+/* ── Página ── */
+*{ box-sizing: border-box; }
+body{
+  margin: 0; background: var(--pp-fondo); color: var(--texto); font-family: var(--fuente);
+  line-height: 1.5;
+  padding: calc(var(--pp-margen) + var(--pp-grosor) + var(--pp-hueco) + 8px);
+}
+main{ max-width: 46rem; margin: 0 auto; padding: 1rem 0.5rem 3rem; }
+.cabecera{ display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+h1{ font-family: var(--fuente-titulo); font-size: 2rem; margin: 0.5rem 0; }
+h2{ font-family: var(--fuente-titulo); font-size: 1.25rem; margin-top: 2rem; }
+[hidden]{ display: none !important; }
+
+label{ display: block; font-weight: 600; margin-bottom: 0.4rem; }
+textarea{
+  width: 100%; font: inherit; color: inherit; background: var(--tarjeta);
+  border: 1px solid var(--borde); border-radius: var(--radio); padding: 0.75rem; resize: vertical;
+}
+button, .boton{
+  font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block;
+  background: var(--acento); color: var(--acento-texto); border: 1px solid var(--acento);
+  border-radius: var(--radio); padding: 0.55rem 1.1rem;
+}
+button.secundario{ background: transparent; color: var(--texto); border-color: var(--borde); }
+button:disabled{ opacity: 0.6; cursor: wait; }
+:focus-visible{ outline: 3px solid var(--pp-linea-int); outline-offset: 2px; }
+.fila{ display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; flex-wrap: wrap; }
+#aviso{ color: var(--suave); }
+#aviso.error{ color: var(--error); }
+
+.lista{ list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+.tarjeta{
+  background: var(--tarjeta); border: 1px solid var(--borde); border-radius: var(--radio);
+  padding: 0.9rem 1rem;
+}
+.tarjeta h3{ margin: 0 0 0.25rem; font-size: 1.05rem; }
+.tarjeta p{ margin: 0.15rem 0; color: var(--suave); }
+.estado{
+  display: inline-block; font-size: 0.8rem; font-weight: 600; padding: 0.1rem 0.6rem;
+  border-radius: 999px; border: 1px solid var(--borde); margin-bottom: 0.4rem;
+}
+.estado.error{ color: var(--error); border-color: var(--error); }
+.alerta{ color: var(--error); }
+
+@media (max-width: 420px){
+  :root{ --pp-margen: 5px; --pp-radio: 12px; }
+}
+@media (prefers-reduced-motion: reduce){ *{ transition: none !important; animation: none !important; } }

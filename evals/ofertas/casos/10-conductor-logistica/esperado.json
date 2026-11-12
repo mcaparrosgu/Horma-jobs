@@ -1,0 +1,14 @@
+{
+  "titulo": "Conductor/a de camión",
+  "empresa": "Transportes Ebro",
+  "ubicacion": "Zaragoza",
+  "contrato": "indefinido",
+  "salario": {
+    "minimo": 1700,
+    "maximo": 1900,
+    "moneda": "EUR"
+  },
+  "requisitos": [
+    "carné C"
+  ]
+}

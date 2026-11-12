@@ -1,0 +1,12 @@
+{
+  "titulo": "Camarera/o",
+  "empresa": "Bar La Marina",
+  "ubicacion": "Valencia",
+  "remoto": false,
+  "contrato": "indefinido",
+  "salario": {
+    "minimo": 16000,
+    "maximo": 18000,
+    "moneda": "EUR"
+  }
+}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horma</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main>
+    <header class="cabecera">
+      <h1>Horma</h1>
+      <button id="salir" class="secundario" type="button" hidden>Salir</button>
+    </header>
+
+    <section id="entrada" hidden>
+      <p>Para guardar y procesar ofertas, entra con tu cuenta de Google.</p>
+      <a class="boton" href="/auth/google/login">Entrar con Google</a>
+    </section>
+
+    <section id="aplicacion" hidden>
+      <form id="formulario">
+        <label for="texto">Pega el texto de una oferta</label>
+        <textarea id="texto" rows="7" maxlength="20000" required></textarea>
+        <div class="fila">
+          <button type="submit">Procesar oferta</button>
+          <span id="aviso" role="status"></span>
+        </div>
+      </form>
+      <h2>Ofertas procesadas</h2>
+      <ul id="lista" class="lista"></ul>
+      <p id="vacio" hidden>Todavía no hay ofertas.</p>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

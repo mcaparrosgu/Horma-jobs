@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  secretos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  calidad:
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync
+      - name: Estilo (ruff)
+        run: uv run ruff check .
+      - name: Arquitectura (RT-02, RT-13)
+        run: uv run lint-imports
+      - name: Postgres de pruebas
+        run: |
+          {
+            echo "POSTGRES_USER=horma"
+            echo "POSTGRES_DB=horma"
+            echo "POSTGRES_PORT=5434"
+            echo "POSTGRES_PASSWORD=$(openssl rand -hex 12)"
+            echo "HORMA_MIGRADOR_PASSWORD=$(openssl rand -hex 12)"
+            echo "HORMA_APP_PASSWORD=$(openssl rand -hex 12)"
+          } > .env
+          . ./.env
+          {
+            echo "DATABASE_URL=postgresql+psycopg://horma_app:${HORMA_APP_PASSWORD}@127.0.0.1:5434/horma"
+            echo "DATABASE_URL_MIGRACIONES=postgresql+psycopg://horma_migrador:${HORMA_MIGRADOR_PASSWORD}@127.0.0.1:5434/horma"
+          } >> .env
+          docker compose up -d --wait postgres
+      - name: Tests (incluye RLS, cola y camino completo)
+        run: uv run pytest -q
+      - name: Eval de extractor-oferta
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            uv run horma eval correr ofertas
+          else
+            echo "::warning::Sin ANTHROPIC_API_KEY: solo se prueba el harness en modo simulado; NO se mide el modelo."
+            uv run horma eval correr ofertas --simulado
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ejecuciones-de-evals
+          path: evals/resultados/
+          if-no-files-found: ignore

@@ -26,3 +26,6 @@ trazas/
 
 # Node (si aplica, p. ej. herramientas de Neon)
 node_modules/
+
+# Ejecuciones de evals (se generan; CI las sube como artefacto)
+evals/resultados/*.json

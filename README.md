@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado: andamiaje listo; aún no hay código de la aplicación. El gate de Clarify de la fase 0 está respondido y verificado (Postgres en Docker Compose, Google OAuth 2.0); siguen la spec, el plan y las tareas.
+> Estado: fase 0 (cimientos) construida: puerta única al modelo, agente `extractor-oferta`, consola, evals, Postgres con RLS, cola y worker, acceso con Google y web mínima. Pendiente para cerrarla: credenciales de Google y clave de Anthropic (ver «Puesta en marcha»).
 
 ## Cómo trabajamos (SDD)
 
@@ -54,19 +54,22 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ## Puesta en marcha
 
-Pendiente de la fase 0; previsto:
-
-1. `cp .env.example .env` y rellenar valores.
+1. `cp .env.example .env` y rellenar: contraseñas de Postgres (`POSTGRES_PASSWORD`, `HORMA_MIGRADOR_PASSWORD`, `HORMA_APP_PASSWORD`), las dos URL de base de datos, `SESSION_SECRET`, `ANTHROPIC_API_KEY` y las credenciales de Google OAuth (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`; URI de redirección `http://localhost:8000/auth/google/callback`). Sin las de Google la web arranca, pero nadie puede entrar.
 2. `uv sync`
-3. `docker compose up` (Postgres local; Neon queda fuera de la fase 0).
-4. `pytest`
+3. `docker compose up -d postgres` (Postgres local en el puerto 5434; Neon queda fuera de la fase 0).
+4. `uv run alembic upgrade head` (migraciones con el rol `horma_migrador`).
+5. `docker compose up -d` levanta también la API (http://localhost:8000) y el worker.
+6. `uv run pytest` (los tests de base de datos necesitan el paso 3), `uv run ruff check .` y `uv run lint-imports`.
 
 ## Consola
 
-Puerta de salida de la fase 0 (aún no implementada):
+Puerta de salida de la fase 0:
 
-- `horma agente correr <nombre> --entrada f`
-- `horma eval correr <set>`
+- `uv run horma agente listar`
+- `uv run horma agente correr extractor-oferta --entrada oferta.md [--salida salida.json]`
+  (con `--simulado --respuesta r.json` no llama al modelo).
+- `uv run horma eval correr ofertas` corre los 10 casos de `evals/ofertas/casos/` y deja la ejecución en
+  `evals/resultados/`. Con `--simulado` solo prueba el harness: no mide el modelo.
 
 ## Git
 

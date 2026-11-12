@@ -1,0 +1,20 @@
+{
+  "titulo": "Desarrollador/a Python",
+  "empresa": "Tecnosur SL",
+  "ubicacion": "España",
+  "remoto": true,
+  "salario": {
+    "minimo": 38000,
+    "maximo": 45000,
+    "moneda": "EUR"
+  },
+  "idiomas": [
+    "inglés"
+  ],
+  "requisitos": [
+    "Python",
+    "FastAPI",
+    "PostgreSQL"
+  ],
+  "fecha_publicacion": "2026-10-28"
+}
