@@ -17,8 +17,8 @@ stale_after: null
 - [Spec de sistema](./system.md) — contrato, arquitectura, RT-01…RT-14. Verificada.
 
 ## Features (una por fase)
-- `000-cimientos/` — fase 0. [Aclaraciones](./000-cimientos/clarifications.md) (respondidas y verificadas); [Spec](./000-cimientos/spec.md) y [plan](./000-cimientos/plan.md) (borradores); `tasks.md` aún no creado.
-- `001-ofertas/` — fase 1. [Aclaraciones](./001-ofertas/clarifications.md) (respondidas), [spec](./001-ofertas/spec.md), [plan](./001-ofertas/plan.md) y [tareas](./001-ofertas/tasks.md) (borradores, pendientes de verificar por Mar).
+- `000-cimientos/` — fase 0 (construida). [Aclaraciones](./000-cimientos/clarifications.md) (respondidas y verificadas); [spec](./000-cimientos/spec.md) y [plan](./000-cimientos/plan.md) (borradores); [tareas](./000-cimientos/tasks.md) (16 hechas).
+- `001-ofertas/` — fase 1 (construida). [Aclaraciones](./001-ofertas/clarifications.md) (respondidas), [spec](./001-ofertas/spec.md) y [plan](./001-ofertas/plan.md) (borradores, pendientes de verificar por Mar) y [tareas](./001-ofertas/tasks.md) (16 hechas; evals solo en modo simulado).
 - `002-perfil-recomendacion/` — fase 2 (vacía).
 - `003-candidatura/` — fase 3 (vacía).
 - `004-langgraph-salida/` — fase 4 (vacía).
