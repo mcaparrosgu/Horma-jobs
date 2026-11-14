@@ -6,7 +6,7 @@ tags: [tareas, ofertas]
 status: active
 sources: [./plan.md]
 generated: { by: claude-code, at: 2026-11-12 }
-verified: { by: human, at: null }
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 
@@ -30,9 +30,10 @@ stale_after: null
 - [x] T16 — CI, Compose (`ingestor`), `.env.example`, README y spec de sistema · test: CI corre los dos sets; README documenta los comandos · cubre: RF-1.2, RT-11
 
 ## Pendiente de la persona (no se puede hacer sin ti)
-- Verificar spec, plan y tareas de la fase 1 (siguen en borrador; `verified: null`).
+- Nada: todo lo que dependía de ti está hecho.
 
 ## Hecho por la persona
 - Evals con el modelo real (14-nov-2026): `ofertas` y `fuentes` aprobados.
 - `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub (14-nov-2026): el CI mide con el modelo real.
 - Tu `sub` de Google en `HORMA_ADMINS`; Arbeitnow calificada como apta y activada en el dashboard.
+- Spec, plan y tareas de la fase 1 verificados (14-nov-2026).

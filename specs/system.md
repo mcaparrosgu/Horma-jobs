@@ -6,7 +6,7 @@ tags: [sistema, arquitectura, sdd]
 status: active
 sources: [./constitution.md, ../docs/Horma v2_ requerimientos por fases.pdf, ./000-cimientos/clarifications.md, ./001-ofertas/clarifications.md]
 generated: { by: claude-code, at: 2026-11-12 }
-verified: { by: human, at: null }  # fase 1 la amplió: falta revisarla
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 

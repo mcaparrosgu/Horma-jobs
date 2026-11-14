@@ -6,7 +6,7 @@ tags: [gobierno, sdd]
 status: draft
 sources: [https://claude.ai/artifact/XgsxiP5gLvaR34W8QeqDoj]
 generated: { by: claude-code, at: 2026-11-11 }
-verified: { by: human, at: null }
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 

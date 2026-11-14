@@ -3,10 +3,10 @@ type: plan
 title: ofertas — Plan técnico
 description: Arquitectura, contratos y modelo de datos que cubren cada requisito de la fase 1.
 tags: [plan, ofertas]
-status: draft
+status: active
 sources: [./spec.md, ./clarifications.md, ../system.md]
 generated: { by: claude-code, at: 2026-11-12 }
-verified: { by: human, at: null }
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 

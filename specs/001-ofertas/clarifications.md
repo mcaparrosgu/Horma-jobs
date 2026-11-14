@@ -6,7 +6,7 @@ tags: [clarify, ofertas]
 status: active
 sources: [../system.md, ../000-cimientos/plan.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
 generated: { by: claude-code, at: 2026-11-12 }
-verified: { by: human, at: null }
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 

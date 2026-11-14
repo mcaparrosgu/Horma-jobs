@@ -3,10 +3,10 @@ type: spec
 title: ofertas — Spec funcional
 description: Requisitos funcionales de la fase 1 (ofertas vivas, auditadas y clasificadas), en notación EARS.
 tags: [spec, ofertas]
-status: draft
+status: active
 sources: [./clarifications.md, ../system.md]
 generated: { by: claude-code, at: 2026-11-12 }
-verified: { by: human, at: null }
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 
