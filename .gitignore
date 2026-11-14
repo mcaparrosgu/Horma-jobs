@@ -32,3 +32,6 @@ evals/resultados/*.json
 
 # Documento de requisitos (no se publica)
 docs/Horma v2_ requerimientos por fases.pdf
+
+# Plan de pruebas manuales (nunca se publica)
+docs/plan-pruebas-manuales.md
