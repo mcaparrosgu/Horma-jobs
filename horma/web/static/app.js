@@ -88,6 +88,8 @@ async function iniciar() {
   $("aplicacion").hidden = false;
   $("salir").hidden = false;
   $("ir-ingesta").hidden = !yo.admin;
+  $("ir-perfil").hidden = false;
+  $("ir-recomendadas").hidden = false;
   if (yo.sub) $("mi-sub").textContent = `Tu identificador de Google (para HORMA_ADMINS): ${yo.sub}`;
   await cargarLista();
 }

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recomendadas · Horma</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main class="muy-ancho">
+    <header class="cabecera">
+      <a class="logo" href="/"><h1>Horma</h1></a>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </header>
+    <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
+
+    <details class="leer">
+      <summary>Cómo leer las recomendaciones</summary>
+      <ul>
+        <li><strong>Compatibilidad</strong>: una nota de 0 a 100 de lo bien que encaja la oferta con tu perfil. Orienta, no decide.</li>
+        <li><strong>Sin puntuar</strong>: ofertas nuevas que aún no tienen nota. Pulsa «Recomendar» para puntuar solo lo que falta.</li>
+        <li><strong>Cambiar un filtro</strong> no gasta nada: solo reordena y filtra lo ya puntuado.</li>
+        <li><strong>Explicación</strong>: despliega la fila para ver por qué. Si no estás de acuerdo, pulsa «Corregir».</li>
+      </ul>
+    </details>
+
+    <form id="filtros" class="filtros" aria-label="Filtros">
+      <div id="grupos" class="grupos-barra"></div>
+      <div class="fila">
+        <label class="casilla"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
+        <label class="casilla"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
+        <label>Sueldo mínimo (€/año)<input id="sueldo-minimo" class="corto" type="number" min="0" step="500" inputmode="numeric"></label>
+        <label>Compatibilidad
+          <span class="rango"><input id="rango-min" class="corto" type="number" min="0" max="100" aria-label="Nota mínima"> –
+          <input id="rango-max" class="corto" type="number" min="0" max="100" aria-label="Nota máxima"></span>
+        </label>
+        <label>Ordenar por
+          <select id="orden">
+            <option value="compatibles">Más compatibles</option>
+            <option value="recientes">Más recientes</option>
+          </select>
+        </label>
+      </div>
+    </form>
+
+    <div class="fila barra-contador">
+      <p id="contador" class="contador" role="status"></p>
+      <button id="recomendar" type="button">Recomendar</button>
+      <span id="aviso" role="status"></span>
+    </div>
+
+    <table id="tabla" class="tabla-ofertas">
+      <thead><tr id="cabeceras"></tr></thead>
+      <tbody id="filas"></tbody>
+    </table>
+    <p id="vacio" class="suave" hidden>Ninguna oferta cumple estos filtros.</p>
+  </main>
+  <script src="/static/comun.js"></script>
+  <script src="/static/recomendadas.js"></script>
+</body>
+</html>

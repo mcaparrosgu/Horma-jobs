@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perfil · Horma</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main class="ancho">
+    <header class="cabecera">
+      <a class="logo" href="/"><h1>Horma</h1></a>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </header>
+    <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
+    <p id="aviso" role="status"></p>
+
+    <section>
+      <h2>Tus CV</h2>
+      <p class="suave">Sube tu CV (PDF, DOCX o Markdown) y Horma construye tu perfil. Un CV «estético» se guarda tal cual, sin procesarlo.</p>
+      <form id="subir" class="fila">
+        <label class="archivo">Archivo<input id="archivo" type="file" accept=".pdf,.docx,.md,.markdown" required></label>
+        <label>Nombre (opcional)<input id="nombre-cv" type="text" maxlength="80"></label>
+        <label>Tipo
+          <select id="clase-cv">
+            <option value="fuente">Para construir mi perfil</option>
+            <option value="estetico">Estético (se guarda sin procesar)</option>
+          </select>
+        </label>
+        <button type="submit">Subir CV</button>
+      </form>
+      <ul id="cvs" class="lista"></ul>
+      <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún CV.</p>
+    </section>
+
+    <section id="estado-perfil"></section>
+
+    <section id="pendientes" hidden>
+      <h2>Preguntas pendientes</h2>
+      <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti.</p>
+      <ul id="lista-pendientes" class="lista"></ul>
+    </section>
+
+    <section id="datos" hidden>
+      <h2>Tu perfil <span id="version" class="estado"></span></h2>
+      <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y los CV base y recomendaciones anteriores quedan «desfasados».</p>
+      <div id="perfil"></div>
+    </section>
+  </main>
+  <script src="/static/comun.js"></script>
+  <script src="/static/perfil.js"></script>
+</body>
+</html>
