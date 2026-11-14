@@ -46,6 +46,14 @@ def crear(datos: NuevaOferta, request: Request, response: Response):
     return r
 
 
+@router.get("/ofertas/total")
+def total(request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """Cuántas ofertas hay en el catálogo (todas, no solo las listadas), por estado."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        por_estado = repo.por_estado(s)
+    return {"total": sum(por_estado.values()), "por_estado": por_estado}
+
+
 @router.get("/ofertas")
 def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """El catálogo común con su auditoría y su taxonomía."""
