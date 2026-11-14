@@ -94,10 +94,31 @@ def _resumen(valor) -> str:
     return texto if len(texto) <= 240 else texto[:237] + "…"
 
 
+def _estado_inicial(nombre: str, entrada: Path, usuaria: str | None) -> dict:
+    """`.json` = el estado tal cual; `.md` = {texto}. `perfilar` también admite `.pdf` y `.docx`:
+    el CV se convierte a texto con `convertir_cv` y entra como el único CV de la usuaria."""
+    if nombre == "perfilar" and entrada.suffix != ".json":
+        from horma.tools.convertir_cv import ArchivoNoValido, convertir_cv
+
+        tipo = entrada.suffix.lstrip(".").lower()
+        try:
+            texto = convertir_cv(entrada.read_bytes(), tipo)
+        except ArchivoNoValido as e:
+            typer.echo(f"No se puede leer el CV: {e}", err=True)
+            raise typer.Exit(2) from e
+        return {"cvs": [{"cv_id": 1, "nombre": f"CV de {usuaria}" if usuaria else entrada.name,
+                         "texto": texto}]}
+    texto = entrada.read_text(encoding="utf-8")
+    return json.loads(texto) if entrada.suffix == ".json" else {"texto": texto}
+
+
 @flujo.command("correr")
 def flujo_correr(
     nombre: str,
-    entrada: Path = typer.Option(..., help="Estado inicial: .md = {texto}; .json = estado."),
+    entrada: Path = typer.Option(..., help="Estado inicial: .md = {texto}; .json = estado; en "
+                                           "`perfilar`, también el CV en .pdf o .docx."),
+    usuaria: str | None = typer.Option(None, help="Solo nombra el CV en la traza (`perfilar`); no "
+                                                  "guarda nada."),
     paso_a_paso: bool = typer.Option(False, "--paso-a-paso", help="Pausa tras cada paso."),
     traza: Path | None = typer.Option(None, help="Carpeta donde guardar cada paso como JSON."),
     salida: Path | None = typer.Option(None, help="Archivo donde guardar el resultado."),
@@ -108,8 +129,7 @@ def flujo_correr(
     if nombre not in FLUJOS:
         typer.echo(f"Flujo desconocido: {nombre}", err=True)
         raise typer.Exit(2)
-    texto = entrada.read_text(encoding="utf-8")
-    estado = json.loads(texto) if entrada.suffix == ".json" else {"texto": texto}
+    estado = _estado_inicial(nombre, entrada, usuaria)
     deps: dict = {}
     if simulado:
         if respuestas is None:
@@ -297,3 +317,122 @@ def correr_eval(
     if res["detenido_por_coste"]:
         typer.echo("El eval se detuvo al superar el tope de coste: el resultado no es completo.")
     raise typer.Exit(0 if res["aprobado"] else 1)
+
+
+def _slug(texto: str) -> str:
+    import re
+    import unicodedata
+
+    plano = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", "-", plano).strip("-")[:40] or "oferta"
+
+
+@evals.command("importar-correccion")
+def importar_correccion(
+    archivo: Path = typer.Option(..., help="Caso exportado desde la pantalla (GET /api/matches/…/exportar)."),
+    raiz: Path = typer.Option(Path("evals"), help="Carpeta de evals."),
+) -> None:
+    """Enseña una corrección de la usuaria y, solo si lo confirmas, la copia a evals/recomendacion/."""
+    caso = json.loads(archivo.read_text(encoding="utf-8"))
+    entrada, esperado = caso.get("entrada"), caso.get("esperado")
+    if (not isinstance(entrada, dict) or not isinstance(esperado, dict)
+            or not {"perfil", "preferencias", "oferta"} <= entrada.keys()
+            or not isinstance(entrada["oferta"], dict) or "nota" not in esperado):
+        typer.echo("El archivo no es un caso exportado (faltan «entrada» o «esperado»).", err=True)
+        raise typer.Exit(2)
+    casos = raiz / "recomendacion" / "casos"
+    for previo in casos.glob("*/entrada.json"):
+        otro = previo.parent / "esperado.json"
+        if (otro.exists() and json.loads(previo.read_text(encoding="utf-8")) == entrada
+                and json.loads(otro.read_text(encoding="utf-8")) == esperado):
+            typer.echo(f"Este caso ya está importado ({previo.parent.name}).", err=True)
+            raise typer.Exit(1)
+    modelo = caso.get("modelo") or {}
+    titulo = entrada["oferta"].get("titulo") or ""
+    typer.echo(f"Oferta: {titulo or '(sin título)'}")
+    typer.echo(f"Nota del modelo: {modelo.get('nota', '—')} · nota corregida: {esperado['nota']}")
+    typer.echo(f"Motivo de la usuaria: {esperado.get('motivo', '—')}")
+    respuesta = typer.prompt(f"¿Copiarlo a {casos}? [s/N]", default="n", show_default=False)
+    if respuesta.strip().lower() not in {"s", "si", "sí", "y", "yes"}:
+        typer.echo("No se ha copiado nada.")
+        raise typer.Exit(1)
+    numeros = [int(p.name[:2]) for p in casos.glob("*") if p.name[:2].isdigit()]
+    destino = casos / f"{max(numeros, default=0) + 1:02d}-correccion-{_slug(titulo)}"
+    destino.mkdir(parents=True)
+    for nombre, datos in (("entrada.json", entrada), ("esperado.json", esperado)):
+        (destino / nombre).write_text(json.dumps(datos, ensure_ascii=False, indent=2),
+                                      encoding="utf-8")
+    typer.echo(f"Copiado en {destino}. Revisa el cambio y haz commit tú.")
+
+
+# --- recomendar (en local, sin guardar nada) ---------------------------------------------------
+def _rango(texto: str) -> tuple[int, int]:
+    try:
+        minimo, maximo = (int(x) for x in texto.split("-"))
+    except ValueError as e:
+        raise typer.BadParameter("usa el formato 40-100") from e
+    if not 0 <= minimo <= maximo <= 100:
+        raise typer.BadParameter("va de 0 a 100 y el mínimo no puede superar al máximo")
+    return minimo, maximo
+
+
+@app.command("recomendar")
+def recomendar_cmd(
+    usuaria: str = typer.Argument(..., help="Nombre del perfil de prueba."),
+    rango: str = typer.Option("40-100", help="Rango de compatibilidad, p. ej. 40-100 (RF-2.13)."),
+    perfil: Path | None = typer.Option(None, help="Perfil en JSON. Por defecto "
+                                       "evals/perfil/perfiles/<usuaria>.json."),
+    ofertas: Path | None = typer.Option(None, help='Catálogo en JSON ({"ofertas": [...]}) para '
+                                        "no usar la API."),
+    simulado: bool = typer.Option(False, help="No llama al modelo: usa --respuestas."),
+    respuestas: Path | None = typer.Option(None, help="JSON con la lista de respuestas simuladas."),
+) -> None:
+    """Puntúa un catálogo de ofertas para un perfil de prueba y enseña la lista. No guarda nada."""
+    from horma.flows import recomendar as flujo_recomendar
+    from horma.schemas.perfil import Perfil
+    from horma.schemas.preferencias import Preferencias
+
+    minimo, maximo = _rango(rango)
+    ruta = perfil or Path("evals") / "perfil" / "perfiles" / f"{usuaria}.json"
+    if not ruta.exists():
+        typer.echo(f"No existe el perfil {ruta}.", err=True)
+        raise typer.Exit(2)
+    datos_perfil = Perfil.model_validate_json(ruta.read_text(encoding="utf-8"))
+    if ofertas:
+        candidatas = json.loads(ofertas.read_text(encoding="utf-8"))["ofertas"]
+    else:
+        from horma.ingesta import ErrorApi
+
+        try:
+            candidatas = _cliente_api().catalogo()["ofertas"]
+        except ErrorApi as e:
+            typer.echo(f"La API respondió con un error: {e}", err=True)
+            raise typer.Exit(1) from e
+    proveedor = None
+    if simulado:
+        if respuestas is None:
+            typer.echo("--simulado necesita --respuestas <archivo.json>", err=True)
+            raise typer.Exit(2)
+        proveedor = ProveedorSimulado(json.loads(respuestas.read_text(encoding="utf-8")))
+    else:
+        _sin_clave_de_anthropic()
+    prefs = Preferencias(rango_min=minimo, rango_max=maximo)
+    try:
+        estado = flujo_recomendar.crear(proveedor=proveedor).run({
+            "perfil": datos_perfil.model_dump(mode="json"),
+            "preferencias": prefs.model_dump(mode="json"), "candidatas": candidatas})
+    except ErrorDePaso as e:
+        typer.echo(f"Falló el {e}", err=True)
+        raise typer.Exit(1) from e
+    titulos = {c["oferta_id"]: c["oferta"].get("titulo") or "(sin título)" for c in candidatas}
+    en_rango = sorted((m for m in estado["recomendaciones"] if minimo <= m["nota"] <= maximo),
+                      key=lambda m: -m["nota"])
+    for m in en_rango:
+        typer.echo(f"{m['nota']:>3}  {titulos.get(m['oferta_id'], m['oferta_id'])}  "
+                   f"· condiciones {m['condiciones']}")
+        if m["retirada"]:
+            typer.echo("     (explicación retirada: mencionaba un rasgo personal)")
+        elif m["explicacion"]:
+            typer.echo(f"     {m['explicacion']}")
+    typer.echo(f"\n{len(en_rango)} de {len(estado['recomendaciones'])} ofertas en el rango "
+               f"{minimo}-{maximo} · {estado['quedan_sin_puntuar']} sin puntuar")

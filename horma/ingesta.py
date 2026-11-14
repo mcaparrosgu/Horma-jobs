@@ -55,6 +55,10 @@ class ClienteApi:
     def pedir_calificacion(self, url: str) -> dict:
         return self._pedir("POST", "/api/fuentes/calificaciones", json={"url": url}).json()
 
+    def catalogo(self) -> dict:
+        """Ofertas comunes, sin datos personales (`GET /api/catalogo`)."""
+        return self._pedir("GET", "/api/catalogo").json()
+
     def calificacion(self, calificacion_id: int) -> dict:
         return self._pedir("GET", f"/api/fuentes/calificaciones/{calificacion_id}").json()
 

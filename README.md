@@ -81,9 +81,22 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 - `uv run horma ingestar <fuente> [--limite N] [--en-seco]`: `--en-seco` lee la fuente de
   `config/endpoints.json` y enseña las ofertas normalizadas sin entregarlas.
 - `uv run horma fuente calificar <url>`: pide la calificación a la API y espera el veredicto.
-- `uv run horma eval correr ofertas|fuentes` corre los casos de `evals/<set>/casos/` y deja la
-  ejecución en `evals/resultados/`. Con `--simulado` solo prueba el harness: no mide el modelo.
-  Sin `--simulado` llama al modelo real y **gasta saldo de Anthropic**.
+- `uv run horma flujo correr perfilar --usuaria ana --entrada cv.pdf [--paso-a-paso --traza trazas/]`
+  (también `.docx` y `.md`): construye el perfil en local y no guarda nada; `--usuaria` solo
+  nombra el CV en la traza.
+- `uv run horma recomendar ana --rango 40-100 [--ofertas catalogo.json]`: puntúa el catálogo con el
+  perfil de prueba `evals/perfil/perfiles/ana.json` (`--perfil` para otro) y enseña la lista. Sin
+  `--ofertas` pide el catálogo común a `GET /api/catalogo` con `HORMA_CLAVE_INGESTA`.
+- `uv run horma agente correr extractor-perfil|clasificador-postulante|generador-cv-base|matcher
+  --entrada x.json`: cada agente nuevo por separado.
+- `uv run horma eval correr ofertas|fuentes` y, de la fase 2, `horma eval correr perfil`,
+  `horma eval correr cv-base` y `horma eval correr recomendacion` corren los casos de
+  `evals/<set>/casos/` y dejan la ejecución en `evals/resultados/`. Con `--simulado` solo prueban
+  el harness: no miden el modelo. Sin `--simulado` llaman al modelo real y **gastan saldo de
+  Anthropic**; `--tope-coste` (1 USD por defecto) detiene el eval al superarlo y lo deja anotado.
+- `uv run horma eval importar-correccion --archivo caso.json`: enseña una corrección de la usuaria
+  (se exporta desde la pantalla de recomendadas) y, solo si confirmas, la copia a
+  `evals/recomendacion/casos/`. Nada entra en los evals sin pasar por aquí.
 
 ## Git
 

@@ -12,6 +12,7 @@ RUN uv sync --frozen --no-dev
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Sin root (el mismo usuario para api y worker)
-RUN useradd --system --no-create-home horma
+RUN useradd --system --no-create-home horma \
+    && mkdir -p /app/data/archivos && chown horma /app/data/archivos
 USER horma
 EXPOSE 8000

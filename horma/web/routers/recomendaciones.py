@@ -7,15 +7,17 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field, ValidationError
+from sqlalchemy import text
 
 from horma.config import ajustes
 from horma.schemas.preferencias import Preferencias
 from horma.tools.buscar_ofertas import buscar_ofertas
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
-from horma.web.db import sesion_de
+from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import matches as repo
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles, tareas
+from horma.web.routers.ingesta import solo_ingesta
 
 router = APIRouter()
 
@@ -133,3 +135,19 @@ def exportar(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria
                          "condiciones": m["condiciones"], "motivo": c["comentario"]},
             "modelo": {"nota": m["nota"], "condiciones": m["condiciones"],
                        "explicacion": m["explicacion"]}}
+
+
+CATALOGO_MAX = 150
+
+
+@router.get("/api/catalogo", dependencies=[Depends(solo_ingesta)])
+def catalogo(request: Request):
+    """Las ofertas recomendables y ya procesadas, comunes a todas las usuarias y sin ningún dato
+    personal. Lo usa `horma recomendar` (clave de ingesta) para probar el matcher desde la consola."""
+    with sesion_sistema(request.app.state.engine) as s:
+        ids = [f[0] for f in s.execute(text(
+            "select id from ofertas where estado = 'procesada' and recomendable "
+            "order by fecha_publicacion desc nulls last, id desc limit :n"), {"n": CATALOGO_MAX})]
+        completas = repo_ofertas.completas(s, ids)
+    return {"ofertas": [{"oferta_id": i, "oferta": completas[i].model_dump(mode="json")}
+                        for i in ids if i in completas]}

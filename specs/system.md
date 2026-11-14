@@ -88,6 +88,7 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 - **Fuentes:** nunca LinkedIn ni Indeed; cada fuente es una fila editable de la tabla `fuentes`, sembrada desde `config/endpoints.json`. Una fuente solo se activa con una calificación apta (condiciones de uso y `robots.txt`).
 - **Ofertas:** catálogo común (desde la fase 1). Cualquier sesión las lee; solo el modo sistema (la API al recibirlas y el worker al procesarlas) las escribe, por RLS.
 - **Administración:** el dashboard `/ingesta` y las claves de API son solo para las cuentas listadas en `HORMA_ADMINS`.
+- **Fase 2 (perfil y recomendación):** los flujos `perfilar`, `clasificar_perfil`, `generar_cv_base` y `recomendar` corren en el worker y también desde la consola (`horma flujo correr`, `horma recomendar`). Los CV subidos viven en el volumen `horma_archivos`, solo montado en la API; el worker recibe el texto. `GET /api/catalogo` (clave `ingesta`) da a la consola las ofertas comunes sin datos personales. Las correcciones de la usuaria no entran en `evals/` sin `horma eval importar-correccion`.
 - **Datos de prueba:** inventados; el repositorio versiona fixtures, nunca datos de una persona.
 
 ## Fases
