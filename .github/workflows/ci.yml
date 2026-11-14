@@ -57,6 +57,20 @@ jobs:
             uv run horma eval correr ofertas --simulado
             uv run horma eval correr fuentes --simulado
           fi
+      - name: Evals de la fase 2 (perfil, CV base y recomendación; tope de 1 USD por ejecución)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            uv run horma eval correr perfil --tope-coste 1.0
+            uv run horma eval correr cv-base --tope-coste 1.0
+            uv run horma eval correr recomendacion --tope-coste 1.0
+          else
+            echo "::warning::Sin ANTHROPIC_API_KEY: solo se prueba el harness en modo simulado; NO se mide el modelo."
+            uv run horma eval correr perfil --simulado
+            uv run horma eval correr cv-base --simulado
+            uv run horma eval correr recomendacion --simulado
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

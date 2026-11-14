@@ -27,6 +27,9 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://horma_app:${HORMA_APP_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes:
+      # Fase 2: los CV subidos (solo la API los lee y los escribe; el worker recibe el texto).
+      - horma_archivos:/app/data/archivos
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -61,3 +64,4 @@ services:
 
 volumes:
   horma_pgdata:
+  horma_archivos:
