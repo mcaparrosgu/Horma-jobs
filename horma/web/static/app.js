@@ -57,7 +57,16 @@ function tarjeta(o) {
   return li;
 }
 
+async function cargarContador() {
+  const r = await fetch("/ofertas/total");
+  if (!r.ok) return;
+  const { total, por_estado } = await r.json();
+  const desglose = Object.entries(por_estado).map(([e, n]) => `${n} ${e}`).join(" · ");
+  $("contador").textContent = `Ofertas en total: ${total}` + (desglose ? ` (${desglose})` : "");
+}
+
 async function cargarLista() {
+  cargarContador();
   const r = await fetch("/ofertas");
   if (!r.ok) return;
   const ofertas = await r.json();

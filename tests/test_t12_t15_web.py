@@ -94,6 +94,14 @@ def test_el_catalogo_es_comun_a_todas_las_usuarias(cliente):
     assert len(cliente.get("/ofertas").json()) == 1
 
 
+def test_el_contador_cuenta_todas_las_ofertas_por_estado(cliente):
+    assert cliente.get("/ofertas/total").status_code == 401
+    csrf = entrar(cliente)
+    assert cliente.get("/ofertas/total").json() == {"total": 0, "por_estado": {}}
+    cliente.post("/ofertas", json={"texto": TEXTO}, headers={"X-CSRF-Token": csrf})
+    assert cliente.get("/ofertas/total").json() == {"total": 1, "por_estado": {"pendiente": 1}}
+
+
 # --- T14: web plana, CSP y escape ------------------------------------------------------------
 def test_la_portada_lleva_csp_estricta_y_cabeceras_de_seguridad(cliente):
     r = cliente.get("/")
