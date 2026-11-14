@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado: fase 1 (ofertas) construida: catálogo común de ofertas, agentes `auditor-oferta`, `clasificador-oferta` y `auditor-fuentes`, flujos `procesar_oferta` y `calificar_fuente` sobre la interfaz `Flow`, ingestor por API, claves de API y dashboard `/ingesta`. Evals probadas solo en modo simulado: falta medirlas con el modelo real para cerrar la puerta de salida.
+> Estado: fase 1 (ofertas) construida: catálogo común de ofertas, agentes `auditor-oferta`, `clasificador-oferta` y `auditor-fuentes`, flujos `procesar_oferta` y `calificar_fuente` sobre la interfaz `Flow`, ingestor por API, claves de API y dashboard `/ingesta`. Evals medidas con el modelo real el 14-nov-2026 (ambos sets aprobados); el CI las corre en simulado hasta que `ANTHROPIC_API_KEY` sea secreto en GitHub.
 
 ## Cómo trabajamos (SDD)
 

@@ -19,7 +19,7 @@ stale_after: null
 - [x] T05 — Flujo `procesar_oferta` · test: fantasma, fraude con cita, salario no publicado, dato sin origen descartado, paso que falla · cubre: RF-1.4, RF-1.5, RF-1.9
 - [x] T06 — Flujo `calificar_fuente` · test: LinkedIn/Indeed sin llamar al modelo; robots que prohíbe → no apta · cubre: RF-1.7
 - [x] T07 — Consola `flujo listar/correr` con `--paso-a-paso` y `--traza` · test: muestra cada paso y guarda un JSON por paso · cubre: RF-1.12, RT-05
-- [x] T08 — Evals `ofertas` (25 casos) y `fuentes` (5 casos) · test: el harness corre el flujo, mide por campo y exige adversarias al 100 % · cubre: RT-11, RT-07 · *solo comprobado en simulado*
+- [x] T08 — Evals `ofertas` (25 casos) y `fuentes` (5 casos) · test: el harness corre el flujo, mide por campo y exige adversarias al 100 % · cubre: RT-11, RT-07 · *medido también con el modelo real el 14-nov-2026: aprobado*
 - [x] T09 — Migración 0002 (catálogo común, fuentes, calificaciones, ejecuciones, claves) y semilla · test: tablas, columnas del esquema, RLS de catálogo y de sistema · cubre: RF-1.1, RF-1.9
 - [x] T10 — Claves de API y `POST /ofertas` con clave · test: hash, revocación, alcance, tamaño, ritmo e idempotencia · cubre: RF-1.3, RF-1.11
 - [x] T11 — Worker con `procesar_oferta` y `calificar_fuente` · test: oferta completa guardada; repetida marcada; error con paso y motivo · cubre: RF-1.4, RF-1.7, RF-1.11
@@ -30,6 +30,9 @@ stale_after: null
 - [x] T16 — CI, Compose (`ingestor`), `.env.example`, README y spec de sistema · test: CI corre los dos sets; README documenta los comandos · cubre: RF-1.2, RT-11
 
 ## Pendiente de la persona (no se puede hacer sin ti)
-- Correr los evals con el modelo real (`horma eval correr ofertas` y `fuentes`): la puerta de salida no se ha medido.
-- Añadir tu `sub` de Google a `HORMA_ADMINS` en `.env` (la web te lo enseña al entrar).
-- Calificar Arbeitnow (`horma fuente calificar https://www.arbeitnow.com`) y, si sale apta, activarla en el dashboard.
+- Verificar spec, plan y tareas de la fase 1 (siguen en borrador; `verified: null`).
+- Añadir `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub: hasta entonces el CI solo corre los evals en simulado.
+
+## Hecho por la persona
+- Evals con el modelo real (14-nov-2026): `ofertas` y `fuentes` aprobados.
+- Tu `sub` de Google en `HORMA_ADMINS`; Arbeitnow calificada como apta y activada en el dashboard.

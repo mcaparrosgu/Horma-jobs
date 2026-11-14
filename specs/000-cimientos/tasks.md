@@ -30,6 +30,8 @@ stale_after: null
 - [x] T16 — CI (GitHub Actions) y README · test: el flujo corre ruff, import-linter, pytest, eval y escaneo de secretos; README documenta `horma agente correr` y `horma eval correr` · cubre: RF-0.8
 
 ## Pendiente de la persona (no se puede hacer sin ti)
-- Crear el cliente OAuth en Google Cloud Console y rellenar `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` en `.env`: hasta entonces el login real no está probado (los tests usan un proveedor simulado).
-- Rellenar `ANTHROPIC_API_KEY` en `.env` y correr `horma eval correr ofertas`: hasta entonces el eval real del modelo no se ha medido.
-- Añadir `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub: el CI no se ha ejecutado todavía.
+- Añadir `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub: el CI corre, pero solo en simulado.
+
+## Hecho por la persona
+- Cliente OAuth de Google creado y `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` en `.env`; login real en uso.
+- `ANTHROPIC_API_KEY` en `.env` (13-nov) y eval real medido (14-nov, set `ofertas` de 25 casos).

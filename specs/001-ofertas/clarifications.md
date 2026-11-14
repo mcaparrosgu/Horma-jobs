@@ -16,7 +16,7 @@ stale_after: null
 - P1: En la fase 0 cada oferta pertenece a una usuaria; las que llegan por ingesta o por clave de API no tienen dueña. ¿Catálogo común o por usuaria? → R: **catálogo común**. Cualquier usuaria con sesión lee las ofertas; solo la API (ingesta o clave) y el worker las escriben.
 - P2: ¿Quién edita fuentes y lanza ingestas desde el dashboard? → R: **solo administradoras**, por una lista de cuentas de Google en `.env` (`HORMA_ADMINS`).
 - P3: ¿Con qué fuentes reales se hace la primera ingesta? → R: **Arbeitnow** (API pública sin clave). Las demás se registran inactivas y pasan por `horma fuente calificar`.
-- P4: ¿Se corren los evals con el modelo real? → R: **solo en simulado**. La puerta queda construida y probada con el harness; la medición real la lanza la persona.
+- P4: ¿Se corren los evals con el modelo real? → R: **solo en simulado**. La puerta queda construida y probada con el harness; la medición real la lanza la persona. *Actualizado: la persona la lanzó el 14-nov-2026 y ambos sets aprobaron.*
 
 ## Decisiones derivadas
 - La regla de RLS de `ofertas` cambia: lectura para cualquier sesión con usuaria; escritura solo en modo sistema (API con clave, ingesta y worker). Los tests de la fase 0 que comprobaban «cada usuaria ve solo sus ofertas» se sustituyen por los del catálogo común.

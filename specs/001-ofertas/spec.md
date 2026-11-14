@@ -33,9 +33,9 @@ están en [system.md](../system.md).
 - **RF-1.12** El sistema DEBERÁ permitir ejecutar `procesar_oferta` y `calificar_fuente` desde la consola paso a paso, mostrando entrada y salida de cada paso y guardando la traza (RT-05).
 
 ## Criterios de aceptación (puerta de salida)
-- [ ] `horma eval correr ofertas` sobre 25 casos inventados: precisión ≥ 0,9 por campo y adversarias al 100 %. *Casos y harness listos y en verde en simulado; falta medir con el modelo real.*
-- [ ] `horma eval correr fuentes` sobre 5 portales inventados con su calificación esperada. *Igual: solo simulado.*
-- [x] Ambos sets corren en CI (simulado sin clave; real con clave de presupuesto limitado).
+- [x] `horma eval correr ofertas` sobre 25 casos inventados: precisión ≥ 0,9 por campo y adversarias al 100 %. *Medido con el modelo real el 14-nov-2026: aprobado (campos ≥ 0,96, adversarias 1,0).*
+- [x] `horma eval correr fuentes` sobre 5 portales inventados con su calificación esperada. *Medido con el modelo real el 14-nov-2026: aprobado (todo a 1,0).*
+- [x] Ambos sets corren en CI (simulado sin clave; real con clave de presupuesto limitado). *El CI corre en simulado: `ANTHROPIC_API_KEY` aún no está como secreto en GitHub.*
 - [x] Consola: `horma ingestar <fuente> --limite 20`, `horma agente correr auditor-oferta --entrada oferta.json`, `horma flujo correr procesar_oferta --entrada oferta.md --paso-a-paso`, `horma fuente calificar <url>`.
 
 ## Fuera de alcance
