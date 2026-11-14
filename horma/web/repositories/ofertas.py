@@ -1,12 +1,15 @@
 """Único lugar donde se escribe SQL sobre ofertas y su origen. El catálogo se escribe en modo sistema."""
 import json
 
+from pydantic import HttpUrl, TypeAdapter, ValidationError
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from horma.schemas.oferta import Oferta
+from horma.schemas.oferta import Auditoria, Oferta, Salario
+from horma.schemas.taxonomia import Taxonomia
 from horma.tools.normalizar import huella
+from horma.tools.normalizar_oferta import normalizar_oferta
 
 COLUMNAS_LISTA = (
     "o.id, o.estado, o.motivo_error, o.titulo, o.empresa, o.ubicacion, o.remoto, o.contrato, "
@@ -60,6 +63,8 @@ def para_procesar(s: Session, oferta_id: int) -> dict:
 def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str]]) -> None:
     sal, a, t = o.salario, o.auditoria, o.taxonomia
     j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
+    texto = s.execute(text("select texto_crudo from ofertas where id=:i"), {"i": oferta_id}).scalar_one()
+    n = normalizar_oferta(o, texto)  # país, contrato, idiomas y sueldo anual para filtrar (P16)
     s.execute(text(
         "update ofertas set estado='procesada', motivo_error=null, procesada_en=now(), "
         "titulo=:titulo, empresa=:empresa, ubicacion=:ubicacion, remoto=:remoto, "
@@ -70,7 +75,9 @@ def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str
         "senales_fraude=cast(:senales as jsonb), dominio_empresa=:dominio, "
         "empresa_validada=:validada, salario_publicado=:publicado, salario_rango=:rango, "
         "frase_pedir_salario=:frase, sector=:sector, familia=:familia, nivel=:nivel, "
-        "stack=cast(:stack as jsonb) where id=:id"),
+        "stack=cast(:stack as jsonb), pais=:pais, tipo_contrato=:tcontrato, "
+        "idiomas_norm=cast(:idiomas_norm as text[]), salario_anual_eur_min=:anual_min, "
+        "salario_anual_eur_max=:anual_max where id=:id"),
         {"id": oferta_id, "titulo": o.titulo, "empresa": o.empresa, "ubicacion": o.ubicacion,
          "remoto": o.remoto, "contrato": o.contrato, "smin": sal.minimo if sal else None,
          "smax": sal.maximo if sal else None, "smon": sal.moneda if sal else None,
@@ -80,13 +87,57 @@ def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str
          "senales": j(a.senales_fraude), "dominio": a.dominio_empresa,
          "validada": a.empresa_validada, "publicado": a.salario_publicado, "rango": a.salario_rango,
          "frase": a.frase_pedir_salario, "sector": t.sector, "familia": t.familia,
-         "nivel": t.nivel, "stack": j(t.stack)})
+         "nivel": t.nivel, "stack": j(t.stack), "pais": n.pais, "tcontrato": n.tipo_contrato,
+         "idiomas_norm": n.idiomas, "anual_min": n.salario_anual_eur_min,
+         "anual_max": n.salario_anual_eur_max})
     s.execute(text("delete from origen where entidad='oferta' and entidad_id=:i and usuaria_id is null"),
               {"i": oferta_id})
     for campo, fragmento in origenes:
         s.execute(text("insert into origen (entidad, entidad_id, campo, fragmento) "
                        "values ('oferta', :i, :c, :f)"),
                   {"i": oferta_id, "c": campo, "f": fragmento})
+
+
+def _url_valida(url: str | None) -> str | None:
+    try:
+        return str(TypeAdapter(HttpUrl).validate_python(url)) if url else None
+    except ValidationError:
+        return None
+
+
+def completas(s: Session, ids: list[int]) -> dict[int, Oferta]:
+    """Las ofertas procesadas con ese id, como `Oferta` (para el matcher)."""
+    if not ids:
+        return {}
+    filas = s.execute(text(
+        "select id, titulo, empresa, ubicacion, remoto, contrato, salario_minimo, salario_maximo, "
+        "salario_moneda, idiomas, requisitos, fecha_publicacion, url, instrucciones_embebidas, "
+        "fantasma, motivos_fantasma, fraude, senales_fraude, dominio_empresa, empresa_validada, "
+        "salario_publicado, salario_rango, frase_pedir_salario, sector, familia, nivel, stack "
+        "from ofertas where estado = 'procesada' and id = any(cast(:ids as int[]))"),
+        {"ids": list(ids)}).mappings().all()
+    salida: dict[int, Oferta] = {}
+    for f in filas:
+        salario = None
+        if f["salario_minimo"] is not None or f["salario_maximo"] is not None:
+            salario = Salario(
+                minimo=None if f["salario_minimo"] is None else float(f["salario_minimo"]),
+                maximo=None if f["salario_maximo"] is None else float(f["salario_maximo"]),
+                moneda=f["salario_moneda"])
+        salida[f["id"]] = Oferta(
+            titulo=f["titulo"] or "sin título", empresa=f["empresa"], ubicacion=f["ubicacion"],
+            remoto=f["remoto"], contrato=f["contrato"], salario=salario, idiomas=f["idiomas"],
+            requisitos=f["requisitos"], fecha_publicacion=f["fecha_publicacion"],
+            url=_url_valida(f["url"]), instrucciones_embebidas=f["instrucciones_embebidas"],
+            auditoria=Auditoria(
+                fantasma=bool(f["fantasma"]), motivos_fantasma=f["motivos_fantasma"],
+                fraude=bool(f["fraude"]), senales_fraude=f["senales_fraude"],
+                dominio_empresa=f["dominio_empresa"], empresa_validada=f["empresa_validada"],
+                salario_publicado=bool(f["salario_publicado"]), salario_rango=f["salario_rango"],
+                frase_pedir_salario=f["frase_pedir_salario"]),
+            taxonomia=Taxonomia(sector=f["sector"] or "otros", familia=f["familia"] or "otros",
+                                nivel=f["nivel"] or "sin_especificar", stack=f["stack"] or []))
+    return salida
 
 
 def marcar_error(s: Session, oferta_id: int, motivo: str) -> None:

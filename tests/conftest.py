@@ -81,5 +81,6 @@ def bd_limpia(motor_migrador):
 
     with motor_migrador.begin() as c:
         c.execute(text("TRUNCATE origen, ofertas, tareas, llm_llamadas, usuarias, fuentes, "
-                       "calificaciones_fuente, ejecuciones_ingesta, claves_api RESTART IDENTITY CASCADE"))
+                       "calificaciones_fuente, ejecuciones_ingesta, claves_api, cv_archivos, perfiles, "
+                       "preferencias, cv_base, matches RESTART IDENTITY CASCADE"))
         sembrar_fuentes(c)
