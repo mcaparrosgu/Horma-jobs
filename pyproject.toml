@@ -72,6 +72,10 @@ modules = [
   "horma.agents.auditor_oferta",
   "horma.agents.clasificador_oferta",
   "horma.agents.auditor_fuentes",
+  "horma.agents.extractor_perfil",
+  "horma.agents.clasificador_postulante",
+  "horma.agents.generador_cv_base",
+  "horma.agents.matcher",
 ]
 
 [[tool.importlinter.contracts]]
