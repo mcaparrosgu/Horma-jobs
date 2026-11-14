@@ -151,6 +151,7 @@ async function calificar(url) {
     pendientes.add(r.id);
     avisar(`Calificación de ${url} pedida; la hace el worker.`);
     await cargarCalificaciones();
+    await cargar(); // arma el temporizador que refresca hasta que termine
   } catch (e) {
     avisar(e.message, true);
   }

@@ -8,7 +8,8 @@ import httpx
 
 Descargador = Callable[[str], str]
 MAX_BYTES = 2_000_000
-AGENTE_HTTP = "HormaBot/0.1 (calificación de fuentes de empleo)"
+# ASCII: las cabeceras HTTP no admiten tildes.
+AGENTE_HTTP = "HormaBot/0.1 (calificacion de fuentes de empleo)"
 
 # Por prioridad: primero las condiciones de uso; el aviso legal o el Impressum, como último recurso.
 _PATRONES = [
