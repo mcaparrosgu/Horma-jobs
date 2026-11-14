@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preferencias · Horma</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main class="ancho">
+    <header class="cabecera">
+      <a class="logo" href="/"><h1>Horma</h1></a>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </header>
+    <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
+
+    <p class="suave">Marca lo que buscas. Un grupo sin nada marcado no filtra. Entre paréntesis, cuántas ofertas recomendables hay ahora en el catálogo. Puestos, sector, países e idiomas llegan marcados desde tu CV: cámbialos cuando quieras, también para cambiar de carrera.</p>
+    <form id="formulario">
+      <div id="grupos" class="grupos"></div>
+      <fieldset class="grupo">
+        <legend>Condiciones</legend>
+        <label class="casilla"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
+        <label class="casilla"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
+        <label>Sueldo mínimo (euros brutos al año)
+          <input id="sueldo-minimo" class="corto" type="number" min="0" step="500" inputmode="numeric">
+        </label>
+        <label>Ordenar por
+          <select id="orden">
+            <option value="compatibles">Más compatibles</option>
+            <option value="recientes">Más recientes</option>
+          </select>
+        </label>
+      </fieldset>
+      <div class="fila">
+        <button type="submit">Guardar preferencias</button>
+        <a class="boton secundario" href="/recomendadas">Ver recomendadas</a>
+        <span id="aviso" role="status"></span>
+      </div>
+    </form>
+  </main>
+  <script src="/static/comun.js"></script>
+  <script src="/static/preferencias.js"></script>
+</body>
+</html>

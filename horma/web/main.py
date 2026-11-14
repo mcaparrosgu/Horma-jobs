@@ -13,7 +13,7 @@ from horma.config import ajustes
 from horma.web.auth.claves import Limitador
 from horma.web.auth.identidad import Identidad, crear_identidad
 from horma.web.db import motor
-from horma.web.routers import auth, cv, ingesta, ofertas, perfil, preferencias, recomendaciones
+from horma.web.routers import auth, cv, ingesta, ofertas, paginas, perfil, preferencias, recomendaciones
 
 ESTATICOS = Path(__file__).parent / "static"
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
@@ -60,7 +60,7 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     app.include_router(auth.router)
     app.include_router(ofertas.router)
     app.include_router(ingesta.router)
-    for r in (cv, perfil, preferencias, recomendaciones):
+    for r in (cv, perfil, preferencias, recomendaciones, paginas):
         app.include_router(r.router)
     app.mount("/static", StaticFiles(directory=ESTATICOS), name="static")
 
