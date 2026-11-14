@@ -35,7 +35,7 @@ están en [system.md](../system.md).
 ## Criterios de aceptación (puerta de salida)
 - [x] `horma eval correr ofertas` sobre 25 casos inventados: precisión ≥ 0,9 por campo y adversarias al 100 %. *Medido con el modelo real el 14-nov-2026: aprobado (campos ≥ 0,96, adversarias 1,0).*
 - [x] `horma eval correr fuentes` sobre 5 portales inventados con su calificación esperada. *Medido con el modelo real el 14-nov-2026: aprobado (todo a 1,0).*
-- [x] Ambos sets corren en CI (simulado sin clave; real con clave de presupuesto limitado). *El CI corre en simulado: `ANTHROPIC_API_KEY` aún no está como secreto en GitHub.*
+- [x] Ambos sets corren en CI (simulado sin clave; real con clave de presupuesto limitado). *`ANTHROPIC_API_KEY` es secreto del repositorio desde el 14-nov-2026: el CI mide con el modelo real.*
 - [x] Consola: `horma ingestar <fuente> --limite 20`, `horma agente correr auditor-oferta --entrada oferta.json`, `horma flujo correr procesar_oferta --entrada oferta.md --paso-a-paso`, `horma fuente calificar <url>`.
 
 ## Fuera de alcance

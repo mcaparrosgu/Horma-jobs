@@ -30,8 +30,9 @@ stale_after: null
 - [x] T16 — CI (GitHub Actions) y README · test: el flujo corre ruff, import-linter, pytest, eval y escaneo de secretos; README documenta `horma agente correr` y `horma eval correr` · cubre: RF-0.8
 
 ## Pendiente de la persona (no se puede hacer sin ti)
-- Añadir `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub: el CI corre, pero solo en simulado.
+- Nada: todo lo que dependía de ti está hecho.
 
 ## Hecho por la persona
 - Cliente OAuth de Google creado y `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` en `.env`; login real en uso.
+- `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub (14-nov): el CI mide con el modelo real.
 - `ANTHROPIC_API_KEY` en `.env` (13-nov) y eval real medido (14-nov, set `ofertas` de 25 casos).

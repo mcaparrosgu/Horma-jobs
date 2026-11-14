@@ -31,8 +31,8 @@ stale_after: null
 
 ## Pendiente de la persona (no se puede hacer sin ti)
 - Verificar spec, plan y tareas de la fase 1 (siguen en borrador; `verified: null`).
-- Añadir `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub: hasta entonces el CI solo corre los evals en simulado.
 
 ## Hecho por la persona
 - Evals con el modelo real (14-nov-2026): `ofertas` y `fuentes` aprobados.
+- `ANTHROPIC_API_KEY` como secreto del repositorio en GitHub (14-nov-2026): el CI mide con el modelo real.
 - Tu `sub` de Google en `HORMA_ADMINS`; Arbeitnow calificada como apta y activada en el dashboard.
