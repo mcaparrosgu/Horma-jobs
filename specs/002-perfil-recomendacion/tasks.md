@@ -3,10 +3,10 @@ type: tasks
 title: perfil-recomendacion — Desglose de tareas
 description: Tareas pequeñas y comprobables derivadas del plan de la fase 2. Cada una empieza con un test que falla.
 tags: [tareas, perfil, recomendacion]
-status: draft
+status: active
 sources: [./plan.md]
 generated: { by: claude-code, at: 2026-11-14 }
-verified: null
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 
@@ -14,11 +14,11 @@ stale_after: null
 
 Orden de construcción: contrato y código puro (T01-T05) → agentes y flujos (T06-T10) → evals (T11-T12) → base de datos y worker (T13-T14) → API (T15-T19) → pantallas (T20-T21) → consola y cierre (T22-T23). Cada tarea empieza con un test que falla. Todo se prueba sin llamar al modelo (puerta simulada) salvo T12.
 
-- [ ] T01 — Dependencias (`python-multipart`, `pypdf`, `python-docx`), esquemas `Perfil`, `Preferencias`, `Match` y listas cerradas `filtros.py` (país, contrato, idioma) · test: casos válidos e inválidos (dato sin `origen`, valor fuera de lista, nota fuera de 0-100, rango invertido) · cubre: RF-2.2, RF-2.8b, RF-2.12
-- [ ] T02 — Herramienta `convertir_cv` · test: PDF, DOCX y Markdown inventados salen como texto; un `.pdf` que no lo es o un archivo vacío se rechaza por sus bytes, no por la extensión · cubre: RF-2.1
-- [ ] T03 — Herramienta `verificar_trazabilidad` · test: acepta un CV base fiel; rechaza al 100 % las frases sin traza, los fragmentos que no están en el maestro y las fechas, cargos, empresas o titulaciones cambiados · cubre: RF-2.9, RT-08
-- [ ] T04 — Herramientas `normalizar_oferta` y `rasgos_personales` · test: «Berlin, Germany» → `DE`, «contrato fijo» → `indefinido`, «2.000 €/mes» → 24.000 anual, USD o sin dato → nulo; la lista de rasgos detecta edad, nacionalidad, sexo, estado civil y salud · cubre: RF-2.6, RF-2.11, RF-2.14
-- [ ] T05 — Herramienta `buscar_ofertas` · test: el dato ausente pasa el filtro; el dato que no coincide descarta; `recomendable = falso` nunca sale; el orden es taxonomía y luego fecha; el sueldo «no comparable» pasa marcado · cubre: RF-2.11, RF-1.9
+- [x] T01 — Dependencias (`python-multipart`, `pypdf`, `python-docx`), esquemas `Perfil`, `Preferencias`, `Match` y listas cerradas `filtros.py` (país, contrato, idioma) · test: casos válidos e inválidos (dato sin `origen`, valor fuera de lista, nota fuera de 0-100, rango invertido) · cubre: RF-2.2, RF-2.8b, RF-2.12
+- [x] T02 — Herramienta `convertir_cv` · test: PDF, DOCX y Markdown inventados salen como texto; un `.pdf` que no lo es o un archivo vacío se rechaza por sus bytes, no por la extensión · cubre: RF-2.1
+- [x] T03 — Herramienta `verificar_trazabilidad` · test: acepta un CV base fiel; rechaza al 100 % las frases sin traza, los fragmentos que no están en el maestro y las fechas, cargos, empresas o titulaciones cambiados · cubre: RF-2.9, RT-08
+- [x] T04 — Herramientas `normalizar_oferta` y `rasgos_personales` · test: «Berlin, Germany» → `DE`, «contrato fijo» → `indefinido`, «2.000 €/mes» → 24.000 anual, USD o sin dato → nulo; la lista de rasgos detecta edad, nacionalidad, sexo, estado civil y salud · cubre: RF-2.6, RF-2.11, RF-2.14
+- [x] T05 — Herramienta `buscar_ofertas` · test: el dato ausente pasa el filtro; el dato que no coincide descarta; `recomendable = falso` nunca sale; el orden es taxonomía y luego fecha; el sueldo «no comparable» pasa marcado · cubre: RF-2.11, RF-1.9
 - [ ] T06 — Agentes `extractor-perfil` y `clasificador-postulante` · test: con la puerta simulada devuelven su esquema; los prompts piden pendientes ante la ambigüedad, no inferir edad ni nacionalidad y registrar instrucciones; ambos están en el registro y en el contrato «independence» · cubre: RF-2.1, RF-2.3, RF-2.5, RF-2.6, RF-2.7, RT-01
 - [ ] T07 — Agentes `generador-cv-base` y `matcher` · test: con la puerta simulada devuelven su esquema; el prompt del matcher exige 2-3 frases que citen perfil y oferta, y prohíbe rasgos personales · cubre: RF-2.9, RF-2.12, RF-2.14, RT-01
 - [ ] T08 — Flujo `perfilar` · test: un dato sin origen va a pendientes; dos CV que se contradicen → pendiente sin elegir; edad y nacionalidad se descartan; las preferencias salen del CV; un CV con instrucciones las registra · cubre: RF-2.2, RF-2.3, RF-2.6, RF-2.7, RF-2.8b

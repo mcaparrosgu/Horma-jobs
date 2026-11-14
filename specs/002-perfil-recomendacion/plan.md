@@ -3,10 +3,10 @@ type: plan
 title: perfil-recomendacion — Plan técnico
 description: Arquitectura, contratos y modelo de datos que cubren cada requisito de la fase 2.
 tags: [plan, perfil, recomendacion]
-status: draft
+status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../001-ofertas/plan.md]
 generated: { by: claude-code, at: 2026-11-14 }
-verified: null
+verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---
 
