@@ -72,6 +72,16 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
    credenciales de la base de datos.
 4. Lanza la ingesta desde el dashboard o con `uv run horma ingestar arbeitnow --limite 20`.
 
+### Fase 2: perfil y recomendación
+
+1. `uv run alembic upgrade head` aplica la migración 0003; `docker compose up -d --build` monta el
+   volumen `horma_archivos` (los CV subidos, solo en la API).
+2. Entra en la web: en `/cv-base` subes tu CV (PDF, DOCX o Markdown); en `/perfil` respondes lo que
+   falte; en `/preferencias` eliges los filtros; en `/recomendadas` ves las ofertas con su nota.
+3. Para probarlo sin web: `horma flujo correr perfilar` y `horma recomendar` (ver Consola).
+4. Puerta de salida: `horma eval correr perfil`, `cv-base` y `recomendacion` con el modelo real
+   (tope de 1 USD por ejecución).
+
 ## Consola
 
 - `uv run horma agente listar` · `uv run horma agente correr <agente> --entrada x [--salida y]`
