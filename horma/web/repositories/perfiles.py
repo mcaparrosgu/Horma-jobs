@@ -42,6 +42,31 @@ def perfil_modelo(fila: dict) -> Perfil:
         "instrucciones_embebidas": fila["instrucciones_embebidas"]})
 
 
+def vigente(s: Session) -> dict | None:
+    """La versión vigente: la de mayor número ya construida (estado 'hecha')."""
+    fila = s.execute(text("select * from perfiles where estado = 'hecha' "
+                          "order by version desc limit 1")).mappings().first()
+    return dict(fila) if fila else None
+
+
+def por_version(s: Session, version: int) -> dict | None:
+    fila = s.execute(text("select * from perfiles where version = :v"), {"v": version}).mappings().first()
+    return dict(fila) if fila else None
+
+
+def ultima(s: Session) -> dict | None:
+    """La última versión reservada, esté como esté (para decir si se está construyendo o falló)."""
+    fila = s.execute(text("select id, version, estado, motivo_error from perfiles "
+                          "order by version desc limit 1")).mappings().first()
+    return dict(fila) if fila else None
+
+
+def origenes(s: Session, perfil_id: int) -> list[dict]:
+    return [dict(f) for f in s.execute(text(
+        "select campo, fragmento from origen where entidad = 'perfil' and entidad_id = :i "
+        "order by id"), {"i": perfil_id}).mappings().all()]
+
+
 def _origenes(perfil: Perfil) -> list[tuple[str, str]]:
     salida = []
     for campo in ("titular", "resumen"):
@@ -135,6 +160,30 @@ def aplicar_preferencias_del_cv(s: Session, usuaria_id: int, desde_cv: Preferenc
 
 
 # --- CV base -----------------------------------------------------------------------------------
+def _nombre_cv_base(destino: dict, version: int) -> str:
+    return f"CV base · {destino['familia']} · {destino['sector']} · v{version}"
+
+
+def listar_cv_base(s: Session) -> list[dict]:
+    """Todos los CV base de la usuaria; `desfasado` = calculado con una versión anterior a la vigente."""
+    filas = s.execute(text(
+        "select c.id, c.nombre, c.sector, c.familia, c.contenido, c.estado, c.motivo_error, "
+        "c.perfil_version, c.creado_en, "
+        "c.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
+        "as desfasado from cv_base c order by c.id")).mappings().all()
+    return [dict(f) for f in filas]
+
+
+def hay_cv_base_hecho(s: Session, perfil_version: int) -> bool:
+    return s.execute(text("select 1 from cv_base where perfil_version = :v and estado = 'hecho'"),
+                     {"v": perfil_version}).first() is not None
+
+
+def renombrar_cv_base(s: Session, cv_id: int, nombre: str) -> bool:
+    return s.execute(text("update cv_base set nombre = :n where id = :i and estado = 'hecho'"),
+                     {"i": cv_id, "n": nombre}).rowcount == 1
+
+
 def guardar_cv_base(s: Session, usuaria_id: int, perfil_version: int, resultado: dict) -> None:
     """Un CV por destino: los verificados quedan 'hecho' y los rechazados dejan su motivo."""
     for g in resultado["guardados"]:
@@ -142,14 +191,14 @@ def guardar_cv_base(s: Session, usuaria_id: int, perfil_version: int, resultado:
         s.execute(text(
             "insert into cv_base (usuaria_id, perfil_version, nombre, sector, familia, contenido, "
             "traza) values (:u, :v, :n, :s, :f, :c, cast(:t as jsonb))"),
-            {"u": usuaria_id, "v": perfil_version, "n": f"CV base · {d['familia']} · {d['sector']}",
+            {"u": usuaria_id, "v": perfil_version, "n": _nombre_cv_base(d, perfil_version),
              "s": d["sector"], "f": d["familia"], "c": g["contenido"], "t": _j(g["traza"])})
     for r in resultado["rechazados"]:
         d = r["destino"]
         s.execute(text(
             "insert into cv_base (usuaria_id, perfil_version, nombre, sector, familia, estado, "
             "motivo_error) values (:u, :v, :n, :s, :f, 'rechazado', :m)"),
-            {"u": usuaria_id, "v": perfil_version, "n": f"CV base · {d['familia']} · {d['sector']}",
+            {"u": usuaria_id, "v": perfil_version, "n": _nombre_cv_base(d, perfil_version),
              "s": d["sector"], "f": d["familia"], "m": r["motivo"][:500]})
 
 

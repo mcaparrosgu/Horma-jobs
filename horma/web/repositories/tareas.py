@@ -14,6 +14,13 @@ def encolar(s: Session, usuaria_id: int, tipo: str, entidad_id: int, tope_coste:
     ).scalar_one()
 
 
+def sin_terminar(s: Session, tipo: str, entidad_id: int) -> bool:
+    """¿Hay ya una tarea de este tipo y entidad pendiente o en curso? (evita encolar dos veces)"""
+    return s.execute(text("select 1 from tareas where tipo = :t and entidad_id = :e "
+                          "and estado in ('pendiente', 'en_curso')"),
+                     {"t": tipo, "e": entidad_id}).first() is not None
+
+
 def registrar_llamadas(s: Session, tarea_id: int, llamadas: list[Llamada]) -> None:
     for ll in llamadas:
         s.execute(text(

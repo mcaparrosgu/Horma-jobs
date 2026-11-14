@@ -13,13 +13,14 @@ from horma.config import ajustes
 from horma.web.auth.claves import Limitador
 from horma.web.auth.identidad import Identidad, crear_identidad
 from horma.web.db import motor
-from horma.web.routers import auth, ingesta, ofertas
+from horma.web.routers import auth, cv, ingesta, ofertas, perfil, preferencias, recomendaciones
 
 ESTATICOS = Path(__file__).parent / "static"
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
        "connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; "
        "frame-ancestors 'none'")
 MAX_CUERPO = 64 * 1024  # RF-1.3: límite de tamaño de cualquier petición
+MARGEN_MULTIPART = 64 * 1024  # cabeceras y campos del formulario que acompañan al archivo
 
 
 def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) -> FastAPI:
@@ -43,7 +44,10 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     @app.middleware("http")
     async def cabeceras_de_seguridad(request, call_next):
         longitud = request.headers.get("content-length", "0")
-        if not longitud.isdigit() or int(longitud) > MAX_CUERPO:
+        # Única excepción al límite: la subida de un CV (el archivo lleva su propio tope, RF-2.1)
+        subida = request.method == "POST" and request.url.path == "/api/cv"
+        maximo = a.max_cv_bytes + MARGEN_MULTIPART if subida else MAX_CUERPO
+        if not longitud.isdigit() or int(longitud) > maximo:
             r = JSONResponse({"detail": "Petición demasiado grande"}, status_code=413)
         else:
             r = await call_next(request)
@@ -56,6 +60,8 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     app.include_router(auth.router)
     app.include_router(ofertas.router)
     app.include_router(ingesta.router)
+    for r in (cv, perfil, preferencias, recomendaciones):
+        app.include_router(r.router)
     app.mount("/static", StaticFiles(directory=ESTATICOS), name="static")
 
     @app.get("/", include_in_schema=False)

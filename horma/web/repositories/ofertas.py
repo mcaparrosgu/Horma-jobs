@@ -98,6 +98,25 @@ def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str
                   {"i": oferta_id, "c": campo, "f": fragmento})
 
 
+_GRUPOS = {"familias": "familia", "sectores": "sector", "niveles": "nivel", "contratos": "tipo_contrato",
+           "paises": "pais"}
+_BASE = "from ofertas where estado = 'procesada' and recomendable"
+
+
+def contadores(s: Session) -> tuple[int, dict[str, dict[str, int]]]:
+    """Cuántas ofertas recomendables hay en total y por valor de cada filtro (las casillas)."""
+    total = s.execute(text(f"select count(*) {_BASE}")).scalar_one()
+    grupos: dict[str, dict[str, int]] = {}
+    for grupo, columna in _GRUPOS.items():
+        filas = s.execute(text(f"select {columna}, count(*) {_BASE} and {columna} is not null "
+                               f"group by {columna}")).all()
+        grupos[grupo] = {v: n for v, n in filas}
+    filas = s.execute(text(f"select i, count(*) from (select unnest(idiomas_norm) as i {_BASE}) t "
+                           "group by i")).all()
+    grupos["idiomas"] = {v: n for v, n in filas}
+    return total, grupos
+
+
 def _url_valida(url: str | None) -> str | None:
     try:
         return str(TypeAdapter(HttpUrl).validate_python(url)) if url else None

@@ -35,6 +35,13 @@ class Ajustes(BaseSettings):
     horma_api_url: str = "http://127.0.0.1:8000"
     horma_clave_ingesta: str = ""
 
+    # Fase 2: archivos de CV (volumen solo de la API) y topes de coste por tipo de tarea (USD)
+    ruta_archivos: str = "data/archivos"
+    max_cv_bytes: int = 5 * 1024 * 1024
+    tope_coste_perfilar: float = 0.50
+    tope_coste_cv_base: float = 0.50
+    tope_coste_recomendar: float = 1.00
+
     def admins(self) -> set[str]:
         return {s.strip() for s in self.horma_admins.split(",") if s.strip()}
 

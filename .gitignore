@@ -38,3 +38,6 @@ docs/plan-pruebas-manuales.md
 
 # Script de pruebas manuales (nunca se publica)
 docs/pruebas-claves.ps1
+
+# Archivos de CV subidos (volumen de la API; datos personales)
+data/

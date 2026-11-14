@@ -11,6 +11,9 @@ from horma.schemas.filtros import Contrato, Idioma, Pais
 from horma.schemas.taxonomia import Familia, Nivel, Sector
 
 OrigenGrupo = Literal["cv", "usuaria"]
+# Grupos de casillas y campos que cuentan como «escritos por ella» al cambiarlos.
+GRUPOS_CON_ORIGEN = ("familias", "sectores", "contratos", "niveles", "paises", "idiomas",
+                     "solo_remoto", "solo_salario", "sueldo_minimo")
 
 
 def _sin_duplicados(v: list) -> list:
