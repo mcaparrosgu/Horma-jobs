@@ -1,0 +1,130 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Marta Soler",
+    "titular": {
+      "valor": "Enfermera con siete años en hospital",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Enfermera con siete años en hospital"
+      }
+    },
+    "experiencias": [
+      {
+        "puesto": "Enfermera",
+        "empresa": "Hospital Clínico",
+        "inicio": "2016",
+        "fin": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Enfermera en Hospital Clínico, Zaragoza, 2016-2023"
+        }
+      },
+      {
+        "puesto": "Enfermera",
+        "empresa": "Centro de Salud Delicias",
+        "inicio": "2023",
+        "fin": "actual",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Enfermera en Centro de Salud Delicias, Zaragoza, 2023-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Enfermería",
+        "centro": "Universidad de Zaragoza",
+        "inicio": "2012",
+        "fin": "2016",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Enfermería, Universidad de Zaragoza, 2012-2016"
+        }
+      },
+      {
+        "titulo": "Máster en Cuidados Críticos",
+        "centro": "Universidad de Zaragoza",
+        "inicio": "2018",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Máster en Cuidados Críticos, Universidad de Zaragoza, 2018-2019"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés B2"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Soporte Vital Avanzado",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Soporte Vital Avanzado"
+        }
+      }
+    ],
+    "taxonomia": {
+      "sector": "sanidad",
+      "familia": "sanidad_cuidados",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Enfermera de UCI",
+    "empresa": "Hospital La Fe",
+    "ubicacion": "Valencia",
+    "remoto": false,
+    "contrato": "indefinido",
+    "salario": null,
+    "idiomas": [],
+    "requisitos": [
+      "Grado en Enfermería",
+      "Experiencia en cuidados críticos"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": false,
+      "salario_rango": null,
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "sanidad",
+      "familia": "sanidad_cuidados",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

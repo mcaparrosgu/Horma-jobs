@@ -1,0 +1,9 @@
+{
+  "cvs": [
+    {
+      "cv_id": 1,
+      "nombre": "CV",
+      "texto": "Irene Calvo\nDesarrolladora backend\n\nEXPERIENCIA\nDesarrolladora Python en Tecnosur SL, Madrid, 2020-2024\nDesarrolladora junior en Webmatic, Madrid, 2018-2020\n\nFORMACIÓN\nIngeniería Informática, Universidad Politécnica de Madrid, 2014-2018\n\nIDIOMAS\nInglés C1\n\nTECNOLOGÍAS\nPython, FastAPI, PostgreSQL, Docker"
+    }
+  ]
+}

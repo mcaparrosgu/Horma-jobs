@@ -1,0 +1,62 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Sara Beltrán",
+    "taxonomia": {
+      "sector": "comercio_retail",
+      "familia": "ventas_comercial",
+      "nivel": "junior",
+      "stack": []
+    },
+    "experiencias": [
+      {
+        "puesto": "Dependienta",
+        "empresa": "Moda Sur",
+        "inicio": "2022",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Dependienta · Moda Sur · 2022-2025"
+        }
+      },
+      {
+        "puesto": "Cajera",
+        "empresa": "Supermercados Mari",
+        "inicio": "2020",
+        "fin": "2022",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Cajera · Supermercados Mari · 2020-2022"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Graduado en ESO",
+        "centro": "IES Jabalcuza",
+        "inicio": "2016",
+        "fin": "2016",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Graduado en ESO · IES Jabalcuza · 2016-2016"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "A2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés A2"
+        }
+      }
+    ]
+  },
+  "cv_maestro": "# Sara Beltrán\n## Experiencia\nDependienta · Moda Sur · 2022-2025\n- Venta asistida y atención al cliente en tienda\n- Reposición y escaparate\nCajera · Supermercados Mari · 2020-2022\n- Manejo de caja y arqueo diario\n## Formación\nGraduado en ESO · IES Jabalcuza · 2016-2016\n## Idiomas\nInglés A2\n",
+  "preferencias": {}
+}

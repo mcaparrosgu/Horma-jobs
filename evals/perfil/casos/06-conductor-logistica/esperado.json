@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "nombre": "Daniel Rubio",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Conductor de camión",
+      "empresa": "Transportes Levante",
+      "inicio": "2015",
+      "fin": "2025",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Conductor de camión en Transportes Levante, Alicante, 2015-2025"
+      }
+    },
+    {
+      "puesto": "Repartidor",
+      "empresa": "Mensajería Rápida",
+      "inicio": "2012",
+      "fin": "2015",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Repartidor en Mensajería Rápida, Alicante, 2012-2015"
+      }
+    }
+  ],
+  "formacion": [],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "A1",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés A1"
+      }
+    }
+  ],
+  "habilidades": [
+    {
+      "nombre": "Carné C+E",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Carné C+E"
+      }
+    },
+    {
+      "nombre": "CAP",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "CAP"
+      }
+    }
+  ],
+  "taxonomia": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

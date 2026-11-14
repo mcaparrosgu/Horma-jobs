@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "nombre": "Álvaro Peña",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Cocinero",
+      "empresa": "Hotel Marina",
+      "inicio": null,
+      "fin": null,
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Cocinero en Hotel Marina, Cádiz, varios años"
+      }
+    },
+    {
+      "puesto": "Cocinero",
+      "empresa": "Restaurante El Puerto",
+      "inicio": "2013",
+      "fin": "2017",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Cocinero en Restaurante El Puerto, Cádiz, 2013-2017"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Curso de manipulador de alimentos",
+      "centro": null,
+      "inicio": null,
+      "fin": null,
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Curso de manipulador de alimentos"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "medio",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Nivel medio de inglés"
+      }
+    }
+  ],
+  "habilidades": [],
+  "taxonomia": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": []
+  },
+  "preguntas_pendientes": [
+    {
+      "campo": "experiencias",
+      "motivo": "ambiguo",
+      "pregunta": "No indicas las fechas del puesto en Hotel Marina. ¿Cuándo empezaste y terminaste?",
+      "opciones": []
+    },
+    {
+      "campo": "idiomas",
+      "motivo": "ambiguo",
+      "pregunta": "¿Qué nivel de inglés tienes, de A1 a C2?",
+      "opciones": []
+    }
+  ],
+  "instrucciones_embebidas": []
+}

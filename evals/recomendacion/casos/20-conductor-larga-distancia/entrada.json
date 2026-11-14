@@ -1,0 +1,118 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Daniel Rubio",
+    "titular": {
+      "valor": "Conductor de camión con carné C+E",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Conductor de camión con carné C+E"
+      }
+    },
+    "experiencias": [
+      {
+        "puesto": "Conductor de camión",
+        "empresa": "Transportes Levante",
+        "inicio": "2015",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Conductor de camión en Transportes Levante, Alicante, 2015-2025"
+        }
+      },
+      {
+        "puesto": "Repartidor",
+        "empresa": "Mensajería Rápida",
+        "inicio": "2012",
+        "fin": "2015",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Repartidor en Mensajería Rápida, Alicante, 2012-2015"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "A1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés A1"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Carné C+E",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Carné C+E"
+        }
+      },
+      {
+        "nombre": "CAP",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "CAP"
+        }
+      }
+    ],
+    "taxonomia": {
+      "sector": "logistica_transporte",
+      "familia": "logistica_transporte",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "sueldo_minimo": 24000.0
+  },
+  "oferta": {
+    "titulo": "Conductor de camión C+E larga distancia",
+    "empresa": "Transportes del Este",
+    "ubicacion": "Valencia",
+    "remoto": false,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 26000,
+      "maximo": 30000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Carné C+E",
+      "CAP en vigor",
+      "Experiencia en larga distancia"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "26000–30000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "logistica_transporte",
+      "familia": "logistica_transporte",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

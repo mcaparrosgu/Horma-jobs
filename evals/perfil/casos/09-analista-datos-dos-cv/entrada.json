@@ -1,0 +1,14 @@
+{
+  "cvs": [
+    {
+      "cv_id": 1,
+      "nombre": "CV general",
+      "texto": "Elena Gil\n\nEXPERIENCIA\nAnalista de datos en Logiplan, Bilbao, 2019-2024\n\nFORMACIÓN\nGrado en Estadística, Universidad del País Vasco, 2015-2019\n\nIDIOMAS\nInglés C1"
+    },
+    {
+      "cv_id": 2,
+      "nombre": "CV técnico",
+      "texto": "Elena Gil\n\nEXPERIENCIA\nAnalista de datos en Logiplan, Bilbao, 2019-2024\n\nFORMACIÓN\nMáster en Ciencia de Datos, UOC, 2024-2025\n\nIDIOMAS\nEuskera B2\n\nHERRAMIENTAS\nSQL, Python, Power BI"
+    }
+  ]
+}

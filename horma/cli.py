@@ -275,6 +275,8 @@ def correr_eval(
     simulado: bool = typer.Option(False, help="Cada caso responde con su esperado: solo prueba el "
                                               "harness, NO mide el modelo."),
     umbral: float = typer.Option(0.9, help="Precisión mínima por campo."),
+    tope_coste: float = typer.Option(1.0, help="Tope de coste por ejecución, en USD: al superarlo "
+                                               "el eval se detiene (RF-2.17)."),
     raiz: Path = typer.Option(Path("evals"), help="Carpeta de evals."),
 ) -> None:
     """Corre un set de evals y deja la ejecución en evals/resultados/."""
@@ -285,9 +287,13 @@ def correr_eval(
         raise typer.Exit(2)
     if not simulado:
         _sin_clave_de_anthropic()
-    res = correr_set(conjunto, raiz=raiz, umbral=umbral, solo=solo, simulado=simulado)
+    res = correr_set(conjunto, raiz=raiz, umbral=umbral, solo=solo, simulado=simulado,
+                     tope_coste=tope_coste)
     for campo, valor in res["campos"].items():
         typer.echo(f"{campo:<30}{valor:.2f}")
     typer.echo(f"{'adversarias':<30}{res['adversarias']:.2f}")
-    typer.echo(f"\n{res['casos']} casos · {'APROBADO' if res['aprobado'] else 'NO APROBADO'}")
+    typer.echo(f"\n{res['casos_ejecutados']} de {res['casos']} casos · coste {res['coste']:.4f} USD "
+               f"(tope {tope_coste:g}) · {'APROBADO' if res['aprobado'] else 'NO APROBADO'}")
+    if res["detenido_por_coste"]:
+        typer.echo("El eval se detuvo al superar el tope de coste: el resultado no es completo.")
     raise typer.Exit(0 if res["aprobado"] else 1)

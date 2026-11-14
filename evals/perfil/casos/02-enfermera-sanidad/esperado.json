@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "nombre": "Marta Soler",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Enfermera",
+      "empresa": "Hospital Clínico",
+      "inicio": "2016",
+      "fin": "2023",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Enfermera en Hospital Clínico, Zaragoza, 2016-2023"
+      }
+    },
+    {
+      "puesto": "Enfermera",
+      "empresa": "Centro de Salud Delicias",
+      "inicio": "2023",
+      "fin": "actual",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Enfermera en Centro de Salud Delicias, Zaragoza, 2023-actual"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Grado en Enfermería",
+      "centro": "Universidad de Zaragoza",
+      "inicio": "2012",
+      "fin": "2016",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Grado en Enfermería, Universidad de Zaragoza, 2012-2016"
+      }
+    },
+    {
+      "titulo": "Máster en Cuidados Críticos",
+      "centro": "Universidad de Zaragoza",
+      "inicio": "2018",
+      "fin": "2019",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Máster en Cuidados Críticos, Universidad de Zaragoza, 2018-2019"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "B2",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés B2"
+      }
+    }
+  ],
+  "habilidades": [
+    {
+      "nombre": "Soporte Vital Avanzado",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Soporte Vital Avanzado"
+      }
+    }
+  ],
+  "taxonomia": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "intermedio",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

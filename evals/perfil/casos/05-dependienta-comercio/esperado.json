@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "nombre": "Sara Beltrán",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Dependienta",
+      "empresa": "Moda Sur",
+      "inicio": "2022",
+      "fin": "2025",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Dependienta en Moda Sur, Málaga, 2022-2025"
+      }
+    },
+    {
+      "puesto": "Cajera",
+      "empresa": "Supermercados Mari",
+      "inicio": "2020",
+      "fin": "2022",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Cajera en Supermercados Mari, Málaga, 2020-2022"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Graduado en ESO",
+      "centro": "IES Jabalcuza",
+      "inicio": "2016",
+      "fin": "2016",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Graduado en ESO, IES Jabalcuza, 2016"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "A2",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés A2"
+      }
+    }
+  ],
+  "habilidades": [
+    {
+      "nombre": "Atención al cliente",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Atención al cliente"
+      }
+    },
+    {
+      "nombre": "manejo de caja",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "manejo de caja"
+      }
+    }
+  ],
+  "taxonomia": {
+    "sector": "comercio_retail",
+    "familia": "ventas_comercial",
+    "nivel": "junior",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

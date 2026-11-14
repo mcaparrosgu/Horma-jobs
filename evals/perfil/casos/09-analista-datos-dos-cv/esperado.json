@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "nombre": "Elena Gil",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Analista de datos",
+      "empresa": "Logiplan",
+      "inicio": "2019",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Analista de datos en Logiplan, Bilbao, 2019-2024"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Grado en Estadística",
+      "centro": "Universidad del País Vasco",
+      "inicio": "2015",
+      "fin": "2019",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Grado en Estadística, Universidad del País Vasco, 2015-2019"
+      }
+    },
+    {
+      "titulo": "Máster en Ciencia de Datos",
+      "centro": "UOC",
+      "inicio": "2024",
+      "fin": "2025",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 2,
+        "fragmento": "Máster en Ciencia de Datos, UOC, 2024-2025"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "C1",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés C1"
+      }
+    },
+    {
+      "idioma": "eu",
+      "nivel": "B2",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 2,
+        "fragmento": "Euskera B2"
+      }
+    }
+  ],
+  "habilidades": [
+    {
+      "nombre": "SQL",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 2,
+        "fragmento": "SQL"
+      }
+    },
+    {
+      "nombre": "Python",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 2,
+        "fragmento": "Python"
+      }
+    },
+    {
+      "nombre": "Power BI",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 2,
+        "fragmento": "Power BI"
+      }
+    }
+  ],
+  "taxonomia": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "intermedio",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

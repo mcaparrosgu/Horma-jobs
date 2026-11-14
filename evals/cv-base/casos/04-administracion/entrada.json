@@ -1,0 +1,51 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Carmen Vidal",
+    "taxonomia": {
+      "sector": "finanzas_seguros",
+      "familia": "administracion_oficina",
+      "nivel": "intermedio",
+      "stack": []
+    },
+    "experiencias": [
+      {
+        "puesto": "Administrativa",
+        "empresa": "Seguros Norte",
+        "inicio": "2017",
+        "fin": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Administrativa · Seguros Norte · 2017-2023"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Administración de Empresas",
+        "centro": "Universidad de Murcia",
+        "inicio": "2013",
+        "fin": "2017",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Administración de Empresas · Universidad de Murcia · 2013-2017"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés B2"
+        }
+      }
+    ]
+  },
+  "cv_maestro": "# Carmen Vidal\n## Experiencia\nAdministrativa · Seguros Norte · 2017-2023\n- Gestión de 120 pólizas al mes\n- Atención telefónica a clientes y facturación\n## Formación\nGrado en Administración de Empresas · Universidad de Murcia · 2013-2017\n## Idiomas\nInglés B2\n## Habilidades\nExcel y facturación\n",
+  "preferencias": {}
+}

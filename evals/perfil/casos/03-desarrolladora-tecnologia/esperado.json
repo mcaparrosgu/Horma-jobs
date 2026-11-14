@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "nombre": "Irene Calvo",
+  "titular": {
+    "valor": "Desarrolladora backend",
+    "origen": {
+      "fuente": "cv",
+      "cv_id": 1,
+      "fragmento": "Desarrolladora backend"
+    }
+  },
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Desarrolladora Python",
+      "empresa": "Tecnosur SL",
+      "inicio": "2020",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Desarrolladora Python en Tecnosur SL, Madrid, 2020-2024"
+      }
+    },
+    {
+      "puesto": "Desarrolladora junior",
+      "empresa": "Webmatic",
+      "inicio": "2018",
+      "fin": "2020",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Desarrolladora junior en Webmatic, Madrid, 2018-2020"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Ingeniería Informática",
+      "centro": "Universidad Politécnica de Madrid",
+      "inicio": "2014",
+      "fin": "2018",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Ingeniería Informática, Universidad Politécnica de Madrid, 2014-2018"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "C1",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés C1"
+      }
+    }
+  ],
+  "habilidades": [
+    {
+      "nombre": "Python",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Python"
+      }
+    },
+    {
+      "nombre": "FastAPI",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "FastAPI"
+      }
+    },
+    {
+      "nombre": "PostgreSQL",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "PostgreSQL"
+      }
+    },
+    {
+      "nombre": "Docker",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Docker"
+      }
+    }
+  ],
+  "taxonomia": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

@@ -1,0 +1,151 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Irene Calvo",
+    "titular": {
+      "valor": "Desarrolladora backend",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Desarrolladora backend"
+      }
+    },
+    "experiencias": [
+      {
+        "puesto": "Desarrolladora Python",
+        "empresa": "Tecnosur SL",
+        "inicio": "2020",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Desarrolladora Python en Tecnosur SL, Madrid, 2020-2024"
+        }
+      },
+      {
+        "puesto": "Desarrolladora junior",
+        "empresa": "Webmatic",
+        "inicio": "2018",
+        "fin": "2020",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Desarrolladora junior en Webmatic, Madrid, 2018-2020"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Ingeniería Informática",
+        "centro": "Universidad Politécnica de Madrid",
+        "inicio": "2014",
+        "fin": "2018",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Ingeniería Informática, Universidad Politécnica de Madrid, 2014-2018"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "C1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés C1"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Python",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Python"
+        }
+      },
+      {
+        "nombre": "FastAPI",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "FastAPI"
+        }
+      },
+      {
+        "nombre": "PostgreSQL",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "PostgreSQL"
+        }
+      },
+      {
+        "nombre": "Docker",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Docker"
+        }
+      }
+    ],
+    "taxonomia": {
+      "sector": "tecnologia",
+      "familia": "desarrollo_software",
+      "nivel": "intermedio",
+      "stack": [
+        "python"
+      ]
+    }
+  },
+  "preferencias": {
+    "solo_remoto": true,
+    "sueldo_minimo": 35000.0,
+    "contratos": [
+      "indefinido"
+    ]
+  },
+  "oferta": {
+    "titulo": "Desarrollador/a frontend React",
+    "empresa": "Pixelia",
+    "ubicacion": "España",
+    "remoto": true,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 28000,
+      "maximo": 30000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "React",
+      "TypeScript"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "28000–30000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "tecnologia",
+      "familia": "desarrollo_software",
+      "nivel": "junior",
+      "stack": [
+        "react",
+        "typescript"
+      ]
+    }
+  }
+}

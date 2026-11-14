@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "nombre": "Pablo Navarro",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [],
+  "formacion": [],
+  "idiomas": [],
+  "habilidades": [],
+  "taxonomia": {
+    "sector": "otros",
+    "familia": "otros",
+    "nivel": "sin_especificar",
+    "stack": []
+  },
+  "preguntas_pendientes": [
+    {
+      "campo": "experiencias",
+      "motivo": "falta",
+      "pregunta": "No encuentro experiencia en tu CV. ¿Quieres añadirla?",
+      "opciones": []
+    },
+    {
+      "campo": "formacion",
+      "motivo": "falta",
+      "pregunta": "No encuentro estudios en tu CV. ¿Quieres añadirlos?",
+      "opciones": []
+    },
+    {
+      "campo": "idiomas",
+      "motivo": "falta",
+      "pregunta": "No encuentro idiomas en tu CV. ¿Quieres añadirlos?",
+      "opciones": []
+    }
+  ],
+  "instrucciones_embebidas": []
+}

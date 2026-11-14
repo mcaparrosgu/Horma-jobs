@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "nombre": "Lucía Ferrer",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Camarera",
+      "empresa": "Bar Sol",
+      "inicio": "2021",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Camarera en Bar Sol, Valencia, 2021-2024"
+      }
+    },
+    {
+      "puesto": "Ayudante de cocina",
+      "empresa": "Restaurante La Barca",
+      "inicio": "2019",
+      "fin": "2021",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Ayudante de cocina en Restaurante La Barca, Valencia, 2019-2021"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Técnico en Servicios de Restauración",
+      "centro": "IES Ausiàs March",
+      "inicio": "2017",
+      "fin": "2019",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Técnico en Servicios de Restauración, IES Ausiàs March, 2017-2019"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "B1",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés B1"
+      }
+    },
+    {
+      "idioma": "ca",
+      "nivel": "nativo",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Valenciano nativo"
+      }
+    }
+  ],
+  "habilidades": [],
+  "taxonomia": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "junior",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

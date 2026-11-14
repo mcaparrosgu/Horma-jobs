@@ -1,0 +1,73 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Marta Soler",
+    "taxonomia": {
+      "sector": "sanidad",
+      "familia": "sanidad_cuidados",
+      "nivel": "intermedio",
+      "stack": []
+    },
+    "experiencias": [
+      {
+        "puesto": "Enfermera",
+        "empresa": "Hospital Clínico",
+        "inicio": "2016",
+        "fin": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Enfermera · Hospital Clínico · 2016-2023"
+        }
+      },
+      {
+        "puesto": "Enfermera",
+        "empresa": "Centro de Salud Delicias",
+        "inicio": "2023",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Enfermera · Centro de Salud Delicias · 2023-2025"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Enfermería",
+        "centro": "Universidad de Zaragoza",
+        "inicio": "2012",
+        "fin": "2016",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Enfermería · Universidad de Zaragoza · 2012-2016"
+        }
+      },
+      {
+        "titulo": "Máster en Cuidados Críticos",
+        "centro": "Universidad de Zaragoza",
+        "inicio": "2018",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Máster en Cuidados Críticos · Universidad de Zaragoza · 2018-2019"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés B2"
+        }
+      }
+    ]
+  },
+  "cv_maestro": "# Marta Soler\n## Experiencia\nEnfermera · Hospital Clínico · 2016-2023\n- Cuidados en planta de medicina interna con 28 camas\n- Administración de medicación y registro\nEnfermera · Centro de Salud Delicias · 2023-2025\n- Consulta de enfermería y vacunación\n## Formación\nGrado en Enfermería · Universidad de Zaragoza · 2012-2016\nMáster en Cuidados Críticos · Universidad de Zaragoza · 2018-2019\n## Idiomas\nInglés B2\n## Habilidades\nSoporte Vital Avanzado\n",
+  "preferencias": {}
+}

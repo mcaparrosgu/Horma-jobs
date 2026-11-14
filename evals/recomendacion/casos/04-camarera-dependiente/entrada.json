@@ -1,0 +1,114 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Lucía Ferrer",
+    "titular": {
+      "valor": "Camarera con experiencia en sala y cocina",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Camarera con experiencia en sala y cocina"
+      }
+    },
+    "experiencias": [
+      {
+        "puesto": "Camarera",
+        "empresa": "Bar Sol",
+        "inicio": "2021",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Camarera en Bar Sol, Valencia, 2021-2024"
+        }
+      },
+      {
+        "puesto": "Ayudante de cocina",
+        "empresa": "Restaurante La Barca",
+        "inicio": "2019",
+        "fin": "2021",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Ayudante de cocina en Restaurante La Barca, Valencia, 2019-2021"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Técnico en Servicios de Restauración",
+        "centro": "IES Ausiàs March",
+        "inicio": "2017",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico en Servicios de Restauración, IES Ausiàs March, 2017-2019"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés B1"
+        }
+      }
+    ],
+    "habilidades": [],
+    "taxonomia": {
+      "sector": "hosteleria_turismo",
+      "familia": "hosteleria_restauracion",
+      "nivel": "junior",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ],
+    "sueldo_minimo": 16000.0
+  },
+  "oferta": {
+    "titulo": "Dependiente de tienda de moda",
+    "empresa": "Moda Centro",
+    "ubicacion": "Valencia",
+    "remoto": false,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 16500,
+      "maximo": 17500,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Atención al público"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "16500–17500 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "comercio_retail",
+      "familia": "ventas_comercial",
+      "nivel": "junior",
+      "stack": []
+    }
+  }
+}

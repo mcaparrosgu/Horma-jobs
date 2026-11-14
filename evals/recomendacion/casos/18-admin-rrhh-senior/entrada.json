@@ -1,0 +1,101 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Carmen Vidal",
+    "titular": {
+      "valor": "Administrativa con seis años en seguros",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Administrativa con seis años en seguros"
+      }
+    },
+    "experiencias": [
+      {
+        "puesto": "Administrativa",
+        "empresa": "Seguros Norte",
+        "inicio": "2017",
+        "fin": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Administrativa en Seguros Norte, Murcia, 2017-2023"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Administración de Empresas",
+        "centro": "Universidad de Murcia",
+        "inicio": "2013",
+        "fin": "2017",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Administración de Empresas, Universidad de Murcia, 2013-2017"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés B2"
+        }
+      }
+    ],
+    "habilidades": [],
+    "taxonomia": {
+      "sector": "finanzas_seguros",
+      "familia": "administracion_oficina",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "paises": [
+      "ES"
+    ],
+    "idiomas": [
+      "en"
+    ]
+  },
+  "oferta": {
+    "titulo": "Responsable de recursos humanos",
+    "empresa": "Grupo Industrial Norte",
+    "ubicacion": "Bilbao",
+    "remoto": false,
+    "contrato": "indefinido",
+    "salario": null,
+    "idiomas": [
+      "inglés"
+    ],
+    "requisitos": [
+      "8 años en RR. HH.",
+      "Gestión de equipos"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": false,
+      "salario_rango": null,
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "industria",
+      "familia": "recursos_humanos",
+      "nivel": "senior",
+      "stack": []
+    }
+  }
+}

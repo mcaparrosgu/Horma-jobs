@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "nombre": "Raúl Ortega",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Auxiliar administrativo en prácticas",
+      "empresa": "Gestoría Ortiz",
+      "inicio": "2024",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Auxiliar administrativo en prácticas en Gestoría Ortiz, Sevilla, 2024"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Grado Superior en Administración y Finanzas",
+      "centro": "IES Triana",
+      "inicio": "2022",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Grado Superior en Administración y Finanzas, IES Triana, 2022-2024"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "A2",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés A2"
+      }
+    }
+  ],
+  "habilidades": [
+    {
+      "nombre": "Word",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Word"
+      }
+    },
+    {
+      "nombre": "Excel",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Excel"
+      }
+    },
+    {
+      "nombre": "facturación",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "facturación"
+      }
+    }
+  ],
+  "taxonomia": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "practicas",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

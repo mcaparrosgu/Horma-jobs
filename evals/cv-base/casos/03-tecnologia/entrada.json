@@ -1,0 +1,66 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Irene Calvo",
+    "taxonomia": {
+      "sector": "tecnologia",
+      "familia": "desarrollo_software",
+      "nivel": "intermedio",
+      "stack": []
+    },
+    "experiencias": [
+      {
+        "puesto": "Desarrolladora Python",
+        "empresa": "Tecnosur SL",
+        "inicio": "2020",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Desarrolladora Python · Tecnosur SL · 2020-2024"
+        }
+      },
+      {
+        "puesto": "Desarrolladora junior",
+        "empresa": "Webmatic",
+        "inicio": "2018",
+        "fin": "2020",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Desarrolladora junior · Webmatic · 2018-2020"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Ingeniería Informática",
+        "centro": "Universidad Politécnica de Madrid",
+        "inicio": "2014",
+        "fin": "2018",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Ingeniería Informática · Universidad Politécnica de Madrid · 2014-2018"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "C1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés C1"
+        }
+      }
+    ]
+  },
+  "cv_maestro": "# Irene Calvo\n## Experiencia\nDesarrolladora Python · Tecnosur SL · 2020-2024\n- Servicios con FastAPI y PostgreSQL para 30 tablas\n- Despliegue con Docker\nDesarrolladora junior · Webmatic · 2018-2020\n- Mantenimiento de una tienda online\n## Formación\nIngeniería Informática · Universidad Politécnica de Madrid · 2014-2018\n## Idiomas\nInglés C1\n## Habilidades\nPython, FastAPI, PostgreSQL, Docker\n",
+  "preferencias": {
+    "familias": [
+      "datos_ia"
+    ]
+  }
+}

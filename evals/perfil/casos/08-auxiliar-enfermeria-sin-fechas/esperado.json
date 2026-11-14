@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "nombre": "Nuria Campos",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Auxiliar de enfermería",
+      "empresa": "Residencia Los Olmos",
+      "inicio": null,
+      "fin": null,
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Auxiliar de enfermería en Residencia Los Olmos, Salamanca"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Técnico en Cuidados Auxiliares de Enfermería",
+      "centro": null,
+      "inicio": "2020",
+      "fin": "2020",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Técnico en Cuidados Auxiliares de Enfermería, 2020"
+      }
+    }
+  ],
+  "idiomas": [],
+  "habilidades": [],
+  "taxonomia": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "junior",
+    "stack": []
+  },
+  "preguntas_pendientes": [
+    {
+      "campo": "experiencias",
+      "motivo": "falta",
+      "pregunta": "No indicas cuándo trabajaste en la Residencia Los Olmos. ¿Qué fechas fueron?",
+      "opciones": []
+    },
+    {
+      "campo": "formacion",
+      "motivo": "falta",
+      "pregunta": "¿En qué centro sacaste el título de Técnico en Cuidados?",
+      "opciones": []
+    }
+  ],
+  "instrucciones_embebidas": []
+}
