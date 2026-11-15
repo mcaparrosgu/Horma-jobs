@@ -39,6 +39,10 @@ del Clarify en [clarifications.md](./clarifications.md) (se citan como P1…P17)
 
 ### CV base
 - **RF-2.9** El sistema DEBERÁ generar, una sola vez por versión del perfil y a petición de la usuaria, hasta 4 CV base por sector o familia de puesto, compatibles con ATS, en Markdown (P3). Cada CV base DEBERÁ pasar `verificar_trazabilidad` antes de guardarse, con un máximo de 2 intentos; SI no la pasa, ENTONCES NO DEBERÁ guardarse y la usuaria DEBERÁ ver el motivo.
+- **RF-2.9b** Ningún idioma de los CV DEBERÁ perderse. SI dos CV dan niveles distintos del mismo idioma, ENTONCES el idioma DEBERÁ quedar en el perfil sin nivel y la usuaria DEBERÁ recibir una pregunta pendiente con los niveles como opciones. Todo CV base DEBERÁ incluir todos los idiomas del perfil; SI falta alguno, ENTONCES NO DEBERÁ guardarse (se reintenta).
+- **RF-2.9c** Los puestos de un CV base DEBERÁN estar escritos todos en el mismo género gramatical (camarera/camarero), el de `genero_puestos` del perfil. Ese dato DEBERÁ salir de cómo están escritos los puestos en sus CV o de lo que responda la usuaria; NUNCA se deducirá del nombre. SI está sin fijar, ENTONCES la usuaria DEBERÁ recibir una pregunta pendiente. El cambio de género de un puesto no cuenta como dato inventado.
+- **RF-2.9d** La pantalla de CV base DEBERÁ mostrar cada CV como un documento legible (nombre, secciones, líneas), no como texto Markdown; «Copiar texto» sigue copiando el Markdown.
+- **RF-2.9e** La usuaria DEBERÁ poder modificar (nombre y texto) y eliminar cualquier CV base, y cambiar en cualquier momento el género de sus puestos. Un CV base modificado es texto suyo y no se vuelve a comprobar contra el CV; eliminarlo permite generarlo de nuevo.
 - **RF-2.10** El sistema DEBERÁ permitir subir un CV estético propio, guardarlo sin procesar con nombre aleatorio y servirlo solo por la API a su dueña. Nadie lo modifica.
 
 ### Recomendación

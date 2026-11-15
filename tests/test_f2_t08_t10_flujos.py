@@ -251,3 +251,16 @@ def test_para_en_el_tope_de_5_tandas():
 def test_se_ignoran_matches_de_ofertas_que_no_estaban_en_la_tanda():
     _, e = _recomendar([{"matches": [_match(1), _match(99), _match(1)]}], [_cand(1)])
     assert [m["oferta_id"] for m in e["recomendaciones"]] == [1]
+
+
+def test_un_idioma_con_niveles_distintos_en_dos_cv_no_se_pierde_y_se_pregunta():
+    from horma.flows.perfilar import _fusionar_idiomas, _genero_puestos
+    o = lambda c, f: {"fuente": "cv", "cv_id": c, "fragmento": f}  # noqa: E731
+    idiomas = [{"idioma": "en", "nivel": "B1", "origen": o(1, "Inglés B1")},
+               {"idioma": "en", "nivel": "medio", "origen": o(2, "Nivel medio de inglés")},
+               {"idioma": "ca", "nivel": "nativo", "origen": o(1, "Valenciano nativo")}]
+    final, pendientes = _fusionar_idiomas(idiomas)
+    assert [i["idioma"] for i in final] == ["en", "ca"] and final[0]["nivel"] is None
+    assert pendientes[0]["campo"] == "idiomas.en.nivel" and pendientes[0]["opciones"] == ["B1", "medio"]
+    assert _genero_puestos({"genero_puestos": None, "experiencias": [{}]})[0]["campo"] == "genero_puestos"
+    assert _genero_puestos({"genero_puestos": "femenino", "experiencias": [{}]}) == []

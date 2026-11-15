@@ -19,9 +19,10 @@ pytestmark = pytest.mark.bd
 CV = "Ana Pérez\nCamarera en Bar Sol, 2020-2023\nInglés B2"
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
        "stack": []}
-BUENO = {"contenido": "## Experiencia\nCamarera en Bar Sol, 2020-2023",
+BUENO = {"contenido": "## Experiencia\nCamarera en Bar Sol, 2020-2023\n## Idiomas\nInglés B2",
          "traza": [{"frase": "Camarera en Bar Sol, 2020-2023",
-                    "fragmento": "Camarera en Bar Sol, 2020-2023"}]}
+                    "fragmento": "Camarera en Bar Sol, 2020-2023"},
+                   {"frase": "Inglés B2", "fragmento": "Inglés B2"}]}
 MALO = {"contenido": "## Experiencia\nDirectora en Hotel Ritz, 2010-2015", "traza": []}
 EXPLICACION = "Tiene experiencia en sala. La oferta pide camarera con experiencia."
 
@@ -59,7 +60,7 @@ def _extraccion(cv_id):
                                      "fragmento": "Camarera en Bar Sol, 2020-2023"}}],
         "idiomas": [{"idioma": "en", "nivel": "B2",
                      "origen": {"fuente": "cv", "cv_id": cv_id, "fragmento": "Inglés B2"}}]},
-        "cv_maestro": "# Ana Pérez\n\nCamarera en Bar Sol, 2020-2023\n"}
+        "cv_maestro": "# Ana Pérez\n\nCamarera en Bar Sol, 2020-2023\n\nInglés B2\n"}
 
 
 def _perfilar_hecho(motor, u):

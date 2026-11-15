@@ -14,7 +14,7 @@ from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
-from horma.tools.verificar_trazabilidad import verificar_trazabilidad
+from horma.tools.verificar_trazabilidad import verificar_idiomas, verificar_trazabilidad
 
 MAX_DESTINOS = 4
 MAX_INTENTOS = 2
@@ -51,6 +51,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
     def verificar(e: dict) -> dict:
         b = e["borrador"]
         e["errores"] = verificar_trazabilidad(b["contenido"], b["traza"], e["cv_maestro"])
+        e["errores"] += verificar_idiomas(b["contenido"], Perfil.model_validate(e["perfil"]))
         return e
 
     def cerrar_destino(e: dict) -> dict:

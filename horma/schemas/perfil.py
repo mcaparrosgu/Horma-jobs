@@ -81,6 +81,10 @@ class Perfil(BaseModel):
 
     version: int = Field(default=1, ge=1)
     nombre: str | None = None
+    genero_puestos: Literal["femenino", "masculino"] | None = Field(
+        default=None,
+        description="Género gramatical con el que se escriben los puestos en sus CV (camarera/camarero). "
+                    "Lo fija ella o sale de su CV; nunca se deduce del nombre.")
     titular: DatoTexto | None = None
     resumen: DatoTexto | None = None
     experiencias: list[Experiencia] = Field(default_factory=list)

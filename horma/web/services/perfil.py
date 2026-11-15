@@ -85,6 +85,10 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -
                 p[seccion][existente] = _con_origen({**p[seccion][existente], **nuevo})
         elif seccion in UNICOS:
             p[seccion] = _con_origen(nuevo)
+        elif seccion == "genero_puestos":
+            if nuevo.get("valor") not in ("femenino", "masculino"):
+                raise DatoNoValido("Elige «femenino» o «masculino».")
+            p["genero_puestos"] = nuevo["valor"]
         elif seccion == "nombre" and nuevo.get("valor"):
             p["nombre"] = str(nuevo["valor"]).strip()
         else:
@@ -105,6 +109,11 @@ def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
                 p[campo][indice] = _con_origen(dato)
         elif campo in UNICOS:
             p[campo] = None if dato is None else _con_origen(dato)
+        elif campo == "genero_puestos":
+            valor = (dato or {}).get("valor")
+            if valor not in ("femenino", "masculino"):
+                raise DatoNoValido("Elige «femenino» o «masculino».")
+            p["genero_puestos"] = valor
         else:
             raise DatoNoValido(f"El campo «{campo}» no se puede corregir.")
     return _nueva_version(engine, usuaria_id, cambio)

@@ -18,7 +18,8 @@ class Respuesta(BaseModel):
 
 
 class Correccion(BaseModel):
-    campo: Literal["experiencias", "formacion", "idiomas", "habilidades", "titular", "resumen"]
+    campo: Literal["experiencias", "formacion", "idiomas", "habilidades", "titular", "resumen",
+                   "genero_puestos"]
     indice: int | None = None
     dato: dict | None = None
 
