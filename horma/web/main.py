@@ -19,6 +19,7 @@ ESTATICOS = Path(__file__).parent / "static"
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
        "connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; "
        "frame-ancestors 'none'")
+CSP_VISOR = CSP.replace("frame-ancestors 'none'", "frame-ancestors 'self'")
 MAX_CUERPO = 64 * 1024  # RF-1.3: límite de tamaño de cualquier petición
 MARGEN_MULTIPART = 64 * 1024  # cabeceras y campos del formulario que acompañan al archivo
 
@@ -51,10 +52,13 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
             r = JSONResponse({"detail": "Petición demasiado grande"}, status_code=413)
         else:
             r = await call_next(request)
-        r.headers["Content-Security-Policy"] = CSP
+        # Única ruta que se deja enmarcar: el visor de CV de la propia página de perfil (RF-2.1c)
+        visor = request.method == "GET" and request.url.path.startswith("/api/cv/") \
+            and request.url.path.endswith("/ver")
+        r.headers["Content-Security-Policy"] = CSP_VISOR if visor else CSP
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["Referrer-Policy"] = "no-referrer"
-        r.headers["X-Frame-Options"] = "DENY"
+        r.headers["X-Frame-Options"] = "SAMEORIGIN" if visor else "DENY"
         return r
 
     app.include_router(auth.router)

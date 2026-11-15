@@ -65,6 +65,20 @@ def descargar(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_ac
     return FileResponse(ruta, media_type=servicio.MEDIA[cv["tipo"]], filename=cv["nombre_original"])
 
 
+@router.get("/api/cv/{cv_id}/ver")
+def ver(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """El CV en línea, para el visor de la página (RF-2.1c). Solo la dueña (RLS)."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        cv = repo.uno(s, cv_id)
+    ruta = servicio.carpeta() / cv["ruta"] if cv else None
+    if not cv or not ruta.is_file():
+        raise HTTPException(status_code=404, detail="No existe ese CV")
+    if cv["tipo"] == "docx":
+        raise HTTPException(status_code=415, detail="Los DOCX no se pueden ver en el navegador: descárgalo.")
+    medio = "application/pdf" if cv["tipo"] == "pdf" else "text/plain; charset=utf-8"
+    return FileResponse(ruta, media_type=medio, content_disposition_type="inline")
+
+
 # --- CV base -----------------------------------------------------------------------------------
 @router.post("/api/cv-base", status_code=202, dependencies=[Depends(exigir_csrf)])
 def generar_cv_base(request: Request, usuaria_id: int = Depends(usuaria_actual)):

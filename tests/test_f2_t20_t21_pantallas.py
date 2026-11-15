@@ -92,6 +92,8 @@ def test_perfil_enseña_origen_pendientes_y_la_gestion_de_cv():
     assert "/api/perfil/respuestas" in js and "/api/perfil/datos" in js
     assert "/api/cv" in js and "PATCH" in js and "/archivo" in js        # renombrar y descargar
     assert "FormData" in js                                               # subir un CV
+    assert "/ver" in js and "iframe" in js and '"Ver"' in js              # ver el CV sin descargarlo
+    assert 'id="visor"' in leer("perfil.html")
 
 
 def test_cv_base_se_genera_a_peticion_y_se_renombra():
