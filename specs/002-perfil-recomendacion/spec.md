@@ -86,5 +86,17 @@ No se pierde: queda en la spec y en la bitácora, y se retoma al terminar la con
 - Ignorar el texto invisible al convertir un CV (blanco sobre blanco o tamaño 0) en `convertir_cv`. Hueco detectado al repasar la fase: una instrucción escondida en el CV es texto del CV, así que `verificar_origen` y `verificar_trazabilidad` no detectarían el dato falso que provoque; hoy solo lo frena que el extractor la anote en `instrucciones_embebidas` (RF-2.7) y que la usuaria vea el origen de cada dato. Toca `convertir_cv` y el eval `perfil`.
 - No nombrar en la explicación las instrucciones embebidas de una oferta. Visto en la prueba 2.3: el `matcher` ignora bien la inyección de una oferta, pero escribe «La oferta incluye una instrucción para reenviar datos personales, que se ignora», que a la usuaria no le sirve. Plan: ajustar el prompt del `matcher` para que las ignore sin mencionarlas, y añadir un caso al eval. Toca RF-2.12 y el prompt del `matcher`.
 
+### Plan para perfeccionar el `matcher` (obligatorio antes de probar con usuarias reales)
+Decidido el 15-nov-2026. Se retoma **cuando todas las fases estén construidas** y **antes** de cualquier prueba con personas reales. Hoy el `matcher` supera los 20 casos inventados, pero esa muestra es pequeña y solo la han medido casos simulados; no basta para fiarse de él.
+
+1. **Medir mejor.** Ampliar `evals/recomendacion/` de 20 a unos 60 casos: más sectores, notas intermedias (40-70, donde más se duda), perfiles casi vacíos y ofertas incompletas. Incluir las correcciones de usuarias importadas con `eval importar-correccion`. Correr cada caso 3 veces con el modelo real para ver cuánto varía la nota entre ejecuciones. Medir también el orden (que la mejor oferta quede arriba), no solo el ±10.
+2. **Explicaciones fiables.** Hacer los dos apuntados de arriba: verificar que las citas existen (RF-2.12) y no nombrar las instrucciones embebidas de una oferta. Añadir el revisor solo en el eval.
+3. **Equidad.** Casos por pares que cambian solo un rasgo personal (nombre, edad, sexo, nacionalidad, foto, huecos laborales) con el resto idéntico: la nota debe ser igual (±3). Contrastarlo con la clasificación legal de la fase (`docs/03-legal.md` / AI Act y RGPD) antes de dar nada por bueno.
+4. **Robustez.** Ofertas en otro idioma, muy largas, con inyección o sin datos; tanda con fallos parciales; reintentos; el tope de 5 tandas y el de coste. Debe fallar con aviso claro, nunca con una nota inventada.
+5. **Bucle de correcciones.** Decidir con Mar si una corrección debe reordenar la lista de quien la hace (hoy no cambia la nota) y quién revisa las correcciones y con qué frecuencia.
+6. **Coste y automatización.** Retomar la decisión de «Recomendar» manual (embudo, caché de prompt, explicación bajo demanda). Preguntar a Mar antes de proponer el embudo.
+
+**Puerta de salida:** ≥ 90 % de los casos dentro de ±10 con el modelo real, estable en las 3 ejecuciones; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con citas verificadas; y una revisión manual de Mar sobre una muestra de 20 recomendaciones.
+
 ## Decidido al planificar
 Al leer el esquema `Oferta` de la fase 1: `contrato`, `ubicacion` e `idiomas` son texto libre, no hay campo país y el salario no indica periodo. Se resuelve en el [plan](./plan.md): código sin IA los normaliza al guardar cada oferta (P16) y el sueldo se compara en euros brutos al año (P17).
