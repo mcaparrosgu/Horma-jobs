@@ -43,7 +43,7 @@ Orden de construcción: contrato y código puro (T01-T05) → agentes y flujos (
 
 ## Pendiente de la persona (no se puede hacer sin ti)
 - ~~Instalar `python-multipart`, `pypdf` y `python-docx` si `uv` falla con certificados (T01)~~ (hecho el 14-nov-2026).
-- Lanzar los tres evals con el modelo real (tope de 1 USD por ejecución) y revisar el resultado (T11, T12).
+- ~~Lanzar los tres evals con el modelo real (T11, T12)~~ (hecho el 15-nov-2026): `perfil` y `cv-base` aprobados; `recomendacion` NO aprobado solo por `nota` (0,67 frente a 0,9), que queda para el plan del `matcher` (spec, «Plan para perfeccionar el `matcher`»).
 
 ## Apuntado para el final, si hay tiempo (no se pierde; spec P15)
 - Descarga de los CV en PDF.
