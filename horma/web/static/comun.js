@@ -63,7 +63,13 @@ async function api(ruta, { metodo = "GET", cuerpo, formulario } = {}) {
   let motivo = null;
   if (!r.ok) {
     const d = datos && datos.detail;
-    motivo = typeof d === "string" ? d : "No se pudo completar la acción.";
+    if (typeof d === "string") motivo = d;
+    else if (Array.isArray(d) && d.length) {   // validación de FastAPI: lista de {loc, msg}
+      motivo = "Revisa los datos: " + d.slice(0, 3).map((x) => {
+        const donde = Array.isArray(x.loc) ? x.loc.filter((l) => l !== "body").join(" › ") : "";
+        return donde ? `${donde}: ${x.msg}` : x.msg;
+      }).join("; ");
+    } else motivo = `No se pudo completar la acción (error ${r.status}).`;
   }
   return { ok: r.ok, estado: r.status, datos, motivo };
 }
@@ -72,7 +78,9 @@ function avisar(texto, esError) {
   const a = $("aviso");
   if (!a) return;
   a.className = esError ? "error" : "";
+  a.setAttribute("role", esError ? "alert" : "status");
   a.textContent = texto || "";
+  if (esError && texto) a.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
 // Pestañas, botón «Salir» y sesión. Sin sesión, a la portada.

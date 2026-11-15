@@ -80,7 +80,7 @@ button:disabled{ opacity: 0.6; cursor: wait; }
 :focus-visible{ outline: 3px solid var(--pp-linea-int); outline-offset: 2px; }
 .fila{ display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; flex-wrap: wrap; }
 #aviso{ color: var(--suave); }
-#aviso.error{ color: var(--error); }
+#aviso.error{ color: var(--error); position: sticky; top: 0.5rem; z-index: 10; background: var(--tarjeta); border: 2px solid var(--error); border-radius: 8px; padding: 0.6rem 0.9rem; font-weight: 600; }
 
 .lista{ list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
 .tarjeta{
