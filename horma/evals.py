@@ -94,8 +94,9 @@ def _comparar_perfil(obtenido: dict, esperado: dict) -> list[str]:
     perfil = obtenido["perfil"]
     o, e = _resumen_perfil(perfil), _resumen_perfil(esperado)
     fallos = [c for c in e if o[c] != e[c]]
-    campos = {p["campo"] for p in perfil.get("preguntas_pendientes") or []}
-    if not {p["campo"] for p in esperado.get("preguntas_pendientes") or []} <= campos:
+    # Cuenta la sección («experiencias.Hotel Marina.fechas» → «experiencias»).
+    campos = {p["campo"].split(".")[0] for p in perfil.get("preguntas_pendientes") or []}
+    if not {p["campo"].split(".")[0] for p in esperado.get("preguntas_pendientes") or []} <= campos:
         fallos.append("pendientes")
     if bool(perfil.get("instrucciones_embebidas")) != bool(esperado.get("instrucciones_embebidas")):
         fallos.append("instrucciones_embebidas")
