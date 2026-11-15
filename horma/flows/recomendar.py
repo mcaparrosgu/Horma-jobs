@@ -16,6 +16,7 @@ from horma.llm.proveedor import Proveedor
 from horma.schemas.match import Match
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
+from horma.tools.evaluar_condiciones import evaluar_condiciones
 from horma.tools.rasgos_personales import rasgos_personales
 
 TANDA = MAX_OFERTAS
@@ -39,15 +40,19 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         lote, e["pendientes"] = e["pendientes"][:TANDA], e["pendientes"][TANDA:]
         prefs = Preferencias.model_validate(e["preferencias"])
         perfil = Perfil.model_validate(e["perfil"]).model_copy(update={"instrucciones_embebidas": []})
+        lote_modelo = [OfertaCandidata.model_validate(c) for c in lote]
         r = Matcher.run(EntradaMatcher(
             perfil=perfil, condiciones=prefs,
-            ofertas=[OfertaCandidata.model_validate(c) for c in lote]), proveedor=proveedor)
+            ofertas=lote_modelo), proveedor=proveedor)
         pedidas = {c["oferta_id"] for c in lote}
         hechas = {m["oferta_id"] for m in e["matches"]}
         nuevas = []
         for m in r.matches:
             if m.oferta_id in pedidas and m.oferta_id not in hechas:  # sin ids inventados ni repetidos
                 hechas.add(m.oferta_id)
+                # Las condiciones no las decide el modelo: se calculan con código (RF-2.12).
+                oferta = next(c.oferta for c in lote_modelo if c.oferta_id == m.oferta_id)
+                m.condiciones = evaluar_condiciones(oferta, prefs)
                 nuevas.append(m.model_dump(mode="json"))
         e["matches"] += nuevas
         e["tandas"] += 1
