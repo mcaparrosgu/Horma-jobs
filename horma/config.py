@@ -42,6 +42,10 @@ class Ajustes(BaseSettings):
     tope_coste_cv_base: float = 0.50
     tope_coste_recomendar: float = 1.00
 
+    # Fase 3: topes de construcción (USD); el de uso real se fija al medir el coste, antes de usuarias
+    tope_coste_candidatura: float = 1.00
+    tope_coste_respuesta: float = 0.05
+
     def admins(self) -> set[str]:
         return {s.strip() for s in self.horma_admins.split(",") if s.strip()}
 

@@ -5,6 +5,8 @@ Tipos de tarea (la carga es siempre un id, nunca texto):
 - `perfilar` (id de una versión nueva y pendiente del perfil), `clasificar_perfil` (id de una versión
   copiada y pendiente), `generar_cv_base` y `recomendar` (id de la versión del perfil con la que se
   trabaja). Las de una usuaria se ejecutan con su sesión (RLS); las demás, en modo sistema.
+- `candidatura` y `clasificar_respuesta` (fase 3; id de la candidatura): CV y carta para una oferta, y
+  propuesta de cambio de estado para un correo pegado.
 """
 import logging
 import time
@@ -14,7 +16,9 @@ from sqlalchemy import Engine
 
 from horma.flows import (
     calificar_fuente,
+    candidatura,
     clasificar_perfil,
+    clasificar_respuesta,
     generar_cv_base,
     perfilar,
     procesar_oferta,
@@ -30,6 +34,7 @@ from horma.tools import descargar, dominio
 from horma.tools.buscar_ofertas import buscar_ofertas
 from horma.web.db import motor, sesion_de, sesion_sistema
 from horma.web.queue import cola
+from horma.web.repositories import candidaturas as repo_candidaturas
 from horma.web.repositories import ingesta as repo_ingesta
 from horma.web.repositories import matches as repo_matches
 from horma.web.repositories import ofertas as repo_ofertas
@@ -175,10 +180,62 @@ class _Recomendar:
         """Sin fila propia: el motivo queda en la tarea."""
 
 
+class _Candidatura:
+    """Prepara CV y carta para una oferta (entidad = id de la candidatura): carga el perfil vigente, el
+    CV maestro y todos los CV base de la usuaria; el flujo elige uno."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        c = repo_candidaturas.fila(s, tarea["entidad_id"])
+        if c is None:
+            raise ValueError(f"no existe la candidatura {tarea['entidad_id']} de esta usuaria")
+        perfil = repo_perfiles.vigente(s)
+        if perfil is None:
+            raise ValueError("la usuaria no tiene un perfil construido")
+        oferta = repo_ofertas.completas(s, [c["oferta_id"]]).get(c["oferta_id"])
+        if oferta is None:
+            raise ValueError(f"la oferta {c['oferta_id']} no está procesada")
+        return {"usuaria_id": tarea["usuaria_id"], "perfil_version": perfil["version"],
+                "oferta": oferta.model_dump(mode="json"), "cv_maestro": perfil["cv_maestro"],
+                "cvs_base": repo_candidaturas.cv_base_para_flujo(s)}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        return candidatura.crear(proveedor=d.proveedor).run(estado)
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_candidaturas.guardar_preparacion(s, tarea["entidad_id"], estado["perfil_version"], estado)
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        repo_candidaturas.marcar_error(s, tarea["entidad_id"], motivo)
+
+
+class _ClasificarRespuesta:
+    """Clasifica el correo pegado (`respuesta_pendiente`) y guarda la propuesta; el texto se borra tanto
+    tras el éxito como tras el error. El modelo no ve el estado de la candidatura."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        c = repo_candidaturas.fila(s, tarea["entidad_id"])
+        if c is None:
+            raise ValueError(f"no existe la candidatura {tarea['entidad_id']} de esta usuaria")
+        if not c["respuesta_pendiente"]:
+            raise ValueError("la candidatura no tiene ninguna respuesta pendiente")
+        return {"texto": c["respuesta_pendiente"], "estado_actual": c["estado"]}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        return clasificar_respuesta.crear(proveedor=d.proveedor).run(estado)
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_candidaturas.guardar_propuesta(
+            s, tarea["entidad_id"], {**estado["propuesta"], "etiqueta": estado["etiqueta"]})
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        repo_candidaturas.borrar_respuesta_pendiente(s, tarea["entidad_id"])
+
+
 MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
-               "recomendar": _Recomendar()}
+               "recomendar": _Recomendar(), "candidatura": _Candidatura(),
+               "clasificar_respuesta": _ClasificarRespuesta()}
 
 
 def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
