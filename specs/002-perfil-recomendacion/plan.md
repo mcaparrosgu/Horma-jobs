@@ -78,7 +78,7 @@ Cada agente nuevo se añade a la lista del contrato «independence» de `import-
 
 **Pantallas**
 - **Recomendadas** (RF-2.15b): sigue `dashboard.png`. Pestañas, barra de filtros de RF-2.8 y rango, contador, bloque plegable «Cómo leer las recomendaciones» y tabla con las columnas Oferta · Puesto (etiqueta de color) · Compatibilidad (barra y nota) · Condiciones · Salario · Lugar · Publicado, con «?» en cada cabecera. La explicación se despliega en la misma fila junto al botón «Corregir». En móvil, tarjetas. **Salario muestra siempre el texto original de la oferta** (P17).
-- **Preferencias** (RF-2.8): grupos de casillas al estilo de The Hub, con el contador entre paréntesis y un campo numérico para el sueldo mínimo.
+- **Preferencias** (RF-2.8): grupos de casillas al estilo de The Hub, con el contador entre paréntesis, «Seleccionar todo» y «Quitar selección» si el grupo tiene más de 2 casillas (`grupoCasillas` en `static/comun.js`), y un campo numérico para el sueldo mínimo.
 - Todo con `textContent` (helper `nodo()`), CSP estricta y el marco Passe-Partout. El diseño visual se hace con la skill `frontend`.
 
 **Consola**

@@ -34,7 +34,7 @@ del Clarify en [clarifications.md](./clarifications.md) (se citan como P1…P17)
 - **RF-2.7** CUANDO un CV contenga instrucciones dirigidas a una IA, el sistema DEBERÁ registrarlas en `instrucciones_embebidas` y NO DEBERÁ ejecutarlas (RT-07).
 
 ### Preferencias
-- **RF-2.8** El sistema DEBERÁ ofrecer las preferencias como filtros de búsqueda al estilo de The Hub: grupos de **casillas** para puestos (familias de la taxonomía), sector, tipo de contrato, nivel, país e idiomas; casillas sueltas para «solo remoto» y «solo con salario publicado»; un **campo numérico** donde la usuaria escribe el sueldo mínimo; y una ordenación (más recientes o más compatibles). Cada casilla DEBERÁ mostrar entre paréntesis cuántas ofertas del catálogo tiene (P13).
+- **RF-2.8** El sistema DEBERÁ ofrecer las preferencias como filtros de búsqueda al estilo de The Hub: grupos de **casillas** para puestos (familias de la taxonomía), sector, tipo de contrato, nivel, país e idiomas; casillas sueltas para «solo remoto» y «solo con salario publicado»; un **campo numérico** donde la usuaria escribe el sueldo mínimo; y una ordenación (más recientes o más compatibles). Cada casilla DEBERÁ mostrar entre paréntesis cuántas ofertas del catálogo tiene (P13). Todo grupo de más de 2 casillas DEBERÁ ofrecer «Seleccionar todo» y «Quitar selección».
 - **RF-2.8b** Puestos, países, idiomas y sector DEBERÁN llegar marcados a partir del CV, y la usuaria DEBERÁ poder cambiarlos y marcar puestos que no están en su CV para cambiar de carrera. Contrato, remoto, nivel, sueldo mínimo y salario publicado los marca ella. Un grupo sin nada marcado NO DEBERÁ filtrar (P1).
 
 ### CV base
