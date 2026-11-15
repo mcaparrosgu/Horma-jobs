@@ -626,3 +626,24 @@ def test_un_cv_base_se_modifica_y_se_borra_y_solo_el_propio(app, motor_app):
     assert c.delete(f"/api/cv-base/{cv_id}", headers=h).status_code == 200
     assert c.get("/api/cv-base").json()["cv_base"] == []
     assert c.delete(f"/api/cv-base/{cv_id}", headers=h).status_code == 404
+
+
+def test_una_cuenta_nueva_ve_vacio_perfil_cv_base_y_recomendadas_de_otra(app, motor_app):
+    """Plan de pruebas 7.1: lo de la usuaria A no aparece en las pantallas de la usuaria B."""
+    a, ha, _ = entrar(app, "google-A")
+    u = _usuaria_id(motor_app, "google-A")
+    subir(a, ha, nombre="CV de A")
+    _perfil_hecho(motor_app, u)
+    with sesion_de(motor_app, u) as s:
+        perfiles.guardar_cv_base(s, u, 1, {
+            "guardados": [{"destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
+                           "contenido": "## Experiencia\nCamarera", "traza": [], "intentos": 1}],
+            "rechazados": []})
+    _puntuar(motor_app, u, 1, (_oferta(motor_app, titulo="Oferta A"), 80))
+    assert a.get("/api/cv-base").json()["cv_base"] and a.get("/api/recomendaciones").json()["recomendaciones"]
+
+    b, _, _ = entrar(app, "google-B")
+    assert b.get("/api/cv").json() == []
+    assert b.get("/api/perfil").json()["perfil"] is None
+    assert b.get("/api/cv-base").json()["cv_base"] == []
+    assert all(x["nota"] is None for x in b.get("/api/recomendaciones").json()["recomendaciones"])
