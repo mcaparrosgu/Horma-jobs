@@ -106,6 +106,8 @@ def test_moneda_en_simbolo_o_palabra():
     "Lleva tres años de experiencia como camarera.",
     "La oferta pide 2 años de experiencia en sala.",
     "Trabajó 5 años en un Centro de Salud como administrativa.",
+    "Lucía tiene 3 años como camarera en Bar Sol.",
+    "Ella tiene 10 años de experiencia en sala.",
     "Perfil senior con inglés B2.",
     "Su formación en hostelería encaja con el puesto.",
     "",

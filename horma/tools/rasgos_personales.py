@@ -13,7 +13,8 @@ import unicodedata
 _PATRONES: dict[str, list[str]] = {
     "edad": [
         r"\bedad\b", r"\bfecha de nacimiento\b", r"\bnacid[oa] (?:en|el)\b", r"\bnacimiento\b",
-        r"\b(?:tiene|tienes|cumple|cumplio|cumplir)\s+(?:\w+\s+)?\d{1,2}\s+anos\b",
+        r"\b(?:tiene|tienes|cumple|cumplio|cumplir)\s+(?:\w+\s+)?\d{1,2}\s+anos\b"
+        r"(?!\s+(?:de\s+(?:experiencia|antiguedad|trayectoria)|como|en|trabajando|ejerciendo|dedicad))",
         r"\b(?:mayor|menor)\s+de\s+\d{2}\s+anos\b", r"\bjoven(?:es)?\b", r"\bjuventud\b",
         r"\banciana?\b", r"\bveterana?\b",
     ],
