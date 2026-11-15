@@ -49,6 +49,17 @@
         "cv_id": 1,
         "fragmento": "Máster en Cuidados Críticos, Universidad de Zaragoza, 2018-2019"
       }
+    },
+    {
+      "titulo": "Soporte Vital Avanzado",
+      "centro": null,
+      "inicio": null,
+      "fin": null,
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Soporte Vital Avanzado"
+      }
     }
   ],
   "idiomas": [

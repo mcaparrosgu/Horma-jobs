@@ -74,7 +74,10 @@ def _lista(valores) -> list[str]:
 
 
 def _periodo(x: dict) -> str:
-    return f"{x.get('inicio') or '?'}-{x.get('fin') or '?'}"
+    inicio, fin = x.get("inicio"), x.get("fin")
+    if inicio and inicio == fin:  # un año suelto («2016») es lo mismo que «?-2016»: no se inventa el inicio
+        inicio = None
+    return f"{inicio or '?'}-{fin or '?'}"
 
 
 def _resumen_perfil(p: dict) -> dict:
