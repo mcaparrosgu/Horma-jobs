@@ -156,6 +156,22 @@ function grupoCasillas(clave, titulo, opciones, marcados, { plegable = false, or
   if (plegable && marcados.length) cabecera.append(nodo("span", String(marcados.length), "estado"));
   cont.append(cabecera);
   const caja = nodo("div", null, "casillas");
+  // Con más de 2 casillas, «Seleccionar todo» y «Quitar selección» (una sola notificación de cambio).
+  if (opciones.length > 2) {
+    const masivo = nodo("div", null, "masivo");
+    for (const [texto, valor] of [["Seleccionar todo", true], ["Quitar selección", false]]) {
+      const b = nodo("button", texto, "secundario enlace");
+      b.type = "button";
+      b.addEventListener("click", () => {
+        for (const i of caja.querySelectorAll("input[type=checkbox]")) i.checked = valor;
+        const n = cont.querySelector("summary .estado:not(.bien)");
+        if (n) n.textContent = String(valor ? opciones.length : 0);
+        if (alCambiar) alCambiar();
+      });
+      masivo.append(b);
+    }
+    caja.append(masivo);
+  }
   for (const o of opciones) {
     const l = nodo("label", null, "casilla");
     const i = nodo("input");

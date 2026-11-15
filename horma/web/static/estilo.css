@@ -229,3 +229,5 @@ details.porque > summary{ cursor: pointer; color: var(--acento); font-size: 0.9r
 .visor header{ justify-content:space-between; align-items:center; }
 #visor-cuerpo{ flex:1; min-height:0; }
 .visor-marco{ width:100%; height:100%; border:0; background:#fff; }
+.masivo{ display: flex; gap: 0.5rem; flex-wrap: wrap; padding-bottom: 0.3rem; border-bottom: 1px solid var(--borde); margin-bottom: 0.2rem; }
+.masivo button.enlace{ padding: 0.1rem 0.5rem; font-size: 0.85rem; }
