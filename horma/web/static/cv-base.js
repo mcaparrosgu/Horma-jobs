@@ -1,37 +1,49 @@
 // Pantalla de CV base: se generan a petición, se leen y se renombran (RF-2.1b, RF-2.9).
 let temporizador = null;
 
-// Dibuja el Markdown del CV como un documento (sin HTML pegado: todo va con textContent).
-function cvBonito(md) {
-  const hoja = nodo("article", null, "cv-hoja");
-  let lista = null;
-  const lineas = md.split("\n");
-  let primero = true;
-  for (const crudo of lineas) {
-    const linea = crudo.trim();
-    if (!linea) { lista = null; continue; }
-    const t = linea.match(/^(#{1,6})\s+(.*)$/);
-    if (t) {
-      lista = null;
-      hoja.append(nodo(primero ? "h4" : "h5", t[2].replace(/[*_`]/g, ""), primero ? "cv-nombre" : "cv-seccion"));
-      primero = false;
-      continue;
+// Historial del CV base (RF-3.8d): versiones con sus líneas añadidas y quitadas; se puede volver a una.
+function lineaVersion(l) {
+  const marca = l.marca === "añadida" ? "añadida" : l.marca === "quitada" ? "quitada" : "igual";
+  const p = nodo("p", null, `linea-version linea-${marca === "añadida" ? "anadida" : marca}`);
+  if (marca !== "igual") p.append(nodo("span", marca === "añadida" ? "añadida: " : "quitada: ", "solo-lector"));
+  p.append(l.linea === "" ? " " : l.linea);
+  return p;
+}
+
+function historial(c) {
+  const d = nodo("details", null, "leer");
+  d.append(nodo("summary", "Historial"));
+  const cuerpo = nodo("div");
+  d.append(cuerpo);
+  let cargado = false;
+  d.addEventListener("toggle", async () => {
+    if (!d.open || cargado) return;
+    cargado = true;
+    const r = await api(`/api/cv-base/${c.id}/versiones`);
+    if (!r.ok) { cargado = false; return avisar(r.motivo, true); }
+    if (!r.datos.versiones.length) {
+      cuerpo.append(nodo("p", "Todavía no hay versiones anteriores: aparecen cuando editas o guardas una candidatura encima de este CV base.", "suave"));
+      return;
     }
-    primero = false;
-    const v = linea.match(/^(?:[-*+•]|\d+[.)])\s+(.*)$/);
-    if (v) {
-      if (!lista) { lista = nodo("ul", null, "cv-lista"); hoja.append(lista); }
-      lista.append(nodo("li", v[1].replace(/[*_`]/g, "")));
-      continue;
+    const origenes = { candidatura: "desde una candidatura", edicion: "edición", restauracion: "al volver a una versión" };
+    for (const v of r.datos.versiones) {
+      const det = nodo("details", null, "version");
+      det.append(nodo("summary", `${fecha(v.creado_en)} · ${origenes[v.origen] || v.origen} · «${v.nombre}»`));
+      const lineas = nodo("div", null, "lineas-version");
+      lineas.append(...v.lineas.map(lineaVersion));
+      const volver = nodo("button", "Volver a esta versión", "secundario");
+      volver.type = "button";
+      volver.addEventListener("click", async () => {
+        const rr = await api(`/api/cv-base/${c.id}/versiones/${v.id}/restaurar`, { metodo: "POST", cuerpo: {} });
+        if (!rr.ok) return avisar(rr.motivo, true);
+        avisar("Has vuelto a esa versión; la anterior queda en el historial.");
+        await cargar();
+      });
+      det.append(lineas, volver);
+      cuerpo.append(det);
     }
-    lista = null;
-    const partes = linea.replace(/[*_`]/g, "").split(/\s[·|]\s/);
-    const p = nodo("p", null, "cv-linea");
-    p.append(nodo("strong", partes[0]));
-    if (partes.length > 1) p.append(nodo("span", partes.slice(1).join(" · "), "cv-detalle"));
-    hoja.append(p);
-  }
-  return hoja;
+  });
+  return d;
 }
 
 function tarjeta(c) {
@@ -46,6 +58,7 @@ function tarjeta(c) {
   detalle.append(nodo("summary", "Ver el CV"));
   detalle.append(cvBonito(c.contenido));
   li.append(detalle);
+  li.append(historial(c));
   const acciones = nodo("div", null, "fila");
   const modificar = nodo("button", "Modificar", "secundario");
   modificar.type = "button";

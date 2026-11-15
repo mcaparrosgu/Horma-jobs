@@ -8,6 +8,7 @@ const PESTANAS = [
   ["Preferencias", "/preferencias"],
   ["CV base", "/cv-base"],
   ["Recomendadas", "/recomendadas"],
+  ["Candidaturas", "/candidaturas"],
 ];
 
 function nodo(etiqueta, texto, clase) {
@@ -104,6 +105,39 @@ async function arrancar(activa) {
     location.href = "/";
   });
   return yo;
+}
+
+// Dibuja el Markdown del CV como un documento (sin HTML pegado: todo va con textContent).
+function cvBonito(md) {
+  const hoja = nodo("article", null, "cv-hoja");
+  let lista = null;
+  const lineas = md.split("\n");
+  let primero = true;
+  for (const crudo of lineas) {
+    const linea = crudo.trim();
+    if (!linea) { lista = null; continue; }
+    const t = linea.match(/^(#{1,6})\s+(.*)$/);
+    if (t) {
+      lista = null;
+      hoja.append(nodo(primero ? "h4" : "h5", t[2].replace(/[*_`]/g, ""), primero ? "cv-nombre" : "cv-seccion"));
+      primero = false;
+      continue;
+    }
+    primero = false;
+    const v = linea.match(/^(?:[-*+•]|\d+[.)])\s+(.*)$/);
+    if (v) {
+      if (!lista) { lista = nodo("ul", null, "cv-lista"); hoja.append(lista); }
+      lista.append(nodo("li", v[1].replace(/[*_`]/g, "")));
+      continue;
+    }
+    lista = null;
+    const partes = linea.replace(/[*_`]/g, "").split(/\s[·|]\s/);
+    const p = nodo("p", null, "cv-linea");
+    p.append(nodo("strong", partes[0]));
+    if (partes.length > 1) p.append(nodo("span", partes.slice(1).join(" · "), "cv-detalle"));
+    hoja.append(p);
+  }
+  return hoja;
 }
 
 function fecha(valor) {

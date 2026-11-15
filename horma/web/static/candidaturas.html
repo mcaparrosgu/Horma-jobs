@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Candidaturas · Horma</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main class="muy-ancho">
+    <header class="cabecera">
+      <a class="logo" href="/"><h1>Horma</h1></a>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </header>
+    <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
+
+    <p class="suave">Tus candidaturas, por estado. Se crean desde <a href="/recomendadas">Recomendadas</a> con «Preparar candidatura». Horma prepara el CV y la carta; tú los revisas, los apruebas y los envías.</p>
+    <span id="aviso" role="status"></span>
+    <div id="tablero" class="tablero"></div>
+    <p id="vacio" class="suave" hidden>Todavía no tienes candidaturas.</p>
+  </main>
+  <script src="/static/comun.js"></script>
+  <script src="/static/candidaturas.js"></script>
+</body>
+</html>
