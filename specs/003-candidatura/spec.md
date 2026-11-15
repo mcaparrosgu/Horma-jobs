@@ -3,25 +3,27 @@ type: spec
 title: candidatura — Spec funcional
 description: Requisitos funcionales de la fase 3 (CV y carta adaptados con verificador y juez, aprobación, envío por cuenta propia y seguimiento en un tablero), en notación EARS.
 tags: [spec, candidatura, seguimiento]
-status: draft
+status: active
 sources: [./clarifications.md, ../system.md, ../002-perfil-recomendacion/spec.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
 generated: { by: claude-code, at: 2026-11-15 }
-verified: { by: null, at: null }
+verified: { by: human, at: 2026-11-15 }
 stale_after: null
 ---
 
 # candidatura — Especificación
 
 ## Contexto
-La usuaria elige una oferta recomendada y uno de sus CV base. Horma le prepara un CV y una carta
-adaptados a esa oferta, los comprueba con código (verificador) y con un segundo agente (juez), y
-le deja un borrador. Ella lo revisa, lo aprueba, descarga los PDF, envía la candidatura por su
-cuenta y la sigue en un tablero. Cuando una empresa contesta, pega la respuesta y Horma le propone
+La usuaria elige una oferta recomendada. Horma elige el más adecuado de sus CV base, le prepara un
+CV y una carta adaptados a esa oferta, los comprueba con código (verificador) y con un segundo
+agente (juez), y le deja un borrador. Ella lo revisa, lo corrige si hace falta (y puede guardar la
+corrección encima de su CV base), lo aprueba, descarga los PDF, envía la candidatura por su cuenta
+y la sigue en un tablero. Cuando una empresa contesta, pega la respuesta y Horma le propone
 el cambio de estado, que ella confirma.
 
 Entran el flujo `candidatura` (el único con bucle, el que define cómo tiene que ser `Flow` para que
-LangGraph lo sustituya en la fase 4), el flujo `clasificar_respuesta` y cinco agentes:
-`redactor-cv`, `juez-cv`, `redactor-carta`, `juez-carta` y `clasificador-respuesta`. Los requisitos
+LangGraph lo sustituya en la fase 4), el flujo `clasificar_respuesta` y seis agentes:
+`selector-cv-base`, `redactor-cv`, `juez-cv`, `redactor-carta`, `juez-carta` y
+`clasificador-respuesta`. Los requisitos
 transversales (RT-xx) están en [system.md](../system.md) y las respuestas del Clarify en
 [clarifications.md](./clarifications.md) (se citan como P1…P11).
 
@@ -36,9 +38,13 @@ transversales (RT-xx) están en [system.md](../system.md) y las respuestas del C
   `medir_ats`) y la carta como máximo 2 (una vuelta). El flujo DEBERÁ terminar en `lista` si el
   último veredicto de los dos jueces es «aprobado» y la verificación no deja errores, o en
   `pendiente_de_ti` si no; en los dos casos la candidatura queda en `borrador` (P4).
-- **RF-3.1b** `elegir_cv_base` DEBERÁ cargar el CV base que eligió la usuaria y comprobar que es suyo
-  y que no está rechazado; NO DEBERÁ elegirlo por ella. SI el CV base está desfasado (de una versión
-  anterior del perfil), ENTONCES el sistema DEBERÁ avisarla antes de preparar la candidatura (P9).
+- **RF-3.1b** `elegir_cv_base` DEBERÁ elegir, con el agente `selector-cv-base`, el CV base de la
+  usuaria más adecuado para la oferta (sector, puesto y requisitos) y anotar el motivo en una frase;
+  la usuaria NO lo elige. El código DEBERÁ comprobar que el elegido es suyo, no está rechazado y
+  estaba entre los candidatos; SI no lo cumple, ENTONCES el flujo DEBERÁ terminar en error sin
+  redactar. Con un solo CV base válido NO DEBERÁ llamarse al modelo. SI el CV base elegido está
+  desfasado (de una versión anterior del perfil), ENTONCES la candidatura DEBERÁ mostrar un aviso
+  (P9).
 - **RF-3.2** `redactor-cv` DEBERÁ adaptar el CV base a la oferta aplicando la regla de los huecos:
   cambia qué se muestra y cómo se cuenta, nunca fechas, cargos, empresas ni titulaciones. Lo que la
   oferta pide y el perfil no tiene DEBERÁ ir a `huecos` con una propuesta para la usuaria, nunca al
@@ -72,13 +78,22 @@ transversales (RT-xx) están en [system.md](../system.md) y las respuestas del C
   (`rechazo`, `descartada` o `retirada`); `cerrada` es final (P8). Cualquier otra transición DEBERÁ
   rechazarse. Cada transición DEBERÁ quedar en el historial con su fecha.
 - **RF-3.7b** CUANDO la usuaria pulse «Preparar candidatura» en una oferta recomendada, el sistema
-  DEBERÁ pedirle que elija un CV base, con el del mismo sector o puesto ya marcado. SI no tiene
-  ninguno, ENTONCES DEBERÁ pedirle que genere uno primero. NO DEBERÁ haber dos candidaturas no
-  cerradas para la misma oferta (P9).
-- **RF-3.8** MIENTRAS la candidatura esté en `borrador`, la usuaria DEBERÁ poder ver el CV y la carta
-  adaptados, los huecos con su propuesta y los avisos (errores de verificación y problemas de los
-  jueces), editarlos a mano o descartarla (P4). Lo que ella escribe lleva origen «usuaria» y vuelve
-  a pasar `verificar_trazabilidad`, sin llamar al modelo. Solo la dueña, con su sesión, DEBERÁ poder
+  DEBERÁ crear la candidatura y lanzar su preparación sin pedirle que elija CV base. SI no tiene
+  ningún CV base válido, ENTONCES DEBERÁ pedirle que genere uno primero. NO DEBERÁ haber dos
+  candidaturas no cerradas para la misma oferta (P9).
+- **RF-3.8** MIENTRAS la candidatura esté en `borrador`, la usuaria DEBERÁ poder ver qué CV base
+  eligió Horma y por qué, el CV y la carta adaptados, los huecos con su propuesta y los avisos
+  (errores de verificación y problemas de los jueces), editarlos a mano o descartarla (P4). Lo que
+  ella escribe lleva origen «usuaria» y vuelve a pasar `verificar_trazabilidad`, sin llamar al
+  modelo. CUANDO haya editado el CV adaptado, DEBERÁ poder guardarlo encima del CV base del que
+  partió, poniéndole el nombre que quiera (por defecto, el que ya tenía; único en su cuenta, como
+  RF-2.1b), para que las próximas candidaturas partan de ese texto (P9b).
+- **RF-3.8d** CUANDO se sobrescriba un CV base (al guardar encima desde una candidatura o al
+  editarlo, RF-2.9e), el sistema DEBERÁ guardar antes la versión anterior (texto, nombre, fecha y
+  origen: candidatura o edición manual) en su historial. La usuaria DEBERÁ poder ver ese historial,
+  con lo añadido y lo quitado marcado entre cada versión y la siguiente, y volver a cualquier
+  versión; volver DEBERÁ guardar antes la versión actual, de modo que ningún texto se pierda. Solo
+  la dueña ve su historial (RLS). Al eliminar un CV base se elimina también su historial. Solo la dueña, con su sesión, DEBERÁ poder
   aprobar; SI hay avisos, ENTONCES DEBERÁ marcar «He revisado los avisos» antes (P10). Al aprobar
   elige entre el CV adaptado y uno de sus CV estéticos.
 - **RF-3.8b** CUANDO la candidatura esté `aprobada` o en un estado posterior, la usuaria DEBERÁ poder
@@ -103,8 +118,10 @@ transversales (RT-xx) están en [system.md](../system.md) y las respuestas del C
   (RT-14) y desde la consola con `--paso-a-paso` (pausa entre pasos, muestra entrada y salida) y
   `--traza <dir>` (guarda cada paso como JSON). Cada agente nuevo DEBERÁ poder ejecutarse por
   separado (RT-04).
-- **RF-3.12** CUANDO un set de evals se mida con el modelo real, el sistema DEBERÁ detenerlo si el
-  coste acumulado supera 1 USD por ejecución y dejar constancia (P6).
+- **RF-3.12** MIENTRAS Horma esté en construcción, CUANDO un set de evals se mida con el modelo
+  real, el sistema DEBERÁ detenerlo si el coste acumulado supera 1 USD por ejecución y dejar
+  constancia (P6). El tope de 1 USD es solo para las pruebas de construcción; el tope de uso real se
+  fija al medir el coste, antes de usuarias reales.
 
 ## Criterios de aceptación (puerta de salida)
 - [ ] `horma eval correr cv` sobre 12 casos con errores sembrados (cifra inventada, cargo subido,
@@ -118,11 +135,16 @@ transversales (RT-xx) están en [system.md](../system.md) y las respuestas del C
 - [ ] La máquina de estados rechaza toda transición no permitida y nadie salvo la dueña con su
       sesión aprueba (test).
 - [ ] El texto de un correo pegado no queda guardado en ninguna tabla, ni con éxito ni con error (test).
-- [ ] Un test de RLS demuestra que una usuaria no lee las candidaturas ni el historial de otra.
+- [ ] Un test de RLS demuestra que una usuaria no lee las candidaturas ni el historial de otra, ni
+      las versiones de sus CV base.
+- [ ] Guardar encima de un CV base y volver después a la versión anterior deja el texto original
+      idéntico, y las dos versiones siguen en el historial (test).
 - [ ] Consola: `horma flujo correr candidatura --usuaria ana --oferta 123 --paso-a-paso --traza
       trazas/ana-123/`, `horma agente correr juez-cv --entrada caso.json`, `horma eval correr cv`.
-- [ ] Prueba manual: desde Recomendadas, preparar una candidatura eligiendo un CV base; ver huecos y
-      avisos; editar; aprobar; descargar los PDF; marcar enviada con canal y fecha; pegar una
+- [ ] Prueba manual: desde Recomendadas, preparar una candidatura y ver qué CV base eligió Horma y
+      por qué; ver huecos y avisos; editar y guardar la edición encima del CV base con un nombre
+      nuevo; ver en el historial del CV base lo añadido y lo quitado y volver a la versión
+      anterior; aprobar; descargar los PDF; marcar enviada con canal y fecha; pegar una
       respuesta y confirmar el cambio; verla en el tablero con su historial.
 
 ## Fuera de alcance
