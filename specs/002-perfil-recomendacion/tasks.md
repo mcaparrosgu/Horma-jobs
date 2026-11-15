@@ -38,8 +38,10 @@ Orden de construcción: contrato y código puro (T01-T05) → agentes y flujos (
 - [x] T22 — Consola (`agente correr` de los 4 agentes, `flujo correr perfilar`, `recomendar`, `eval correr` de los 3 sets, `eval importar-correccion`) · test: cada comando corre en simulado; `--paso-a-paso` y `--traza` guardan un JSON por paso; la corrección solo se copia con confirmación · cubre: RF-2.13, RF-2.16, RT-04, RT-05
 - [x] T23 — CI, Compose (volumen `horma_archivos`), `.env.example`, README, `specs/system.md` y plan de pruebas manuales · test: CI corre los tres sets; el README documenta los comandos; el contrato de import-linter incluye los agentes nuevos · cubre: RF-2.16, RF-2.17, RT-11
 
+- Aclaraciones, spec, plan y tareas de la fase 2 verificados por Mar el 14-nov-2026 (campo `verified` del encabezado de cada documento).
+
 ## Pendiente de la persona (no se puede hacer sin ti)
-- Instalar `python-multipart`, `pypdf` y `python-docx` si `uv` falla con certificados (T01); después, `UV_NO_SYNC=1`.
+- ~~Instalar `python-multipart`, `pypdf` y `python-docx` si `uv` falla con certificados (T01)~~ (hecho el 14-nov-2026).
 - Lanzar los tres evals con el modelo real (tope de 1 USD por ejecución) y revisar el resultado (T11, T12).
 
 ## Apuntado para el final, si hay tiempo (no se pierde; spec P15)
