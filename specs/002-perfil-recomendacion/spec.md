@@ -78,6 +78,7 @@ No se pierde: queda en la spec y en la bitácora, y se retoma al terminar la con
 - Guardar búsquedas con nombre.
 - Programar recomendaciones periódicas.
 - Verificar las explicaciones del `matcher` (hueco detectado al repasar la fase): hoy solo los CV base pasan `verificar_trazabilidad`. Plan: el matcher devuelve los fragmentos literales del perfil y de la oferta en que se apoya, un verificador en código comprueba que existen y, si no, la explicación no se muestra y se reintenta una vez. Un segundo agente revisor solo en el eval, no en producción. Toca RF-2.12, el plan y el matcher.
+- Ignorar el texto invisible al convertir un CV (blanco sobre blanco o tamaño 0) en `convertir_cv`. Hueco detectado al repasar la fase: una instrucción escondida en el CV es texto del CV, así que `verificar_origen` y `verificar_trazabilidad` no detectarían el dato falso que provoque; hoy solo lo frena que el extractor la anote en `instrucciones_embebidas` (RF-2.7) y que la usuaria vea el origen de cada dato. Toca `convertir_cv` y el eval `perfil`.
 
 ## Decidido al planificar
 Al leer el esquema `Oferta` de la fase 1: `contrato`, `ubicacion` e `idiomas` son texto libre, no hay campo país y el salario no indica periodo. Se resuelve en el [plan](./plan.md): código sin IA los normaliza al guardar cada oferta (P16) y el sueldo se compara en euros brutos al año (P17).
