@@ -82,6 +82,16 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 4. Puerta de salida: `horma eval correr perfil`, `cv-base` y `recomendacion` con el modelo real
    (tope de 1 USD por ejecución).
 
+### Fase 3: candidatura y seguimiento
+
+1. `uv run alembic upgrade head` aplica la migración 0006 (candidaturas, historial y versiones de CV base).
+2. En `/recomendadas`, «Preparar candidatura» crea la candidatura; el worker elige el CV base y
+   redacta CV y carta. En `/candidaturas` las ves por estado: revisas, editas, apruebas, descargas
+   los PDF y sigues el proceso (enviada, entrevista, cerrada). Cada CV base guarda su historial en `/cv-base`.
+3. Para probarlo sin web: `horma flujo correr candidatura` y `horma flujo correr clasificar_respuesta`
+   (ver Consola).
+4. Puerta de salida: `horma eval correr cv` y `respuestas` con el modelo real (tope de 1 USD, solo de construcción).
+
 ## Consola
 
 - `uv run horma agente listar` · `uv run horma agente correr <agente> --entrada x [--salida y]`
@@ -99,6 +109,14 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
   `--ofertas` pide el catálogo común a `GET /api/catalogo` con `HORMA_CLAVE_INGESTA`.
 - `uv run horma agente correr extractor-perfil|clasificador-postulante|generador-cv-base|matcher
   --entrada x.json`: cada agente nuevo por separado.
+- `uv run horma flujo correr candidatura --usuaria ana --oferta <id> [--ofertas catalogo.json]
+  [--paso-a-paso --traza trazas/]`: prepara CV y carta en local con la usuaria de prueba
+  `evals/cv/usuarias/ana` y una oferta del catálogo (sin `--ofertas`, de `GET /api/catalogo`); no guarda nada.
+- `uv run horma flujo correr clasificar_respuesta --entrada r.json`: `r.json` = `{"texto": "…",
+  "estado_actual": "enviada"}`; enseña la etiqueta y la transición propuesta.
+- `uv run horma agente correr redactor-cv|juez-cv|redactor-carta|juez-carta|clasificador-respuesta|selector-cv-base
+  --entrada x.json`: los agentes de la fase 3, cada uno por separado.
+- `uv run horma eval correr cv|respuestas`: los evals de la fase 3 (`--simulado` solo prueba el harness).
 - `uv run horma eval correr ofertas|fuentes` y, de la fase 2, `horma eval correr perfil`,
   `horma eval correr cv-base` y `horma eval correr recomendacion` corren los casos de
   `evals/<set>/casos/` y dejan la ejecución en `evals/resultados/`. Con `--simulado` solo prueban

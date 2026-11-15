@@ -112,13 +112,46 @@ def _estado_inicial(nombre: str, entrada: Path, usuaria: str | None) -> dict:
     return json.loads(texto) if entrada.suffix == ".json" else {"texto": texto}
 
 
+def _estado_candidatura(usuaria: str | None, oferta_id: str | None, ofertas: Path | None) -> dict:
+    """Estado inicial de `candidatura` sin base de datos: usuaria de prueba + oferta del catálogo."""
+    from horma.evals import cargar_usuaria
+
+    if not usuaria or not oferta_id:
+        typer.echo("`candidatura` necesita --entrada, o bien --usuaria y --oferta.", err=True)
+        raise typer.Exit(2)
+    carpeta = Path("evals") / "cv" / "usuarias" / usuaria
+    if not (carpeta / "usuaria.json").exists():
+        typer.echo(f"No existe la usuaria de prueba {carpeta}.", err=True)
+        raise typer.Exit(2)
+    if ofertas:
+        candidatas = json.loads(ofertas.read_text(encoding="utf-8"))["ofertas"]
+    else:
+        from horma.ingesta import ErrorApi
+
+        try:
+            candidatas = _cliente_api().catalogo()["ofertas"]
+        except ErrorApi as e:
+            typer.echo(f"La API respondió con un error: {e}", err=True)
+            raise typer.Exit(1) from e
+    elegida = next((c for c in candidatas if str(c["oferta_id"]) == oferta_id), None)
+    if elegida is None:
+        typer.echo(f"La oferta {oferta_id} no está en el catálogo.", err=True)
+        raise typer.Exit(2)
+    return {**cargar_usuaria(carpeta), "oferta": elegida["oferta"]}
+
+
 @flujo.command("correr")
 def flujo_correr(
     nombre: str,
-    entrada: Path = typer.Option(..., help="Estado inicial: .md = {texto}; .json = estado; en "
-                                           "`perfilar`, también el CV en .pdf o .docx."),
-    usuaria: str | None = typer.Option(None, help="Solo nombra el CV en la traza (`perfilar`); no "
-                                                  "guarda nada."),
+    entrada: Path | None = typer.Option(None, help="Estado inicial: .md = {texto}; .json = estado; "
+                                                   "en `perfilar`, también el CV en .pdf o .docx. "
+                                                   "En `candidatura` sobra con --usuaria y --oferta."),
+    usuaria: str | None = typer.Option(None, help="`perfilar`: solo nombra el CV en la traza. "
+                                                  "`candidatura`: usuaria de prueba de "
+                                                  "evals/cv/usuarias/. No guarda nada."),
+    oferta: str | None = typer.Option(None, help="`candidatura`: id de la oferta del catálogo."),
+    ofertas: Path | None = typer.Option(None, help='`candidatura`: catálogo en JSON ({"ofertas": '
+                                                   "[...]}) para no usar la API."),
     paso_a_paso: bool = typer.Option(False, "--paso-a-paso", help="Pausa tras cada paso."),
     traza: Path | None = typer.Option(None, help="Carpeta donde guardar cada paso como JSON."),
     salida: Path | None = typer.Option(None, help="Archivo donde guardar el resultado."),
@@ -129,7 +162,13 @@ def flujo_correr(
     if nombre not in FLUJOS:
         typer.echo(f"Flujo desconocido: {nombre}", err=True)
         raise typer.Exit(2)
-    estado = _estado_inicial(nombre, entrada, usuaria)
+    if nombre == "candidatura" and entrada is None:
+        estado = _estado_candidatura(usuaria, oferta, ofertas)
+    elif entrada is None:
+        typer.echo("Falta --entrada.", err=True)
+        raise typer.Exit(2)
+    else:
+        estado = _estado_inicial(nombre, entrada, usuaria)
     deps: dict = {}
     if simulado:
         if respuestas is None:
