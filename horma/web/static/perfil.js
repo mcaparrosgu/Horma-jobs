@@ -15,6 +15,7 @@ const SECCIONES = [["titular", "Titular"], ["resumen", "Resumen"], ["experiencia
                    ["formacion", "Formación"], ["idiomas", "Idiomas"], ["habilidades", "Habilidades"]];
 const MOTIVOS = { falta: "Falta", ambiguo: "Ambiguo", contradiccion: "Contradicción entre CV" };
 let idiomasValidos = [];
+let perfilActual = null;
 let temporizador = null;
 
 function resumenDe(campoNombre, d) {
@@ -119,10 +120,20 @@ function pregunta(p, i) {
     abrir.addEventListener("click", () => {
       abrir.hidden = true;
       const extra = { sugerencias: p.opciones || [] };
-      if (DETALLES[detalle]) extra.solo = DETALLES[detalle];
+      const inicial = {};
+      // Si el dato por el que se pregunta no está en el perfil (lo dejó fuera por ambiguo), hay que
+      // pedirlo entero: con solo las fechas no se puede crear.
+      const existe = (perfilActual?.[seccion] || []).some((x) => Object.entries(x).some(
+        ([k, v]) => k !== "origen" && typeof v === "string" && v.trim().toLowerCase() === clave.trim().toLowerCase()));
+      if (DETALLES[detalle] && (existe || !clave)) extra.solo = DETALLES[detalle];
+      else if (DETALLES[detalle]) {
+        extra.sugerencias = [];
+        if (seccion === "experiencias") inicial.empresa = clave;
+        if (seccion === "formacion") inicial.centro = clave;
+      }
       else if (seccion === "nombre") extra.solo = ["valor"];
       if (seccion === "idiomas" && idiomasValidos.includes(clave)) extra.idiomaFijo = clave;
-      const f = formularioDato(seccion, {}, responder, () => { f.remove(); abrir.hidden = false; },
+      const f = formularioDato(seccion, inicial, responder, () => { f.remove(); abrir.hidden = false; },
                                "Guardar respuesta", extra);
       li.insertBefore(f, acciones);
     });
@@ -188,6 +199,7 @@ async function cargarPerfil() {
   $("datos").hidden = true;
   if (!perfil) return;
 
+  perfilActual = perfil;
   const pend = perfil.preguntas_pendientes || [];
   $("pendientes").hidden = pend.length === 0;
   $("lista-pendientes").replaceChildren(...pend.map(pregunta));
