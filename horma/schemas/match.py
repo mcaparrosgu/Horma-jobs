@@ -11,8 +11,14 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 _FRASE = re.compile(r"[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$")
 
 
+# Siglas con puntos («RR. HH.», «EE. UU.») y abreviaturas («p. ej.», «etc.») no cierran frase.
+_SIGLA = re.compile(r"\b([A-ZÁÉÍÓÚÑ]{1,3})\.(?=\s?[A-ZÁÉÍÓÚÑ]{1,3}\.)")
+_PUNTO_ANTES_DE_MINUSCULA = re.compile(r"\.(?=\s+[a-záéíóúñ])")
+
+
 def contar_frases(texto: str) -> int:
-    return len([f for f in _FRASE.findall(texto.strip()) if f.strip(" .!?")])
+    texto = _PUNTO_ANTES_DE_MINUSCULA.sub("", _SIGLA.sub(r"\1", texto.strip()))
+    return len([f for f in _FRASE.findall(texto) if f.strip(" .!?")])
 
 
 class Match(BaseModel):
