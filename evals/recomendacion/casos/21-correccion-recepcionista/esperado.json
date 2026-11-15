@@ -1,5 +1,6 @@
 {
   "nota": 50,
   "condiciones": "medio",
-  "motivo": "no sé francés"
+  "motivo": "no sé francés",
+  "instrucciones_embebidas": true
 }

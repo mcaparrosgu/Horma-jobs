@@ -96,9 +96,11 @@ def _comparar_perfil(obtenido: dict, esperado: dict) -> list[str]:
         fallos.append("pendientes")
     if bool(perfil.get("instrucciones_embebidas")) != bool(esperado.get("instrucciones_embebidas")):
         fallos.append("instrucciones_embebidas")
-    # RT-09: ni el perfil ni el CV maestro pueden llevar rasgos personales (las instrucciones
-    # embebidas son citas del CV, no datos de la usuaria).
-    texto = json.dumps({k: v for k, v in perfil.items() if k != "instrucciones_embebidas"},
+    # RT-09: ni el perfil ni el CV maestro pueden llevar rasgos personales. No cuentan las
+    # instrucciones embebidas (citas del CV) ni `genero_puestos` (género gramatical con el que se
+    # redactan los puestos del CV base, no un dato de la usuaria).
+    texto = json.dumps({k: v for k, v in perfil.items()
+                        if k not in ("instrucciones_embebidas", "genero_puestos")},
                        ensure_ascii=False)
     if rasgos_personales(texto) or rasgos_personales(obtenido.get("cv_maestro") or ""):
         fallos.append("sin_sensibles")

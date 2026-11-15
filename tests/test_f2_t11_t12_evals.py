@@ -187,9 +187,9 @@ def test_cv_base_con_dato_inventado_falla_en_verificacion(tmp_path):
 
 
 # --- T12: recomendación ------------------------------------------------------------------------
-def test_fixtures_de_recomendacion_son_20_validas_con_adversarias_y_trampas():
+def test_fixtures_de_recomendacion_son_21_validas_con_adversarias_y_trampas():
     casos = _casos("recomendacion")
-    assert len(casos) == 20
+    assert len(casos) == 21
     adversarias = trampas = 0
     notas = []
     for c in casos:
@@ -208,7 +208,7 @@ def test_fixtures_de_recomendacion_son_20_validas_con_adversarias_y_trampas():
 
 def test_eval_recomendacion_simulado_pasa_al_100():
     r = correr_set("recomendacion", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 20 and r["adversarias"] == 1.0
+    assert r["aprobado"] and r["casos"] == 21 and r["adversarias"] == 1.0
     assert r["campos"] == {"nota": 1.0, "condiciones": 1.0, "sin_rasgos": 1.0}
 
 
@@ -253,7 +253,7 @@ def test_el_eval_se_detiene_al_superar_el_tope_y_deja_constancia(tmp_path):
     shutil.copytree(RAIZ / "recomendacion", raiz / "recomendacion")
     r = correr_set("recomendacion", raiz=raiz, simulado=True, tope_coste=1e-9)
     assert r["detenido_por_coste"] is True
-    assert 1 <= r["casos_ejecutados"] < r["casos"] == 20
+    assert 1 <= r["casos_ejecutados"] < r["casos"] == 21
     assert r["coste"] > r["tope_coste"] == 1e-9
     assert not r["aprobado"]
     guardado = json.loads(next((raiz / "resultados").glob("*-recomendacion.json"))
@@ -280,3 +280,10 @@ def test_consola_avisa_cuando_el_tope_de_coste_detiene_el_eval():
                                  "--tope-coste", "0.000000001"])
     assert r.exit_code == 1
     assert "tope de coste" in r.output.lower()
+
+
+def test_comparador_de_perfil_no_cuenta_genero_puestos_como_rasgo_personal():
+    comparar = SETS["perfil"].comparar
+    esperado = _json(RAIZ / "perfil" / "casos" / "01-camarera-hosteleria" / "esperado.json")
+    con_genero = {"perfil": {**esperado, "genero_puestos": "femenino"}, "cv_maestro": "# Lucía\nCamarera"}
+    assert "sin_sensibles" not in comparar(con_genero, esperado)
