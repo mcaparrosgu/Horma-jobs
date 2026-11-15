@@ -36,6 +36,10 @@ def crear(s: Session, usuaria_id: int, *, nombre: str, nombre_original: str, rut
          "z": tamano, "x": texto}).scalar_one()
 
 
+def eliminar(s: Session, cv_id: int) -> bool:
+    return s.execute(text("delete from cv_archivos where id = :i"), {"i": cv_id}).rowcount == 1
+
+
 def renombrar(s: Session, cv_id: int, nombre: str) -> bool:
     return s.execute(text("update cv_archivos set nombre = :n where id = :i"),
                      {"i": cv_id, "n": nombre}).rowcount == 1
