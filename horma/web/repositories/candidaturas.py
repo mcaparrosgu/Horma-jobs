@@ -13,6 +13,105 @@ def fila(s: Session, candidatura_id: int) -> dict | None:
     return dict(f) if f else None
 
 
+def oferta_procesada(s: Session, oferta_id: int) -> bool:
+    return s.execute(text("select 1 from ofertas where id = :i and estado = 'procesada'"),
+                     {"i": oferta_id}).first() is not None
+
+
+def hay_viva(s: Session, oferta_id: int) -> bool:
+    """¿Hay ya una candidatura no cerrada para esta oferta? (RF-3.7b)"""
+    return s.execute(text("select 1 from candidaturas where oferta_id = :i and estado <> 'cerrada'"),
+                     {"i": oferta_id}).first() is not None
+
+
+def crear(s: Session, usuaria_id: int, oferta_id: int) -> int:
+    return s.execute(text("insert into candidaturas (usuaria_id, oferta_id) values (:u, :o) returning id"),
+                     {"u": usuaria_id, "o": oferta_id}).scalar_one()
+
+
+def tablero(s: Session) -> list[dict]:
+    """Una tarjeta por candidatura, de la última tocada a la primera."""
+    return [dict(f) for f in s.execute(text(
+        "select c.id, c.oferta_id, c.estado, c.preparacion, c.motivo_cierre, c.actualizado_en, "
+        "o.titulo, o.empresa from candidaturas c left join ofertas o on o.id = c.oferta_id "
+        "order by c.actualizado_en desc, c.id desc")).mappings()]
+
+
+def detalle(s: Session, candidatura_id: int) -> dict | None:
+    """La fila sin el texto del correo pegado, con la oferta y el CV base elegido."""
+    f = s.execute(text(
+        "select c.*, o.titulo as oferta_titulo, o.empresa as oferta_empresa, b.nombre as cv_base_nombre, "
+        "b.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
+        "as cv_base_desfasado from candidaturas c left join ofertas o on o.id = c.oferta_id "
+        "left join cv_base b on b.id = c.cv_base_id where c.id = :i"),
+        {"i": candidatura_id}).mappings().first()
+    return dict(f) if f else None
+
+
+def eventos(s: Session, candidatura_id: int) -> list[dict]:
+    return [dict(f) for f in s.execute(text(
+        "select id, de, a, motivo, canal, origen, tipo, etiqueta_respuesta, creado_en "
+        "from candidatura_eventos where candidatura_id = :i order by id"),
+        {"i": candidatura_id}).mappings()]
+
+
+def registrar_evento(s: Session, usuaria_id: int, candidatura_id: int, *, tipo: str = "transicion",
+                     de: str | None = None, a: str | None = None, motivo: str | None = None,
+                     canal: str | None = None, origen: str = "usuaria",
+                     etiqueta_respuesta: str | None = None) -> None:
+    s.execute(text(
+        "insert into candidatura_eventos (usuaria_id, candidatura_id, de, a, motivo, canal, origen, tipo, "
+        "etiqueta_respuesta) values (:u, :c, :de, :a, :m, :ca, :o, :t, :e)"),
+        {"u": usuaria_id, "c": candidatura_id, "de": de, "a": a, "m": motivo, "ca": canal, "o": origen,
+         "t": tipo, "e": etiqueta_respuesta})
+
+
+def contenido_cv_base(s: Session, cv_base_id: int | None) -> str:
+    if cv_base_id is None:
+        return ""
+    return s.execute(text("select contenido from cv_base where id = :i"), {"i": cv_base_id}).scalar() or ""
+
+
+def cv_estetico_valido(s: Session, cv_id: int) -> bool:
+    return s.execute(text("select 1 from cv_archivos where id = :i and clase = 'estetico'"),
+                     {"i": cv_id}).first() is not None
+
+
+def guardar_edicion(s: Session, candidatura_id: int, cv: str, carta: str, avisos: list[str],
+                    preparacion: str) -> None:
+    s.execute(text("update candidaturas set cv_contenido = :cv, carta_contenido = :ca, "
+                   "avisos = cast(:a as jsonb), preparacion = :p, actualizado_en = now() where id = :i"),
+              {"i": candidatura_id, "cv": cv, "ca": carta, "a": _j(avisos), "p": preparacion})
+
+
+def aprobar(s: Session, candidatura_id: int, documento: str, cv_estetico_id: int | None) -> None:
+    s.execute(text("update candidaturas set estado = 'aprobada', documento = :d, cv_estetico_id = :e, "
+                   "actualizado_en = now() where id = :i"),
+              {"i": candidatura_id, "d": documento, "e": cv_estetico_id})
+
+
+def marcar_enviada(s: Session, candidatura_id: int, fecha, canal: str, canal_otro: str | None) -> None:
+    s.execute(text("update candidaturas set estado = 'enviada', enviada_en = :f, canal = :c, "
+                   "canal_otro = :o, actualizado_en = now() where id = :i"),
+              {"i": candidatura_id, "f": fecha, "c": canal, "o": canal_otro})
+
+
+def cambiar_estado(s: Session, candidatura_id: int, estado: str, motivo_cierre: str | None = None) -> None:
+    s.execute(text("update candidaturas set estado = :e, motivo_cierre = :m, actualizado_en = now() "
+                   "where id = :i"), {"i": candidatura_id, "e": estado, "m": motivo_cierre})
+
+
+def guardar_respuesta_pendiente(s: Session, candidatura_id: int, texto: str) -> None:
+    """El texto vive solo hasta que el worker lo clasifica; también se borra la propuesta anterior."""
+    s.execute(text("update candidaturas set respuesta_pendiente = :t, respuesta_propuesta = null, "
+                   "actualizado_en = now() where id = :i"), {"i": candidatura_id, "t": texto})
+
+
+def borrar_propuesta(s: Session, candidatura_id: int) -> None:
+    s.execute(text("update candidaturas set respuesta_propuesta = null, respuesta_pendiente = null, "
+                   "actualizado_en = now() where id = :i"), {"i": candidatura_id})
+
+
 def cv_base_para_flujo(s: Session) -> list[dict]:
     """Todos los CV base de la usuaria; el flujo descarta los rechazados."""
     return [dict(f) for f in s.execute(text(
