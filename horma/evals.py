@@ -17,8 +17,6 @@ Tope de coste (RF-2.17): `correr_set(tope_coste=…)` suma el coste de las llama
 (`metricas.capturar()`); al superarlo deja de correr casos y lo anota en el resultado.
 """
 import json
-import re
-import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -34,6 +32,7 @@ from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.fuente import CalificacionFuente
 from horma.schemas.oferta import Oferta, OfertaExtraida
 from horma.schemas.perfil import Perfil
+from horma.tools.medir_ats import errores_ats  # noqa: F401  (movida a tools; se reexporta)
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.verificar_trazabilidad import frases
 
@@ -127,33 +126,6 @@ class EsperadoCvBase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     destinos: int = Field(ge=1, le=generar_cv_base.MAX_DESTINOS)
-
-
-_ENCABEZADOS_ATS = ("experiencia", "formacion", "educacion", "idiomas", "habilidades", "competencias",
-                    "perfil", "resumen", "certificaciones", "cursos", "contacto")
-
-
-def _sin_tildes(texto: str) -> str:
-    t = unicodedata.normalize("NFD", texto)
-    return "".join(c for c in t if unicodedata.category(c) != "Mn").casefold()
-
-
-def errores_ats(contenido: str) -> list[str]:
-    """Formato compatible con ATS: sin tablas, imágenes ni HTML y con encabezados de sección
-    estándar. Código puro; devuelve los problemas (vacío si todo va bien)."""
-    errores = []
-    if re.search(r"^\s*\|", contenido, re.M) or re.search(r"\|\s*:?-{3,}", contenido):
-        errores.append("lleva una tabla")
-    if re.search(r"!\[[^\]]*\]\(", contenido):
-        errores.append("lleva una imagen")
-    if re.search(r"</?[a-zA-Z][^>]*>", contenido):
-        errores.append("lleva etiquetas HTML")
-    secciones = re.findall(r"^\s*##\s+(.+?)\s*$", contenido, re.M)
-    if not secciones:
-        errores.append("no tiene encabezados de sección (## Experiencia, ## Formación…)")
-    errores += [f"encabezado no estándar: «{s}»" for s in secciones
-                if not any(k in _sin_tildes(s) for k in _ENCABEZADOS_ATS)]
-    return errores
 
 
 def _comparar_cv_base(obtenido: dict, esperado: dict) -> list[str]:

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+from horma.schemas.candidatura import TrazaFrase  # noqa: F401  (movida a schemas; se reexporta)
 from horma.schemas.perfil import Perfil
 from horma.schemas.taxonomia import Familia, Sector
 
@@ -7,11 +8,6 @@ from horma.schemas.taxonomia import Familia, Sector
 class Destino(BaseModel):
     sector: Sector
     familia: Familia
-
-
-class TrazaFrase(BaseModel):
-    frase: str = Field(min_length=1, description="Línea del CV base, tal cual.")
-    fragmento: str = Field(min_length=1, description="Cita literal del CV maestro de la que sale.")
 
 
 class EntradaGeneradorCvBase(BaseModel):

@@ -102,26 +102,43 @@ def verificar_idiomas(contenido: str, perfil) -> list[str]:
     return errores
 
 
-def verificar_trazabilidad(contenido: str, traza: Sequence, maestro: str) -> list[str]:
-    errores: list[str] = []
-    maestro_clave = _clave(maestro)
-    por_frase = {_clave(_campo(t, "frase")): _campo(t, "fragmento") for t in traza}
+FORMULAS_CORTESIA: tuple[str, ...] = (
+    "Estimado equipo de selección,", "Estimados señores,", "Hola equipo,", "Buenos días,",
+    "Un saludo", "Saludos cordiales", "Cordialmente", "Atentamente", "Muchas gracias por su tiempo",
+    "Gracias por su tiempo", "Gracias por tu tiempo",
+)  # lista cerrada de saludos y despedidas de la carta (RF-3.6): no piden traza
 
-    # 3. fechas: ninguna puede faltar en el maestro
-    fechas_maestro = set(_FECHA.findall(_limpiar(maestro)))
+
+def verificar_trazabilidad(contenido: str, traza: Sequence, fuentes: str | Sequence[str],
+                           formulas_cortesia: Sequence[str] = ()) -> list[str]:
+    """`fuentes`: un texto (el CV maestro, como en la fase 2) o una lista de textos (CV maestro, CV base
+    editado y, solo para la carta, la oferta). Un fragmento vale si está en alguna; una fecha, si está
+    en alguna. `formulas_cortesia`: líneas que quedan exentas de traza (saludo y despedida de la carta)."""
+    unica = isinstance(fuentes, str)
+    lista = [fuentes] if unica else list(fuentes)
+    nombre = "el CV maestro" if unica else "ninguna de las fuentes"
+    errores: list[str] = []
+    claves_fuentes = [_clave(f) for f in lista]
+    por_frase = {_clave(_campo(t, "frase")): _campo(t, "fragmento") for t in traza}
+    exentas = {_clave(f) for f in formulas_cortesia}
+
+    # 3. fechas: ninguna puede faltar en las fuentes
+    fechas_fuentes = {f for fuente in lista for f in _FECHA.findall(_limpiar(fuente))}
     for fecha in dict.fromkeys(_FECHA.findall(_limpiar(contenido))):
-        if fecha not in fechas_maestro:
-            errores.append(f"Fecha que no está en el CV maestro: {fecha}")
+        if fecha not in fechas_fuentes:
+            errores.append(f"Fecha que no está en {nombre}: {fecha}")
 
     for frase in frases(contenido):
+        if _clave(frase) in exentas:
+            continue
         fragmento = por_frase.get(_clave(frase))
         # 1. toda frase tiene traza
         if fragmento is None:
             errores.append(f"Frase sin origen en la traza: «{frase}»")
             continue
-        # 2. el fragmento está en el maestro
-        if _clave(fragmento) not in maestro_clave:
-            errores.append(f"El fragmento no está en el CV maestro: «{fragmento}» (frase «{frase}»)")
+        # 2. el fragmento está en alguna fuente
+        if not any(_clave(fragmento) in c for c in claves_fuentes):
+            errores.append(f"El fragmento no está en {nombre}: «{fragmento}» (frase «{frase}»)")
             continue
         # 4. la frase no añade datos a su fragmento
         en_fragmento = {p.casefold() for p in _palabras(fragmento)}
