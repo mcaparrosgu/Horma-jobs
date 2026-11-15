@@ -77,6 +77,7 @@ No se pierde: queda en la spec y en la bitácora, y se retoma al terminar la con
 - Aviso por correo con ofertas nuevas que encajen con los filtros (The Hub lo ofrece: «Get an email with new jobs in this search»).
 - Guardar búsquedas con nombre.
 - Programar recomendaciones periódicas.
+- Verificar las explicaciones del `matcher` (hueco detectado al repasar la fase): hoy solo los CV base pasan `verificar_trazabilidad`. Plan: el matcher devuelve los fragmentos literales del perfil y de la oferta en que se apoya, un verificador en código comprueba que existen y, si no, la explicación no se muestra y se reintenta una vez. Un segundo agente revisor solo en el eval, no en producción. Toca RF-2.12, el plan y el matcher.
 
 ## Decidido al planificar
 Al leer el esquema `Oferta` de la fase 1: `contrato`, `ubicacion` e `idiomas` son texto libre, no hay campo país y el salario no indica periodo. Se resuelve en el [plan](./plan.md): código sin IA los normaliza al guardar cada oferta (P16) y el sueldo se compara en euros brutos al año (P17).
