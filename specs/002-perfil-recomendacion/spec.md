@@ -96,6 +96,8 @@ Decidido el 15-nov-2026. Se retoma **cuando todas las fases estén construidas**
 5. **Bucle de correcciones.** Decidir con Mar si una corrección debe reordenar la lista de quien la hace (hoy no cambia la nota) y quién revisa las correcciones y con qué frecuencia.
 6. **Coste y automatización.** Retomar la decisión de «Recomendar» manual (embudo, caché de prompt, explicación bajo demanda). Preguntar a Mar antes de proponer el embudo.
 
+**Punto de partida (medido el 15-nov-2026 con el modelo real, 21 casos):** `nota` 0,67 (7 casos fuera de ±10: 02, 04, 10, 13, 15, 18, 21); `condiciones` 1,00 (ahora las calcula código); `sin_rasgos` 1,00; adversarias 0,67 (solo por la `nota` del caso 21).
+
 **Puerta de salida:** ≥ 90 % de los casos dentro de ±10 con el modelo real, estable en las 3 ejecuciones; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con citas verificadas; y una revisión manual de Mar sobre una muestra de 20 recomendaciones.
 
 ## Decidido al planificar
