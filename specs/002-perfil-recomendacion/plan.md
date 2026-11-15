@@ -64,6 +64,7 @@ Cada agente nuevo se añade a la lista del contrato «independence» de `import-
 |---|---|
 | `POST /api/cv` | Multipart (`archivo`, `nombre`, `clase`: fuente o estético). Máx. 5 MB; PDF, DOCX o MD. Si es fuente, convierte y encola `perfilar` |
 | `GET /api/cv` · `PATCH /api/cv/{id}` · `GET /api/cv/{id}/archivo` | Listar, renombrar (nombre único por cuenta, 409 si se repite) y descargar solo la dueña |
+| `GET /api/cv/{id}/ver` | Muestra el CV en línea (PDF o Markdown como texto; DOCX → 415). Solo la dueña. Única ruta que se deja enmarcar (`frame-ancestors 'self'`) para el visor de la página de perfil |
 | `GET /api/perfil` · `POST /api/perfil/respuestas` · `PATCH /api/perfil/datos` | Ver la versión vigente con orígenes y pendientes; responder o corregir (crea versión) |
 | `GET/PUT /api/preferencias` · `GET /api/preferencias/opciones` | Leer y guardar filtros; casillas con su contador de ofertas |
 | `POST /api/cv-base` · `GET /api/cv-base` · `PATCH /api/cv-base/{id}` | Generar a petición (tarea), listar y renombrar |

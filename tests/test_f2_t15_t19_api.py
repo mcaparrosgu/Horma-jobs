@@ -176,6 +176,41 @@ def test_la_descarga_es_solo_de_su_duena(app):
     assert TestClient(app).get(f"/api/cv/{cv_id}/archivo").status_code == 401
 
 
+def test_ver_un_cv_lo_muestra_en_linea_solo_a_su_duena(app):
+    a, ha, _ = entrar(app, "google-A")
+    b, _, _ = entrar(app, "google-B")
+    cv_id = subir(a, ha).json()["id"]
+    r = a.get(f"/api/cv/{cv_id}/ver")
+    assert r.status_code == 200 and r.content == MD
+    assert r.headers["content-type"].startswith("text/plain")
+    assert "inline" in r.headers.get("content-disposition", "inline")
+    assert "attachment" not in r.headers.get("content-disposition", "")
+    assert b.get(f"/api/cv/{cv_id}/ver").status_code == 404
+    assert TestClient(app).get(f"/api/cv/{cv_id}/ver").status_code == 401
+
+
+def test_ver_un_pdf_sale_como_pdf_en_linea(app):
+    a, ha, _ = entrar(app, "google-A")
+    from tests.test_f2_t02_convertir_cv import _pdf
+    pdf = _pdf("Ana Perez camarera en Bar Sol")
+    r = subir(a, ha, contenido=pdf, nombre_archivo="cv.pdf")
+    assert r.status_code == 201, r.text
+    v = a.get(f"/api/cv/{r.json()['id']}/ver")
+    assert v.headers["content-type"] == "application/pdf"
+    assert "attachment" not in v.headers.get("content-disposition", "")
+
+
+def test_solo_la_ruta_de_ver_se_deja_enmarcar(app):
+    a, ha, _ = entrar(app, "google-A")
+    cv_id = subir(a, ha).json()["id"]
+    ver = a.get(f"/api/cv/{cv_id}/ver")
+    assert "frame-ancestors 'self'" in ver.headers["content-security-policy"]
+    assert ver.headers["x-frame-options"] == "SAMEORIGIN"
+    otra = a.get(f"/api/cv/{cv_id}/archivo")
+    assert "frame-ancestors 'none'" in otra.headers["content-security-policy"]
+    assert otra.headers["x-frame-options"] == "DENY"
+
+
 def test_el_cv_estetico_no_se_procesa(app, motor_app):
     c, h, _ = entrar(app)
     r = subir(c, h, b"%PDF-1.4 maquetado", "bonito.pdf", clase="estetico")

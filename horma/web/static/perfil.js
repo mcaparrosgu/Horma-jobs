@@ -118,9 +118,9 @@ function dato(campoNombre, d, indice) {
   const origen = origenDe(d);
   if (origen) li.append(nodo("p", origen, "suave origen"));
   const acciones = nodo("div", null, "fila");
-  const editar = nodo("button", "Corregir", "secundario");
+  const editar = nodo("button", "Modificar", "secundario");
   editar.type = "button";
-  const quitar = nodo("button", "Quitar", "secundario");
+  const quitar = nodo("button", "Eliminar", "secundario");
   quitar.type = "button";
   const enviar = (nuevo) => cambiarPerfil("/api/perfil/datos", "PATCH",
                                           { campo: campoNombre, indice, dato: nuevo });
@@ -224,10 +224,28 @@ function tarjetaCv(c) {
     li.append(f);
     i.focus();
   });
+  if (c.tipo !== "docx") {   // el navegador no muestra DOCX: solo se descargan
+    const ver = nodo("button", "Ver", "secundario");
+    ver.type = "button";
+    ver.addEventListener("click", () => abrirVisor(c));
+    fila.append(ver);
+  }
   fila.append(descargar, renombrar);
   li.append(fila);
   return li;
 }
+
+function abrirVisor(c) {
+  const marco = nodo("iframe", null, "visor-marco");
+  marco.src = `/api/cv/${c.id}/ver`;
+  marco.title = c.nombre;
+  $("visor-titulo").textContent = c.nombre;
+  $("visor-cuerpo").replaceChildren(marco);
+  $("visor").showModal();
+}
+
+$("visor-cerrar").addEventListener("click", () => $("visor").close());
+$("visor").addEventListener("close", () => $("visor-cuerpo").replaceChildren());
 
 async function cargarCvs() {
   const r = await api("/api/cv");
