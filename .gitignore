@@ -41,3 +41,9 @@ docs/pruebas-claves.ps1
 
 # Archivos de CV subidos (volumen de la API; datos personales)
 data/
+
+# Plan de pruebas manuales de la fase 2 (nunca se publica)
+docs/plan-pruebas-fase2.md
+
+# Archivos de apoyo de las pruebas manuales (nunca se publican)
+pruebas-manuales/
