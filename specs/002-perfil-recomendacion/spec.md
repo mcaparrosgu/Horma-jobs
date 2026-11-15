@@ -59,15 +59,15 @@ del Clarify en [clarifications.md](./clarifications.md) (se citan como P1…P17)
 - **RF-2.17** CUANDO un set de evals se mida con el modelo real, el sistema DEBERÁ detenerlo si el coste acumulado supera el tope de 1 por ejecución y dejar constancia de ello (P6).
 
 ## Criterios de aceptación (puerta de salida)
-- [ ] `horma eval correr perfil` sobre 12 CV inventados de 5 sectores: precisión ≥ 0,9 por campo; lo ambiguo va a pendientes al 100 %; las 2 adversarias, al 100 % sin efecto.
-- [ ] `horma eval correr recomendacion` sobre 20 pares perfil-oferta: nota dentro de ±10 de la esperada; ninguna explicación con rasgos personales (100 %).
-- [ ] `horma eval correr cv-base` sobre 5 casos (uno por sector): cada CV base pasa `verificar_trazabilidad` en 2 intentos como máximo y cumple el formato ATS, al 100 %.
-- [ ] Los tres sets corren en CI: simulado sin clave; con modelo real y tope de coste cuando hay clave.
-- [ ] `verificar_trazabilidad` rechaza el 100 % de los CV base con datos que no existen en el CV maestro (test unitario).
-- [ ] Prueba manual: subir un CV inventado con el nombre que quiera, ver el perfil con su origen y sus pendientes, generar CV base, subir un CV estético, marcar filtros con casillas y escribir un sueldo mínimo, y ver ofertas recomendadas con rango 40-100 en una pantalla como la maqueta.
-- [ ] Cambiar un filtro no produce ninguna llamada al modelo (test con la puerta única simulada).
-- [ ] Un test de RLS demuestra que una usuaria no lee el perfil, los CV ni los matches de otra.
-- [ ] Consola: `horma flujo correr perfilar --usuaria ana --entrada cv.pdf`, `horma agente correr matcher --entrada tanda.json`, `horma recomendar ana --rango 40-100`.
+- [x] `horma eval correr perfil` sobre 12 CV inventados de 5 sectores: precisión ≥ 0,9 por campo; lo ambiguo va a pendientes al 100 %; las 2 adversarias, al 100 % sin efecto.
+- [ ] `horma eval correr recomendacion` sobre 20 pares perfil-oferta: nota dentro de ±10 de la esperada; ninguna explicación con rasgos personales (100 %). **Fase cerrada el 15-nov-2026 con este criterio a medias:** rasgos personales y condiciones al 100 %, pero la `nota` (0,67 con 21 casos) queda para el plan del `matcher`.
+- [x] `horma eval correr cv-base` sobre 5 casos (uno por sector): cada CV base pasa `verificar_trazabilidad` en 2 intentos como máximo y cumple el formato ATS, al 100 %.
+- [x] Los tres sets corren en CI: simulado sin clave; con modelo real y tope de coste cuando hay clave.
+- [x] `verificar_trazabilidad` rechaza el 100 % de los CV base con datos que no existen en el CV maestro (test unitario).
+- [x] Prueba manual: subir un CV inventado con el nombre que quiera, ver el perfil con su origen y sus pendientes, generar CV base, subir un CV estético, marcar filtros con casillas y escribir un sueldo mínimo, y ver ofertas recomendadas con rango 40-100 en una pantalla como la maqueta.
+- [x] Cambiar un filtro no produce ninguna llamada al modelo (test con la puerta única simulada).
+- [x] Un test de RLS demuestra que una usuaria no lee el perfil, los CV ni los matches de otra.
+- [x] Consola: `horma flujo correr perfilar --usuaria ana --entrada cv.pdf`, `horma agente correr matcher --entrada tanda.json`, `horma recomendar ana --rango 40-100`.
 
 ## Fuera de alcance
 - Adaptar CV y carta a una oferta, jueces, aprobación y tablero: fase 3.
