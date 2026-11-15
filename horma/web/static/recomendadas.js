@@ -105,7 +105,7 @@ function porque(o) {
       const nota = c.nota !== null && c.nota !== undefined ? ` (nota que propones: ${c.nota})` : "";
       cuerpo.append(nodo("p", `Tu corrección${nota}: ${c.comentario}`, "origen"));
     }
-    const boton = nodo("button", o.correccion ? "Corregir de nuevo" : "Corregir", "secundario");
+    const boton = nodo("button", o.correccion ? "Modificar de nuevo" : "Modificar", "secundario");
     boton.type = "button";
     boton.addEventListener("click", () => {
       boton.hidden = true;
