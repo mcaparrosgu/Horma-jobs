@@ -104,3 +104,20 @@ def test_una_fecha_solo_de_la_oferta_vale_para_la_carta_si_la_oferta_es_fuente()
     oferta = "Oferta publicada en 2026 por Hotel Marina."
     assert verificar_trazabilidad(carta, traza, [MAESTRO, oferta]) == []
     assert any("2026" in e for e in verificar_trazabilidad(carta, traza, [MAESTRO]))
+
+
+def test_por_frase_la_traza_va_por_frase_y_no_por_parrafo():
+    carta = "Hola equipo,\nTrabajé en Bar Sol desde 2020. Me gusta atender mesas con calma.\nUn saludo"
+    fuente = "Camarera en Bar Sol, 2020-2023\nAtender mesas con calma"
+    traza = [{"frase": "Trabajé en Bar Sol desde 2020.", "fragmento": "Camarera en Bar Sol, 2020-2023"},
+             {"frase": "Me gusta atender mesas con calma.", "fragmento": "Atender mesas con calma"}]
+    formulas = ("Hola equipo,", "Un saludo")
+    assert verificar_trazabilidad(carta, traza, fuente, formulas, por_frase=True) == []
+    assert verificar_trazabilidad(carta, traza, fuente, formulas)  # por línea falla
+
+
+def test_por_frase_una_frase_corta_de_carta_no_se_trata_como_cabecera():
+    carta = "Mi nivel es B1.\nUn saludo"
+    traza = [{"frase": "Mi nivel es B1.", "fragmento": "Inglés B1"}]
+    assert verificar_trazabilidad(carta, traza, "Inglés B1", ("Un saludo",), por_frase=True) == []
+    assert verificar_trazabilidad(carta, traza, "Inglés B1", ("Un saludo",))  # en el CV sí lo es

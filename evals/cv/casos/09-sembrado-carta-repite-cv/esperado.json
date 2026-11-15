@@ -1,0 +1,6 @@
+{
+  "tipo": "sembrado",
+  "error": "carta_repite_cv",
+  "rechazado_por": "juez",
+  "problema": "repite_cv"
+}

@@ -1,0 +1,22 @@
+{
+  "modo": "sembrado",
+  "usuaria": "ana",
+  "cv_base_id": 1,
+  "oferta": "camarera-bar-luna",
+  "documento": "cv",
+  "contenido": "## Experiencia\nCamarera · Bar Sol · 2021-2024\n- Atención de mesas y barra en un bar de 40 plazas\n- Responsable de toda la gestión económica del local\n",
+  "traza": [
+    {
+      "frase": "Camarera · Bar Sol · 2021-2024",
+      "fragmento": "Camarera · Bar Sol · 2021-2024"
+    },
+    {
+      "frase": "Atención de mesas y barra en un bar de 40 plazas",
+      "fragmento": "Atención de mesas y barra en un bar de 40 plazas"
+    },
+    {
+      "frase": "Responsable de toda la gestión económica del local",
+      "fragmento": "Gestión de la caja al cierre"
+    }
+  ]
+}

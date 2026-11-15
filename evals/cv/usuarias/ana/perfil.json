@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "nombre": "Ana Ferrer (usuaria de prueba)",
+  "titular": null,
+  "resumen": null,
+  "experiencias": [
+    {
+      "puesto": "Camarera",
+      "empresa": "Bar Sol",
+      "inicio": "2021",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Camarera · Bar Sol · 2021-2024"
+      }
+    },
+    {
+      "puesto": "Ayudante de cocina",
+      "empresa": "Restaurante La Barca",
+      "inicio": "2019",
+      "fin": "2021",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Ayudante de cocina · Restaurante La Barca · 2019-2021"
+      }
+    },
+    {
+      "puesto": "Dependienta",
+      "empresa": "Moda Sur",
+      "inicio": "2018",
+      "fin": "2019",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Dependienta · Moda Sur · 2018-2019"
+      }
+    },
+    {
+      "puesto": "Auxiliar administrativa",
+      "empresa": "Gestoría Levante",
+      "inicio": "2017",
+      "fin": "2018",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Auxiliar administrativa · Gestoría Levante · 2017-2018"
+      }
+    }
+  ],
+  "formacion": [
+    {
+      "titulo": "Técnico en Servicios de Restauración",
+      "centro": "IES Ausiàs March",
+      "inicio": "2017",
+      "fin": "2019",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Técnico en Servicios de Restauración · IES Ausiàs March · 2017-2019"
+      }
+    }
+  ],
+  "idiomas": [
+    {
+      "idioma": "en",
+      "nivel": "B1",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Inglés B1"
+      }
+    },
+    {
+      "idioma": "ca",
+      "nivel": "nativo",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Valenciano nativo"
+      }
+    }
+  ],
+  "habilidades": [],
+  "taxonomia": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "junior",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}
