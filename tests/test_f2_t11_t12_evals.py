@@ -241,10 +241,10 @@ def test_una_explicacion_con_rasgo_personal_falla_sin_rasgos(tmp_path):
     assert r["campos"]["sin_rasgos"] == 0.0 and not r["aprobado"]
 
 
-def test_nivel_de_condiciones_distinto_falla(tmp_path):
+def test_el_nivel_de_condiciones_lo_calcula_el_codigo_y_no_el_modelo(tmp_path):
     esp = _json(_casos("recomendacion")[1] / "esperado.json")
     r = _correr_uno(tmp_path, condiciones="bajo" if esp["condiciones"] != "bajo" else "alto")
-    assert r["detalle"][0]["fallos"] == ["condiciones"]
+    assert r["detalle"][0]["fallos"] == []  # lo que diga el modelo se ignora
 
 
 # --- T12: tope de coste ------------------------------------------------------------------------
