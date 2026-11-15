@@ -112,3 +112,25 @@ def test_ignora_marcas_de_markdown_y_mayusculas_al_comparar():
     traza = [{"frase": "Ana Inventada", "fragmento": "Ana Inventada"},
              {"frase": "camarera · bar sol · 2020-2022", "fragmento": "**Camarera** · Bar Sol · 2020-2022"}]
     assert verificar_trazabilidad(cv, traza, MAESTRO) == []
+
+
+# --- Cambios tras la prueba manual 4.3: idiomas obligatorios y género de los puestos ---------------
+def test_el_genero_de_un_puesto_no_cuenta_como_dato_nuevo():
+    maestro = "Cocinero · Hotel Marina · 2013-2017"
+    traza = [{"frase": "Cocinera · Hotel Marina · 2013-2017", "fragmento": maestro}]
+    assert verificar_trazabilidad("## Experiencia\nCocinera · Hotel Marina · 2013-2017", traza, maestro) == []
+
+
+def test_un_puesto_distinto_sigue_rechazandose():
+    maestro = "Cocinero · Hotel Marina · 2013-2017"
+    traza = [{"frase": "Directora · Hotel Marina · 2013-2017", "fragmento": maestro}]
+    assert verificar_trazabilidad("## Experiencia\nDirectora · Hotel Marina · 2013-2017", traza, maestro)
+
+
+def test_un_cv_base_sin_un_idioma_del_perfil_se_rechaza():
+    from horma.schemas.perfil import IdiomaPerfil, OrigenDato, Perfil
+    from horma.tools.verificar_trazabilidad import verificar_idiomas
+    o = OrigenDato(cv_id=1, fragmento="Inglés B1")
+    perfil = Perfil(idiomas=[IdiomaPerfil(idioma="en", nivel="B1", origen=o)])
+    assert verificar_idiomas("## Idiomas\nValenciano nativo", perfil)
+    assert verificar_idiomas("## Idiomas\nInglés B1", perfil) == []

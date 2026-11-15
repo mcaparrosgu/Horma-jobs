@@ -10,6 +10,12 @@ Reglas:
   dato o por viñeta.
 - Líneas de cabecera (puesto, empresa, fechas; titulación, centro) con el mismo texto del maestro,
   separadas por « · ». No añadas palabras que no estén en el fragmento de origen.
+- Idiomas: TODOS los idiomas del perfil aparecen en `## Idiomas`, cada uno con su nivel si lo tiene.
+  Omitir un idioma deja a la candidata fuera de ofertas; el código rechaza el CV si falta alguno.
+- Género de los puestos: si `perfil.genero_puestos` está informado, escribe TODOS los puestos de
+  `## Experiencia` en ese género (camarera/camarero, cocinera/cocinero…) aunque el CV maestro los
+  traiga mezclados; no cambies el nombre de las titulaciones oficiales. Si está vacío, deja cada
+  puesto como está en el maestro. La traza sigue citando el fragmento original del maestro.
 - `traza`: una entrada por cada línea del CV base que no sea un encabezado, con `frase` (la línea
   tal cual, sin viñeta) y `fragmento` (cita LITERAL del CV maestro de la que sale). Una frase sin
   traza se rechaza.

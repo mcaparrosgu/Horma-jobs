@@ -1,6 +1,39 @@
 // Pantalla de CV base: se generan a petición, se leen y se renombran (RF-2.1b, RF-2.9).
 let temporizador = null;
 
+// Dibuja el Markdown del CV como un documento (sin HTML pegado: todo va con textContent).
+function cvBonito(md) {
+  const hoja = nodo("article", null, "cv-hoja");
+  let lista = null;
+  const lineas = md.split("\n");
+  let primero = true;
+  for (const crudo of lineas) {
+    const linea = crudo.trim();
+    if (!linea) { lista = null; continue; }
+    const t = linea.match(/^(#{1,6})\s+(.*)$/);
+    if (t) {
+      lista = null;
+      hoja.append(nodo(primero ? "h4" : "h5", t[2].replace(/[*_`]/g, ""), primero ? "cv-nombre" : "cv-seccion"));
+      primero = false;
+      continue;
+    }
+    primero = false;
+    const v = linea.match(/^(?:[-*+•]|\d+[.)])\s+(.*)$/);
+    if (v) {
+      if (!lista) { lista = nodo("ul", null, "cv-lista"); hoja.append(lista); }
+      lista.append(nodo("li", v[1].replace(/[*_`]/g, "")));
+      continue;
+    }
+    lista = null;
+    const partes = linea.replace(/[*_`]/g, "").split(/\s[·|]\s/);
+    const p = nodo("p", null, "cv-linea");
+    p.append(nodo("strong", partes[0]));
+    if (partes.length > 1) p.append(nodo("span", partes.slice(1).join(" · "), "cv-detalle"));
+    hoja.append(p);
+  }
+  return hoja;
+}
+
 function tarjeta(c) {
   const li = nodo("li", null, "tarjeta");
   const fila = nodo("div", null, "fila");
@@ -11,33 +44,62 @@ function tarjeta(c) {
   li.append(nodo("p", `Perfil versión ${c.perfil_version} · ${fecha(c.creado_en)}`, "suave"));
   const detalle = nodo("details", null, "leer");
   detalle.append(nodo("summary", "Ver el CV"));
-  detalle.append(nodo("pre", c.contenido, "cv-texto"));
+  detalle.append(cvBonito(c.contenido));
   li.append(detalle);
   const acciones = nodo("div", null, "fila");
-  const renombrar = nodo("button", "Cambiar nombre", "secundario");
-  renombrar.type = "button";
-  renombrar.addEventListener("click", () => {
+  const modificar = nodo("button", "Modificar", "secundario");
+  modificar.type = "button";
+  modificar.addEventListener("click", () => {
     acciones.hidden = true;
-    const f = nodo("form", null, "fila editor");
+    const f = nodo("form", null, "editor");
     const i = nodo("input");
     i.type = "text";
     i.maxLength = 80;
     i.required = true;
     i.value = c.nombre;
     i.setAttribute("aria-label", "Nombre del CV base");
+    const t = nodo("textarea");
+    t.rows = 18;
+    t.required = true;
+    t.maxLength = 20000;
+    t.value = c.contenido;
+    t.setAttribute("aria-label", "Texto del CV base");
+    const ayuda = nodo("p", "Puedes cambiar el nombre y el texto. Los títulos empiezan por ## y las listas por -. Lo que escribas es tuyo: Horma no lo vuelve a comprobar contra tu CV.", "suave");
     const cancelar = nodo("button", "Cancelar", "secundario");
     cancelar.type = "button";
     cancelar.addEventListener("click", () => { f.remove(); acciones.hidden = false; });
-    f.append(i, nodo("button", "Guardar"), cancelar);
+    const fila = nodo("div", null, "fila");
+    fila.append(nodo("button", "Guardar"), cancelar);
+    f.append(i, t, ayuda, fila);
     f.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const r = await api(`/api/cv-base/${c.id}`, { metodo: "PATCH", cuerpo: { nombre: i.value } });
+      const r = await api(`/api/cv-base/${c.id}`, { metodo: "PATCH", cuerpo: { nombre: i.value, contenido: t.value } });
       if (!r.ok) return avisar(r.motivo, true);
-      avisar("Nombre cambiado.");
+      avisar("CV base guardado.");
       await cargar();
     });
     li.append(f);
-    i.focus();
+    t.focus();
+  });
+  const eliminar = nodo("button", "Eliminar", "secundario");
+  eliminar.type = "button";
+  eliminar.addEventListener("click", () => {
+    acciones.hidden = true;
+    const conf = nodo("div", null, "fila editor");
+    const si = nodo("button", "Eliminar", "secundario");
+    si.type = "button";
+    const no = nodo("button", "Cancelar", "secundario");
+    no.type = "button";
+    no.addEventListener("click", () => { conf.remove(); acciones.hidden = false; });
+    si.addEventListener("click", async () => {
+      const r = await api(`/api/cv-base/${c.id}`, { metodo: "DELETE" });
+      if (!r.ok) return avisar(r.motivo, true);
+      avisar("CV base eliminado.");
+      await cargar();
+    });
+    conf.append(nodo("span", "¿Eliminar este CV base? No se puede deshacer."), si, no);
+    li.append(conf);
+    no.focus();
   });
   const copiar = nodo("button", "Copiar texto", "secundario");
   copiar.type = "button";
@@ -49,7 +111,7 @@ function tarjeta(c) {
       avisar("No se pudo copiar: abre «Ver el CV» y selecciona el texto.", true);
     }
   });
-  acciones.append(renombrar, copiar);
+  acciones.append(modificar, copiar, eliminar);
   li.append(acciones);
   return li;
 }

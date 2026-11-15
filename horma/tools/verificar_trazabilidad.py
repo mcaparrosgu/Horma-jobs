@@ -61,6 +61,16 @@ def _es_cabecera(frase: str) -> bool:
     return bool(_SEPARADOR.search(frase)) or len(_palabras(frase)) <= 4
 
 
+def _raiz(palabra: str) -> str:
+    """Quita la marca de género/número final, para que camarero/camarera cuenten como la misma palabra
+    (el CV base escribe todos los puestos en el género de la candidata)."""
+    p = palabra.casefold()
+    for fin in ("os", "as", "o", "a", "e"):
+        if p.endswith(fin) and len(p) > len(fin) + 3:
+            return p[: -len(fin)]
+    return p
+
+
 def _terminos_a_comprobar(frase: str) -> list[str]:
     """Palabras de la frase que deben estar en su fragmento (en minúsculas)."""
     palabras = _palabras(frase)
@@ -73,6 +83,23 @@ def _terminos_a_comprobar(frase: str) -> list[str]:
         if es_cifra or es_propio:
             terminos.append(p.casefold())
     return terminos
+
+
+_IDIOMAS = {"es": "español|castellano", "en": "inglés|english", "fr": "francés|french",
+            "de": "alemán|german", "it": "italiano", "pt": "portugués", "ca": "catalán|valenciano|català",
+            "eu": "euskera|vasco", "gl": "gallego", "ar": "árabe", "zh": "chino", "ru": "ruso",
+            "ro": "rumano", "nl": "neerlandés|holandés", "pl": "polaco", "ja": "japonés"}
+
+
+def verificar_idiomas(contenido: str, perfil) -> list[str]:
+    """Todo idioma del perfil debe salir en el CV base: omitirlo deja a la candidata fuera de ofertas."""
+    texto = _limpiar(contenido).casefold()
+    errores = []
+    for i in perfil.idiomas:
+        nombres = _IDIOMAS.get(i.idioma)
+        if nombres and not re.search(nombres, texto):
+            errores.append(f"Falta el idioma «{i.idioma}» del perfil en el CV base")
+    return errores
 
 
 def verificar_trazabilidad(contenido: str, traza: Sequence, maestro: str) -> list[str]:
@@ -98,7 +125,8 @@ def verificar_trazabilidad(contenido: str, traza: Sequence, maestro: str) -> lis
             continue
         # 4. la frase no añade datos a su fragmento
         en_fragmento = {p.casefold() for p in _palabras(fragmento)}
+        raices = {_raiz(p) for p in en_fragmento}
         for termino in _terminos_a_comprobar(frase):
-            if termino not in en_fragmento:
+            if termino not in en_fragmento and _raiz(termino) not in raices:
                 errores.append(f"«{termino}» no aparece en el fragmento de origen de la frase «{frase}»")
     return errores

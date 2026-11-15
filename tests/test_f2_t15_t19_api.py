@@ -594,3 +594,35 @@ def test_de_la_subida_al_perfil_y_la_recomendacion_con_el_worker(app, motor_app)
     assert worker.procesar_una(motor_app, ProveedorSimulado([{"matches": [match]}])) == "hecha"
     r = c.get("/api/recomendaciones").json()["recomendaciones"]
     assert [(x["titulo"], x["nota"]) for x in r] == [("Camarera de sala", 88)]
+
+
+def test_el_genero_de_los_puestos_se_fija_y_se_cambia_despues(app, motor_app):
+    c, h, _ = entrar(app)
+    _perfil_hecho(motor_app, _usuaria_id(motor_app, "google-A"))
+    for valor in ("femenino", "masculino"):
+        r = c.patch("/api/perfil/datos", headers=h, json={"campo": "genero_puestos", "dato": {"valor": valor}})
+        assert r.status_code == 201
+        assert c.get("/api/perfil").json()["perfil"]["genero_puestos"] == valor
+    r = c.patch("/api/perfil/datos", headers=h, json={"campo": "genero_puestos", "dato": {"valor": "otro"}})
+    assert r.status_code == 422
+
+
+def test_un_cv_base_se_modifica_y_se_borra_y_solo_el_propio(app, motor_app):
+    c, h, _ = entrar(app)
+    u = _usuaria_id(motor_app, "google-A")
+    _perfil_hecho(motor_app, u)
+    with sesion_de(motor_app, u) as s:
+        perfiles.guardar_cv_base(s, u, 1, {"guardados": [{
+            "destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
+            "contenido": "## Experiencia\nCamarera", "traza": [], "intentos": 1}], "rechazados": []})
+    cv_id = c.get("/api/cv-base").json()["cv_base"][0]["id"]
+    r = c.patch(f"/api/cv-base/{cv_id}", headers=h, json={"contenido": "## Experiencia\nCamarera en Bar Sol"})
+    assert r.status_code == 200
+    ver = c.get("/api/cv-base").json()["cv_base"][0]
+    assert ver["contenido"].endswith("Bar Sol") and ver["nombre"].startswith("CV base")
+    assert c.patch(f"/api/cv-base/{cv_id}", headers=h, json={}).status_code == 422
+    otra, h2, _ = entrar(app, "google-B")
+    assert otra.delete(f"/api/cv-base/{cv_id}", headers=h2).status_code == 404
+    assert c.delete(f"/api/cv-base/{cv_id}", headers=h).status_code == 200
+    assert c.get("/api/cv-base").json()["cv_base"] == []
+    assert c.delete(f"/api/cv-base/{cv_id}", headers=h).status_code == 404

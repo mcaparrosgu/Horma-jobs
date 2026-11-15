@@ -19,6 +19,11 @@ class Nombre(BaseModel):
     nombre: str = Field(min_length=1, max_length=80)
 
 
+class EdicionCvBase(BaseModel):
+    nombre: str | None = Field(default=None, min_length=1, max_length=80)
+    contenido: str | None = Field(default=None, min_length=1, max_length=20000)
+
+
 def _nombre(valor: str) -> str:
     return valor.strip()
 
@@ -120,12 +125,23 @@ def listar_cv_base(request: Request, usuaria_id: int = Depends(usuaria_actual)):
 
 
 @router.patch("/api/cv-base/{cv_id}", dependencies=[Depends(exigir_csrf)])
-def renombrar_cv_base(cv_id: int, datos: Nombre, request: Request,
-                      usuaria_id: int = Depends(usuaria_actual)):
-    nombre = _nombre(datos.nombre)
+def editar_cv_base(cv_id: int, datos: EdicionCvBase, request: Request,
+                   usuaria_id: int = Depends(usuaria_actual)):
+    """Cambia el nombre y/o el texto del CV base: es de ella y lo puede retocar."""
+    if datos.nombre is None and datos.contenido is None:
+        raise HTTPException(status_code=422, detail="Indica el nombre o el texto nuevo.")
+    nombre = _nombre(datos.nombre) if datos.nombre is not None else None
     with sesion_de(request.app.state.engine, usuaria_id) as s:
-        if repo.nombre_en_uso(s, nombre, excepto_base=cv_id):
+        if nombre and repo.nombre_en_uso(s, nombre, excepto_base=cv_id):
             raise HTTPException(status_code=409, detail="Ya tienes un CV con ese nombre.")
-        if not perfiles.renombrar_cv_base(s, cv_id, nombre):
+        if not perfiles.editar_cv_base(s, cv_id, nombre, datos.contenido):
             raise HTTPException(status_code=404, detail="No existe ese CV base")
     return {"id": cv_id, "nombre": nombre}
+
+
+@router.delete("/api/cv-base/{cv_id}", dependencies=[Depends(exigir_csrf)])
+def eliminar_cv_base(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        if not perfiles.eliminar_cv_base(s, cv_id):
+            raise HTTPException(status_code=404, detail="No existe ese CV base")
+    return {"id": cv_id}

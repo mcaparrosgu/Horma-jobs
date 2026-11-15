@@ -184,6 +184,17 @@ def renombrar_cv_base(s: Session, cv_id: int, nombre: str) -> bool:
                      {"i": cv_id, "n": nombre}).rowcount == 1
 
 
+def editar_cv_base(s: Session, cv_id: int, nombre: str | None, contenido: str | None) -> bool:
+    """Cambia el nombre y/o el texto de un CV base ya hecho. El texto editado es de ella, no del modelo."""
+    return s.execute(text(
+        "update cv_base set nombre = coalesce(:n, nombre), contenido = coalesce(:c, contenido) "
+        "where id = :i and estado = 'hecho'"), {"i": cv_id, "n": nombre, "c": contenido}).rowcount == 1
+
+
+def eliminar_cv_base(s: Session, cv_id: int) -> bool:
+    return s.execute(text("delete from cv_base where id = :i"), {"i": cv_id}).rowcount == 1
+
+
 def guardar_cv_base(s: Session, usuaria_id: int, perfil_version: int, resultado: dict) -> None:
     """Un CV por destino: los verificados quedan 'hecho' y los rechazados dejan su motivo."""
     for g in resultado["guardados"]:

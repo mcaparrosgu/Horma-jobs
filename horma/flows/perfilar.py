@@ -73,6 +73,36 @@ def _contradicciones(campo: str, items: list[dict], clave_nombre: str, clave_lug
     return [x for x in items if id(x) not in quitar], pendientes
 
 
+def _fusionar_idiomas(idiomas: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Un idioma nunca se pierde: una entrada por idioma. Si los CV dan niveles distintos, el idioma
+    se queda SIN nivel (no se elige uno por ella) y se le pregunta cuál es."""
+    grupos: dict[str, list[dict]] = {}
+    for x in idiomas:
+        grupos.setdefault(x["idioma"], []).append(x)
+    salida, pendientes = [], []
+    for codigo, grupo in grupos.items():
+        niveles = list(dict.fromkeys(_plano(g["nivel"]) for g in grupo if g.get("nivel")))
+        primero = next((g for g in grupo if g.get("nivel")), grupo[0])
+        if len(niveles) > 1:
+            textos = list(dict.fromkeys(g["nivel"] for g in grupo if g.get("nivel")))
+            salida.append({**primero, "nivel": None})
+            pendientes.append(_pendiente(
+                f"idiomas.{codigo}.nivel", "contradiccion",
+                f"Tus CV dan niveles distintos de «{codigo}». ¿Cuál es el tuyo?", textos))
+        else:
+            salida.append(primero)
+    return salida, pendientes
+
+
+def _genero_puestos(perfil: dict) -> list[dict]:
+    """Si no está claro en qué género escribir los puestos, se le pregunta; nunca se deduce del nombre."""
+    if perfil.get("genero_puestos") or not perfil["experiencias"]:
+        return []
+    return [_pendiente("genero_puestos", "ambiguo",
+                       "¿En qué género quieres que aparezcan tus puestos en los CV (camarera o camarero)?",
+                       ["femenino", "masculino"])]
+
+
 def crear(proveedor: Proveedor | None = None) -> PlainFlow:
 
     def extraer(e: dict) -> dict:
@@ -105,6 +135,9 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                                      ("formacion", "titulo", "centro")):
             perfil[campo], nuevas = _contradicciones(campo, perfil[campo], nombre, lugar)
             pendientes += nuevas
+        perfil["idiomas"], nuevas = _fusionar_idiomas(perfil["idiomas"])
+        pendientes += nuevas
+        pendientes += _genero_puestos(perfil)
         # Instrucciones: solo las que están de verdad en algún CV.
         perfil["instrucciones_embebidas"] = [
             i for i in dict.fromkeys(perfil["instrucciones_embebidas"])

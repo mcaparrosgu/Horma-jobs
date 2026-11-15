@@ -106,7 +106,14 @@ function pregunta(p, i) {
   const acciones = nodo("div", null, "fila");
   const responder = (dato) => cambiarPerfil("/api/perfil/respuestas", "POST", { indice: i, dato });
   const [seccion, clave = "", detalle = ""] = p.campo.split(".");
-  if (CAMPOS[seccion]) {
+  if (seccion === "genero_puestos") {
+    for (const g of ["femenino", "masculino"]) {
+      const b = nodo("button", g.charAt(0).toUpperCase() + g.slice(1));
+      b.type = "button";
+      b.addEventListener("click", () => responder({ valor: g }));
+      acciones.append(b);
+    }
+  } else if (CAMPOS[seccion]) {
     const abrir = nodo("button", "Responder");
     abrir.type = "button";
     abrir.addEventListener("click", () => {
@@ -190,6 +197,17 @@ async function cargarPerfil() {
   const cont = $("perfil");
   cont.replaceChildren();
   if (perfil.nombre) cont.append(nodo("p", perfil.nombre, "dato"));
+  if (perfil.genero_puestos) {
+    const fila = nodo("div", null, "fila");
+    fila.append(nodo("p", `Tus puestos se escriben en género ${perfil.genero_puestos}.`, "suave"));
+    const otro = perfil.genero_puestos === "femenino" ? "masculino" : "femenino";
+    const cambiar = nodo("button", `Cambiar a ${otro}`, "secundario");
+    cambiar.type = "button";
+    cambiar.addEventListener("click", () => cambiarPerfil("/api/perfil/datos", "PATCH",
+                                                          { campo: "genero_puestos", dato: { valor: otro } }));
+    fila.append(cambiar);
+    cont.append(fila);
+  }
   if (perfil.taxonomia) {
     const t = perfil.taxonomia;
     cont.append(nodo("p", `Clasificación: ${etiqueta(t.sector)} · ${etiqueta(t.familia)} · ${etiqueta(t.nivel)}`, "suave"));
