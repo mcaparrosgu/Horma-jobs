@@ -28,7 +28,7 @@ API (FastAPI) y worker.
 |---|---|---|
 | `horma/schemas/` | Modelos Pydantic del contrato | Única fuente de verdad; las tablas se generan desde aquí |
 | `horma/agents/<nombre>/` | `prompt.md`, `schemas.py` (entrada y salida), `agent.py` con `run()` | Sin estado, sin E/S, sin llamar a otros agentes |
-| `horma/tools/` | Código determinista (`verificar_trazabilidad`, `medir_ats`, `buscar_ofertas`, `convertir_cv`) | Funciones puras con tests unitarios |
+| `horma/tools/` | Código determinista (`verificar_trazabilidad`, `medir_ats`, `buscar_ofertas`, `convertir_cv`, `generar_pdf`) | Funciones puras con tests unitarios |
 | `horma/flows/` | Interfaz `Flow`, `PlainFlow` (y `LangGraphFlow` en la fase 4) | Toda la composición de agentes vive aquí |
 | `horma/llm/` | Puerta única `completar(agente, prompt, entrada, esquema_salida)` | Único módulo que importa el SDK de Anthropic |
 | `horma/cli.py` | Consola Typer | Sin lógica propia: mismo código que la API. Nunca abre la BD: lo que necesita persistir pasa por la API |
@@ -50,7 +50,7 @@ dato. Cambiar un `prompt.md` no toca código; cambiar un esquema es un cambio de
 | `Perfil` | Datos de la usuaria con `origen` por dato y `preguntas_pendientes` | Fase 2 |
 | `Preferencias` | Puestos, países, idiomas y sector, solo a partir del CV y editables | Fase 2 |
 | `Match` | Nota 0-100 por experiencia y formación, nivel por condiciones de trabajo y explicación de 2-3 frases | Fase 2 |
-| `Candidatura` | CV y carta adaptados, traza, huecos y estado (`borrador → aprobada → enviada → entrevista`) | Fase 3 |
+| `Candidatura` | CV y carta adaptados, traza, huecos y estado (`borrador → aprobada → enviada → entrevista`, y `cerrada` con motivo desde cualquier estado) | Fase 3 |
 | `Fuente` | Endpoint de ofertas: nombre, web del portal, URL del endpoint, método, parámetros, cabeceras, variable de entorno con la clave, mapeo de campos, activa | Fase 1 |
 | `CalificacionFuente` | Resultado de calificar una fuente (condiciones de uso y `robots.txt`) | Fase 1 |
 
@@ -89,6 +89,7 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 - **Ofertas:** catálogo común (desde la fase 1). Cualquier sesión las lee; solo el modo sistema (la API al recibirlas y el worker al procesarlas) las escribe, por RLS.
 - **Administración:** el dashboard `/ingesta` y las claves de API son solo para las cuentas listadas en `HORMA_ADMINS`.
 - **Fase 2 (perfil y recomendación):** los flujos `perfilar`, `clasificar_perfil`, `generar_cv_base` y `recomendar` corren en el worker y también desde la consola (`horma flujo correr`, `horma recomendar`). Los CV subidos viven en el volumen `horma_archivos`, solo montado en la API; el worker recibe el texto. `GET /api/catalogo` (clave `ingesta`) da a la consola las ofertas comunes sin datos personales. Las correcciones de la usuaria no entran en `evals/` sin `horma eval importar-correccion`.
+- **Fase 3 (candidatura, en spec):** la candidatura separa `estado` (la máquina, que solo cambia la usuaria) y `preparacion` (el resultado del flujo: `lista` o `pendiente_de_ti`). La usuaria elige el CV base de partida; un CV base editado por ella cuenta como fuente con origen «usuaria». Los errores de trazabilidad y del juez son avisos que ella revisa antes de aprobar. El texto de un correo pegado no se guarda: solo etiqueta, fecha y transición.
 - **Datos de prueba:** inventados; el repositorio versiona fixtures, nunca datos de una persona.
 
 ## Fases
