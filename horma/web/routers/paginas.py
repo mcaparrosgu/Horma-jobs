@@ -1,4 +1,4 @@
-"""Páginas de la fase 2 (RF-2.15): perfil, preferencias, CV base y recomendadas.
+"""Páginas de las fases 2 y 3: perfil, preferencias, CV base, recomendadas y candidaturas.
 
 Solo se sirven con sesión; sin ella, a la portada para entrar. Los datos los pide cada página a la API
 (que aplica RLS), así que aquí no hay datos de nadie."""
@@ -10,7 +10,8 @@ from fastapi.responses import FileResponse, RedirectResponse
 router = APIRouter()
 ESTATICOS = Path(__file__).resolve().parent.parent / "static"
 PAGINAS = {"/perfil": "perfil.html", "/preferencias": "preferencias.html", "/cv-base": "cv-base.html",
-           "/recomendadas": "recomendadas.html"}
+           "/recomendadas": "recomendadas.html", "/candidaturas": "candidaturas.html",
+           "/candidaturas/{candidatura_id}": "candidatura.html"}
 
 
 def _pagina(archivo: str):

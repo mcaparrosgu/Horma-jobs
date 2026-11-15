@@ -8,6 +8,7 @@ const AYUDA = [
   ["Salario", "Tal como lo dice la oferta, sin convertirlo. Si no lo publica, lo verás indicado."],
   ["Lugar", "El país donde está el puesto, o «Remoto»."],
   ["Publicado", "El día en que se publicó la oferta (o, si no lo dice, el día en que llegó a Horma)."],
+  ["Candidatura", "Horma elige tu CV base más adecuado y prepara el CV adaptado y la carta. Tú los revisas y los apruebas."],
 ];
 const MAX_PUNTUANDO = 30;  // sondeos de 3 s tras pulsar «Recomendar»
 let guardadas = null;
@@ -119,6 +120,30 @@ function porque(o) {
   return d;
 }
 
+// «Preparar candidatura» (RF-3.7b): crea la candidatura y lleva a ella; el CV base lo elige Horma.
+function celdaCandidatura(o) {
+  const td = celda("Candidatura");
+  const b = nodo("button", "Preparar candidatura", "secundario");
+  b.type = "button";
+  b.addEventListener("click", async () => {
+    b.disabled = true;
+    const r = await api("/api/candidaturas", { metodo: "POST", cuerpo: { oferta_id: o.id } });
+    if (r.ok) {
+      location.href = `/candidaturas/${r.datos.id}`;
+      return;
+    }
+    b.disabled = false;
+    avisar(r.motivo, true);
+    if (r.estado === 409 && /CV base/i.test(r.motivo || "") && !td.querySelector("a")) {
+      const a = nodo("a", "Generar CV base", "bloque");
+      a.href = "/cv-base";
+      td.append(a);
+    }
+  });
+  td.append(b);
+  return td;
+}
+
 function filaOferta(o) {
   const tr = nodo("tr", null, "fila-oferta");
   const titulo = urlSegura(o.url) ? nodo("a", o.titulo || "Sin título") : nodo("span", o.titulo || "Sin título");
@@ -153,6 +178,7 @@ function filaOferta(o) {
   const lugar = [o.remoto ? "Remoto" : null, o.pais].filter(Boolean).join(" · ") || o.ubicacion || "—";
   tr.append(celda("Lugar", nodo("span", lugar)));
   tr.append(celda("Publicado", nodo("span", fecha(o.fecha_publicacion || o.creada_en))));
+  tr.append(celdaCandidatura(o));
   return tr;
 }
 

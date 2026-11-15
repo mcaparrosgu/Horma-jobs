@@ -203,6 +203,7 @@ details.porque > summary{ cursor: pointer; color: var(--acento); font-size: 0.9r
 .porque-cuerpo p{ margin: 0; }
 
 @media (max-width: 760px){
+  .tablero{ grid-template-columns: 1fr; }
   .tabla-ofertas, .tabla-ofertas tbody, .tabla-ofertas tr, .tabla-ofertas td{ display: block; width: 100%; }
   .tabla-ofertas{ background: transparent; border: 0; }
   .tabla-ofertas thead{ display: none; }
@@ -231,3 +232,18 @@ details.porque > summary{ cursor: pointer; color: var(--acento); font-size: 0.9r
 .visor-marco{ width:100%; height:100%; border:0; background:#fff; }
 .masivo{ display: flex; gap: 0.5rem; flex-wrap: wrap; padding-bottom: 0.3rem; border-bottom: 1px solid var(--borde); margin-bottom: 0.2rem; }
 .masivo button.enlace{ padding: 0.1rem 0.5rem; font-size: 0.85rem; }
+
+/* Candidaturas (fase 3): tablero, columnas y historial del CV base */
+.tablero{ display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; align-items: start; }
+.columna{ min-width: 0; }
+.columna-cerrada{ background: var(--tarjeta); border: 1px solid var(--borde); border-radius: var(--radio); padding: 0.6rem 1rem; }
+.columna-cerrada summary{ cursor: pointer; font-weight: 600; }
+.columna-cerrada .lista{ margin-top: 0.6rem; }
+.tarjeta.alerta{ border-color: var(--error); }
+.version{ margin: 0.5rem 0; }
+.version > summary{ cursor: pointer; font-size: 0.92rem; }
+.lineas-version{ margin: 0.5rem 0; font-family: ui-monospace, Consolas, monospace; font-size: 0.88rem; }
+.linea-version{ margin: 0; padding: 0.05rem 0.4rem; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--texto); }
+.linea-anadida{ background: color-mix(in srgb, var(--ok) 18%, transparent); border-left: 3px solid var(--ok); }
+.linea-quitada{ background: color-mix(in srgb, var(--bajo) 18%, transparent); border-left: 3px solid var(--bajo); text-decoration: line-through; }
+.solo-lector{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
