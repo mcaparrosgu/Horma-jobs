@@ -212,6 +212,17 @@ def test_el_cv_no_puede_citar_la_oferta_pero_la_carta_si():
     assert e["preparacion"] == "pendiente_de_ti"
 
 
+def test_lo_que_deja_pendiente_de_ti_sale_en_los_avisos():
+    malo = _cv("## Experiencia\nDirectora en Hotel Ritz, 2010-2015", traza=[])
+    e, _ = _correr([malo, CORREGIR, malo, CORREGIR, malo, CORREGIR, CARTA_MALA, CORREGIR,
+                    CARTA_MALA, CORREGIR])
+    assert e["preparacion"] == "pendiente_de_ti"
+    assert any(a.startswith("CV: ") and "Hotel Ritz" in a for a in e["avisos"])
+    assert any(a.startswith("CV, juez") and "exagera" in a for a in e["avisos"])
+    assert any(a.startswith("Carta: ") for a in e["avisos"])
+    assert len(e["avisos"]) == len(set(e["avisos"]))
+
+
 # --- T08: cierre -------------------------------------------------------------------------------
 def test_un_juez_que_no_aprueba_deja_pendiente_de_ti_y_el_flujo_no_toca_el_estado():
     e, _ = _correr([_cv(), APROBADO, CARTA, CORREGIR, CARTA, CORREGIR], estado=_estado(estado="borrador"))

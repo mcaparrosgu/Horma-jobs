@@ -35,11 +35,15 @@ PROPUESTA_HUECO = ("La oferta lo pide y no aparece en tu perfil: si lo tienes, a
                    "maestro y vuelve a preparar la candidatura.")
 
 
-def _texto_oferta(oferta: Oferta) -> str:
+def texto_oferta(oferta: Oferta) -> str:
     """La oferta como texto, fuente válida solo para la carta (RF-3.6)."""
     partes = [oferta.titulo, oferta.empresa, oferta.ubicacion, oferta.contrato, *oferta.idiomas,
               *oferta.requisitos, *oferta.taxonomia.stack]
     return "\n".join(p for p in partes if p)
+
+
+def _aviso_problema(documento: str, p: dict) -> str:
+    return f"{documento}, juez ({p['tipo']}): «{p['frase']}» — {p['motivo']}"
 
 
 def _sumar(e: dict, clave: str, nuevas: list[str]) -> None:
@@ -121,7 +125,8 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         e.update(cobertura_ats=m["cobertura"], errores_formato=m["errores_formato"],
                  palabras_sugeridas=m["ausentes_con_origen"], ausentes_sin_origen=m["ausentes_sin_origen"],
                  errores_cv=[*e["errores"], *(["el juez no aprobó el CV"]
-                                              if e["veredicto_cv"] == "corregir" else [])])
+                                              if e["veredicto_cv"] == "corregir" else [])],
+                 problemas_cv=list(e["problemas"]))  # `problemas` se reutiliza para los de la carta
         return e
 
     def redactar_carta(e: dict) -> dict:
@@ -144,7 +149,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         oferta = Oferta.model_validate(e["oferta"])
         e["errores"] = verificar_trazabilidad(
             e["carta_contenido"], e["carta_traza"],
-            [e["cv_maestro"], e["cv_base_contenido"], _texto_oferta(oferta)],
+            [e["cv_maestro"], e["cv_base_contenido"], texto_oferta(oferta)],
             formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)
         e["errores"] += [f"Rasgo personal en la carta: {r}" for r in rasgos_personales(e["carta_contenido"])]
         return e
@@ -167,8 +172,14 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                        *({"requisito": p, "propuesta": PROPUESTA_HUECO}
                          for p in e.get("ausentes_sin_origen", []) if p.casefold() not in vistos)]
         e["huecos"] = list({h["requisito"].casefold(): h for h in e["huecos"]}.values())
-        if e["errores_formato"]:
-            e["avisos"] += [f"Formato del CV para ATS: {x}" for x in e["errores_formato"]]
+        # Todo lo que dejó sin resolver cada documento se le enseña a ella (RF-3.8): sin esto, una
+        # preparación `pendiente_de_ti` no diría qué hay que revisar.
+        e["avisos"] += [f"Formato del CV para ATS: {x}" for x in e["errores_formato"]]
+        e["avisos"] += [f"CV: {x}" for x in e["errores_cv"]]
+        e["avisos"] += [_aviso_problema("CV", p) for p in e.get("problemas_cv", [])]
+        e["avisos"] += [f"Carta: {x}" for x in e["errores"]]
+        e["avisos"] += [_aviso_problema("Carta", p) for p in e["problemas"]]
+        e["avisos"] = list(dict.fromkeys(e["avisos"]))
         # `errores_cv` guarda los del último CV; `errores`, los de la última carta.
         cv_limpio = not e["errores_cv"] and not e["errores_formato"]
         carta_limpia = e["veredicto_carta"] == "aprobado" and not e["errores"]

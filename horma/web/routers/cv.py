@@ -139,6 +139,25 @@ def editar_cv_base(cv_id: int, datos: EdicionCvBase, request: Request,
     return {"id": cv_id, "nombre": nombre}
 
 
+@router.get("/api/cv-base/{cv_id}/versiones")
+def versiones_cv_base(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """El historial (RF-3.8d): de la más reciente a la más antigua, con las líneas marcadas."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        versiones = perfiles.versiones_cv_base(s, cv_id)
+    if versiones is None:
+        raise HTTPException(status_code=404, detail="No existe ese CV base")
+    return {"versiones": versiones}
+
+
+@router.post("/api/cv-base/{cv_id}/versiones/{version_id}/restaurar", dependencies=[Depends(exigir_csrf)])
+def restaurar_cv_base(cv_id: int, version_id: int, request: Request,
+                      usuaria_id: int = Depends(usuaria_actual)):
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        if not perfiles.restaurar_cv_base(s, cv_id, version_id):
+            raise HTTPException(status_code=404, detail="No existe esa versión del CV base")
+    return {"id": cv_id, "version_id": version_id}
+
+
 @router.delete("/api/cv-base/{cv_id}", dependencies=[Depends(exigir_csrf)])
 def eliminar_cv_base(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     with sesion_de(request.app.state.engine, usuaria_id) as s:
