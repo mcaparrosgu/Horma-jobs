@@ -50,8 +50,8 @@ falla. Todo se prueba sin llamar al modelo (puerta simulada) salvo la medición 
 - [x] T20 — Botón «Preparar candidatura» en Recomendadas e historial en la pantalla de CV base · test: crea la candidatura sin pedir CV base y lleva a ella; sin CV base pide generarlo; cada CV base tiene «Historial» plegado con sus versiones, las líneas añadidas y quitadas se distinguen sin depender solo del color, y «Volver a esta versión» funciona; JS sin `innerHTML` · cubre: RF-3.7b, RF-3.8d
 
 ### Bloque G · Consola y cierre
-- [ ] T21 — Consola (`agente correr` de los 6 agentes, `flujo correr candidatura --usuaria --oferta`, `flujo correr clasificar_respuesta`, `eval correr cv|respuestas`) · test: cada comando corre en simulado; `--paso-a-paso` y `--traza` guardan un JSON por paso; `--oferta` funciona con `--ofertas f.json` sin API · cubre: RF-3.11, RT-04, RT-05
-- [ ] T22 — CI, `.env.example` (topes nuevos, marcados como de construcción), README, `specs/system.md` e `specs/index.md` (fase 3 construida) y plan de pruebas manuales (gitignorado) · test: CI corre los dos sets; el README documenta los comandos; import-linter incluye los agentes nuevos · cubre: RF-3.11, RF-3.12, RT-11
+- [x] T21 — Consola (`agente correr` de los 6 agentes, `flujo correr candidatura --usuaria --oferta`, `flujo correr clasificar_respuesta`, `eval correr cv|respuestas`) · test: cada comando corre en simulado; `--paso-a-paso` y `--traza` guardan un JSON por paso; `--oferta` funciona con `--ofertas f.json` sin API · cubre: RF-3.11, RT-04, RT-05
+- [x] T22 — CI, `.env.example` (topes nuevos, marcados como de construcción), README, `specs/system.md` e `specs/index.md` (fase 3 construida) y plan de pruebas manuales (gitignorado) · test: CI corre los dos sets; el README documenta los comandos; import-linter incluye los agentes nuevos · cubre: RF-3.11, RF-3.12, RT-11
 
 ## Pendiente de la persona (no se puede hacer sin ti)
 - Verificar aclaraciones, spec, plan y tareas (campo `verified` de cada documento) antes de T01.
