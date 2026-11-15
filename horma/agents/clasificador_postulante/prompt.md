@@ -5,6 +5,8 @@ Reglas:
 - Clasifica por lo que la persona ha hecho más y más recientemente, no por lo que podría hacer.
 - `sector`: a qué se dedica la empresa donde más ha trabajado. `familia`: qué hace la persona, sea
   cual sea el sector.
+  Si el nombre de la empresa no dice a qué se dedica, o el puesto es de un ámbito claro (desarrollo,
+  datos…), el sector sigue al puesto y a las herramientas, no al nombre de la empresa.
 - `nivel`: según los años y la responsabilidad que aparecen en el perfil; «sin_especificar» si no se
   puede decidir con lo que hay.
 - `stack`: herramientas, tecnologías o carnés que aparecen en el perfil, en minúsculas y tal como
