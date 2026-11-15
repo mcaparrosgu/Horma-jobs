@@ -7,7 +7,10 @@ const CAMPOS = {
   habilidades: [["nombre", "Habilidad"]],
   titular: [["valor", "Titular"]],
   resumen: [["valor", "Resumen"]],
+  nombre: [["valor", "Nombre"]],
 };
+// Si la pregunta es sobre un detalle («experiencias.Hotel Marina.fechas»), solo se piden esos campos.
+const DETALLES = { fechas: ["inicio", "fin"], nivel: ["nivel"] };
 const SECCIONES = [["titular", "Titular"], ["resumen", "Resumen"], ["experiencias", "Experiencia"],
                    ["formacion", "Formación"], ["idiomas", "Idiomas"], ["habilidades", "Habilidades"]];
 const MOTIVOS = { falta: "Falta", ambiguo: "Ambiguo", contradiccion: "Contradicción entre CV" };
@@ -32,11 +35,11 @@ function origenDe(d) {
 }
 
 // Formulario con un campo por dato; devuelve el objeto a enviar o null si está todo vacío.
-function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton) {
+function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, extra = {}) {
   const f = nodo("form", null, "editor");
   const entradas = {};
   let idioma = null;
-  if (campoNombre === "idiomas") {
+  if (campoNombre === "idiomas" && !extra.idiomaFijo) {
     idioma = nodo("select");
     for (const v of idiomasValidos) {
       const o = nodo("option", etiqueta(v));
@@ -47,12 +50,23 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton) 
     f.append(campo("Idioma", idioma));
   }
   for (const [clave, rotulo] of CAMPOS[campoNombre]) {
+    if (extra.solo && !extra.solo.includes(clave)) continue;
     const i = nodo("input");
     i.type = "text";
     i.maxLength = 300;
     i.value = inicial[clave] || "";
     entradas[clave] = i;
     f.append(campo(rotulo, i));
+    if (extra.sugerencias?.length && clave === (extra.solo?.[0] ?? CAMPOS[campoNombre][0][0])) {   // opciones pulsables: rellenan el campo
+      const caja = nodo("div", null, "fila");
+      for (const s of extra.sugerencias) {
+        const b = nodo("button", s, "secundario");
+        b.type = "button";
+        b.addEventListener("click", () => { i.value = s; i.focus(); });
+        caja.append(b);
+      }
+      f.append(caja);
+    }
   }
   const fila = nodo("div", null, "fila");
   fila.append(nodo("button", textoBoton || "Guardar"));
@@ -68,6 +82,7 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton) 
     const dato = {};
     for (const [clave, i] of Object.entries(entradas)) dato[clave] = i.value.trim() || null;
     if (idioma) dato.idioma = idioma.value;
+    else if (extra.idiomaFijo) dato.idioma = extra.idiomaFijo;
     alEnviar(dato);
   });
   return f;
@@ -90,16 +105,18 @@ function pregunta(p, i) {
   li.append(nodo("h3", p.pregunta));
   const acciones = nodo("div", null, "fila");
   const responder = (dato) => cambiarPerfil("/api/perfil/respuestas", "POST", { indice: i, dato });
-  if (p.opciones && p.opciones.length && !CAMPOS[p.campo]) {
-    li.append(nodo("p", "Opciones: " + p.opciones.join(" · "), "suave"));
-  }
-  if (CAMPOS[p.campo]) {
+  const [seccion, clave = "", detalle = ""] = p.campo.split(".");
+  if (CAMPOS[seccion]) {
     const abrir = nodo("button", "Responder");
     abrir.type = "button";
     abrir.addEventListener("click", () => {
       abrir.hidden = true;
-      const f = formularioDato(p.campo, {}, responder, () => { f.remove(); abrir.hidden = false; },
-                               "Guardar respuesta");
+      const extra = { sugerencias: p.opciones || [] };
+      if (DETALLES[detalle]) extra.solo = DETALLES[detalle];
+      else if (seccion === "nombre") extra.solo = ["valor"];
+      if (seccion === "idiomas" && idiomasValidos.includes(clave)) extra.idiomaFijo = clave;
+      const f = formularioDato(seccion, {}, responder, () => { f.remove(); abrir.hidden = false; },
+                               "Guardar respuesta", extra);
       li.insertBefore(f, acciones);
     });
     acciones.append(abrir);
@@ -230,7 +247,30 @@ function tarjetaCv(c) {
     ver.addEventListener("click", () => abrirVisor(c));
     fila.append(ver);
   }
-  fila.append(descargar, renombrar);
+  const papelera = nodo("button", null, "secundario icono");
+  papelera.type = "button";
+  papelera.title = "Eliminar CV";
+  papelera.setAttribute("aria-label", `Eliminar el CV ${c.nombre}`);
+  papelera.append(iconoPapelera());
+  papelera.addEventListener("click", () => {
+    fila.hidden = true;
+    const conf = nodo("div", null, "fila editor");
+    const si = nodo("button", "Eliminar", "secundario");
+    si.type = "button";
+    const no = nodo("button", "Cancelar", "secundario");
+    no.type = "button";
+    no.addEventListener("click", () => { conf.remove(); fila.hidden = false; });
+    si.addEventListener("click", async () => {
+      const r = await api(`/api/cv/${c.id}`, { metodo: "DELETE" });
+      if (!r.ok) return avisar(r.motivo, true);
+      avisar("CV eliminado. Tu perfil ya construido no cambia.");
+      await cargarCvs();
+    });
+    conf.append(nodo("span", "¿Eliminar este CV? No se puede deshacer."), si, no);
+    li.append(conf);
+    no.focus();
+  });
+  fila.append(descargar, renombrar, papelera);
   li.append(fila);
   return li;
 }

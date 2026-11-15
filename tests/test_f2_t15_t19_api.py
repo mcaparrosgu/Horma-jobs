@@ -231,6 +231,22 @@ def test_listar_y_renombrar_un_cv(app):
     assert c.patch("/api/cv/999", json={"nombre": "x"}, headers=h).status_code == 404
 
 
+def test_eliminar_un_cv_quita_fila_y_archivo_y_solo_el_propio(app, motor_app):
+    c, h, _ = entrar(app)
+    a = subir(c, h, nombre="Uno").json()["id"]
+    from horma.web.services import cv as servicio_cv
+    assert len(list(servicio_cv.carpeta().iterdir())) == 1
+    assert c.delete(f"/api/cv/{a}", headers=h).status_code == 200
+    assert c.get("/api/cv").json() == [] and list(servicio_cv.carpeta().iterdir()) == []
+    assert c.delete(f"/api/cv/{a}", headers=h).status_code == 404
+    assert c.delete("/api/cv/1").status_code in (401, 403)  # sin CSRF
+
+
+def test_los_estaticos_se_revalidan_siempre(app):
+    c, _, _ = entrar(app)
+    assert c.get("/static/comun.js").headers["cache-control"] == "no-cache"
+
+
 # --- T16: perfil -------------------------------------------------------------------------------
 def test_ver_el_perfil_con_origenes_y_pendientes(app, motor_app):
     c, h, _ = entrar(app)
@@ -256,6 +272,32 @@ def test_responder_crea_version_nueva_conserva_la_anterior_y_marca_origen_usuari
         v1 = perfiles.perfil_modelo(perfiles.por_version(s, 1))
     assert len(v1.preguntas_pendientes) == 1 and v1.idiomas == []  # la anterior, intacta
     assert [t.tipo for t in _tareas(motor_app)] == ["clasificar_perfil"]
+
+
+def test_responder_preguntas_con_campo_compuesto_y_nombre(app, motor_app):
+    c, h, _ = entrar(app)
+    u = _usuaria_id(motor_app, "google-A")
+    pend = [{"campo": "experiencias.Bar Sol.fechas", "motivo": "falta", "pregunta": "¿Cuándo?"},
+            {"campo": "idiomas.en.nivel", "motivo": "ambiguo", "pregunta": "¿Nivel?",
+             "opciones": ["B1", "medio"]},
+            {"campo": "nombre", "motivo": "contradiccion", "pregunta": "¿Cuál es tu nombre?"}]
+    ingles = {"idioma": "en", "nivel": "medio",
+              "origen": {"fuente": "cv", "cv_id": 1, "fragmento": "inglés medio"}}
+    _perfil_hecho(motor_app, u, preguntas_pendientes=pend, idiomas=[ingles])
+    r = c.post("/api/perfil/respuestas", headers=h,
+               json={"indice": 0, "dato": {"inicio": "2018", "fin": "2021", "puesto": None}})
+    assert r.status_code == 201, r.text
+    r = c.post("/api/perfil/respuestas", headers=h,
+               json={"indice": 0, "dato": {"nivel": "B1", "idioma": "en"}})
+    assert r.status_code == 201, r.text
+    r = c.post("/api/perfil/respuestas", headers=h, json={"indice": 0, "dato": {"valor": "Lucía Ferrer"}})
+    assert r.status_code == 201, r.text
+    p = c.get("/api/perfil").json()["perfil"]
+    assert len(p["experiencias"]) == 1 and p["experiencias"][0]["puesto"] == "Camarera"
+    assert (p["experiencias"][0]["inicio"], p["experiencias"][0]["fin"]) == ("2018", "2021")
+    assert p["experiencias"][0]["origen"]["fuente"] == "usuaria"
+    assert len(p["idiomas"]) == 1 and p["idiomas"][0]["nivel"] == "B1"
+    assert p["nombre"] == "Lucía Ferrer" and p["preguntas_pendientes"] == []
 
 
 def test_corregir_un_dato_y_quitarlo(app, motor_app):

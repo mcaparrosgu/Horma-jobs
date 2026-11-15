@@ -54,6 +54,13 @@ def renombrar(cv_id: int, datos: Nombre, request: Request, usuaria_id: int = Dep
     return {"id": cv_id, "nombre": nombre}
 
 
+@router.delete("/api/cv/{cv_id}", dependencies=[Depends(exigir_csrf)])
+def eliminar(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    if not servicio.eliminar(request.app.state.engine, usuaria_id, cv_id):
+        raise HTTPException(status_code=404, detail="No existe ese CV")
+    return {"id": cv_id}
+
+
 @router.get("/api/cv/{cv_id}/archivo")
 def descargar(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Solo la dueña (RLS): para las demás, el CV no existe."""

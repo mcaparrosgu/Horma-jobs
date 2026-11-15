@@ -23,6 +23,21 @@ function campo(etiqueta, control) {
   return l;
 }
 
+// Icono de papelera (SVG con DOM, sin HTML): el botón que lo lleva debe tener aria-label.
+function iconoPapelera() {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  for (const [k, v] of Object.entries({ viewBox: "0 0 24 24", width: "18", height: "18", fill: "none",
+    stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round",
+    "aria-hidden": "true" })) svg.setAttribute(k, v);
+  for (const d of ["M3 6h18", "M8 6V4h8v2", "M6 6l1 14h10l1-14", "M10 11v6", "M14 11v6"]) {
+    const p = document.createElementNS(ns, "path");
+    p.setAttribute("d", d);
+    svg.append(p);
+  }
+  return svg;
+}
+
 // Llama a la API con CSRF si cambia algo. Devuelve { ok, estado, datos, motivo }.
 async function api(ruta, { metodo = "GET", cuerpo, formulario } = {}) {
   const cabeceras = {};

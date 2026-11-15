@@ -93,6 +93,17 @@ def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original:
     return {"id": cv_id, "nombre": nombre, "tipo": tipo, "clase": clase, "perfil_id": perfil_id}
 
 
+def eliminar(engine: Engine, usuaria_id: int, cv_id: int) -> bool:
+    """Quita el CV (fila y texto) y, ya confirmado, su archivo. El perfil ya construido no cambia."""
+    with sesion_de(engine, usuaria_id) as s:
+        cv = repo.uno(s, cv_id)
+        if cv is None:
+            return False
+        repo.eliminar(s, cv_id)
+    (carpeta() / cv["ruta"]).unlink(missing_ok=True)
+    return True
+
+
 def _borrar(destino: Path, escrito: bool) -> None:
     if escrito:
         destino.unlink(missing_ok=True)

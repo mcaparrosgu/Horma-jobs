@@ -54,6 +54,16 @@ def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], Non
     return {"id": perfil_id, "version": version}
 
 
+def _buscar(elementos: list[dict], clave: str) -> int | None:
+    """Posición del dato al que se refiere la pregunta (por empresa, centro, idioma…), si lo hay."""
+    clave = clave.strip().lower()
+    for i, x in enumerate(elementos):
+        if any(isinstance(v, str) and v.strip().lower() == clave
+               for k, v in x.items() if k != "origen"):
+            return i
+    return None
+
+
 def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -> dict:
     """Responde una pregunta pendiente: la quita y, si trae un dato, lo añade con origen «usuaria»."""
     def cambio(p: dict) -> None:
@@ -63,10 +73,20 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -
         campo = pendientes.pop(indice)["campo"]
         if dato is None:
             return
-        if campo in LISTAS:
-            p[campo].append(_con_origen(dato))
-        elif campo in UNICOS:
-            p[campo] = _con_origen(dato)
+        # El modelo a veces pregunta por un dato concreto: «experiencias.Hotel Marina.fechas».
+        seccion, _, resto = campo.partition(".")
+        clave = resto.partition(".")[0]
+        nuevo = {k: v for k, v in dato.items() if v not in (None, "")}
+        if seccion in LISTAS:
+            existente = _buscar(p[seccion], clave) if clave else None
+            if existente is None:
+                p[seccion].append(_con_origen(nuevo))
+            else:
+                p[seccion][existente] = _con_origen({**p[seccion][existente], **nuevo})
+        elif seccion in UNICOS:
+            p[seccion] = _con_origen(nuevo)
+        elif seccion == "nombre" and nuevo.get("valor"):
+            p["nombre"] = str(nuevo["valor"]).strip()
         else:
             raise DatoNoValido(f"La pregunta sobre «{campo}» no admite un dato: respóndela sin dato.")
     return _nueva_version(engine, usuaria_id, cambio)
