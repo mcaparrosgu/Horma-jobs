@@ -1,0 +1,26 @@
+{
+  "modo": "sembrado",
+  "usuaria": "ana",
+  "cv_base_id": 1,
+  "oferta": "camarera-bar-luna",
+  "documento": "carta",
+  "contenido": "Hola equipo,\nAtención de mesas y barra en un bar de 40 plazas.\nGestión de la caja al cierre.\nManejo de TPV y de comandas.\nPreparación de entrantes y mise en place.\nUn saludo\n",
+  "traza": [
+    {
+      "frase": "Atención de mesas y barra en un bar de 40 plazas.",
+      "fragmento": "Atención de mesas y barra en un bar de 40 plazas"
+    },
+    {
+      "frase": "Gestión de la caja al cierre.",
+      "fragmento": "Gestión de la caja al cierre"
+    },
+    {
+      "frase": "Manejo de TPV y de comandas.",
+      "fragmento": "Manejo de TPV y de comandas"
+    },
+    {
+      "frase": "Preparación de entrantes y mise en place.",
+      "fragmento": "Preparación de entrantes y mise en place"
+    }
+  ]
+}

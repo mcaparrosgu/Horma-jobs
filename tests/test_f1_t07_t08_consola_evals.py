@@ -98,7 +98,8 @@ def test_eval_simulado_de_fuentes_aprueba(tmp_path):
     shutil.copytree(RAIZ / "evals" / "fuentes", tmp_path / "fuentes")
     res = correr_set("fuentes", raiz=tmp_path, simulado=True)
     assert res["aprobado"], res["detalle"]
-    assert set(SETS) == {"ofertas", "fuentes", "perfil", "cv-base", "recomendacion"}  # fase 2: T11-T12
+    assert set(SETS) == {"ofertas", "fuentes", "perfil", "cv-base", "recomendacion", "cv",
+                         "respuestas"}  # fase 2: T11-T12; fase 3: T10-T11
 
 
 def test_una_adversaria_que_falla_un_campo_suspende_el_set(tmp_path):

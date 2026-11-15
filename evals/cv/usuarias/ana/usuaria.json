@@ -1,0 +1,27 @@
+{
+  "usuaria_id": 1,
+  "perfil_version": 1,
+  "cvs_base": [
+    {
+      "id": 1,
+      "nombre": "Hostelería",
+      "sector": "hosteleria_turismo",
+      "familia": "hosteleria_restauracion",
+      "archivo": "cv_base/01-hosteleria.md"
+    },
+    {
+      "id": 2,
+      "nombre": "Comercio",
+      "sector": "comercio_retail",
+      "familia": "atencion_cliente",
+      "archivo": "cv_base/02-comercio.md"
+    },
+    {
+      "id": 3,
+      "nombre": "Administración",
+      "sector": "servicios_profesionales",
+      "familia": "administracion_oficina",
+      "archivo": "cv_base/03-administracion.md"
+    }
+  ]
+}

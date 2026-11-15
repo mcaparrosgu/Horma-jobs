@@ -16,6 +16,7 @@ Reglas:
   selección,», «Estimados señores,», «Hola equipo,», «Buenos días,», «Un saludo», «Saludos
   cordiales», «Cordialmente», «Atentamente», «Muchas gracias por su tiempo», «Gracias por su tiempo»,
   «Gracias por tu tiempo». Las fórmulas no necesitan traza.
+- No firmes con tu nombre: termina con una de las fórmulas de despedida.
 - `traza`: una entrada por cada frase de la carta que no sea una fórmula de la lista, con `frase` (tal
   cual) y `fragmento` (cita LITERAL del CV maestro, del CV adaptado o de la oferta). Una frase sin traza
   se rechaza.

@@ -1,0 +1,11 @@
+{
+  "tipo": "flujo",
+  "huecos": [
+    "Inglés B2",
+    "Curso de sumiller"
+  ],
+  "prohibidas": [
+    "B2",
+    "sumiller"
+  ]
+}

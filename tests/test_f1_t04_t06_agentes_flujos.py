@@ -168,4 +168,5 @@ def test_sin_condiciones_no_es_apta_y_no_llama_al_modelo():
 
 def test_registro_de_flujos():
     assert set(FLUJOS) == {"procesar_oferta", "calificar_fuente", "perfilar", "clasificar_perfil",
-                           "generar_cv_base", "recomendar"}
+                           "generar_cv_base", "recomendar", "candidatura",
+                           "clasificar_respuesta"}

@@ -71,10 +71,10 @@ def _raiz(palabra: str) -> str:
     return p
 
 
-def _terminos_a_comprobar(frase: str) -> list[str]:
+def _terminos_a_comprobar(frase: str, cabeceras: bool = True) -> list[str]:
     """Palabras de la frase que deben estar en su fragmento (en minúsculas)."""
     palabras = _palabras(frase)
-    if _es_cabecera(frase):
+    if cabeceras and _es_cabecera(frase):
         return [p.casefold() for p in palabras if len(p) > _CORTAS or p[0].isdigit()]
     terminos = []
     for i, p in enumerate(palabras):
@@ -109,17 +109,29 @@ FORMULAS_CORTESIA: tuple[str, ...] = (
 )  # lista cerrada de saludos y despedidas de la carta (RF-3.6): no piden traza
 
 
+_FIN_DE_FRASE = re.compile(r"(?<=[.!?])\s+")
+
+
+def _unidades(contenido: str, por_frase: bool) -> list[str]:
+    """Lo que necesita traza: las líneas del documento o, en la carta, cada frase de cada párrafo."""
+    lineas = frases(contenido)
+    if not por_frase:
+        return lineas
+    return [f for linea in lineas for f in _FIN_DE_FRASE.split(linea) if f.strip()]
+
+
 def verificar_trazabilidad(contenido: str, traza: Sequence, fuentes: str | Sequence[str],
-                           formulas_cortesia: Sequence[str] = ()) -> list[str]:
+                           formulas_cortesia: Sequence[str] = (), por_frase: bool = False) -> list[str]:
     """`fuentes`: un texto (el CV maestro, como en la fase 2) o una lista de textos (CV maestro, CV base
     editado y, solo para la carta, la oferta). Un fragmento vale si está en alguna; una fecha, si está
-    en alguna. `formulas_cortesia`: líneas que quedan exentas de traza (saludo y despedida de la carta)."""
+    en alguna. `formulas_cortesia`: líneas que quedan exentas de traza (saludo y despedida de la carta).
+    `por_frase`: la traza es por frase y no por línea (la carta escribe párrafos de varias frases)."""
     unica = isinstance(fuentes, str)
     lista = [fuentes] if unica else list(fuentes)
     nombre = "el CV maestro" if unica else "ninguna de las fuentes"
     errores: list[str] = []
     claves_fuentes = [_clave(f) for f in lista]
-    por_frase = {_clave(_campo(t, "frase")): _campo(t, "fragmento") for t in traza}
+    traza_por_frase = {_clave(_campo(t, "frase")): _campo(t, "fragmento") for t in traza}
     exentas = {_clave(f) for f in formulas_cortesia}
 
     # 3. fechas: ninguna puede faltar en las fuentes
@@ -128,10 +140,10 @@ def verificar_trazabilidad(contenido: str, traza: Sequence, fuentes: str | Seque
         if fecha not in fechas_fuentes:
             errores.append(f"Fecha que no está en {nombre}: {fecha}")
 
-    for frase in frases(contenido):
+    for frase in _unidades(contenido, por_frase):
         if _clave(frase) in exentas:
             continue
-        fragmento = por_frase.get(_clave(frase))
+        fragmento = traza_por_frase.get(_clave(frase))
         # 1. toda frase tiene traza
         if fragmento is None:
             errores.append(f"Frase sin origen en la traza: «{frase}»")
@@ -143,7 +155,7 @@ def verificar_trazabilidad(contenido: str, traza: Sequence, fuentes: str | Seque
         # 4. la frase no añade datos a su fragmento
         en_fragmento = {p.casefold() for p in _palabras(fragmento)}
         raices = {_raiz(p) for p in en_fragmento}
-        for termino in _terminos_a_comprobar(frase):
+        for termino in _terminos_a_comprobar(frase, cabeceras=not por_frase):
             if termino not in en_fragmento and _raiz(termino) not in raices:
                 errores.append(f"«{termino}» no aparece en el fragmento de origen de la frase «{frase}»")
     return errores

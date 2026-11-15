@@ -1,0 +1,36 @@
+{
+  "titulo": "Jefa de sala",
+  "empresa": "Restaurante Marina",
+  "ubicacion": "Valencia",
+  "remoto": false,
+  "contrato": "indefinido",
+  "salario": null,
+  "idiomas": [
+    "inglés"
+  ],
+  "requisitos": [
+    "Atención de mesas y barra",
+    "Inglés B2",
+    "Curso de sumiller"
+  ],
+  "fecha_publicacion": "2026-11-10",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "junior",
+    "stack": []
+  }
+}
