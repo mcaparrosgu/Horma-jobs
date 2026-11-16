@@ -68,13 +68,14 @@ def test_estado_desconocido_se_rechaza():
         transicion("borrador", "inventado")
 
 
-def test_enviada_exige_fecha_y_canal():
+def test_enviada_exige_fecha_y_el_canal_es_opcional():
     with pytest.raises(TransicionInvalida):
         transicion("aprobada", "enviada")
-    with pytest.raises(TransicionInvalida):
-        transicion("aprobada", "enviada", fecha=HOY)
+    assert transicion("aprobada", "enviada", fecha=HOY) == "enviada"
     with pytest.raises(TransicionInvalida):
         transicion("aprobada", "enviada", canal="web")
+    with pytest.raises(TransicionInvalida):
+        transicion("aprobada", "enviada", fecha=HOY, canal_otro="en mano")
     with pytest.raises(TransicionInvalida):
         transicion("aprobada", "enviada", fecha=HOY, canal="telepatía")
 

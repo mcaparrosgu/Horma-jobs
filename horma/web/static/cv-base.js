@@ -22,10 +22,10 @@ function historial(c) {
     const r = await api(`/api/cv-base/${c.id}/versiones`);
     if (!r.ok) { cargado = false; return avisar(r.motivo, true); }
     if (!r.datos.versiones.length) {
-      cuerpo.append(nodo("p", "Todavía no hay versiones anteriores: aparecen cuando editas o guardas una candidatura encima de este CV base.", "suave"));
+      cuerpo.append(nodo("p", "Todavía no hay versiones anteriores: aparecen cuando editas este CV base o vuelves a una versión.", "suave"));
       return;
     }
-    const origenes = { candidatura: "desde una candidatura", edicion: "edición", restauracion: "al volver a una versión" };
+    const origenes = { edicion: "edición", restauracion: "al volver a una versión" };
     for (const v of r.datos.versiones) {
       const det = nodo("details", null, "version");
       det.append(nodo("summary", `${fecha(v.creado_en)} · ${origenes[v.origen] || v.origen} · «${v.nombre}»`));

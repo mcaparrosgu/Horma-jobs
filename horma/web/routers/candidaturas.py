@@ -3,10 +3,10 @@ from datetime import date
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import RedirectResponse, Response
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
-from horma.schemas.candidatura import MAX_CANAL_OTRO, Canal, Documento, MotivoCierre
+from horma.schemas.candidatura import MAX_CANAL_OTRO, Canal, MotivoCierre
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.services import candidaturas as servicio
 
@@ -23,28 +23,14 @@ class Edicion(BaseModel):
     carta_contenido: str | None = Field(default=None, min_length=1, max_length=20000)
 
 
-class GuardarCvBase(BaseModel):
-    nombre: str = Field(min_length=1, max_length=80)
-
-
-class Aprobacion(BaseModel):
-    documento: Documento
-    cv_estetico_id: int | None = None
-    avisos_revisados: bool = False
-
-
 class Envio(BaseModel):
-    fecha: date
-    canal: Canal
+    fecha: date | None = None  # sin fecha, la de hoy
+    canal: Canal | None = None
     canal_otro: str | None = Field(default=None, max_length=MAX_CANAL_OTRO)
 
 
 class Cierre(BaseModel):
     motivo: MotivoCierre
-
-
-class Respuesta(BaseModel):
-    texto: str = Field(min_length=1, max_length=20000)
 
 
 def _llamar(funcion, request: Request, usuaria_id: int, *args):
@@ -79,17 +65,15 @@ def editar(candidatura_id: int, datos: Edicion, request: Request, usuaria_id: in
                    datos.carta_contenido)
 
 
-@router.post("/api/candidaturas/{candidatura_id}/guardar-cv-base", dependencies=[Depends(exigir_csrf)])
-def guardar_cv_base(candidatura_id: int, datos: GuardarCvBase, request: Request,
-                    usuaria_id: int = Depends(usuaria_actual)):
-    return _llamar(servicio.guardar_cv_base, request, usuaria_id, candidatura_id, datos.nombre.strip())
-
-
 @router.post("/api/candidaturas/{candidatura_id}/aprobar", dependencies=[Depends(exigir_csrf)])
-def aprobar(candidatura_id: int, datos: Aprobacion, request: Request,
-            usuaria_id: int = Depends(usuaria_actual)):
-    return _llamar(servicio.aprobar, request, usuaria_id, candidatura_id, datos.documento,
-                   datos.cv_estetico_id, datos.avisos_revisados)
+def aprobar(candidatura_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    return _llamar(servicio.aprobar, request, usuaria_id, candidatura_id)
+
+
+@router.post("/api/candidaturas/{candidatura_id}/reintentar", status_code=202,
+             dependencies=[Depends(exigir_csrf)])
+def reintentar(candidatura_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    return _llamar(servicio.reintentar, request, usuaria_id, candidatura_id)
 
 
 @router.post("/api/candidaturas/{candidatura_id}/enviada", dependencies=[Depends(exigir_csrf)])
@@ -109,10 +93,8 @@ def cerrar(candidatura_id: int, datos: Cierre, request: Request, usuaria_id: int
 
 
 def _descarga(cual: Literal["cv", "carta"], candidatura_id: int, request: Request, usuaria_id: int):
-    tipo, valor = _llamar(servicio.documento_pdf, request, usuaria_id, candidatura_id, cual)
-    if tipo == "estetico":  # su archivo original, tal cual
-        return RedirectResponse(f"/api/cv/{valor}/archivo", status_code=307)
-    return Response(valor, media_type="application/pdf",
+    pdf = _llamar(servicio.documento_pdf, request, usuaria_id, candidatura_id, cual)
+    return Response(pdf, media_type="application/pdf",
                     headers={"Content-Disposition": f'attachment; filename="{cual}.pdf"'})
 
 
@@ -124,21 +106,3 @@ def cv_pdf(candidatura_id: int, request: Request, usuaria_id: int = Depends(usua
 @router.get("/api/candidaturas/{candidatura_id}/carta.pdf")
 def carta_pdf(candidatura_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     return _descarga("carta", candidatura_id, request, usuaria_id)
-
-
-@router.post("/api/candidaturas/{candidatura_id}/respuesta", status_code=202,
-             dependencies=[Depends(exigir_csrf)])
-def pegar_respuesta(candidatura_id: int, datos: Respuesta, request: Request,
-                    usuaria_id: int = Depends(usuaria_actual)):
-    """El texto vive en la fila solo hasta que el worker lo clasifica; después no se conserva."""
-    return _llamar(servicio.pegar_respuesta, request, usuaria_id, candidatura_id, datos.texto)
-
-
-@router.post("/api/candidaturas/{candidatura_id}/respuesta/confirmar", dependencies=[Depends(exigir_csrf)])
-def confirmar_respuesta(candidatura_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    return _llamar(servicio.confirmar_respuesta, request, usuaria_id, candidatura_id)
-
-
-@router.post("/api/candidaturas/{candidatura_id}/respuesta/descartar", dependencies=[Depends(exigir_csrf)])
-def descartar_respuesta(candidatura_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    return _llamar(servicio.descartar_respuesta, request, usuaria_id, candidatura_id)
