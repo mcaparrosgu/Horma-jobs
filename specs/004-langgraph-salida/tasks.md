@@ -28,7 +28,7 @@ las mediciones reales de T11 y T14, que necesitan el OK de Mar antes de gastar. 
 protección de rama esté activa (T11), cada bloque se entrega en su rama y con un PR.
 
 ### Bloque A · LangGraphFlow (RF-4.1, RF-4.2)
-- [ ] T01 — Dependencias e interfaz.
+- [x] T01 — Dependencias e interfaz.
   - **Qué se hace:** `uv add langgraph langgraph-checkpoint-postgres` (versiones fijadas). `Flow` gana
     `pausas`, `run(…, hilo=)` y `reanudar`. `PlainFlow` se para antes de un paso en `pausas` y reanuda
     desde él. Los flujos lineales siguen con `pausas = set()`. Se añade el contrato de import-linter
@@ -37,7 +37,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     cambios y termina. Sin pausas, todo sigue igual: pasan todas las suites de flujos actuales.
     `reanudar` en un flujo sin pausa da error. lint-imports en verde.
   - **Cubre:** RF-4.2, RT-12.
-- [ ] T02 — `candidatura` con definición compartida.
+- [x] T02 — `candidatura` con definición compartida.
   - **Qué se hace:** `PASOS`, `ARISTAS`, `CLAVES_INTERNAS`, el paso `entregar` (código: dos
     `generar_pdf`) y la arista `componer → entregar`, con `pausas = finales = {"entregar"}`.
   - **Test:**
@@ -47,7 +47,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - `entregar` no llama al modelo;
     - el resto de la suite T26 de la fase 3 sigue en verde.
   - **Cubre:** RF-4.1, RF-4.3c.
-- [ ] T03 — `LangGraphFlow` (`horma/flows/grafo.py`).
+- [x] T03 — `LangGraphFlow` (`horma/flows/grafo.py`).
   - **Qué se hace:** `StateGraph` con un `TypedDict` generado desde `EstadoCandidatura` y
     `CLAVES_INTERNAS`, un nodo por paso, las aristas condicionales, `interrupt_before` de las pausas y
     `run_step`/`siguiente` sobre las mismas funciones.
@@ -57,7 +57,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - `reanudar` sin checkpoint lanza `ErrorDePaso`;
     - un fallo en un nodo llega como `ErrorDePaso` con el nombre del paso.
   - **Cubre:** RF-4.1, RF-4.1b.
-- [ ] T04 — Elección por configuración y suite parametrizada.
+- [x] T04 — Elección por configuración y suite parametrizada.
   - **Qué se hace:** `HORMA_FLOW_IMPL` en `config.py` y en `.env.example` (por defecto `plain`) y
     `registry` que construye la implementación pedida. Se parametrizan por implementación la suite de
     flujos de candidatura (`tests/test_f3_t08_t09_flujos.py`) y `eval correr cv` (`--flujo`).

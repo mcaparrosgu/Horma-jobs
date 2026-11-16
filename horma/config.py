@@ -45,6 +45,9 @@ class Ajustes(BaseSettings):
     # Fase 3: topes de construcción (USD); el de uso real se fija al medir el coste, antes de usuarias
     tope_coste_candidatura: float = 1.00
 
+    # Fase 4: implementación del flujo `candidatura` ("plain" o "langgraph")
+    horma_flow_impl: str = "plain"
+
     def admins(self) -> set[str]:
         return {s.strip() for s in self.horma_admins.split(",") if s.strip()}
 

@@ -24,6 +24,7 @@ Un caso es adversario si su esperado tiene instrucciones embebidas: debe acertar
 Tope de coste (RF-2.17): `correr_set(tope_coste=…)` suma el coste de las llamadas al modelo
 (`metricas.capturar()`); al superarlo deja de correr casos y lo anota en el resultado.
 """
+import functools
 import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -44,6 +45,7 @@ from horma.flows import (
     procesar_oferta,
     recomendar,
 )
+from horma.flows.registry import crear_flujo
 from horma.llm import metricas
 from horma.llm.proveedor import Proveedor
 from horma.llm.simulado import ProveedorSimulado
@@ -295,10 +297,10 @@ def _estado_candidatura(e: dict) -> dict:
     return {k: e[k] for k in ("usuaria_id", "perfil_version", "oferta", "cv_maestro", "cvs_base")}
 
 
-def _correr_cv(e: dict, prov: Proveedor | None) -> dict:
+def _correr_cv(e: dict, prov: Proveedor | None, impl: str | None = None) -> dict:
     if e["modo"] == "sembrado":
         return _revisar_sembrado(e, prov)
-    flujo = candidatura.crear(proveedor=prov)
+    flujo = crear_flujo("candidatura", impl, proveedor=prov)
     if e["modo"] == "seleccion":
         r = flujo.run_step("elegir_cv_base", _estado_candidatura(e))
         return {"modo": "seleccion", "cv_base_id": r["cv_base_id"], "motivo": r["cv_base_motivo"]}
@@ -478,10 +480,11 @@ def casos_de(raiz: Path, nombre: str, solo: str | None = None) -> list[Path]:
 
 def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                umbral: float = 0.9, solo: str | None = None, simulado: bool = False,
-               tope_coste: float | None = None) -> dict:
+               tope_coste: float | None = None, flujo: str | None = None) -> dict:
     """Con `simulado`, cada caso responde con su propio esperado: solo prueba el harness.
     Con `tope_coste` (en USD), deja de correr casos en cuanto el coste acumulado lo supera."""
     s = SETS[nombre]
+    correr = functools.partial(_correr_cv, impl=flujo) if nombre == "cv" else s.correr
     casos = casos_de(raiz, nombre, solo)
     aciertos = dict.fromkeys(s.campos, 0)
     detalle = []
@@ -495,7 +498,7 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
             try:
                 entrada = s.entrada(caso)
                 prov = ProveedorSimulado(s.simuladas(esperado, entrada)) if simulado else proveedor
-                obtenido = s.correr(entrada, prov)
+                obtenido = correr(entrada, prov)
                 fallos = (s.comparar(obtenido, esperado_d) if s.comparar else
                           [c for c in s.campos if _valor(obtenido, c) != _valor(esperado_d, c)])
                 error = None

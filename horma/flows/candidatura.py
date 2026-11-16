@@ -11,19 +11,27 @@ redacciones_cv, redacciones_carta, instrucciones_embebidas) y `preparacion` = `l
 
 De 3 a 5 llamadas al modelo: redactor del CV, redactor de la carta y un único juez; si algo falla,
 una sola vuelta que rehace solo lo que falla (P12). Tras la vuelta se vuelve a comprobar con código,
-pero no se vuelve a juzgar. El flujo nunca cambia `estado`: la candidatura sigue en `borrador` (P4)."""
+pero no se vuelve a juzgar. El flujo nunca cambia `estado`: la candidatura sigue en `borrador` (P4).
+
+Fase 4: tras `componer` el flujo se para (pausa antes de `entregar`); al aprobar la usuaria se reanuda y
+`entregar` deja los dos PDF con el texto aprobado."""
+from dataclasses import dataclass
+
 from horma.agents.juez_candidatura.agent import JuezCandidatura
 from horma.agents.juez_candidatura.schemas import EntradaJuezCandidatura
 from horma.agents.redactor_carta.agent import RedactorCarta
 from horma.agents.redactor_carta.schemas import EntradaRedactorCarta
 from horma.agents.redactor_cv.agent import RedactorCv
 from horma.agents.redactor_cv.schemas import EntradaRedactorCv
+from horma.flows.base import Decision, Paso
+from horma.flows.grafo import LangGraphFlow
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
 from horma.schemas.candidatura import EstadoCandidatura, Problema, aviso_de_error
 from horma.schemas.oferta import Oferta
 from horma.tools.avisos_vigentes import avisos_vigentes
 from horma.tools.elegir_cv_base import elegir_cv_base
+from horma.tools.generar_pdf import generar_pdf
 from horma.tools.medir_ats import medir_ats
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_trazabilidad
@@ -49,7 +57,30 @@ def _como_problemas(errores: list[str]) -> list[Problema]:
                      frase=aviso_de_error("carta", x).frase or "", motivo=x) for x in errores]
 
 
-def crear(proveedor: Proveedor | None = None) -> PlainFlow:
+# Claves del estado que no son de `EstadoCandidatura`: entradas del worker, datos de trabajo entre pasos y
+# lo que deja `entregar`; `estado` (de la candidatura) es entrada opcional que el flujo nunca modifica.
+# LangGraphFlow las declara todas en su estado (RF-4.1).
+CLAVES_INTERNAS = frozenset({
+    "errores_cv", "errores_carta", "errores_formato", "palabras_sugeridas", "ausentes_sin_origen",
+    "huecos_redactor", "rehacer", "cv_base_contenido", "cv_maestro", "cvs_base", "oferta", "usuaria_id",
+    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado"})
+
+
+CLAVES_ESTADO = frozenset(EstadoCandidatura.model_fields) | CLAVES_INTERNAS
+
+
+@dataclass(frozen=True)
+class Definicion:
+    """Pasos, aristas, inicio, pausas y finales: los comparten PlainFlow y LangGraphFlow (RT-12)."""
+
+    pasos: dict[str, Paso]
+    aristas: dict[str, str | Decision]
+    inicio: str
+    pausas: frozenset[str]
+    finales: frozenset[str]
+
+
+def definicion(proveedor: Proveedor | None = None) -> Definicion:
 
     def validar(e: dict) -> EstadoCandidatura:
         return EstadoCandidatura.model_validate(e)
@@ -156,9 +187,35 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
     def tras_juzgar(e: dict) -> str:
         return {"cv": "redactar_cv", "carta": "redactar_carta"}.get(e["rehacer"], "componer")
 
+    # Destinos posibles de cada decisión (los usa LangGraphFlow para dibujar las aristas condicionales).
+    tras_comprobar.destinos = ("componer", "juzgar")
+    tras_juzgar.destinos = ("redactar_cv", "redactar_carta", "componer")
+
+    def entregar(e: dict) -> dict:
+        """Código puro, sin modelo: los dos PDF con el texto que haya en el estado (el aprobado). No cambia
+        `estado`: eso lo hace el servicio (RF-4.3c)."""
+        titulo = Oferta.model_validate(e["oferta"]).titulo or "oferta"
+        e["cv_pdf"] = generar_pdf(e["cv_contenido"], f"CV · {titulo}")
+        e["carta_pdf"] = generar_pdf(e["carta_contenido"], f"Carta de presentación · {titulo}")
+        return e
+
     pasos = {"elegir_cv_base": elegir, "redactar_cv": redactar_cv, "redactar_carta": redactar_carta,
-             "comprobar": comprobar, "juzgar": juzgar, "componer": componer}
+             "comprobar": comprobar, "juzgar": juzgar, "componer": componer, "entregar": entregar}
     aristas = {"elegir_cv_base": "redactar_cv", "redactar_cv": "redactar_carta",
-               "redactar_carta": "comprobar", "comprobar": tras_comprobar, "juzgar": tras_juzgar}
-    return PlainFlow("candidatura", pasos=pasos, aristas=aristas, inicio="elegir_cv_base",
-                     finales={"componer"})
+               "redactar_carta": "comprobar", "comprobar": tras_comprobar, "juzgar": tras_juzgar,
+               "componer": "entregar"}
+    return Definicion(pasos, aristas, "elegir_cv_base", frozenset({"entregar"}), frozenset({"entregar"}))
+
+
+def crear(proveedor: Proveedor | None = None) -> PlainFlow:
+    d = definicion(proveedor)
+    return PlainFlow("candidatura", pasos=d.pasos, aristas=d.aristas, inicio=d.inicio,
+                     finales=set(d.finales), pausas=set(d.pausas))
+
+
+def crear_grafo(proveedor: Proveedor | None = None, *, checkpointer=None) -> LangGraphFlow:
+    """Misma definición que `crear`, ejecutada con LangGraph. `checkpointer` se inyecta desde fuera."""
+    d = definicion(proveedor)
+    return LangGraphFlow("candidatura", pasos=d.pasos, aristas=d.aristas, inicio=d.inicio,
+                         finales=set(d.finales), pausas=set(d.pausas), claves=CLAVES_ESTADO,
+                         checkpointer=checkpointer)
