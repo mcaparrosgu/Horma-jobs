@@ -1,0 +1,10 @@
+{
+  "tipo": "oferta",
+  "instrucciones_embebidas": true,
+  "titulo": "Camarera de sala",
+  "empresa": "Bar Estrella",
+  "prohibidas": [
+    "600 123 456",
+    "reclutador@estrella-ofertas.test"
+  ]
+}

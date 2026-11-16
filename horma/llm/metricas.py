@@ -14,6 +14,7 @@ class Llamada:
     coste: float
     latencia_ms: int
     resultado: str  # ok | salida_invalida | error
+    senales_entrada: tuple[str, ...] = ()  # solo tipos de señal (RF-4.5), nunca texto
 
 
 class TopeSuperado(Exception):

@@ -25,9 +25,11 @@ def registrar_llamadas(s: Session, tarea_id: int, llamadas: list[Llamada]) -> No
     for ll in llamadas:
         s.execute(text(
             "insert into llm_llamadas (tarea_id, agente, modelo, tokens_entrada, tokens_salida, "
-            "coste, latencia_ms, resultado) values (:t, :a, :m, :ti, :to, :c, :l, :r)"),
+            "coste, latencia_ms, resultado, senales_entrada) "
+            "values (:t, :a, :m, :ti, :to, :c, :l, :r, :s)"),
             {"t": tarea_id, "a": ll.agente, "m": ll.modelo, "ti": ll.tokens_entrada,
-             "to": ll.tokens_salida, "c": ll.coste, "l": ll.latencia_ms, "r": ll.resultado})
+             "to": ll.tokens_salida, "c": ll.coste, "l": ll.latencia_ms, "r": ll.resultado,
+             "s": list(ll.senales_entrada)})
 
 
 def actualizar(s: Session, tarea_id: int, estado: str, coste_extra: float = 0.0,

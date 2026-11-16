@@ -6,12 +6,31 @@ from collections.abc import Callable
 from pydantic import BaseModel, ValidationError
 
 from horma.config import ajustes
-from horma.llm import metricas
+from horma.llm import metricas, vigilancia
 from horma.llm.proveedor import Proveedor
+from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA
 
 
 class SalidaInvalida(Exception):
     """La salida del modelo no valida contra el esquema tras el reintento."""
+
+
+def _textos(salida: BaseModel) -> str:
+    """Todas las cadenas de la salida, una por línea, para buscar fugas del prompt."""
+    cadenas: list[str] = []
+
+    def recorrer(v: object) -> None:
+        if isinstance(v, str):
+            cadenas.append(v)
+        elif isinstance(v, dict):
+            for x in v.values():
+                recorrer(x)
+        elif isinstance(v, (list, tuple)):
+            for x in v:
+                recorrer(x)
+
+    recorrer(salida.model_dump())
+    return "\n".join(cadenas)
 
 
 def _modelo_real(modelo: str) -> tuple[str, tuple[float, float]]:
@@ -39,6 +58,7 @@ def completar(*, agente: str, prompt: str, entrada: BaseModel, esquema_salida: t
     nombre_modelo, (p_in, p_out) = _modelo_real(modelo)
     esquema = esquema_salida.model_json_schema()
     usuario = entrada.model_dump_json()
+    senales = tuple(vigilancia.senales_entrada(usuario))  # RF-4.5: marca y registra; no bloquea
     t_in = t_out = 0
     t0 = time.monotonic()
 
@@ -46,7 +66,8 @@ def completar(*, agente: str, prompt: str, entrada: BaseModel, esquema_salida: t
         metricas.registrar(metricas.Llamada(
             agente=agente, modelo=nombre_modelo, tokens_entrada=t_in, tokens_salida=t_out,
             coste=round((t_in * p_in + t_out * p_out) / 1_000_000, 6),
-            latencia_ms=int((time.monotonic() - t0) * 1000), resultado=resultado))
+            latencia_ms=int((time.monotonic() - t0) * 1000), resultado=resultado,
+            senales_entrada=senales))
 
     error_validacion = ""
     for _ in range(2):  # 1 llamada + 1 reintento con el error de validación (RT-03)
@@ -69,6 +90,10 @@ def completar(*, agente: str, prompt: str, entrada: BaseModel, esquema_salida: t
             salida = esquema_salida.model_validate(json.loads(r.texto))
         except (ValidationError, json.JSONDecodeError) as e:
             error_validacion = str(e)
+            continue
+        if vigilancia.fuga_prompt(_textos(salida), prompt, excluir=FORMULAS_CORTESIA):  # RF-4.5c
+            error_validacion = ("La salida reproduce instrucciones internas; "
+                                "reescríbela con tus palabras, sin copiarlas.")
             continue
         cerrar("ok")
         return salida
