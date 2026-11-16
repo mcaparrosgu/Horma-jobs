@@ -15,6 +15,7 @@ from dataclasses import dataclass
 
 from sqlalchemy import Engine
 
+from horma.config import ajustes
 from horma.flows import (
     calificar_fuente,
     clasificar_perfil,
@@ -25,13 +26,14 @@ from horma.flows import (
 )
 from horma.llm import metricas
 from horma.llm.proveedor import Proveedor
+from horma.logs import configurar_logs, motivo_seguro
 from horma.schemas.fuente import CalificacionFuente
 from horma.schemas.oferta import Oferta
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.tools import descargar, dominio
 from horma.tools.buscar_ofertas import buscar_ofertas
-from horma.web import checkpointer
+from horma.web import alertas, checkpointer
 from horma.web.db import motor, sesion_de, sesion_sistema
 from horma.web.queue import cola
 from horma.web.repositories import candidaturas as repo_candidaturas
@@ -258,7 +260,7 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
             repo_tareas.actualizar(s, tarea["id"], "hecha", coste)
             return "hecha"
         elif tarea["intentos"] >= tarea["tope_reintentos"] or manejador is None:
-            motivo = f"reintentos agotados ({tarea['intentos']}): {error}"
+            motivo = f"reintentos agotados ({tarea['intentos']}): {motivo_seguro(error)}"
         if motivo:
             motivo = motivo[:500]
             if manejador:
@@ -270,11 +272,28 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
         return "pendiente"
 
 
+def comprobar_alertas(engine: Engine, ultima: float | None, ahora: float) -> float | None:
+    """Llama a `alertas.comprobar` si han pasado `ALERTA_INTERVALO_MIN` minutos desde la última vez.
+    Devuelve el instante de la última comprobación. Un fallo se registra y no para el worker."""
+    a = ajustes()
+    if ultima is not None and ahora - ultima < a.alerta_intervalo_min * 60:
+        return ultima
+    try:
+        alertas.comprobar(engine, a)
+    except Exception as e:  # noqa: BLE001
+        log.error("No se pudieron comprobar las alertas (%s)", type(e).__name__)
+    return ahora
+
+
 def main() -> None:
-    logging.basicConfig(level=logging.INFO)
+    configurar_logs()
     engine = motor()
     log.info("worker en marcha")
+    if not alertas.correo_configurado(ajustes()):
+        log.warning("SMTP_HOST o ALERTAS_CORREO sin configurar: las alertas solo salen en pantalla y log")
+    ultima: float | None = None
     while True:
+        ultima = comprobar_alertas(engine, ultima, time.monotonic())
         if procesar_una(engine) is None:
             time.sleep(1.0)
 

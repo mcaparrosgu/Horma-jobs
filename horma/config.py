@@ -53,6 +53,18 @@ class Ajustes(BaseSettings):
     # Fase 4: implementación del flujo `candidatura` ("plain" o "langgraph")
     horma_flow_impl: str = "plain"
 
+    # Fase 4 · Alertas (RF-4.7b). Sin `SMTP_HOST` solo hay pantalla y log.
+    alerta_gasto_dia_usd: float = 5.0
+    alerta_tasa_errores: float = 0.5  # fracción de llamadas con resultado distinto de «ok», última hora
+    alerta_min_llamadas: int = 10  # mínimo de llamadas en la última hora para evaluar la tasa
+    alerta_intervalo_min: int = 5  # cada cuántos minutos comprueba el worker
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_usuario: str = ""
+    smtp_password: str = ""
+    alertas_correo: str = ""
+    horma_dominio: str = ""  # para el enlace a /costes del correo
+
     def admins(self) -> set[str]:
         return {s.strip() for s in self.horma_admins.split(",") if s.strip()}
 

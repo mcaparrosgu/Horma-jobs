@@ -219,14 +219,14 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Cubre:** RF-4.6e.
 
 ### Bloque F · Observabilidad (RF-4.7)
-- [ ] T20 — Motivo de error saneado y `LOG_LEVEL`.
+- [x] T20 — Motivo de error saneado y `LOG_LEVEL`.
   - **Test:**
     - un `ErrorDePaso` cuya causa lleva texto de la usuaria deja en `tareas.motivo_error` y en el log
       solo el paso y el mensaje fijo;
     - `TopeSuperado` y `SalidaInvalida` dan su mensaje propio;
     - `LOG_LEVEL=WARNING` silencia los INFO.
   - **Cubre:** RF-4.7c.
-- [ ] T21 — `/costes` (página, `GET /api/costes` y `repositories/costes.py`).
+- [x] T21 — `/costes` (página, `GET /api/costes` y `repositories/costes.py`).
   - **Test:**
     - solo los admins entran (otra cuenta recibe 403);
     - con llamadas sembradas, los totales por día, agente y modelo y la tasa de errores son correctos;
@@ -234,7 +234,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - el JS no usa `innerHTML`;
     - en el móvil la tabla no desborda.
   - **Cubre:** RF-4.7.
-- [ ] T22 — Alertas (`web/alertas.py` y llamada desde el worker).
+- [x] T22 — Alertas (`web/alertas.py` y llamada desde el worker).
   - **Test:**
     - con un gasto sembrado por encima del umbral se crea una alerta, se escribe en el log y se envía
       un correo (SMTP simulado) sin datos personales;

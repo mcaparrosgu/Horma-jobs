@@ -248,3 +248,10 @@ details.porque > summary{ cursor: pointer; color: var(--acento); font-size: 0.9r
 .linea-anadida{ background: color-mix(in srgb, var(--ok) 18%, transparent); border-left: 3px solid var(--ok); }
 .linea-quitada{ background: color-mix(in srgb, var(--bajo) 18%, transparent); border-left: 3px solid var(--bajo); text-decoration: line-through; }
 .solo-lector{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Costes (fase 4): las tablas anchas se desplazan dentro de su caja, la página no desborda */
+.tabla-costes{ overflow-x: auto; max-width: 100%; border: 1px solid var(--borde); border-radius: var(--radio); background: var(--tarjeta); }
+.tabla-costes table{ border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.tabla-costes th{ text-align: left; color: var(--suave); padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+.tabla-costes td{ padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+.tabla-costes tr:last-child td{ border-bottom: 0; }
