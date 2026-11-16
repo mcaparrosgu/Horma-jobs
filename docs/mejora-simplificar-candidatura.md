@@ -1,6 +1,6 @@
 # Mejora pendiente: simplificar la candidatura (CV y carta)
 
-Estado: **hecha** (bloque H de la fase 3, `specs/003-candidatura/`, P12-P17, T23-T32), el 16-nov-2026; solo falta medir una candidatura real. Decidido el 16-nov-2026: se aborda **antes** de la fase 4 (así LangGraph migra el flujo ya simplificado).
+Estado: **hecha** (bloque H de la fase 3, `specs/003-candidatura/`, P12-P17, T23-T32), el 16-nov-2026; medida con el modelo real: 4 llamadas, 0,11 USD. Decidido el 16-nov-2026: se aborda **antes** de la fase 4 (así LangGraph migra el flujo ya simplificado).
 
 ## Por qué
 - **Pantalla:** hasta 9 decisiones antes de tener los PDF.

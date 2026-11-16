@@ -204,33 +204,42 @@ def flujo_correr(
     orden = f.pasos()
     if traza:
         traza.mkdir(parents=True, exist_ok=True)
-    paso, n = f.inicio, 0
+    from horma.llm.metricas import capturar
+
     try:
-        while paso is not None:
-            n += 1
-            antes = copy.deepcopy(estado)
-            estado = f.run_step(paso, estado)
-            cambios = {k: v for k, v in estado.items() if k not in antes or antes[k] != v}
-            typer.echo(f"[{orden.index(paso) + 1}/{len(orden)}] {paso}")
-            if paso_a_paso:
-                typer.echo(f"  entrada: {', '.join(antes) or '—'}")
-                for k, v in cambios.items():
-                    typer.echo(f"  {k}: {_resumen(v)}")
-            if traza:
-                (traza / f"{n:02d}-{paso}.json").write_text(json.dumps(
-                    {"paso": paso, "entrada": antes, "salida": estado}, ensure_ascii=False,
-                    indent=2), encoding="utf-8")
-            paso = f.siguiente(paso, estado)
-            if paso_a_paso and paso is not None:
-                typer.prompt("  Enter para seguir", default="", show_default=False,
-                             prompt_suffix="")
+        with capturar() as llamadas:
+            estado = _correr_pasos(f, orden, estado, paso_a_paso, traza)
     except ErrorDePaso as e:
         typer.echo(f"Falló el {e}", err=True)
         raise typer.Exit(1) from e
+    typer.echo(f"{len(llamadas)} llamadas al modelo · {sum(ll.coste for ll in llamadas):.4f} USD", err=True)
     resultado = json.dumps(estado.get(RESULTADO[nombre]), ensure_ascii=False, indent=2)
     if salida:
         salida.write_text(resultado, encoding="utf-8")
     typer.echo(resultado)
+
+
+def _correr_pasos(f, orden, estado, paso_a_paso, traza):
+    paso, n = f.inicio, 0
+    while paso is not None:
+        n += 1
+        antes = copy.deepcopy(estado)
+        estado = f.run_step(paso, estado)
+        cambios = {k: v for k, v in estado.items() if k not in antes or antes[k] != v}
+        typer.echo(f"[{orden.index(paso) + 1}/{len(orden)}] {paso}")
+        if paso_a_paso:
+            typer.echo(f"  entrada: {', '.join(antes) or '—'}")
+            for k, v in cambios.items():
+                typer.echo(f"  {k}: {_resumen(v)}")
+        if traza:
+            (traza / f"{n:02d}-{paso}.json").write_text(json.dumps(
+                {"paso": paso, "entrada": antes, "salida": estado}, ensure_ascii=False,
+                indent=2), encoding="utf-8")
+        paso = f.siguiente(paso, estado)
+        if paso_a_paso and paso is not None:
+            typer.prompt("  Enter para seguir", default="", show_default=False,
+                         prompt_suffix="")
+    return estado
 
 
 # --- ingesta y fuentes (por la API: la consola no tiene credenciales de la BD) -----------------
