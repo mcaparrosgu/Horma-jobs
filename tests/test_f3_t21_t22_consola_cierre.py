@@ -45,6 +45,14 @@ def test_agente_correr_de_los_agentes_de_la_fase_3_en_simulado(tmp_path, nombre)
     assert r.exit_code == 0, r.output
 
 
+@pytest.mark.parametrize("quitado", ["juez-cv", "juez-carta", "selector-cv-base"])
+def test_agente_quitado_falla_con_un_mensaje_claro(tmp_path, quitado):
+    e = _json(tmp_path / "e.json", {})
+    r = CliRunner().invoke(cli, ["agente", "correr", quitado, "--entrada", str(e)])
+    assert r.exit_code == 2
+    assert "ya no existe" in r.output and ("juez-candidatura" in r.output or "elegir_cv_base" in r.output)
+
+
 def _flujo_candidatura(tmp_path, *extra, input=None):
     caso = RAIZ / "evals/cv/casos/10-flujo-camarera-con-tres-cv-base"
     e = _entrada_cv(caso)
@@ -113,19 +121,34 @@ def test_ci_corre_los_dos_sets_de_la_fase_3_con_tope_y_en_simulado_sin_clave():
 
 def test_env_example_marca_los_topes_nuevos_como_de_construccion():
     env = _texto(".env.example")
-    assert "TOPE_COSTE_CANDIDATURA=" in env and "TOPE_COSTE_RESPUESTA=" in env
+    assert "TOPE_COSTE_CANDIDATURA=" in env and "TOPE_COSTE_RESPUESTA" not in env
     assert "de construcción" in env.split("TOPE_COSTE_CANDIDATURA")[0].split("Fase 3")[-1]
 
 
 def test_readme_documenta_los_comandos_de_la_fase_3():
     readme = _texto("README.md")
     for comando in ("flujo correr candidatura", "flujo correr clasificar_respuesta",
-                    "eval correr cv", "redactor-cv"):
+                    "eval correr cv", "redactor-cv", "juez-candidatura"):
         assert comando in readme
+    assert "juez-cv" not in readme.replace("`juez-cv`, `juez-carta` y `selector-cv-base`", "")
     assert "### Fase 3" in readme
 
 
 def test_specs_dan_la_fase_3_por_construida():
     assert "Fase 3 (candidatura, construida)" in _texto("specs/system.md")
     index = next(x for x in _texto("specs/index.md").splitlines() if x.startswith("- `003-candidatura/`"))
-    assert "T01-T22" in index and "bloques A a G" in index
+    assert "T01-T32" in index and "bloque H" in index
+    assert "juez-candidatura" in _texto("specs/system.md")
+
+
+def test_flujo_listar_no_falla_con_una_consola_cp1252():
+    """Windows: la salida estándar en cp1252 no puede escribir «→» (se fuerza UTF-8)."""
+    import subprocess
+    import sys
+
+    env = {**os.environ, "PYTHONIOENCODING": "cp1252", "UV_NO_SYNC": "1"}
+    env.pop("PYTHONUTF8", None)
+    r = subprocess.run([sys.executable, "-c", "from horma.cli import app; app()", "flujo", "listar"], env=env,
+                       capture_output=True, cwd=RAIZ)
+    assert r.returncode == 0, r.stderr.decode("utf-8", "replace")
+    assert "→".encode() in r.stdout
