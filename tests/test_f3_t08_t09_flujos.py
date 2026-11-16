@@ -111,10 +111,11 @@ def test_sin_ningun_cv_base_valido_es_un_error():
     assert exc.value.paso == "elegir_cv_base"
 
 
-def test_un_cv_base_de_una_version_anterior_del_perfil_deja_un_aviso():
+def test_un_cv_base_de_una_version_anterior_del_perfil_no_deja_aviso():
+    # El redactor parte también del CV maestro (siempre al día): el CV base viejo no hace falta avisarlo.
     e, _ = _correr([_cv(), APROBADO, CARTA, APROBADO], cvs=[_cv_base(perfil_version=1)])
-    assert any("versión anterior del perfil" in a for a in e["avisos"])
-    assert e["preparacion"] == "lista"  # el aviso no impide estar lista
+    assert not any("versión anterior del perfil" in a for a in e["avisos"])
+    assert e["preparacion"] == "lista"
 
 
 # --- T08: bucle del CV -------------------------------------------------------------------------
