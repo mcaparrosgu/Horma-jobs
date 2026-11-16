@@ -2,6 +2,7 @@
 se pide a la API con una clave (RF-1.2)."""
 import copy
 import json
+import sys
 from pathlib import Path
 
 import typer
@@ -19,6 +20,16 @@ agente = typer.Typer(help="Ejecutar agentes uno a uno.", no_args_is_help=True)
 flujo = typer.Typer(help="Ejecutar flujos, también paso a paso.", no_args_is_help=True)
 evals = typer.Typer(help="Correr sets de evals.", no_args_is_help=True)
 fuente = typer.Typer(help="Calificar fuentes de ofertas.", no_args_is_help=True)
+
+
+@app.callback()
+def _utf8() -> None:
+    """En Windows la consola usa cp1252 y falla con «→» o «·»: se fuerza UTF-8 en la salida."""
+    for flujo_ in (sys.stdout, sys.stderr):
+        if hasattr(flujo_, "reconfigure"):
+            flujo_.reconfigure(encoding="utf-8", errors="replace")
+
+
 app.add_typer(agente, name="agente")
 app.add_typer(flujo, name="flujo")
 app.add_typer(evals, name="eval")
@@ -40,6 +51,13 @@ def listar() -> None:
                    f"salida={a.salida.__name__}")
 
 
+QUITADOS = {  # agentes retirados en el bloque H de la fase 3 (16-nov-2026)
+    "juez-cv": "lo sustituye juez-candidatura, que juzga CV y carta de una vez.",
+    "juez-carta": "lo sustituye juez-candidatura, que juzga CV y carta de una vez.",
+    "selector-cv-base": "el CV base lo elige la herramienta elegir_cv_base, sin modelo.",
+}
+
+
 @agente.command("correr")
 def correr(
     nombre: str,
@@ -49,6 +67,9 @@ def correr(
     respuesta: Path | None = typer.Option(None, help="JSON con la respuesta simulada."),
 ) -> None:
     """Ejecuta un agente con una entrada en archivo y valida su salida."""
+    if nombre in QUITADOS:
+        typer.echo(f"El agente {nombre} ya no existe: {QUITADOS[nombre]}", err=True)
+        raise typer.Exit(2)
     if nombre not in AGENTES:
         typer.echo(f"Agente desconocido: {nombre}", err=True)
         raise typer.Exit(2)

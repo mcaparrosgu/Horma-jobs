@@ -114,7 +114,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
   `evals/cv/usuarias/ana` y una oferta del catálogo (sin `--ofertas`, de `GET /api/catalogo`); no guarda nada.
 - `uv run horma flujo correr clasificar_respuesta --entrada r.json`: `r.json` = `{"texto": "…",
   "estado_actual": "enviada"}`; enseña la etiqueta y la transición propuesta.
-- `uv run horma agente correr redactor-cv|juez-cv|redactor-carta|juez-carta|clasificador-respuesta|selector-cv-base
+- `uv run horma agente correr redactor-cv|redactor-carta|juez-candidatura|clasificador-respuesta
   --entrada x.json`: los agentes de la fase 3, cada uno por separado.
 - `uv run horma eval correr cv|respuestas`: los evals de la fase 3 (`--simulado` solo prueba el harness).
 - `uv run horma eval correr ofertas|fuentes` y, de la fase 2, `horma eval correr perfil`,
