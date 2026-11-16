@@ -1,219 +1,204 @@
 ---
 type: plan
 title: candidatura — Plan técnico
-description: Arquitectura, contratos y modelo de datos que cubren cada requisito de la fase 3.
+description: Arquitectura, contratos y modelo de datos que cubren cada requisito de la fase 3. Regenerado el 16-nov-2026 con el cambio «simplificar la candidatura» (bloque H).
 tags: [plan, candidatura, seguimiento]
 status: active
-sources: [./spec.md, ./clarifications.md, ../system.md, ../002-perfil-recomendacion/plan.md]
-generated: { by: claude-code, at: 2026-11-15 }
-verified: { by: human, at: 2026-11-15 }
+sources: [./spec.md, ./clarifications.md, ../system.md, ../002-perfil-recomendacion/plan.md, ../../docs/mejora-simplificar-candidatura.md]
+generated: { by: claude-code, at: 2026-11-16 }
+verified: { by: human, at: 2026-11-16 }
 stale_after: null
 ---
 
 # candidatura — Plan
 
 ## Arquitectura
-Se añade a lo de las fases 0 a 2:
+Estado tras el bloque H (lo que se quita está en «Qué cambia respecto a la versión construida»):
 
 ```
 horma/
   schemas/   candidatura.py (Candidatura, EstadoCandidatura, EventoCandidatura, Hueco, Problema,
-             enumerados Estado, Preparacion, Canal, MotivoCierre, EtiquetaRespuesta;
-             transicion() y transicion_por_respuesta(): máquina de estados como funciones puras)
-  agents/    selector_cv_base/ (pequeño), redactor_cv/ (mayor), juez_cv/ (mayor),
-             redactor_carta/ (mayor), juez_carta/ (mayor), clasificador_respuesta/ (pequeño)
-  tools/     medir_ats.py (nuevo), generar_pdf.py (nuevo), comparar_versiones.py (nuevo),
-             verificar_trazabilidad.py (varias fuentes)
-  flows/     candidatura.py, clasificar_respuesta.py
-  cli.py     + flujo correr candidatura --oferta, eval correr cv|respuestas
-  web/       migración 0006, routers/candidaturas.py, services/candidaturas.py,
-             repositories/candidaturas.py, static/{candidaturas,candidatura}.{html,js},
-             recomendadas.js (+ botón), comun.js (+ pestaña)
-evals/cv/ (12 casos + fixtures de ana) · evals/respuestas/ (15 correos)
+             Aviso, TrazaFrase; enumerados Estado, Preparacion, Canal, MotivoCierre,
+             EtiquetaRespuesta; transicion() y transicion_por_respuesta(), funciones puras)
+  agents/    redactor_cv/ (mayor), redactor_carta/ (mayor), juez_candidatura/ (mayor, nuevo),
+             clasificador_respuesta/ (pequeño, solo consola)
+  tools/     elegir_cv_base.py (nuevo), medir_ats.py, generar_pdf.py, comparar_versiones.py,
+             verificar_trazabilidad.py, rasgos_personales.py
+  flows/     candidatura.py (reescrito), clasificar_respuesta.py (sin cambios)
+  llm/       metricas.capturar(tope=…) y TopeSuperado (arreglo del tope, RF-3.11)
+  cli.py     agente correr juez-candidatura; sin selector ni jueces antiguos
+  web/       migración 0007, services/ y routers/candidaturas.py, repositories/candidaturas.py,
+             queue/worker.py, static/candidatura.{html,js}
+evals/cv/ (14 casos, adaptados al juez único) · evals/respuestas/ (15 correos, sin cambios)
 ```
 
-- **Camino de una candidatura:** la usuaria pulsa «Preparar candidatura» en Recomendadas →
-  `POST /api/candidaturas` crea la fila en `borrador` con `preparacion = en_curso` y encola
-  `candidatura` (solo el id) → el worker carga oferta, perfil, CV maestro y sus CV base válidos,
-  ejecuta el flujo (que empieza eligiendo el CV base) y guarda el CV base elegido con su motivo, CV,
-  carta, trazas, huecos y avisos con `preparacion = lista` o `pendiente_de_ti`.
-- **Guardar encima del CV base:** desde la candidatura en `borrador`, la usuaria guarda su CV
-  editado sobre el CV base del que partió (`cv_base.contenido` y `nombre`). Usa la misma regla que
-  la edición de RF-2.9e: texto suyo, no se vuelve a comprobar contra el CV, nombre único.
-- **Historial del CV base (RF-3.8d):** la función de editar del repositorio de `cv_base` copia
-  primero la versión actual a `cv_base_versiones`, en la misma transacción. Así lo cubren a la vez
-  guardar encima, la edición manual de la fase 2 y volver a una versión. Lo añadido y lo quitado se
-  calcula al leer, línea a línea, con `difflib` (biblioteca estándar): herramienta pura
-  `tools/comparar_versiones.py`.
-- **Dos campos, dos máquinas:** `estado` es la de la candidatura (`borrador → aprobada → enviada →
-  entrevista`, y `cerrada` desde cualquiera, P8); `preparacion` es el resultado del flujo (`en_curso`,
-  `lista`, `pendiente_de_ti`, `error`). El flujo nunca cambia `estado`.
+- **Camino de una candidatura:** «Preparar candidatura» en Recomendadas → `POST /api/candidaturas`
+  crea la fila en `borrador` con `preparacion = en_curso` y encola `candidatura` → el worker carga
+  oferta, perfil, CV maestro y sus CV base, ejecuta el flujo y guarda CV base elegido y motivo, CV,
+  carta, trazas, huecos, avisos y `preparacion` (`lista`, `pendiente_de_ti` o `error`).
+- **Dos campos, dos máquinas (sin cambios):** `estado` es la de la candidatura y solo la cambia ella;
+  `preparacion` es el resultado del flujo. El flujo nunca cambia `estado`.
 - **Fronteras (sin cambios):** agentes y herramientas sin base de datos ni disco; `generar_pdf`
   devuelve bytes y el router los sirve; la consola no abre la base de datos.
-- **`Flow` y `PlainFlow` no cambian** (`horma/flows/base.py`, `plain.py`): el estado sigue siendo un
-  `dict` y cada paso de `candidatura` lo valida con `EstadoCandidatura`, el mismo modelo que usará
-  `LangGraphFlow` en la fase 4. No se toca ningún flujo de la fase 2.
+- **`Flow` y `PlainFlow` no cambian** (`flows/base.py`, `plain.py`): el estado sigue siendo un `dict`
+  validado en cada paso con `EstadoCandidatura`, el mismo modelo que usará `LangGraphFlow`.
+
+## Qué cambia respecto a la versión construida
+| Se quita | Motivo |
+|---|---|
+| Agentes `selector_cv_base/`, `juez_cv/`, `juez_carta/` | P14 (elección por código) y P12 (juez único) |
+| Ruta `POST /api/candidaturas/{id}/guardar-cv-base` y el origen «candidatura» del historial | P9b sustituida |
+| `documento`, `cv_estetico_id` y `avisos_revisados` al aprobar; redirección al CV estético | CV estético y casilla quitados (P10) |
+| Rutas `/respuesta`, `/respuesta/confirmar`, `/respuesta/descartar`; manejador `clasificar_respuesta` del worker; `tope_coste_respuesta` | P15, P17 (el agente y su flujo se quedan para la consola) |
+| `PREFIJO_DESFASADO` y prefijos «CV:», «Carta:» en los avisos | Avisos estructurados (RF-3.6c) |
+
+| Se añade | Requisito |
+|---|---|
+| `tools/elegir_cv_base.py` | RF-3.1b |
+| `agents/juez_candidatura/` | RF-3.4 |
+| Esquema `Aviso` | RF-3.6c, RF-3.8 |
+| Ruta `POST /api/candidaturas/{id}/reintentar` | RF-3.8e |
+| `metricas.capturar(tope=…)` + `TopeSuperado` en la puerta única | RF-3.11 |
+| Migración 0007 | P16 |
 
 ## Flujos
 | Flujo | Pasos |
 |---|---|
-| `candidatura` | `elegir_cv_base` (selector-cv-base si hay más de un CV base válido; el código comprueba que el elegido es de la usuaria, no está rechazado y estaba en la lista, y anota el aviso si está desfasado) → `redactar_cv` (redactor-cv) → `verificar` (verificar_trazabilidad con fuentes = maestro + CV base) → `juzgar_cv` (juez-cv) → arista: vuelve a `redactar_cv` con errores y problemas si hay alguno y quedan vueltas → `medir_ats` → arista: vuelve a `redactar_cv` con las palabras que faltan con origen si quedan vueltas; las que no tienen origen van a `huecos` → `redactar_carta` (redactor-carta) → `verificar_carta` (verificar_trazabilidad con fuentes = maestro + CV base + oferta) → `juzgar_carta` (juez-carta) → arista: una vuelta a `redactar_carta` → `componer` (`lista` o `pendiente_de_ti`) |
-| `clasificar_respuesta` | `clasificar` (clasificador-respuesta) → `proponer` (código: `transicion_por_respuesta(estado_actual, etiqueta)`; si la transición no es legal o hay instrucciones embebidas, la propuesta es «ninguna») → `componer` |
+| `candidatura` | `elegir_cv_base` (código: `tools/elegir_cv_base`) → `redactar_cv` (redactor-cv) → `redactar_carta` (redactor-carta) → `comprobar` (código: `verificar_trazabilidad` del CV con fuentes = maestro + CV base y de la carta con fuentes = maestro + CV base + oferta; `rasgos_personales` de los dos; `medir_ats` del CV) → `juzgar` (juez-candidatura) → arista `tras_juzgar`: si `vuelta_hecha` es falso y el CV tiene errores, problemas, errores de formato o palabras con origen → `redactar_cv`; si solo la carta tiene errores o problemas → `redactar_carta`; si no → `componer`. Tras `redactar_cv` en la vuelta se pasa siempre por `redactar_carta`. Tras `comprobar` en la vuelta → `componer` (arista `tras_comprobar`, que mira `vuelta_hecha`) |
+| `clasificar_respuesta` | Sin cambios: `clasificar` → `proponer` → `componer`. Solo consola |
 
-Contadores en el estado: `vueltas_cv` (máx. 3 redacciones: la primera y 2 vueltas, incluida la del
-ATS) y `vueltas_carta` (máx. 2). El bucle copia el patrón de `flows/generar_cv_base.py:20-83`
-(`MAX_INTENTOS`, `errores_previos`, decisión `tras_verificar`). Los dos flujos se añaden a `FLUJOS` y
-`RESULTADO` de `flows/registry.py:11-17`.
+Estado: `vuelta_hecha` (booleano) sustituye a `vueltas_cv` y `vueltas_carta`; se guardan
+`redacciones_cv` y `redacciones_carta` (1 o 2) para el tablero de métricas. `problemas_juez` guarda
+la lista del único juicio; `componer` y el servicio de edición filtran los que siguen vigentes con
+la misma función pura `avisos_vigentes(contenido, problemas)` (frase literal en el texto).
 
 ## Contratos
 **Agentes**
 | Agente | Modelo | Entrada → salida |
 |---|---|---|
-| `selector-cv-base` | pequeño | `{oferta, cvs_base: [{id, nombre, sector, familia, contenido}]}` → `{cv_base_id, motivo (una frase), instrucciones_embebidas[]}` |
-| `redactor-cv` | mayor | `{cv_base, cv_maestro, oferta, errores_previos[], problemas_previos[], palabras_sugeridas[]}` → `{contenido (Markdown ATS), traza: [{frase, fragmento}], huecos: [{requisito, propuesta}], instrucciones_embebidas[]}` |
-| `juez-cv` | mayor | `{contenido, traza, cv_maestro, cv_base, oferta}` → `{veredicto: aprobado·corregir, problemas: [{tipo: sin_origen·inflado·promesa·rasgo_personal, frase, motivo}]}` |
-| `redactor-carta` | mayor | `{cv_maestro, cv_adaptado, oferta, sector, problemas_previos[]}` → `{contenido, traza, instrucciones_embebidas[]}` |
-| `juez-carta` | mayor | `{contenido, traza, cv_maestro, cv_adaptado, oferta}` → `{veredicto, problemas: [{tipo: …·repite_cv, frase, motivo}]}` |
-| `clasificador-respuesta` | pequeño | `{texto}` → `{etiqueta: entrevista·rechazo·piden_informacion·otro, instrucciones_embebidas[]}` |
+| `redactor-cv` | mayor | Sin cambios: `{cv_base, cv_maestro, oferta, errores_previos[], problemas_previos[], palabras_sugeridas[]}` → `{contenido, traza, huecos, instrucciones_embebidas[]}` |
+| `redactor-carta` | mayor | Sin cambios: `{cv_maestro, cv_adaptado, oferta, sector, problemas_previos[]}` → `{contenido, traza, instrucciones_embebidas[]}`. En la vuelta recibe también los errores de `comprobar` como problemas `sin_origen` |
+| `juez-candidatura` | mayor | `{cv, cv_traza, carta, carta_traza, cv_maestro, cv_base, oferta}` → `{veredicto_cv, veredicto_carta: aprobado·corregir, problemas: [{documento: cv·carta, tipo: sin_origen·inflado·promesa·rasgo_personal·repite_cv, frase, motivo}]}`. Un `repite_cv` con `documento = cv` no valida |
+| `clasificador-respuesta` | pequeño | Sin cambios |
 
-Los jueces nunca reescriben. `TrazaFrase` sale de `agents/generador_cv_base/schemas.py:12` a
-`horma/schemas/candidatura.py` para compartirla sin que un agente importe a otro (RT-13). Cada agente
-nuevo se añade a `agents/registry.py:11-14` y al contrato «independence» de `pyproject.toml:67-79`.
+El prompt de `juez-candidatura` une los de `juez-cv` y `juez-carta` (prohíbe reescribir, pide la
+lista tipada, es menos estricto con `repite_cv` como se ajustó en el bloque C). Se registra en
+`agents/registry.py` y en el contrato «independence» de `pyproject.toml`; salen los tres agentes
+quitados.
 
 **Herramientas (código puro con tests)**
-- `verificar_trazabilidad(contenido, traza, fuentes)`: `fuentes` pasa a aceptar un texto o una lista
-  de textos (compatibilidad con la llamada de la fase 2). Para la carta, `formulas_cortesia` (lista
-  cerrada de saludos y despedidas) queda exenta de traza.
-- `medir_ats(contenido, oferta, fuentes)`: devuelve `{errores_formato[], cobertura (0-1),
-  presentes[], ausentes_con_origen[], ausentes_sin_origen[]}`. Las palabras clave salen de
-  `oferta.requisitos` y `taxonomia.stack`. `errores_formato` es el actual `errores_ats`
-  (`horma/evals.py:141-156`), que se mueve aquí y `evals.py` lo importa.
-- `comparar_versiones(anterior, siguiente)`: devuelve las líneas con su marca (`igual`, `añadida`,
-  `quitada`), con `difflib`.
-- `generar_pdf(markdown, titulo) -> bytes`: Markdown sencillo (encabezados, listas, párrafos) a PDF
-  con `fpdf2` y una fuente con acentos. Sin imágenes ni tablas.
-- `transicion(estado, destino, motivo?)` y `transicion_por_respuesta(estado, etiqueta)` en
-  `schemas/candidatura.py`: lanzan `TransicionInvalida` o devuelven la propuesta.
+- `elegir_cv_base(oferta, cvs_base) -> (cv_base, motivo)`: filtra los de la usuaria con `estado =
+  hecho`; ordena por (familia y sector coinciden, familia coincide, sector coincide, `creado_en`,
+  `id`) y devuelve el primero con un motivo fijo en llano («Coincide en puesto y sector con la
+  oferta», «Coincide en el puesto», «Coincide en el sector», «Ninguno coincide; es el más
+  reciente»). Lista vacía → `ValueError`.
+- `avisos_vigentes(documento, contenido, problemas) -> list[Aviso]`: devuelve los problemas de ese
+  documento cuya `frase` sigue literalmente en `contenido`.
+- Las demás (`verificar_trazabilidad`, `medir_ats`, `rasgos_personales`, `generar_pdf`,
+  `comparar_versiones`) no cambian.
+
+**`Aviso`**: `{documento: cv·carta, frase: str | None, mensaje: str}`. `mensaje` en lenguaje llano y
+sin prefijos; lo escribe el código a partir del tipo de problema o del error (una tabla de textos en
+`schemas/candidatura.py`). La pantalla pinta cada aviso junto a su frase.
+
+**Puerta única (arreglo del tope, RF-3.11)**: `metricas.capturar(tope: float | None = None)`. Antes
+de cada llamada, `completar` suma el coste de las llamadas ya capturadas en ese bloque y, si supera
+el tope, lanza `TopeSuperado` sin llamar al modelo. El worker abre `capturar(tope=tope_coste -
+coste_acumulado)`; `TopeSuperado` no se reintenta y deja la tarea en `error` con el motivo «tope de
+coste superado». Vale para todas las tareas, no solo la candidatura.
 
 **API** (sesión; escritura con CSRF; RLS «propia»)
 | Ruta | Qué hace |
 |---|---|
-| `POST /api/candidaturas` | `{oferta_id}`. Comprueba que tenga al menos un CV base válido (si no, 409 con «genera un CV base primero»), que no haya otra candidatura no cerrada para esa oferta (409), que no haya una cerrada sin confirmar (409 «Ya preparaste…»; con `repetir: true` se crea otra) y encola `candidatura` |
-| `GET /api/candidaturas` · `GET /api/candidaturas/{id}` | Tablero (agrupado por estado) y detalle con CV, carta, huecos, avisos e historial |
-| `PATCH /api/candidaturas/{id}` | Solo en `borrador`: edita CV o carta; vuelve a pasar `verificar_trazabilidad` (sin modelo) y actualiza los avisos |
-| `POST /api/candidaturas/{id}/guardar-cv-base` | Solo en `borrador`: `{nombre}`. Sobrescribe el `cv_base` de la candidatura con su CV adaptado actual y el nombre (409 si el nombre ya existe en su cuenta). Guarda antes la versión anterior y lo registra en el historial de la candidatura |
-| `GET /api/cv-base/{id}/versiones` | Historial del CV base: cada versión con fecha, origen, nombre y sus líneas marcadas (añadida·quitada·igual) respecto a la siguiente |
-| `POST /api/cv-base/{id}/versiones/{version_id}/restaurar` | Vuelve a esa versión; guarda antes la actual en el historial |
-| `POST /api/candidaturas/{id}/aprobar` | `{documento: adaptado·estetico, cv_estetico_id?, avisos_revisados}`. 400 si hay avisos y no están revisados |
-| `POST /api/candidaturas/{id}/enviada` · `/entrevista` · `/cerrar` | Transiciones con `transicion()`: `{fecha, canal, canal_otro?}` · `{}` · `{motivo}` |
-| `GET /api/candidaturas/{id}/cv.pdf` · `/carta.pdf` | Solo desde `aprobada`; si eligió el estético, redirige a `GET /api/cv/{id}/archivo` |
-| `POST /api/candidaturas/{id}/respuesta` · `/respuesta/confirmar` · `/respuesta/descartar` | Guarda el texto en `respuesta_pendiente` y encola `clasificar_respuesta`; confirmar aplica la propuesta; descartar la borra |
-| `GET /candidaturas`, `/candidaturas/{id}` | Páginas con pestañas comunes |
+| `POST /api/candidaturas` | Sin cambios (RF-3.7b, `repetir`) |
+| `GET /api/candidaturas` · `GET /api/candidaturas/{id}` | Tablero y detalle; el detalle trae `avisos` estructurados, `huecos` y un bloque `detalles` (CV base, motivo, cobertura ATS) |
+| `PATCH /api/candidaturas/{id}` | Solo en `borrador`: edita CV o carta; vuelve a pasar `comprobar` por código y recalcula los avisos con `avisos_vigentes` para los dos documentos (arregla que se borraran los del juez) |
+| `POST /api/candidaturas/{id}/aprobar` | `{}`. Sin casilla ni elección de documento |
+| `POST /api/candidaturas/{id}/reintentar` | Solo con `preparacion = error` y en `borrador`: vuelve a `en_curso` y encola `candidatura`. 409 si no está en error |
+| `POST /api/candidaturas/{id}/enviada` | `{canal?, canal_otro?}`; la fecha la pone el servidor (hoy) |
+| `POST /api/candidaturas/{id}/entrevista` · `/cerrar` | Sin cambios; «Me han llamado» usa `/entrevista` y «Me han rechazado», `/cerrar` con `motivo = rechazo` |
+| `GET /api/candidaturas/{id}/cv.pdf` · `/carta.pdf` | Solo desde `aprobada`; siempre el CV adaptado |
+| `GET /api/cv-base/{id}/versiones` · `POST …/restaurar` | Sin cambios |
 
-Los cuerpos caben en `MAX_CUERPO` (64 KB). La CSP no cambia: los PDF se descargan, no se enmarcan.
-
-**Pantallas** (marco Passe-Partout, `nodo()` y `textContent`; diseño con la skill `frontend`)
-- **Tablero** (`/candidaturas`, pestaña nueva en `PESTANAS`, `static/comun.js:6-11`): columnas
-  borrador, aprobada, enviada, entrevista y «Cerradas» (plegada); tarjeta con puesto, empresa, fecha
-  del último cambio y marca «Te toca revisar». En móvil, columnas apiladas.
-- **Candidatura** (`/candidaturas/{id}`): qué CV base eligió Horma y por qué; CV y carta como
-  documento legible (como RF-2.9d), con «Editar»; tras editar el CV, «Guardar como mi CV base» con
-  el nombre propuesto (editable) y el aviso «La versión anterior queda en el historial»; huecos con
-  su propuesta; avisos; botones según el estado (aprobar con la casilla «He
-  revisado los avisos» y la elección de CV; descargar; marcar enviada con canal y fecha; pegar
-  respuesta y confirmar la propuesta; cerrar con motivo); historial.
-- **Recomendadas**: botón «Preparar candidatura» en cada fila (`filaOferta`,
-  `static/recomendadas.js:122-157`) que crea la candidatura y lleva a ella; sin CV base, enlaza a
-  generarlo.
-- **CV base** (`static/cv-base.js`): «Historial» en cada CV base, plegado. Lista de versiones (fecha,
-  origen, nombre); al abrir una, sus líneas añadidas en verde y quitadas en rojo y tachadas (con
-  texto «añadido»/«quitado» para lectores de pantalla), y «Volver a esta versión».
-  Recomendadas y CV base son las dos únicas pantallas de la fase 2 que cambian.
+**Pantallas** (marco Passe-Partout, `nodo()` y `textContent`)
+- **Candidatura** (`static/candidatura.js`): CV y carta como documento legible con «Editar»; lista
+  «Revisa esto» (huecos con su propuesta y avisos junto a su frase, en llano); «Detalles» plegado
+  (CV base, motivo, % ATS); «Aprobar y descargar» (aprueba y descarga los dos PDF); «Marcar como
+  enviada» (canal opcional); «Me han llamado» y «Me han rechazado» según el estado; «Reintentar»
+  con el motivo si la preparación falló; cerrar con motivo; historial. Se quitan «Guardar como mi CV
+  base», la casilla, la elección de CV y «pegar la respuesta».
+- **Tablero**, **Recomendadas** y **CV base**: sin cambios de comportamiento; solo se revisan los
+  textos que nombren el selector, el CV estético o «guardar encima».
 
 **Consola**
-- `horma agente correr selector-cv-base|redactor-cv|juez-cv|redactor-carta|juez-carta|clasificador-respuesta --entrada f [--simulado]`
-- `horma flujo correr candidatura --usuaria ana --oferta 123 [--paso-a-paso --traza dir]`: con
-  `--usuaria` carga los fixtures `evals/cv/usuarias/ana/` (perfil, CV maestro y sus CV base); la oferta
-  sale de `GET /api/catalogo` o de `--ofertas f.json`. `--entrada caso.json` sigue valiendo. En
-  local; no guarda nada.
-- `horma flujo correr clasificar_respuesta --entrada correo.json`
+- `horma agente correr redactor-cv|redactor-carta|juez-candidatura|clasificador-respuesta --entrada f [--simulado]`
+- `horma flujo correr candidatura --usuaria ana --oferta 123 [--paso-a-paso --traza dir]` (sin cambios)
+- `horma flujo correr clasificar_respuesta --entrada correo.json` (sin cambios)
 - `horma eval correr cv|respuestas [--tope-coste 1.0]`
 
 ## Requisito → componente
 | Requisito | Componente | Notas |
 |---|---|---|
-| RF-3.1 | `flows/candidatura.py`, `schemas/candidatura.py` (`EstadoCandidatura`) | Máx. 3 redacciones de CV y 2 de carta |
-| RF-3.1b | `agents/selector_cv_base/`, paso `elegir_cv_base` | La elige el agente; el código valida (P9) |
-| RF-3.2 | `agents/redactor_cv/` | Regla de los huecos en el prompt |
-| RF-3.3 | `tools/verificar_trazabilidad.py` (varias fuentes) | Reutiliza `linea_con` y `literales` |
-| RF-3.4 | `agents/juez_cv/` | Nunca reescribe |
-| RF-3.5 | `tools/medir_ats.py` | Sin umbral (RF-4.4) |
-| RF-3.6 | `agents/redactor_carta/`, `agents/juez_carta/`, paso `verificar_carta` | Sin carta base (P1) |
-| RF-3.6b | prompts, `instrucciones_embebidas`, `tools/rasgos_personales.py` | Casos adversarios en `evals/cv/` |
-| RF-3.7 | `transicion()`, tabla `candidatura_eventos` | `cerrada` con motivo (P8) |
-| RF-3.7b | `POST /api/candidaturas`, `static/recomendadas.js` | Índice único parcial |
-| RF-3.8 | `PATCH`, `/guardar-cv-base` y `/aprobar`, `static/candidatura.*` | Avisos revisados (P10); sobrescribir pide confirmación (P9b) |
-| RF-3.8d | tabla `cv_base_versiones`, repositorio de `cv_base`, `tools/comparar_versiones.py`, rutas `/versiones`, `static/cv-base.js` | Ningún texto se pierde |
-| RF-3.8b | `tools/generar_pdf.py`, rutas `.pdf`, `/enviada` | Canal ampliable (P3) |
-| RF-3.8c | rutas `.pdf` y `/enviada` comprueban el estado | RT-10 |
-| RF-3.9 | `agents/clasificador_respuesta/`, `flows/clasificar_respuesta.py`, rutas `/respuesta` | El texto se borra (P11) |
-| RF-3.10 | `static/candidaturas.*`, `GET /api/candidaturas` | Por descripción (P5) |
-| RF-3.11 | worker (`candidatura`), `cli.py` | Traza `NN-paso.json` |
-| RF-3.12 | `horma/evals.py` | Tope 1 USD, solo en construcción |
+| RF-3.1 | `flows/candidatura.py`, `schemas/candidatura.py` | 3-5 llamadas; vuelta única |
+| RF-3.1b | `tools/elegir_cv_base.py`, paso `elegir_cv_base` | Sin modelo (P14) |
+| RF-3.2 | `agents/redactor_cv/` | Sin cambios |
+| RF-3.3 | paso `comprobar` | Reúne verificar, rasgos y ATS |
+| RF-3.4 | `agents/juez_candidatura/` | Nunca reescribe |
+| RF-3.5 | `tools/medir_ats.py`, arista `tras_juzgar` | Palabras dentro de la vuelta (P13) |
+| RF-3.6, RF-3.6b | `agents/redactor_carta/`, prompts | Sin cambios |
+| RF-3.6c | `componer`, `avisos_vigentes`, `Aviso` | Lenguaje llano |
+| RF-3.7, RF-3.7b | `transicion()`, `POST /api/candidaturas` | Sin cambios |
+| RF-3.8 | `PATCH`, `static/candidatura.*` | Avisos del juez conservados |
+| RF-3.8a | `/aprobar` | Sin casilla (P10) |
+| RF-3.8b, RF-3.8c | `/enviada`, rutas `.pdf` | Fecha de hoy, canal opcional |
+| RF-3.8d | `cv_base_versiones`, repositorio de `cv_base`, `static/cv-base.js` | Orígenes `edicion`·`restauracion` |
+| RF-3.8e | `/reintentar` | Mismo tope |
+| RF-3.9 | `/entrevista`, `/cerrar`, `static/candidatura.js` | Dos botones (P15) |
+| RF-3.9b | `agents/clasificador_respuesta/`, `flows/clasificar_respuesta.py`, `evals/respuestas/` | Solo consola y CI (P17) |
+| RF-3.10 | `static/candidaturas.*` | Sin cambios |
+| RF-3.11 | worker, `llm/metricas.py`, `llm/gateway.py`, `cli.py` | Corte antes de cada llamada |
+| RF-3.12 | `horma/evals.py` | Sin cambios |
 
-## Modelo de datos (migración 0006)
-| Tabla | Campos | RLS |
-|---|---|---|
-| `candidaturas` | `id`, `usuaria_id`, `oferta_id`, `cv_base_id` (nulo hasta que lo elige el flujo), `cv_base_motivo`, `perfil_version`, `estado` (borrador·aprobada·enviada·entrevista·cerrada), `motivo_cierre`, `preparacion` (en_curso·lista·pendiente_de_ti·error), `motivo_error`, `cv_contenido`, `cv_traza` jsonb, `carta_contenido`, `carta_traza` jsonb, `huecos` jsonb, `avisos` jsonb, `cobertura_ats`, `vueltas_cv`, `vueltas_carta`, `instrucciones_embebidas` jsonb, `documento` (adaptado·estetico), `cv_estetico_id`, `canal`, `canal_otro`, `enviada_en`, `respuesta_pendiente` (texto temporal), `respuesta_propuesta` jsonb, `creado_en`, `actualizado_en` | propia |
-| `candidatura_eventos` | `id`, `usuaria_id`, `candidatura_id`, `de`, `a`, `motivo`, `canal`, `origen` (usuaria·respuesta), `tipo` (transicion·nota·cv_base_guardado), `etiqueta_respuesta`, `creado_en` | propia |
-| `cv_base_versiones` | `id`, `usuaria_id`, `cv_base_id` (borrado en cascada), `nombre`, `contenido`, `origen` (candidatura·edicion·restauracion), `candidatura_id` (nulo si no viene de una), `creado_en` | propia |
+## Modelo de datos (migración 0007, reversible)
+| Tabla | Cambio |
+|---|---|
+| `candidaturas` | Quita `documento`, `cv_estetico_id`, `respuesta_pendiente`, `respuesta_propuesta`, `vueltas_cv`, `vueltas_carta`. Añade `redacciones_cv`, `redacciones_carta` (smallint) y `problemas_juez` (jsonb, `[]`). `avisos` pasa a guardar objetos `Aviso` (los antiguos, texto, se convierten a `{documento: cv, frase: null, mensaje: texto}`) |
+| `candidatura_eventos` | Quita `etiqueta_respuesta`; `origen` solo `usuaria` (las filas `respuesta` pasan a `usuaria`); `tipo` sin `cv_base_guardado` (esas filas se borran: son de prueba) |
+| `cv_base_versiones` | `origen` solo `edicion`·`restauracion` (las `candidatura` pasan a `edicion`); quita `candidatura_id` |
 
-Índice único parcial `(usuaria_id, oferta_id) WHERE estado <> 'cerrada'` (RF-3.7b). Las tres tablas se
-añaden al `TRUNCATE` de `tests/conftest.py:83-85`. Ningún archivo de las fases anteriores cambia salvo
-los registros, `recomendadas.js`, `cv-base.js` (historial), el router de `cv-base` (rutas de versiones), `comun.js`, `paginas.py`, `config.py`, `evals.py` (importa
-`errores_ats`), la firma compatible de `verificar_trazabilidad` y el repositorio de `cv_base`, que
-reutiliza su función de editar (RF-2.9e) para guardar encima y le añade la copia al historial.
+`downgrade` vuelve a crear las columnas y los `CHECK` antiguos (vacías o con su valor por defecto).
+Las tablas siguen en el `TRUNCATE` de `tests/conftest.py`.
 
 ## Worker
-Dos manejadores nuevos en `MANEJADORES` (`horma/web/queue/worker.py:178-181`):
-- `candidatura`: `cargar` (oferta, perfil vigente, maestro, CV base válidos de la usuaria) → flujo →
-  `guardar` (CV base elegido y motivo, todo lo del flujo y `preparacion`); `marcar_error` deja `preparacion = error` con el motivo.
-- `clasificar_respuesta`: lee `respuesta_pendiente`, guarda `respuesta_propuesta` y **borra
-  `respuesta_pendiente` en `guardar` y en `marcar_error`**.
-
-Topes nuevos en `horma/config.py`: `tope_coste_candidatura = 1.00` y `tope_coste_respuesta = 0.05` (USD).
-Son valores de construcción: el tope de uso real se fija al medir el coste, antes de usuarias reales.
+- `candidatura`: igual que ahora; `cargar` añade `creado_en` a cada CV base (para desempatar).
+- Sale el manejador `clasificar_respuesta` de `MANEJADORES`.
+- `procesar_una` abre `metricas.capturar(tope=…)`; `TopeSuperado` va directo a `error` sin reintento.
+- `config.py` y `.env.example`: sale `tope_coste_respuesta`; `tope_coste_candidatura` sigue en 1 USD
+  (construcción).
 
 ## Evals
-| Set | Casos | Mide | Umbral |
-|---|---|---|---|
-| `cv` | 12: 9 con un error sembrado (cifra inventada, cargo subido, fecha cambiada, empresa cambiada, titulación inventada, rasgo personal, promesa, inflado, carta que repite el CV) que pasan por el verificador y el juez; 3 de flujo completo (uno adversario: oferta con instrucciones) | Sembrados rechazados; fechas, cargos, empresas y titulaciones idénticos; lo que falta va a huecos; adversaria sin efecto; cobertura ATS registrada | 100 % en todo; ATS sin umbral |
-| `respuestas` | 15 correos inventados (3 con instrucciones escondidas) | Etiqueta; ningún efecto en los adversarios | ≥ 0,9 etiqueta; adversarios 100 % |
-
-Se registran como `SetEval` en `NUEVOS` (`horma/evals.py:41-50`, `:223-243`); el tope de 1 USD de
-construcción ya se aplica en `:326`. El set `cv` añade 2 casos de selección (`selector-cv-base`
-elige el CV base del sector de la oferta entre 2 o 3), sin contar en los 12 de errores sembrados. CI añade los dos sets a `.github/workflows/ci.yml`.
+| Set | Casos | Cambio |
+|---|---|---|
+| `cv` | 14: 9 sembrados, 3 de flujo completo (uno adversario), 2 de selección | Los sembrados pasan por `comprobar` + `juez-candidatura`; los de selección comprueban `elegir_cv_base` (código, coste 0); el harness cuenta las llamadas de los casos de flujo (≤ 5). Umbrales sin cambios: 100 % |
+| `respuestas` | 15 correos (3 adversarios) | Sin cambios; sigue en CI |
 
 ## Decisiones del plan (revisables)
-- PDF con `fpdf2` (Python puro, sin GTK); corrige la redacción de P2.
-- La vuelta que pide `medir_ats` cuenta dentro de las 2 del CV.
-- Solo se edita en `borrador`; no hay «reabrir».
-- Tope de 1 USD por candidatura durante la construcción: como mucho 6 llamadas al modelo mayor para
-  el CV (3 redacciones y 3 juicios), 4 para la carta (2 y 2) y 1 al pequeño para elegir el CV base.
-- El selector usa el modelo pequeño: elegir entre pocos CV es una tarea corta.
-- Historial con copia completa de cada versión, sin límite de versiones: un CV base son unos pocos KB.
-  Lo añadido y lo quitado no se guarda; se calcula al mostrarlo.
-- La edición manual de la fase 2 también deja versión, porque comparte la función del repositorio.
-- Dependencia nueva: `fpdf2`.
+- «Más reciente» = `creado_en` más nuevo (a igualdad, `id` mayor). Editar un CV base no lo hace más
+  reciente; si molesta, se cambia por la fecha de su última versión.
+- Tras la vuelta no se vuelve a juzgar: los problemas que siguen vigentes se detectan con código
+  (frase literal). Un problema reformulado a medias puede quedar sin aviso; los errores duros (fecha,
+  cargo, empresa, titulación, rasgo) los sigue cazando `comprobar`.
+- El arreglo del tope vive en la puerta única y vale para todas las tareas del worker.
+- Los textos de los avisos los escribe el código, no el modelo: son estables y se pueden traducir.
+- «Aprobar y descargar» descarga los dos PDF desde el navegador tras aprobar (dos peticiones).
 
 ## Riesgos
-- **Instalación:** `uv` falla con certificados en esta red; puede hacer falta `--system-certs` o
-  instalar `fpdf2` a mano y usar `UV_NO_SYNC=1`.
-- **Coste:** una candidatura que agota las vueltas hace 10 llamadas al modelo mayor (estimado, sin
-  medir: 0,30-0,60 USD); el tope la corta en 1 USD.
-- **Selector equivocado:** si elige un CV base de otro sector, el CV adaptado sale peor. La
-  candidatura muestra cuál eligió y por qué, y los 2 casos de selección del eval lo vigilan.
-- **Juez demasiado estricto:** si `juez-cv` marca casi todo, la mayoría de candidaturas acabarán en
-  `pendiente_de_ti`. Se vigila con los 3 casos de flujo completo y la prueba manual.
-- **Acentos en el PDF:** las fuentes básicas de `fpdf2` no cubren todo Unicode; se incluye una fuente
-  TTF libre en el paquete.
+- **Más avisos:** con un solo juicio y una vuelta, más candidaturas quedarán en `pendiente_de_ti`.
+  Se vigila con los 3 casos de flujo y la prueba manual.
+- **Juez único con dos documentos:** la entrada es más larga y puede confundir de qué documento es
+  cada problema; el esquema lo obliga y un `repite_cv` en el CV no valida.
+- **Migración:** borra datos de prueba (eventos `cv_base_guardado`, respuestas pendientes). Antes de
+  aplicarla, `docker compose` con la base de datos de desarrollo; nunca hay datos reales.
+- **Tope en la puerta única:** toca `horma/llm`, que usan todos los flujos; la suite completa lo cubre.
+- **Coste de medir:** eval `cv` real ≈ 0,5 USD y una candidatura real < 1 USD; se pide OK a Mar antes.
+- **Instalación:** `uv` puede fallar con certificados; usar `--system-certs` y `UV_NO_SYNC=1`.

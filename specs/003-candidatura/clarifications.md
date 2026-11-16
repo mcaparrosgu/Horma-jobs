@@ -1,12 +1,12 @@
 ---
 type: clarifications
 title: candidatura — Aclaraciones
-description: Preguntas abiertas de la fase 3 resueltas con la persona antes de escribir la spec, más los supuestos.
+description: Preguntas abiertas de la fase 3 resueltas con la persona antes de escribir la spec, más los supuestos. Incluye el cambio del 16-nov-2026 (bloque H, simplificar la candidatura).
 tags: [clarify, candidatura, seguimiento]
 status: active
-sources: [../system.md, ../002-perfil-recomendacion/clarifications.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
-generated: { by: claude-code, at: 2026-11-15 }
-verified: { by: human, at: 2026-11-15 }
+sources: [../system.md, ../002-perfil-recomendacion/clarifications.md, ../../docs/Horma v2_ requerimientos por fases.pdf, ../../docs/mejora-simplificar-candidatura.md]
+generated: { by: claude-code, at: 2026-11-16 }
+verified: { by: human, at: 2026-11-16 }
 stale_after: null
 ---
 
@@ -26,14 +26,40 @@ stale_after: null
 - P10: ¿Qué impide aprobar si la usuaria edita a mano y su texto no está en el maestro? → R: **avisos; decide ella**. Lo que escribe lleva origen «usuaria», como en el perfil. Los errores de `verificar_trazabilidad` y los problemas del juez se muestran, y para aprobar marca «He revisado los avisos». La IA nunca aprueba (RT-10).
 - P11: ¿Se guarda el texto del correo que pega la usuaria? → R: **no; solo etiqueta, fecha y transición** en el historial (minimización de datos: un correo puede traer datos de terceros). El texto vive solo mientras el worker lo clasifica y se borra al acabar, con éxito o con error.
 
+## Cambio del 16-nov-2026: simplificar la candidatura (bloque H)
+Tras la prueba manual, Mar decidió simplificar la candidatura **antes** de la fase 4, para que
+LangGraph migre el flujo ya simplificado. Los 11 puntos de
+[`docs/mejora-simplificar-candidatura.md`](../../docs/mejora-simplificar-candidatura.md) quedan
+decididos. El cambio es de la fase 3 (spec regenerada), no de la 4: el PDF dice que en la fase 4 no
+entra ningún agente nuevo, y el juez único lo es.
+
+**Lo que sustituye a respuestas anteriores**
+- **P4:** se añade «Reintentar» cuando la preparación acaba en `error` (no en `pendiente_de_ti`).
+- **P9:** el CV base lo elige **el código**, no un agente (se quita `selector-cv-base`): gana el que coincide con la oferta en sector y familia y, si empatan, el más reciente (ver P14).
+- **P9b:** se quita «Guardar como mi CV base» de la candidatura. Lo que se edita se queda en esa candidatura; el CV base se cambia en su propia pantalla (RF-2.9e), que **conserva** el historial de versiones.
+- **P10:** se quita la casilla «He revisado los avisos». Los avisos nunca bloquean y pulsar «Aprobar y descargar» cuenta como revisarlos. La IA sigue sin aprobar nunca (RT-10).
+- **RF-3.9 y P7:** en la pantalla, «pegar la respuesta» se sustituye por dos botones (ver P15 y P17).
+- **Supuesto del CV estético:** se quita la elección entre CV adaptado y estético; siempre se usa el adaptado.
+- **Dos jueces → uno:** `juez-cv` y `juez-carta` se funden en `juez-candidatura`, con una sola vuelta de corrección (ver P12 y P13).
+
+**Preguntas y respuestas**
+- P12: El juez único revisa CV y carta juntos y da una sola vuelta. Si solo uno tiene problemas, ¿qué se vuelve a redactar? → R: **solo el que falla**. Si falla el CV, se reescriben el CV y después la carta (la carta parte del CV); si solo falla la carta, solo la carta. De 3 llamadas al modelo (sin problemas) a 5 como mucho.
+- P13: ¿Qué pasa con las palabras clave de la oferta que faltan en el CV y sí tienen origen (`medir_ats`)? → R: **entran en la vuelta única**: se suman a lo que pide corregir el juez; si el juez lo aprueba todo y solo faltan palabras, la vuelta se usa para añadirlas. Nunca hay más de una vuelta.
+- P14: ¿Y si ningún CV base coincide con la oferta? → R: **el más parecido**: primero el que coincide en familia y sector, luego en familia, luego en sector y, si no coincide ninguno, el más reciente. «Detalles» dice por qué. Nunca se bloquea.
+- P15: ¿Qué se hace cuando la empresa pide más información? → R: **nada; la candidatura sigue en `enviada`**. Solo dos botones: «Me han llamado» (→ `entrevista`) y «Me han rechazado» (→ `cerrada` con motivo `rechazo`).
+- P16: ¿Se quitan de la base de datos las columnas que quedan sin uso? → R: **sí, con la migración 0007** (reversible). Las versiones del historial con origen «candidatura» pasan a «edicion». Solo se pierden datos de prueba inventados.
+- P17: ¿Qué se hace con el clasificador de respuestas? → R: **se mantiene el agente, su flujo y su set de evals** (consola y CI), pero **sin conectar a la web**: la pantalla usa los dos botones y se quitan las rutas `/respuesta*` y la tarea del worker. Motivos: lo necesitará la lectura del correo (P7) y es la base del *red teaming* de correos de la fase 4. El set `cv` se adapta al juez único.
+
 ## Decisiones derivadas
 - `redactor-carta` recibe CV maestro, CV adaptado, oferta y sector; no hay carta base ni plantillas por sector.
 - El estado `enviada` guarda fecha y canal; el canal es un enumerado ampliable.
 - `pendiente_de_ti` es un estado terminal del flujo, no de la máquina de la candidatura (borrador → aprobada → enviada → entrevista, y `cerrada` desde cualquiera). La candidatura guarda los dos por separado: `estado` (la máquina) y `preparacion` (el resultado del flujo).
-- `elegir_cv_base` llama a `selector-cv-base` (modelo pequeño) y el código valida lo que elige: que sea suyo, no rechazado y de su lista. Con un solo CV base no se llama al modelo (P9).
-- Guardar encima de un CV base guarda antes la versión anterior en su historial. Lo añadido y lo quitado se calcula con código al mostrarlo; no se guarda. Volver a una versión también guarda antes la actual, así que ningún texto se pierde. El historial cubre también la edición manual de la fase 2 (RF-2.9e), porque las dos usan la misma función del repositorio (P9b).
+- ~~`elegir_cv_base` llama a `selector-cv-base`~~ (sustituido el 16-nov por P14): `elegir_cv_base` es código y nunca llama al modelo; solo considera CV base de la usuaria y no rechazados.
+- Editar un CV base (RF-2.9e) guarda antes la versión anterior en su historial. Lo añadido y lo quitado se calcula con código al mostrarlo; no se guarda. Volver a una versión también guarda antes la actual, así que ningún texto se pierde. (Desde el 16-nov ya no se guarda encima desde una candidatura.)
+- Tras la vuelta única, el juez no vuelve a juzgar. Los problemas de su revisión cuya frase sigue literalmente en el texto final se conservan como avisos; los de un documento que ella edita, también, mientras su frase siga en el texto (P12, arreglo del punto 11 de la mejora).
+- El tope de coste de una tarea se comprueba antes de cada llamada al modelo, no solo cuando algo falla (punto 11 de la mejora).
 - Las fuentes válidas de una frase son el CV maestro y el CV base elegido; para la carta, también la oferta (P9).
-- La respuesta de la empresa solo propone; la transición la confirma la usuaria (RF-3.9, P11).
+- La respuesta de la empresa solo propone; la transición la confirma la usuaria (RF-3.9, P11). Desde el 16-nov esto vale para el clasificador en la consola; en la web la transición la hace ella con un botón (P15, P17).
 
 ## Fuera de alcance (anotado, no se construye aquí)
 - Entrevista a la usuaria sobre sus valores y su personalidad para redactar cartas personalizadas (anotada en la bitácora el 15-nov-2026; enlaza con la «entrevista del perfil» del plan posterior del PDF). Se retoma cuando todo Horma esté construido.
@@ -44,5 +70,5 @@ stale_after: null
 
 ## Supuestos (revisables)
 - El umbral de cobertura ATS no se fija ahora: se fija con las primeras ejecuciones (RF-4.4).
-- El CV estético que la usuaria puede elegir al aprobar (RF-3.8) es el ya subido en la fase 2; no se genera ninguno nuevo.
-- Máximo 2 vueltas de corrección del CV y 1 de la carta, como en el PDF. La vuelta que pide `medir_ats` cuenta dentro de las 2 del CV (decidido al planificar).
+- ~~El CV estético que la usuaria puede elegir al aprobar~~: quitado el 16-nov; siempre se usa el CV adaptado.
+- ~~Máximo 2 vueltas de corrección del CV y 1 de la carta~~: desde el 16-nov, **una sola vuelta** para los dos documentos, que incluye las palabras del ATS (P12, P13). Se aparta del PDF a cambio de menos coste y espera; habrá más candidaturas con avisos.
