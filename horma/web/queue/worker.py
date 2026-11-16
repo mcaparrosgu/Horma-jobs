@@ -5,8 +5,9 @@ Tipos de tarea (la carga es siempre un id, nunca texto):
 - `perfilar` (id de una versión nueva y pendiente del perfil), `clasificar_perfil` (id de una versión
   copiada y pendiente), `generar_cv_base` y `recomendar` (id de la versión del perfil con la que se
   trabaja). Las de una usuaria se ejecutan con su sesión (RLS); las demás, en modo sistema.
-- `candidatura` y `clasificar_respuesta` (fase 3; id de la candidatura): CV y carta para una oferta, y
-  propuesta de cambio de estado para un correo pegado.
+- `candidatura` (fase 3; id de la candidatura): CV y carta para una oferta.
+El tope de coste vale para cualquier tarea: se corta en la puerta única (`metricas.capturar(tope=…)`) y
+una tarea que lo supera queda en `error` sin reintento y sin guardar su resultado.
 """
 import logging
 import time
@@ -18,7 +19,6 @@ from horma.flows import (
     calificar_fuente,
     candidatura,
     clasificar_perfil,
-    clasificar_respuesta,
     generar_cv_base,
     perfilar,
     procesar_oferta,
@@ -208,34 +208,10 @@ class _Candidatura:
         repo_candidaturas.marcar_error(s, tarea["entidad_id"], motivo)
 
 
-class _ClasificarRespuesta:
-    """Clasifica el correo pegado (`respuesta_pendiente`) y guarda la propuesta; el texto se borra tanto
-    tras el éxito como tras el error. El modelo no ve el estado de la candidatura."""
-
-    def cargar(self, s, tarea: dict) -> dict:
-        c = repo_candidaturas.fila(s, tarea["entidad_id"])
-        if c is None:
-            raise ValueError(f"no existe la candidatura {tarea['entidad_id']} de esta usuaria")
-        if not c["respuesta_pendiente"]:
-            raise ValueError("la candidatura no tiene ninguna respuesta pendiente")
-        return {"texto": c["respuesta_pendiente"], "estado_actual": c["estado"]}
-
-    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return clasificar_respuesta.crear(proveedor=d.proveedor).run(estado)
-
-    def guardar(self, s, tarea: dict, estado: dict) -> None:
-        repo_candidaturas.guardar_propuesta(
-            s, tarea["entidad_id"], {**estado["propuesta"], "etiqueta": estado["etiqueta"]})
-
-    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
-        repo_candidaturas.borrar_respuesta_pendiente(s, tarea["entidad_id"])
-
-
 MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
-               "recomendar": _Recomendar(), "candidatura": _Candidatura(),
-               "clasificar_respuesta": _ClasificarRespuesta()}
+               "recomendar": _Recomendar(), "candidatura": _Candidatura()}
 
 
 def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
@@ -253,7 +229,8 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
     manejador = MANEJADORES.get(tarea["tipo"])
     error: Exception | None = None
     estado = None
-    with metricas.capturar() as llamadas:
+    restante = float(tarea["tope_coste"]) - float(tarea["coste_acumulado"])
+    with metricas.capturar(tope=restante) as llamadas:
         try:
             if manejador is None:
                 raise ValueError(f"tipo de tarea desconocido: {tarea['tipo']}")
@@ -267,13 +244,13 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
 
     with sesion() as s:
         repo_tareas.registrar_llamadas(s, tarea["id"], llamadas)
-        if error is None:
+        motivo = None
+        if isinstance(error, metricas.TopeSuperado) or acumulado > float(tarea["tope_coste"]):
+            motivo = f"tope de coste superado ({acumulado:.6f} > {float(tarea['tope_coste']):.6f})"
+        elif error is None:
             manejador.guardar(s, tarea, estado)
             repo_tareas.actualizar(s, tarea["id"], "hecha", coste)
             return "hecha"
-        motivo = None
-        if acumulado > float(tarea["tope_coste"]):
-            motivo = f"tope de coste superado ({acumulado:.6f} > {float(tarea['tope_coste']):.6f})"
         elif tarea["intentos"] >= tarea["tope_reintentos"] or manejador is None:
             motivo = f"reintentos agotados ({tarea['intentos']}): {error}"
         if motivo:

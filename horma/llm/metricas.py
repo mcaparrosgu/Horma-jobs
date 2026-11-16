@@ -16,8 +16,13 @@ class Llamada:
     resultado: str  # ok | salida_invalida | error
 
 
+class TopeSuperado(Exception):
+    """El coste acumulado en el bloque `capturar(tope=…)` ya supera el tope: no se hace otra llamada."""
+
+
 _registro: deque[Llamada] = deque(maxlen=1000)
 _destinos: list[Callable[[Llamada], None]] = []
+_topes: list[tuple[list[Llamada], float]] = []
 
 
 def registrar(llamada: Llamada) -> None:
@@ -27,14 +32,28 @@ def registrar(llamada: Llamada) -> None:
 
 
 @contextmanager
-def capturar() -> Iterator[list[Llamada]]:
-    """Recoge las llamadas hechas dentro del bloque (el worker las guarda en `llm_llamadas`)."""
+def capturar(tope: float | None = None) -> Iterator[list[Llamada]]:
+    """Recoge las llamadas hechas dentro del bloque (el worker las guarda en `llm_llamadas`).
+    Con `tope` (USD), `comprobar_tope()` corta antes de la llamada siguiente si lo acumulado ya lo supera."""
     recogidas: list[Llamada] = []
-    _destinos.append(recogidas.append)
+    destino = recogidas.append
+    _destinos.append(destino)
+    if tope is not None:
+        _topes.append((recogidas, tope))
     try:
         yield recogidas
     finally:
-        _destinos.remove(recogidas.append)
+        _destinos.remove(destino)
+        if tope is not None:
+            _topes.remove((recogidas, tope))
+
+
+def comprobar_tope() -> None:
+    """La puerta única lo llama antes de cada llamada al modelo (RF-3.11)."""
+    for recogidas, tope in _topes:
+        gastado = sum(ll.coste for ll in recogidas)
+        if gastado > tope:
+            raise TopeSuperado(f"tope de coste superado ({gastado:.6f} > {tope:.6f})")
 
 
 def registradas() -> list[Llamada]:

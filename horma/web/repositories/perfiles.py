@@ -186,12 +186,11 @@ def renombrar_cv_base(s: Session, cv_id: int, nombre: str) -> bool:
 
 
 def editar_cv_base(s: Session, cv_id: int, nombre: str | None, contenido: str | None, *,
-                   origen: str = "edicion", candidatura_id: int | None = None) -> bool:
+                   origen: str = "edicion") -> bool:
     """Cambia el nombre y/o el texto de un CV base ya hecho. El texto editado es de ella, no del modelo.
 
     Antes de sobrescribir guarda la versión que se va a sustituir en `cv_base_versiones` (RF-3.8d), en
-    la misma transacción. `origen` dice qué la sustituye: `edicion` manual, `candidatura` (guardar
-    encima) o `restauracion`. Si no cambia nada, no se guarda versión."""
+    la misma transacción. `origen` dice qué la sustituye: `edicion` manual o `restauracion`. Si no cambia nada, no se guarda versión."""
     actual = s.execute(text("select usuaria_id, nombre, contenido from cv_base "
                             "where id = :i and estado = 'hecho' for update"), {"i": cv_id}).mappings().first()
     if actual is None:
@@ -201,10 +200,10 @@ def editar_cv_base(s: Session, cv_id: int, nombre: str | None, contenido: str | 
     if (nuevo_nombre, nuevo_contenido) == (actual["nombre"], actual["contenido"]):
         return True
     s.execute(text(
-        "insert into cv_base_versiones (usuaria_id, cv_base_id, nombre, contenido, origen, candidatura_id) "
-        "values (:u, :i, :n, :c, :o, :k)"),
+        "insert into cv_base_versiones (usuaria_id, cv_base_id, nombre, contenido, origen) "
+        "values (:u, :i, :n, :c, :o)"),
         {"u": actual["usuaria_id"], "i": cv_id, "n": actual["nombre"], "c": actual["contenido"],
-         "o": origen, "k": candidatura_id})
+         "o": origen})
     s.execute(text("update cv_base set nombre = :n, contenido = :c where id = :i"),
               {"i": cv_id, "n": nuevo_nombre, "c": nuevo_contenido})
     return True
@@ -218,7 +217,7 @@ def versiones_cv_base(s: Session, cv_id: int) -> list[dict] | None:
     if actual is None:
         return None
     filas = [dict(f) for f in s.execute(text(
-        "select id, nombre, contenido, origen, candidatura_id, creado_en from cv_base_versiones "
+        "select id, nombre, contenido, origen, creado_en from cv_base_versiones "
         "where cv_base_id = :i order by id"), {"i": cv_id}).mappings()]
     siguientes = [f["contenido"] for f in filas[1:]] + ([actual] if filas else [])
     for f, siguiente in zip(filas, siguientes, strict=True):

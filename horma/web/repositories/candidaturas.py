@@ -58,20 +58,18 @@ def detalle(s: Session, candidatura_id: int) -> dict | None:
 
 def eventos(s: Session, candidatura_id: int) -> list[dict]:
     return [dict(f) for f in s.execute(text(
-        "select id, de, a, motivo, canal, origen, tipo, etiqueta_respuesta, creado_en "
+        "select id, de, a, motivo, canal, origen, tipo, creado_en "
         "from candidatura_eventos where candidatura_id = :i order by id"),
         {"i": candidatura_id}).mappings()]
 
 
 def registrar_evento(s: Session, usuaria_id: int, candidatura_id: int, *, tipo: str = "transicion",
                      de: str | None = None, a: str | None = None, motivo: str | None = None,
-                     canal: str | None = None, origen: str = "usuaria",
-                     etiqueta_respuesta: str | None = None) -> None:
+                     canal: str | None = None) -> None:
     s.execute(text(
-        "insert into candidatura_eventos (usuaria_id, candidatura_id, de, a, motivo, canal, origen, tipo, "
-        "etiqueta_respuesta) values (:u, :c, :de, :a, :m, :ca, :o, :t, :e)"),
-        {"u": usuaria_id, "c": candidatura_id, "de": de, "a": a, "m": motivo, "ca": canal, "o": origen,
-         "t": tipo, "e": etiqueta_respuesta})
+        "insert into candidatura_eventos (usuaria_id, candidatura_id, de, a, motivo, canal, tipo) "
+        "values (:u, :c, :de, :a, :m, :ca, :t)"),
+        {"u": usuaria_id, "c": candidatura_id, "de": de, "a": a, "m": motivo, "ca": canal, "t": tipo})
 
 
 def contenido_cv_base(s: Session, cv_base_id: int | None) -> str:
@@ -133,15 +131,15 @@ def guardar_preparacion(s: Session, candidatura_id: int, perfil_version: int, r:
         "update candidaturas set cv_base_id = :cb, cv_base_motivo = :cm, perfil_version = :pv, "
         "cv_contenido = :cv, cv_traza = cast(:cvt as jsonb), carta_contenido = :ca, "
         "carta_traza = cast(:cat as jsonb), huecos = cast(:h as jsonb), avisos = cast(:a as jsonb), "
-        "cobertura_ats = :ats, vueltas_cv = :vcv, vueltas_carta = :vca, "
+        "cobertura_ats = :ats, redacciones_cv = :rcv, redacciones_carta = :rca, "
+        "problemas_juez = cast(:pj as jsonb), "
         "instrucciones_embebidas = cast(:ie as jsonb), preparacion = :p, motivo_error = null, "
         "actualizado_en = now() where id = :i"),
         {"i": candidatura_id, "cb": r["cv_base_id"], "cm": r["cv_base_motivo"], "pv": perfil_version,
          "cv": r["cv_contenido"], "cvt": _j(r["cv_traza"]), "ca": r["carta_contenido"],
          "cat": _j(r["carta_traza"]), "h": _j(r["huecos"]), "a": _j(r["avisos"]),
          "ats": r["cobertura_ats"],
-         # Hasta la migración 0007 (T28) las columnas siguen llamándose vueltas_*: guardan las redacciones.
-         "vcv": r["redacciones_cv"], "vca": r["redacciones_carta"],
+         "rcv": r["redacciones_cv"], "rca": r["redacciones_carta"], "pj": _j(r["problemas_juez"]),
          "ie": _j(r["instrucciones_embebidas"]), "p": r["preparacion"]})
 
 
