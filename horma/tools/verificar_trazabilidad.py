@@ -13,7 +13,7 @@ al generador para que corrija en el intento siguiente. Qué se comprueba:
      llevan cargos, empresas y titulaciones, TODAS las palabras están en el fragmento. Una línea de
      cabecera es la que lleva un separador («·», «|», «—», « - ») o tiene 4 palabras o menos.
 
-La coherencia semántica fina (p. ej. «lideré» frente a «participé») la juzga el juez-cv (fase 3);
+La coherencia semántica fina (p. ej. «lideré» frente a «participé») la juzga el juez-candidatura (fase 3);
 aquí solo lo que se puede decidir con reglas."""
 import re
 import unicodedata

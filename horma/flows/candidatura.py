@@ -1,36 +1,33 @@
-"""Flujo candidatura (RF-3.1): elegir_cv_base → redactar_cv → verificar → juzgar_cv → (redactar_cv) →
-medir_ats → (redactar_cv) → redactar_carta → verificar_carta → juzgar_carta → (redactar_carta) →
-componer. Sin acceso a la base de datos ni a disco: el worker carga las entradas y guarda el resultado.
+"""Flujo candidatura (RF-3.1): elegir_cv_base → redactar_cv → redactar_carta → comprobar → juzgar →
+(vuelta única) → componer. Sin acceso a la base de datos ni a disco: el worker carga las entradas y guarda
+el resultado.
 
 Estado de entrada: {"usuaria_id": int, "perfil_version": int, "oferta": Oferta, "cv_maestro": str,
-"cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version}, ...]}
-(todos los CV base de la usuaria; el flujo descarta los rechazados y los de otras usuarias).
-Estado de salida: además, lo de `EstadoCandidatura` (cv_base_id, cv_base_motivo, cv_contenido,
-cv_traza, carta_contenido, carta_traza, huecos, avisos, cobertura_ats, vueltas_cv, vueltas_carta,
-instrucciones_embebidas) y `preparacion` = `lista` o `pendiente_de_ti`.
+"cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...]}
+(todos los CV base de la usuaria; el código descarta los rechazados y los de otras usuarias).
+Estado de salida: además, lo de `EstadoCandidatura` (cv_base_id, cv_base_motivo, cv_contenido, cv_traza,
+carta_contenido, carta_traza, huecos, avisos, problemas_juez, cobertura_ats, vuelta_hecha,
+redacciones_cv, redacciones_carta, instrucciones_embebidas) y `preparacion` = `lista` o `pendiente_de_ti`.
 
-El CV se redacta como máximo 3 veces (la primera y 2 vueltas, incluida la que pide `medir_ats`) y la
-carta como máximo 2. El flujo nunca cambia `estado`: la candidatura sigue en `borrador` (P4)."""
-from horma.agents.juez_carta.agent import JuezCarta
-from horma.agents.juez_carta.schemas import EntradaJuezCarta
-from horma.agents.juez_cv.agent import JuezCv
-from horma.agents.juez_cv.schemas import EntradaJuezCv
+De 3 a 5 llamadas al modelo: redactor del CV, redactor de la carta y un único juez; si algo falla,
+una sola vuelta que rehace solo lo que falla (P12). Tras la vuelta se vuelve a comprobar con código,
+pero no se vuelve a juzgar. El flujo nunca cambia `estado`: la candidatura sigue en `borrador` (P4)."""
+from horma.agents.juez_candidatura.agent import JuezCandidatura
+from horma.agents.juez_candidatura.schemas import EntradaJuezCandidatura
 from horma.agents.redactor_carta.agent import RedactorCarta
 from horma.agents.redactor_carta.schemas import EntradaRedactorCarta
 from horma.agents.redactor_cv.agent import RedactorCv
 from horma.agents.redactor_cv.schemas import EntradaRedactorCv
-from horma.agents.selector_cv_base.agent import SelectorCvBase
-from horma.agents.selector_cv_base.schemas import CvBaseOpcion, EntradaSelectorCvBase
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
-from horma.schemas.candidatura import EstadoCandidatura, Problema
+from horma.schemas.candidatura import EstadoCandidatura, Problema, aviso_de_error
 from horma.schemas.oferta import Oferta
+from horma.tools.avisos_vigentes import avisos_vigentes
+from horma.tools.elegir_cv_base import elegir_cv_base
 from horma.tools.medir_ats import medir_ats
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_trazabilidad
 
-MAX_VUELTAS_CV = 3
-MAX_VUELTAS_CARTA = 2
 PROPUESTA_HUECO = ("La oferta lo pide y no aparece en tu perfil: si lo tienes, añádelo tú a tu CV "
                    "maestro y vuelve a preparar la candidatura.")
 
@@ -42,12 +39,14 @@ def texto_oferta(oferta: Oferta) -> str:
     return "\n".join(p for p in partes if p)
 
 
-def _aviso_problema(documento: str, p: dict) -> str:
-    return f"{documento}, juez ({p['tipo']}): «{p['frase']}» — {p['motivo']}"
+def _sumar(e: dict, nuevas: list[str]) -> None:
+    e["instrucciones_embebidas"] = list(dict.fromkeys([*e.get("instrucciones_embebidas", []), *nuevas]))
 
 
-def _sumar(e: dict, clave: str, nuevas: list[str]) -> None:
-    e[clave] = list(dict.fromkeys([*e.get(clave, []), *nuevas]))
+def _como_problemas(errores: list[str]) -> list[Problema]:
+    """Los errores de `comprobar` como problemas de la carta, para que el redactor los reciba (P12)."""
+    return [Problema(documento="carta", tipo="sin_origen",
+                     frase=aviso_de_error("carta", x).frase or "", motivo=x) for x in errores]
 
 
 def crear(proveedor: Proveedor | None = None) -> PlainFlow:
@@ -55,151 +54,111 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
     def validar(e: dict) -> EstadoCandidatura:
         return EstadoCandidatura.model_validate(e)
 
-    def elegir_cv_base(e: dict) -> dict:
+    def elegir(e: dict) -> dict:
         validar(e)
-        candidatos = [c for c in e["cvs_base"]
-                      if c.get("estado") == "hecho" and c.get("usuaria_id") == e["usuaria_id"]]
-        if not candidatos:
-            raise ValueError("la usuaria no tiene ningún CV base válido: hay que generarlo primero")
-        e.update(avisos=[], errores=[], errores_formato=[], problemas=[], palabras_sugeridas=[],
-                 huecos=[], huecos_redactor=[], instrucciones_embebidas=[], vueltas_cv=0,
-                 vueltas_carta=0, cobertura_ats=None, preparacion="en_curso")
-        if len(candidatos) == 1:
-            elegido, motivo = candidatos[0], "Es tu único CV base válido."
-        else:
-            r = SelectorCvBase.run(EntradaSelectorCvBase(
-                oferta=Oferta.model_validate(e["oferta"]),
-                cvs_base=[CvBaseOpcion(id=c["id"], nombre=c["nombre"], sector=c.get("sector") or "otros",
-                                       familia=c.get("familia") or "otros", contenido=c["contenido"])
-                          for c in candidatos]), proveedor=proveedor)
-            _sumar(e, "instrucciones_embebidas", r.instrucciones_embebidas)
-            por_id = {c["id"]: c for c in candidatos}
-            if r.cv_base_id not in por_id:
-                raise ValueError(f"el selector eligió el CV base {r.cv_base_id}, que no es un candidato "
-                                 "válido de esta usuaria (rechazado, ajeno o fuera de la lista)")
-            elegido, motivo = por_id[r.cv_base_id], r.motivo
-        e.update(cv_base_id=elegido["id"], cv_base_motivo=motivo, cv_base_contenido=elegido["contenido"])
+        elegido, motivo = elegir_cv_base(e["oferta"], e["cvs_base"], e["usuaria_id"])
+        e.update(avisos=[], problemas_juez=[], errores_cv=[], errores_carta=[], errores_formato=[],
+                 palabras_sugeridas=[], ausentes_sin_origen=[], huecos=[], huecos_redactor=[],
+                 instrucciones_embebidas=[], vuelta_hecha=False, rehacer=None, redacciones_cv=0,
+                 redacciones_carta=0, cobertura_ats=None, preparacion="en_curso",
+                 cv_base_id=elegido["id"], cv_base_motivo=motivo, cv_base_contenido=elegido["contenido"])
         return e
 
     def redactar_cv(e: dict) -> dict:
         validar(e)
-        e["vueltas_cv"] += 1
+        e["redacciones_cv"] += 1
         r = RedactorCv.run(EntradaRedactorCv(
             cv_base=e["cv_base_contenido"], cv_maestro=e["cv_maestro"],
             oferta=Oferta.model_validate(e["oferta"]),
-            errores_previos=[*e["errores"], *e["errores_formato"]],
-            problemas_previos=[Problema.model_validate(p) for p in e["problemas"]],
+            errores_previos=[*e["errores_cv"], *e["errores_formato"]],
+            problemas_previos=[Problema.model_validate(p) for p in e["problemas_juez"]
+                               if p["documento"] == "cv"],
             palabras_sugeridas=e["palabras_sugeridas"]), proveedor=proveedor)
-        _sumar(e, "instrucciones_embebidas", r.instrucciones_embebidas)
+        _sumar(e, r.instrucciones_embebidas)
         e.update(cv_contenido=r.contenido, cv_traza=[t.model_dump(mode="json") for t in r.traza],
-                 huecos_redactor=[h.model_dump(mode="json") for h in r.huecos],
-                 errores=[], errores_formato=[], problemas=[], palabras_sugeridas=[])
-        return e
-
-    def verificar(e: dict) -> dict:
-        validar(e)
-        e["errores"] = verificar_trazabilidad(e["cv_contenido"], e["cv_traza"],
-                                              [e["cv_maestro"], e["cv_base_contenido"]])
-        e["errores"] += [f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])]
-        return e
-
-    def juzgar_cv(e: dict) -> dict:
-        validar(e)
-        r = JuezCv.run(EntradaJuezCv(
-            contenido=e["cv_contenido"], traza=e["cv_traza"], cv_maestro=e["cv_maestro"],
-            cv_base=e["cv_base_contenido"], oferta=Oferta.model_validate(e["oferta"])),
-            proveedor=proveedor)
-        _sumar(e, "instrucciones_embebidas", r.instrucciones_embebidas)
-        e["veredicto_cv"] = r.veredicto
-        e["problemas"] = [p.model_dump(mode="json") for p in r.problemas]
-        return e
-
-    def medir(e: dict) -> dict:
-        validar(e)
-        m = medir_ats(e["cv_contenido"], Oferta.model_validate(e["oferta"]),
-                      [e["cv_maestro"], e["cv_base_contenido"]])
-        e.update(cobertura_ats=m["cobertura"], errores_formato=m["errores_formato"],
-                 palabras_sugeridas=m["ausentes_con_origen"], ausentes_sin_origen=m["ausentes_sin_origen"],
-                 errores_cv=[*e["errores"], *(["el juez no aprobó el CV"]
-                                              if e["veredicto_cv"] == "corregir" else [])],
-                 problemas_cv=list(e["problemas"]))  # `problemas` se reutiliza para los de la carta
+                 huecos_redactor=[h.model_dump(mode="json") for h in r.huecos])
         return e
 
     def redactar_carta(e: dict) -> dict:
         validar(e)
-        if e["vueltas_carta"] == 0:
-            e.update(errores=[], problemas=[])  # los del CV ya no se pasan a la carta
-        e["vueltas_carta"] += 1
+        e["redacciones_carta"] += 1
         oferta = Oferta.model_validate(e["oferta"])
+        problemas = [Problema.model_validate(p) for p in e["problemas_juez"] if p["documento"] == "carta"]
         r = RedactorCarta.run(EntradaRedactorCarta(
             cv_maestro=e["cv_maestro"], cv_adaptado=e["cv_contenido"], oferta=oferta,
-            sector=oferta.taxonomia.sector, errores_previos=e["errores"],
-            problemas_previos=[Problema.model_validate(p) for p in e["problemas"]]), proveedor=proveedor)
-        _sumar(e, "instrucciones_embebidas", r.instrucciones_embebidas)
-        e.update(carta_contenido=r.contenido, carta_traza=[t.model_dump(mode="json") for t in r.traza],
-                 errores=[], problemas=[])
+            sector=oferta.taxonomia.sector, errores_previos=[],
+            problemas_previos=[*problemas, *_como_problemas(e["errores_carta"])]), proveedor=proveedor)
+        _sumar(e, r.instrucciones_embebidas)
+        e.update(carta_contenido=r.contenido, carta_traza=[t.model_dump(mode="json") for t in r.traza])
         return e
 
-    def verificar_carta(e: dict) -> dict:
+    def comprobar(e: dict) -> dict:
+        """Todo con código: trazabilidad y rasgos personales de los dos documentos y ATS del CV."""
         validar(e)
         oferta = Oferta.model_validate(e["oferta"])
-        e["errores"] = verificar_trazabilidad(
-            e["carta_contenido"], e["carta_traza"],
-            [e["cv_maestro"], e["cv_base_contenido"], texto_oferta(oferta)],
-            formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)
-        e["errores"] += [f"Rasgo personal en la carta: {r}" for r in rasgos_personales(e["carta_contenido"])]
+        fuentes_cv = [e["cv_maestro"], e["cv_base_contenido"]]
+        e["errores_cv"] = [
+            *verificar_trazabilidad(e["cv_contenido"], e["cv_traza"], fuentes_cv),
+            *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])]]
+        e["errores_carta"] = [
+            *verificar_trazabilidad(e["carta_contenido"], e["carta_traza"],
+                                    [*fuentes_cv, texto_oferta(oferta)],
+                                    formulas_cortesia=FORMULAS_CORTESIA, por_frase=True),
+            *[f"Rasgo personal en la carta: {r}" for r in rasgos_personales(e["carta_contenido"])]]
+        m = medir_ats(e["cv_contenido"], oferta, fuentes_cv)
+        e.update(cobertura_ats=m["cobertura"],
+                 errores_formato=[f"Formato del CV para ATS: {x}" for x in m["errores_formato"]],
+                 palabras_sugeridas=m["ausentes_con_origen"], ausentes_sin_origen=m["ausentes_sin_origen"])
         return e
 
-    def juzgar_carta(e: dict) -> dict:
+    def _falla(e: dict, documento: str) -> bool:
+        errores = (e["errores_cv"] + e["errores_formato"] + e["palabras_sugeridas"]
+                   if documento == "cv" else e["errores_carta"])
+        return bool(errores) or any(p["documento"] == documento for p in e["problemas_juez"])
+
+    def juzgar(e: dict) -> dict:
+        """Un solo juicio. Decide también qué se rehace en la vuelta única (solo lo que falla)."""
         validar(e)
-        r = JuezCarta.run(EntradaJuezCarta(
-            contenido=e["carta_contenido"], traza=e["carta_traza"], cv_maestro=e["cv_maestro"],
-            cv_adaptado=e["cv_contenido"], oferta=Oferta.model_validate(e["oferta"])),
-            proveedor=proveedor)
-        _sumar(e, "instrucciones_embebidas", r.instrucciones_embebidas)
-        e["veredicto_carta"] = r.veredicto
-        e["problemas"] = [p.model_dump(mode="json") for p in r.problemas]
+        r = JuezCandidatura.run(EntradaJuezCandidatura(
+            cv=e["cv_contenido"], cv_traza=e["cv_traza"], carta=e["carta_contenido"],
+            carta_traza=e["carta_traza"], cv_maestro=e["cv_maestro"], cv_base=e["cv_base_contenido"],
+            oferta=Oferta.model_validate(e["oferta"])), proveedor=proveedor)
+        _sumar(e, r.instrucciones_embebidas)
+        e["problemas_juez"] = [p.model_dump(mode="json") for p in r.problemas]
+        # Si el CV falla se rehace el CV y, después, la carta (que se apoya en él); si solo falla la carta,
+        # solo ella. Las palabras ATS con origen entran en esta misma vuelta (P13).
+        e["rehacer"] = "cv" if _falla(e, "cv") else "carta" if _falla(e, "carta") else None
+        e["vuelta_hecha"] = e["rehacer"] is not None
         return e
 
     def componer(e: dict) -> dict:
+        """Avisos en llano sobre el texto final: errores de `comprobar` y problemas del juez vigentes."""
         validar(e)
         vistos = {h["requisito"].casefold() for h in e["huecos_redactor"]}
-        e["huecos"] = [*e["huecos_redactor"],
-                       *({"requisito": p, "propuesta": PROPUESTA_HUECO}
-                         for p in e.get("ausentes_sin_origen", []) if p.casefold() not in vistos)]
-        e["huecos"] = list({h["requisito"].casefold(): h for h in e["huecos"]}.values())
-        # Todo lo que dejó sin resolver cada documento se le enseña a ella (RF-3.8): sin esto, una
-        # preparación `pendiente_de_ti` no diría qué hay que revisar.
-        e["avisos"] += [f"Formato del CV para ATS: {x}" for x in e["errores_formato"]]
-        e["avisos"] += [f"CV: {x}" for x in e["errores_cv"]]
-        e["avisos"] += [_aviso_problema("CV", p) for p in e.get("problemas_cv", [])]
-        e["avisos"] += [f"Carta: {x}" for x in e["errores"]]
-        e["avisos"] += [_aviso_problema("Carta", p) for p in e["problemas"]]
-        e["avisos"] = list(dict.fromkeys(e["avisos"]))
-        # `errores_cv` guarda los del último CV; `errores`, los de la última carta.
-        cv_limpio = not e["errores_cv"] and not e["errores_formato"]
-        carta_limpia = e["veredicto_carta"] == "aprobado" and not e["errores"]
-        e["preparacion"] = "lista" if cv_limpio and carta_limpia else "pendiente_de_ti"
+        huecos = [*e["huecos_redactor"],
+                  *({"requisito": p, "propuesta": PROPUESTA_HUECO}
+                    for p in e["ausentes_sin_origen"] if p.casefold() not in vistos)]
+        e["huecos"] = list({h["requisito"].casefold(): h for h in huecos}.values())
+        errores_del_cv = [*e["errores_formato"], *e["errores_cv"]]
+        avisos = [*(aviso_de_error("cv", x, e["cv_contenido"]) for x in errores_del_cv),
+                  *(aviso_de_error("carta", x, e["carta_contenido"]) for x in e["errores_carta"]),
+                  *avisos_vigentes("cv", e["cv_contenido"], e["problemas_juez"]),
+                  *avisos_vigentes("carta", e["carta_contenido"], e["problemas_juez"])]
+        e["avisos"] = [a.model_dump(mode="json") for a in
+                       {(a.documento, a.frase, a.mensaje): a for a in avisos}.values()]
+        e["preparacion"] = "pendiente_de_ti" if e["avisos"] else "lista"
         validar(e)
         return e
 
-    def tras_juzgar_cv(e: dict) -> str:
-        hay_fallos = bool(e["errores"]) or e["veredicto_cv"] == "corregir"
-        return "redactar_cv" if hay_fallos and e["vueltas_cv"] < MAX_VUELTAS_CV else "medir_ats"
+    def tras_comprobar(e: dict) -> str:
+        return "componer" if e["vuelta_hecha"] and e["redacciones_carta"] > 1 else "juzgar"
 
-    def tras_medir(e: dict) -> str:
-        pide = bool(e["errores_formato"] or e["palabras_sugeridas"])
-        return "redactar_cv" if pide and e["vueltas_cv"] < MAX_VUELTAS_CV else "redactar_carta"
+    def tras_juzgar(e: dict) -> str:
+        return {"cv": "redactar_cv", "carta": "redactar_carta"}.get(e["rehacer"], "componer")
 
-    def tras_juzgar_carta(e: dict) -> str:
-        hay_fallos = bool(e["errores"]) or e["veredicto_carta"] == "corregir"
-        return "redactar_carta" if hay_fallos and e["vueltas_carta"] < MAX_VUELTAS_CARTA else "componer"
-
-    pasos = {"elegir_cv_base": elegir_cv_base, "redactar_cv": redactar_cv, "verificar": verificar,
-             "juzgar_cv": juzgar_cv, "medir_ats": medir, "redactar_carta": redactar_carta,
-             "verificar_carta": verificar_carta, "juzgar_carta": juzgar_carta, "componer": componer}
-    aristas = {"elegir_cv_base": "redactar_cv", "redactar_cv": "verificar", "verificar": "juzgar_cv",
-               "juzgar_cv": tras_juzgar_cv, "medir_ats": tras_medir, "redactar_carta": "verificar_carta",
-               "verificar_carta": "juzgar_carta", "juzgar_carta": tras_juzgar_carta}
+    pasos = {"elegir_cv_base": elegir, "redactar_cv": redactar_cv, "redactar_carta": redactar_carta,
+             "comprobar": comprobar, "juzgar": juzgar, "componer": componer}
+    aristas = {"elegir_cv_base": "redactar_cv", "redactar_cv": "redactar_carta",
+               "redactar_carta": "comprobar", "comprobar": tras_comprobar, "juzgar": tras_juzgar}
     return PlainFlow("candidatura", pasos=pasos, aristas=aristas, inicio="elegir_cv_base",
                      finales={"componer"})

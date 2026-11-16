@@ -123,7 +123,7 @@ def borrar_propuesta(s: Session, candidatura_id: int) -> None:
 def cv_base_para_flujo(s: Session) -> list[dict]:
     """Todos los CV base de la usuaria; el flujo descarta los rechazados."""
     return [dict(f) for f in s.execute(text(
-        "select id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version "
+        "select id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en "
         "from cv_base order by id")).mappings().all()]
 
 
@@ -139,7 +139,9 @@ def guardar_preparacion(s: Session, candidatura_id: int, perfil_version: int, r:
         {"i": candidatura_id, "cb": r["cv_base_id"], "cm": r["cv_base_motivo"], "pv": perfil_version,
          "cv": r["cv_contenido"], "cvt": _j(r["cv_traza"]), "ca": r["carta_contenido"],
          "cat": _j(r["carta_traza"]), "h": _j(r["huecos"]), "a": _j(r["avisos"]),
-         "ats": r["cobertura_ats"], "vcv": r["vueltas_cv"], "vca": r["vueltas_carta"],
+         "ats": r["cobertura_ats"],
+         # Hasta la migración 0007 (T28) las columnas siguen llamándose vueltas_*: guardan las redacciones.
+         "vcv": r["redacciones_cv"], "vca": r["redacciones_carta"],
          "ie": _j(r["instrucciones_embebidas"]), "p": r["preparacion"]})
 
 

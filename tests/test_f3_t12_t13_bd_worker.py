@@ -20,11 +20,11 @@ BASE = "## Experiencia\nCamarera en Bar Sol, 2020-2023\nManejo de TPV"
 CV = {"contenido": "## Experiencia\nCamarera en Bar Sol, 2020-2023\nManejo de TPV",
       "traza": [{"frase": "Camarera en Bar Sol, 2020-2023", "fragmento": "Camarera en Bar Sol, 2020-2023"},
                 {"frase": "Manejo de TPV", "fragmento": "Manejo de TPV"}], "huecos": []}
-APROBADO = {"veredicto": "aprobado", "problemas": []}
+APROBADO = {"veredicto_cv": "aprobado", "veredicto_carta": "aprobado", "problemas": []}
 CARTA = {"contenido": "Hola equipo,\nTrabajé en Bar Sol desde 2020.\nUn saludo",
          "traza": [{"frase": "Trabajé en Bar Sol desde 2020.",
                     "fragmento": "Camarera en Bar Sol, 2020-2023"}]}
-FELIZ = [CV, APROBADO, CARTA, APROBADO]
+FELIZ = [CV, CARTA, APROBADO]
 
 
 def _usuarias(motor):
@@ -151,29 +151,27 @@ def test_candidatura_guarda_el_cv_base_elegido_con_motivo_cv_carta_trazas_y_prep
     ids = _perfil_y_cv_base(motor_app, a, n_cv_base=2)
     cid = _candidatura(motor_app, a, _oferta(motor_app))
     _encolar(motor_app, a, "candidatura", cid)
-    selector = {"cv_base_id": ids[1], "motivo": "Es del sector de la oferta."}
-    prov = ProveedorSimulado([selector, *FELIZ])
+    prov = ProveedorSimulado(FELIZ)
     assert worker.procesar_una(motor_app, prov) == "hecha"
     f = _fila(motor_app, a, cid)
-    assert f["cv_base_id"] == ids[1] and f["cv_base_motivo"] == "Es del sector de la oferta."
+    # Los dos coinciden en puesto y sector: gana el más reciente (id mayor); lo elige el código.
+    assert f["cv_base_id"] == ids[1] and f["cv_base_motivo"] == "Coincide en puesto y sector con la oferta"
     assert f["cv_contenido"].startswith("## Experiencia") and f["carta_contenido"].startswith("Hola equipo")
     assert f["cv_traza"][0]["frase"] == "Camarera en Bar Sol, 2020-2023"
     assert f["carta_traza"][0]["fragmento"] == "Camarera en Bar Sol, 2020-2023"
     assert [h["requisito"] for h in f["huecos"]] == ["inglés"]  # la oferta lo pide y el CV no lo tiene
     assert f["avisos"] == [] and f["perfil_version"] == 1
     assert f["preparacion"] == "lista" and f["estado"] == "borrador" and f["motivo_error"] is None
-    assert f["vueltas_cv"] == 1 and f["vueltas_carta"] == 1
-    # El selector ve los dos CV base de la usuaria.
-    assert "CV 1" in prov.llamadas[0]["usuario"] and "CV 2" in prov.llamadas[0]["usuario"]
+    assert f["vueltas_cv"] == 1 and f["vueltas_carta"] == 1 and len(prov.llamadas) == 3
 
 
-def test_candidatura_con_un_solo_cv_base_no_llama_al_selector(motor_app, bd_limpia):
+def test_candidatura_con_un_solo_cv_base_hace_3_llamadas(motor_app, bd_limpia):
     a, _ = _usuarias(motor_app)
     [cv_base] = _perfil_y_cv_base(motor_app, a)
     cid = _candidatura(motor_app, a, _oferta(motor_app))
     _encolar(motor_app, a, "candidatura", cid)
     prov = ProveedorSimulado(FELIZ)
-    assert worker.procesar_una(motor_app, prov) == "hecha" and len(prov.llamadas) == 4
+    assert worker.procesar_una(motor_app, prov) == "hecha" and len(prov.llamadas) == 3
     assert _fila(motor_app, a, cid)["cv_base_id"] == cv_base
 
 
@@ -187,7 +185,7 @@ def test_candidatura_ignora_los_cv_base_rechazados_y_los_de_otra_usuaria(motor_a
     cid = _candidatura(motor_app, a, _oferta(motor_app))
     _encolar(motor_app, a, "candidatura", cid)
     prov = ProveedorSimulado(FELIZ)
-    assert worker.procesar_una(motor_app, prov) == "hecha" and len(prov.llamadas) == 4
+    assert worker.procesar_una(motor_app, prov) == "hecha" and len(prov.llamadas) == 3
     assert _fila(motor_app, a, cid)["cv_base_id"] == bueno
 
 

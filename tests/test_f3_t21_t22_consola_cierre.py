@@ -11,23 +11,18 @@ from horma.evals import SETS, EsperadoCv, _entrada_cv
 
 RAIZ = Path(__file__).resolve().parent.parent
 TRAZA = [{"frase": "Camarera · Bar Sol", "fragmento": "Camarera en Bar Sol"}]
-APROBADO = {"veredicto": "aprobado", "problemas": []}
+APROBADO = {"veredicto_cv": "aprobado", "veredicto_carta": "aprobado", "problemas": []}
 OFERTA = json.loads((RAIZ / "evals/cv/ofertas/camarera-bar-luna.json").read_text(encoding="utf-8"))
 ENTRADAS = {
     "redactor-cv": ({"cv_base": "Camarera en Bar Sol", "cv_maestro": "Camarera en Bar Sol", "oferta": OFERTA},
                     {"contenido": "## Experiencia\nCamarera · Bar Sol", "traza": TRAZA}),
-    "juez-cv": ({"contenido": "Camarera · Bar Sol", "traza": TRAZA, "cv_maestro": "Camarera en Bar Sol",
-                 "cv_base": "Camarera en Bar Sol", "oferta": OFERTA}, APROBADO),
     "redactor-carta": ({"cv_maestro": "Camarera en Bar Sol", "cv_adaptado": "Camarera en Bar Sol",
                         "oferta": OFERTA, "sector": "hosteleria_turismo"},
                        {"contenido": "Hola equipo,\nUn saludo", "traza": []}),
-    "juez-carta": ({"contenido": "Hola equipo", "traza": [], "cv_maestro": "Camarera en Bar Sol",
-                    "cv_adaptado": "Camarera en Bar Sol", "oferta": OFERTA}, APROBADO),
+    "juez-candidatura": ({"cv": "Camarera · Bar Sol", "cv_traza": TRAZA, "carta": "Hola equipo",
+                          "carta_traza": [], "cv_maestro": "Camarera en Bar Sol",
+                          "cv_base": "Camarera en Bar Sol", "oferta": OFERTA}, APROBADO),
     "clasificador-respuesta": ({"texto": "Queremos entrevistarte."}, {"etiqueta": "entrevista"}),
-    "selector-cv-base": ({"oferta": OFERTA, "cvs_base": [{"id": 1, "nombre": "Hostelería",
-                          "sector": "hosteleria_turismo", "familia": "hosteleria_restauracion",
-                          "contenido": "Camarera en Bar Sol"}]},
-                         {"cv_base_id": 1, "motivo": "Es del sector."}),
 }
 
 
@@ -42,7 +37,7 @@ def _json(ruta: Path, datos) -> Path:
 
 
 @pytest.mark.parametrize("nombre", ENTRADAS)
-def test_agente_correr_de_los_seis_agentes_en_simulado(tmp_path, nombre):
+def test_agente_correr_de_los_agentes_de_la_fase_3_en_simulado(tmp_path, nombre):
     entrada, respuesta = ENTRADAS[nombre]
     e, r_ = _json(tmp_path / "e.json", entrada), _json(tmp_path / "r.json", respuesta)
     r = CliRunner().invoke(cli, ["agente", "correr", nombre, "--entrada", str(e), "--simulado",
