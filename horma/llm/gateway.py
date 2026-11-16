@@ -34,6 +34,7 @@ def completar(*, agente: str, prompt: str, entrada: BaseModel, esquema_salida: t
               modelo: str = "pequeno", proveedor: Proveedor | None = None,
               dormir: Callable[[float], None] = time.sleep) -> BaseModel:
     a = ajustes()
+    metricas.comprobar_tope()  # antes de gastar: si el bloque ya superó su tope, no se llama al modelo
     proveedor = proveedor or _proveedor_por_defecto()
     nombre_modelo, (p_in, p_out) = _modelo_real(modelo)
     esquema = esquema_salida.model_json_schema()

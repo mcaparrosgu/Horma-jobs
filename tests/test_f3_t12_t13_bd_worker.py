@@ -1,6 +1,6 @@
-"""Fase 3 · T12-T13: migración 0006 (candidaturas, historial, versiones de CV base, RLS, índice único)
-y worker con `candidatura` y `clasificar_respuesta` (puerta simulada) (RF-3.7, RF-3.7b, RF-3.8d, RF-3.9,
-RF-3.10, RF-3.11, RT-14)."""
+"""Fase 3 · T12-T13: esquema de candidaturas (migraciones 0006 y 0007), historial, versiones de CV base,
+RLS, índice único y worker `candidatura` (puerta simulada) (RF-3.7, RF-3.7b, RF-3.8d, RF-3.10, RF-3.11,
+RT-14). La migración 0007 y el tope de coste tienen su propio fichero (T28-T29)."""
 import json
 
 import pytest
@@ -79,13 +79,12 @@ def test_las_tablas_y_columnas_del_esquema_de_la_fase_3(motor_migrador):
                 "select column_name from information_schema.columns where table_name=:t"), {"t": tabla})}
         assert {"usuaria_id", "oferta_id", "cv_base_id", "cv_base_motivo", "perfil_version", "estado",
                 "motivo_cierre", "preparacion", "motivo_error", "cv_contenido", "cv_traza",
-                "carta_contenido", "carta_traza", "huecos", "avisos", "cobertura_ats", "vueltas_cv",
-                "vueltas_carta", "instrucciones_embebidas", "documento", "cv_estetico_id", "canal",
-                "canal_otro", "enviada_en", "respuesta_pendiente", "respuesta_propuesta", "creado_en",
-                "actualizado_en"} <= columnas("candidaturas")
+                "carta_contenido", "carta_traza", "huecos", "avisos", "cobertura_ats", "redacciones_cv",
+                "redacciones_carta", "problemas_juez", "instrucciones_embebidas", "canal",
+                "canal_otro", "enviada_en", "creado_en", "actualizado_en"} <= columnas("candidaturas")
         assert {"usuaria_id", "candidatura_id", "de", "a", "motivo", "canal", "origen", "tipo",
-                "etiqueta_respuesta", "creado_en"} <= columnas("candidatura_eventos")
-        assert {"usuaria_id", "cv_base_id", "nombre", "contenido", "origen", "candidatura_id",
+                "creado_en"} <= columnas("candidatura_eventos")
+        assert {"usuaria_id", "cv_base_id", "nombre", "contenido", "origen",
                 "creado_en"} <= columnas("cv_base_versiones")
 
 
@@ -136,9 +135,8 @@ def test_eliminar_un_cv_base_borra_sus_versiones_y_no_la_candidatura(motor_app, 
     [cv_base] = _perfil_y_cv_base(motor_app, a)
     cid = _candidatura(motor_app, a, oferta, cv_base_id=cv_base)
     with sesion_de(motor_app, a) as s:
-        s.execute(text("insert into cv_base_versiones (usuaria_id, cv_base_id, nombre, contenido, origen, "
-                       "candidatura_id) values (:u, :b, 'CV 1', 'texto', 'candidatura', :c)"),
-                  {"u": a, "b": cv_base, "c": cid})
+        s.execute(text("insert into cv_base_versiones (usuaria_id, cv_base_id, nombre, contenido, origen) "
+                       "values (:u, :b, 'CV 1', 'texto', 'edicion')"), {"u": a, "b": cv_base})
         assert s.execute(text("delete from cv_base where id = :i"), {"i": cv_base}).rowcount == 1
         assert s.execute(text("select count(*) from cv_base_versiones")).scalar_one() == 0
         c = s.execute(text("select cv_base_id from candidaturas where id = :i"), {"i": cid}).one()
@@ -162,7 +160,8 @@ def test_candidatura_guarda_el_cv_base_elegido_con_motivo_cv_carta_trazas_y_prep
     assert [h["requisito"] for h in f["huecos"]] == ["inglés"]  # la oferta lo pide y el CV no lo tiene
     assert f["avisos"] == [] and f["perfil_version"] == 1
     assert f["preparacion"] == "lista" and f["estado"] == "borrador" and f["motivo_error"] is None
-    assert f["vueltas_cv"] == 1 and f["vueltas_carta"] == 1 and len(prov.llamadas) == 3
+    assert f["redacciones_cv"] == 1 and f["redacciones_carta"] == 1 and len(prov.llamadas) == 3
+    assert f["problemas_juez"] == [] and len(prov.llamadas) == 3
 
 
 def test_candidatura_con_un_solo_cv_base_hace_3_llamadas(motor_app, bd_limpia):
@@ -220,56 +219,18 @@ def test_una_usuaria_no_puede_preparar_la_candidatura_de_otra(motor_app, bd_limp
     assert _fila(motor_app, a, cid_a)["preparacion"] == "en_curso"
 
 
-# --- T13: worker `clasificar_respuesta` --------------------------------------------------------
-CORREO = "Hola Ana, nos gustaría hacerte una entrevista el jueves."
-
-
-def _con_respuesta(motor, u, estado="enviada", texto=CORREO):
-    cid = _candidatura(motor, u, _oferta(motor), estado=estado, respuesta_pendiente=texto,
-                       **({"canal": "correo", "enviada_en": "2026-11-01"} if estado != "borrador" else {}))
-    return cid
-
-
-def test_clasificar_respuesta_guarda_la_propuesta_y_borra_el_texto_del_correo(motor_app, bd_limpia):
+# --- T29: `clasificar_respuesta` ya no es una tarea del worker (P17) ------------------------------------
+def test_clasificar_respuesta_ya_no_es_una_tarea_del_worker(motor_app, bd_limpia):
     a, _ = _usuarias(motor_app)
-    cid = _con_respuesta(motor_app, a)
-    _encolar(motor_app, a, "clasificar_respuesta", cid)
-    prov = ProveedorSimulado([{"etiqueta": "entrevista", "instrucciones_embebidas": []}])
-    assert worker.procesar_una(motor_app, prov) == "hecha"
-    f = _fila(motor_app, a, cid)
-    assert f["respuesta_pendiente"] is None and f["estado"] == "enviada"
-    p = f["respuesta_propuesta"]
-    assert (p["tipo"], p["destino"], p["etiqueta"]) == ("transicion", "entrevista", "entrevista")
-    assert "enviada" not in prov.llamadas[0]["usuario"]  # el modelo no ve el estado de la candidatura
-
-
-def test_clasificar_respuesta_borra_el_texto_tambien_tras_un_error(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    cid = _con_respuesta(motor_app, a)
+    cid = _candidatura(motor_app, a, _oferta(motor_app))
     _encolar(motor_app, a, "clasificar_respuesta", cid, tope_reintentos=1)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([{"mal": 1}] * 5)) == "error"
-    f = _fila(motor_app, a, cid)
-    assert f["respuesta_pendiente"] is None and f["respuesta_propuesta"] is None
-
-
-def test_clasificar_respuesta_con_un_tope_bajo_borra_el_texto(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    cid = _con_respuesta(motor_app, a)
-    _encolar(motor_app, a, "clasificar_respuesta", cid, tope_coste=0.0000001, tope_reintentos=5)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([{"mal": 1}] * 5)) == "error"
-    assert _fila(motor_app, a, cid)["respuesta_pendiente"] is None
-
-
-def test_clasificar_respuesta_sin_texto_pendiente_falla_con_motivo(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    cid = _con_respuesta(motor_app, a, texto=None)
-    _encolar(motor_app, a, "clasificar_respuesta", cid, tope_reintentos=1)
+    assert "clasificar_respuesta" not in worker.MANEJADORES
     assert worker.procesar_una(motor_app, ProveedorSimulado([])) == "error"
     with sesion_de(motor_app, a) as s:
-        assert "respuesta pendiente" in s.execute(text("select motivo_error from tareas")).scalar_one()
+        assert "desconocido" in s.execute(text("select motivo_error from tareas")).scalar_one()
 
 
 def test_los_topes_de_construccion_estan_en_la_configuracion():
     a = ajustes()
-    assert a.tope_coste_candidatura == 1.00 and a.tope_coste_respuesta == 0.05
+    assert a.tope_coste_candidatura == 1.00 and not hasattr(a, "tope_coste_respuesta")
     assert json.dumps(a.tope_coste_candidatura)  # número simple, no una estructura
