@@ -4,14 +4,12 @@ Alcances:
 - `ofertas`: solo `POST /ofertas` (una empresa que publica mientras no hay portal).
 - `ingesta`: además, las rutas del ingestor y pedir calificaciones (consola sin BD).
 """
-import threading
-import time
-from collections import defaultdict, deque
 from dataclasses import dataclass
 
 from fastapi import HTTPException, Request
 
 from horma.config import ajustes
+from horma.web.limites import Limitador  # noqa: F401 - se sigue importando desde aquí
 from horma.web.services import ingesta as servicio
 
 
@@ -19,25 +17,6 @@ from horma.web.services import ingesta as servicio
 class Clave:
     id: int
     alcance: str
-
-
-class Limitador:
-    """Ventana deslizante de 60 s por clave, en memoria del proceso de la API."""
-
-    def __init__(self):
-        self._marcas: dict[int, deque[float]] = defaultdict(deque)
-        self._cerrojo = threading.Lock()
-
-    def permitir(self, clave_id: int, limite: int, ahora: float | None = None) -> bool:
-        ahora = time.monotonic() if ahora is None else ahora
-        with self._cerrojo:
-            marcas = self._marcas[clave_id]
-            while marcas and ahora - marcas[0] >= 60:
-                marcas.popleft()
-            if len(marcas) >= limite:
-                return False
-            marcas.append(ahora)
-            return True
 
 
 def portador(request: Request) -> str | None:

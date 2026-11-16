@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 from horma.schemas.candidatura import MAX_CANAL_OTRO, Canal, MotivoCierre
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
+from horma.web.limites import limite_candidaturas
 from horma.web.services import candidaturas as servicio
 
 router = APIRouter()
@@ -40,7 +41,8 @@ def _llamar(funcion, request: Request, usuaria_id: int, *args):
         raise HTTPException(status_code=e.estado, detail=e.motivo) from e
 
 
-@router.post("/api/candidaturas", status_code=202, dependencies=[Depends(exigir_csrf)])
+@router.post("/api/candidaturas", status_code=202,
+             dependencies=[Depends(exigir_csrf), Depends(limite_candidaturas)])
 def crear(datos: Nueva, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Crea la candidatura en borrador y encola su preparación; el CV base lo elige Horma (RF-3.1b)."""
     return _llamar(servicio.crear, request, usuaria_id, datos.oferta_id, datos.repetir)
@@ -71,7 +73,7 @@ def aprobar(candidatura_id: int, request: Request, usuaria_id: int = Depends(usu
 
 
 @router.post("/api/candidaturas/{candidatura_id}/reintentar", status_code=202,
-             dependencies=[Depends(exigir_csrf)])
+             dependencies=[Depends(exigir_csrf), Depends(limite_candidaturas)])
 def reintentar(candidatura_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     return _llamar(servicio.reintentar, request, usuaria_id, candidatura_id)
 

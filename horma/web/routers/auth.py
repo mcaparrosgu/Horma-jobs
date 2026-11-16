@@ -7,16 +7,17 @@ from sqlalchemy import text
 from horma.config import ajustes
 from horma.web.auth.sesion import es_admin, exigir_csrf, usuaria_actual
 from horma.web.db import sesion_sin_usuaria
+from horma.web.limites import limite_login
 
 router = APIRouter()
 
 
-@router.get("/auth/google/login")
+@router.get("/auth/google/login", dependencies=[Depends(limite_login)])
 async def login(request: Request):
     return await request.app.state.identidad.redirigir(request, ajustes().google_redirect_uri)
 
 
-@router.get("/auth/google/callback")
+@router.get("/auth/google/callback", dependencies=[Depends(limite_login)])
 async def callback(request: Request):
     try:
         sub = await request.app.state.identidad.sub_desde_callback(request)

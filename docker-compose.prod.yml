@@ -1,0 +1,77 @@
+# Perfil de producción (RF-4.6b). Se superpone al de desarrollo:
+#   docker compose --env-file .env.produccion -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Copia `.env.produccion.example` a `.env.produccion` y rellénalo (nunca se versiona).
+# Solo Caddy publica puertos (80 y 443). Postgres y la API quedan en la red interna.
+
+services:
+  postgres:
+    ports: !reset []
+    restart: unless-stopped
+
+  api:
+    env_file: !override
+      - path: .env.produccion
+        required: false  # si faltan los secretos, la API se niega a arrancar (RF-4.6c)
+    environment:
+      APP_ENV: produccion
+    # Solo se fía de las cabeceras X-Forwarded-* de Caddy (su IP fija en la red interna)
+    command: >-
+      uvicorn horma.web.main:crear_app --factory --host 0.0.0.0 --port 8000
+      --proxy-headers --forwarded-allow-ips 172.29.77.200
+    ports: !reset []
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/salud', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  worker:
+    env_file: !override
+      - path: .env.produccion
+        required: false
+    environment:
+      APP_ENV: produccion
+    restart: unless-stopped
+
+  ingestor:
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.10.2
+    restart: unless-stopped
+    environment:
+      HORMA_DOMINIO: ${HORMA_DOMINIO:-localhost}
+    ports:
+      # En un servidor, déjalo por defecto (todas las IP). En local, si otro programa (p. ej.
+      # Tailscale) ocupa el 443, pon HORMA_IP_PUBLICA=127.0.0.1.
+      - "${HORMA_IP_PUBLICA:-0.0.0.0}:80:80"
+      - "${HORMA_IP_PUBLICA:-0.0.0.0}:443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_datos:/data  # certificados y su CA interna
+      - caddy_config:/config
+    # Sin root: solo puede abrir puertos bajos y no gana privilegios
+    user: "1000:1000"
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: ["no-new-privileges:true"]
+    networks:
+      default:
+        ipv4_address: 172.29.77.200
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  default:
+    ipam:
+      config:
+        # Docker reparte las IP automáticas solo en la mitad baja; Caddy usa una fija de la alta
+        - subnet: 172.29.77.0/24
+          ip_range: 172.29.77.0/25
+
+volumes:
+  caddy_datos:
+  caddy_config:

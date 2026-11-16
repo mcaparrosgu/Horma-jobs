@@ -10,9 +10,10 @@ from sqlalchemy import Engine
 from starlette.middleware.sessions import SessionMiddleware
 
 from horma.config import ajustes
-from horma.web.auth.claves import Limitador
+from horma.web.arranque import problemas_de_arranque
 from horma.web.auth.identidad import Identidad, crear_identidad
 from horma.web.db import motor
+from horma.web.limites import Limitador
 from horma.web.routers import (
     auth,
     candidaturas,
@@ -28,8 +29,10 @@ from horma.web.routers import (
 ESTATICOS = Path(__file__).parent / "static"
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
        "connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; "
-       "frame-ancestors 'none'")
+       "frame-ancestors 'none'; manifest-src 'self'; worker-src 'self'")
 CSP_VISOR = CSP.replace("frame-ancestors 'none'", "frame-ancestors 'self'")
+HSTS = "max-age=31536000; includeSubDomains"
+PERMISSIONS_POLICY = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
 MAX_CUERPO = 64 * 1024  # RF-1.3: límite de tamaño de cualquier petición
 MARGEN_MULTIPART = 64 * 1024  # cabeceras y campos del formulario que acompañan al archivo
 
@@ -37,6 +40,9 @@ MARGEN_MULTIPART = 64 * 1024  # cabeceras y campos del formulario que acompañan
 def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) -> FastAPI:
     a = ajustes()
     en_desarrollo = a.app_env == "development"
+    en_produccion = a.app_env == "produccion"
+    if en_produccion and (problemas := problemas_de_arranque(a)):
+        raise RuntimeError("Configuración de producción no válida: " + "; ".join(problemas))
     secreto = a.session_secret
     if not secreto:
         if not en_desarrollo:
@@ -72,6 +78,9 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["Referrer-Policy"] = "no-referrer"
         r.headers["X-Frame-Options"] = "SAMEORIGIN" if visor else "DENY"
+        if en_produccion:
+            r.headers["Strict-Transport-Security"] = HSTS
+            r.headers["Permissions-Policy"] = PERMISSIONS_POLICY
         return r
 
     app.include_router(auth.router)
@@ -84,5 +93,19 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     @app.get("/", include_in_schema=False)
     def portada():
         return FileResponse(ESTATICOS / "index.html")
+
+    @app.get("/manifest.webmanifest", include_in_schema=False)
+    def manifiesto():
+        return FileResponse(ESTATICOS / "manifest.webmanifest", media_type="application/manifest+json")
+
+    @app.get("/sw.js", include_in_schema=False)
+    def service_worker():
+        # En la raíz para que su alcance sea toda la web; el navegador lo revalida siempre.
+        return FileResponse(ESTATICOS / "sw.js", media_type="text/javascript",
+                            headers={"Cache-Control": "no-cache"})
+
+    @app.get("/salud", include_in_schema=False)
+    def salud():
+        return {"estado": "ok"}  # sin datos: solo dice que la API responde
 
     return app
