@@ -10,6 +10,7 @@ from sqlalchemy import Engine
 from starlette.middleware.sessions import SessionMiddleware
 
 from horma.config import ajustes
+from horma.logs import configurar_logs
 from horma.web.arranque import problemas_de_arranque
 from horma.web.auth.identidad import Identidad, crear_identidad
 from horma.web.db import motor
@@ -17,6 +18,7 @@ from horma.web.limites import Limitador
 from horma.web.routers import (
     auth,
     candidaturas,
+    costes,
     cv,
     ingesta,
     ofertas,
@@ -39,6 +41,7 @@ MARGEN_MULTIPART = 64 * 1024  # cabeceras y campos del formulario que acompañan
 
 def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) -> FastAPI:
     a = ajustes()
+    configurar_logs()
     en_desarrollo = a.app_env == "development"
     en_produccion = a.app_env == "produccion"
     if en_produccion and (problemas := problemas_de_arranque(a)):
@@ -86,6 +89,7 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     app.include_router(auth.router)
     app.include_router(ofertas.router)
     app.include_router(ingesta.router)
+    app.include_router(costes.router)
     for r in (cv, perfil, preferencias, recomendaciones, candidaturas, paginas):
         app.include_router(r.router)
     app.mount("/static", StaticFiles(directory=ESTATICOS), name="static")

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horma · Costes</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#6b3f2a">
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main class="ancho">
+    <header class="cabecera">
+      <h1>Costes y errores</h1>
+      <a class="boton secundario" href="/ingesta">Ingesta</a>
+    </header>
+    <p id="aviso" role="status"></p>
+
+    <section aria-labelledby="t-alertas">
+      <h2 id="t-alertas">Alertas (últimos 7 días)</h2>
+      <ul id="alertas" class="lista"></ul>
+      <p id="sin-alertas" hidden>Sin alertas.</p>
+    </section>
+
+    <section aria-labelledby="t-dias">
+      <h2 id="t-dias">Por día (últimos 30)</h2>
+      <div class="tabla-costes" tabindex="0" role="region" aria-labelledby="t-dias"><table id="dias"></table></div>
+    </section>
+
+    <section aria-labelledby="t-agentes">
+      <h2 id="t-agentes">Por agente</h2>
+      <div class="tabla-costes" tabindex="0" role="region" aria-labelledby="t-agentes"><table id="agentes"></table></div>
+    </section>
+
+    <section aria-labelledby="t-modelos">
+      <h2 id="t-modelos">Por modelo</h2>
+      <div class="tabla-costes" tabindex="0" role="region" aria-labelledby="t-modelos"><table id="modelos"></table></div>
+    </section>
+
+    <section aria-labelledby="t-tareas">
+      <h2 id="t-tareas">Tareas en error por tipo</h2>
+      <ul id="tareas" class="chips"></ul>
+      <p id="sin-tareas" hidden>Sin tareas en error.</p>
+    </section>
+  </main>
+  <script src="/static/costes.js"></script>
+  <script src="/static/pwa.js"></script>
+</body>
+</html>
