@@ -44,7 +44,6 @@ function cabecera() {
     const p = nodo("p", `CV base elegido: «${c.cv_base.nombre}».`);
     if (c.cv_base_motivo) p.append(" " + c.cv_base_motivo);
     s.append(p);
-    if (c.cv_base.desfasado) s.append(nodo("p", "Ese CV base es de una versión anterior de tu perfil.", "alerta"));
   }
   if (c.cobertura_ats !== null && c.cobertura_ats !== undefined) {
     s.append(nodo("p", `Palabras de la oferta que aparecen en el CV: ${Math.round(Number(c.cobertura_ats) * 100)} %`, "suave"));

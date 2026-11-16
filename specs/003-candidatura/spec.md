@@ -42,9 +42,9 @@ transversales (RT-xx) están en [system.md](../system.md) y las respuestas del C
   usuaria más adecuado para la oferta (sector, puesto y requisitos) y anotar el motivo en una frase;
   la usuaria NO lo elige. El código DEBERÁ comprobar que el elegido es suyo, no está rechazado y
   estaba entre los candidatos; SI no lo cumple, ENTONCES el flujo DEBERÁ terminar en error sin
-  redactar. Con un solo CV base válido NO DEBERÁ llamarse al modelo. SI el CV base elegido está
-  desfasado (de una versión anterior del perfil), ENTONCES la candidatura DEBERÁ mostrar un aviso
-  (P9).
+  redactar. Con un solo CV base válido NO DEBERÁ llamarse al modelo. Si el CV base elegido es de una
+  versión anterior del perfil, NO DEBERÁ mostrarse aviso: el redactor también parte del CV maestro,
+  que siempre está al día (P9).
 - **RF-3.2** `redactor-cv` DEBERÁ adaptar el CV base a la oferta aplicando la regla de los huecos:
   cambia qué se muestra y cómo se cuenta, nunca fechas, cargos, empresas ni titulaciones. Lo que la
   oferta pide y el perfil no tiene DEBERÁ ir a `huecos` con una propuesta para la usuaria, nunca al

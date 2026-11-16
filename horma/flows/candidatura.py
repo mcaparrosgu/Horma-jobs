@@ -78,10 +78,6 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                 raise ValueError(f"el selector eligió el CV base {r.cv_base_id}, que no es un candidato "
                                  "válido de esta usuaria (rechazado, ajeno o fuera de la lista)")
             elegido, motivo = por_id[r.cv_base_id], r.motivo
-        if elegido.get("perfil_version", e["perfil_version"]) < e["perfil_version"]:
-            e["avisos"].append(
-                f"El CV base «{elegido['nombre']}» es de una versión anterior del perfil "
-                f"(v{elegido['perfil_version']}; ahora v{e['perfil_version']}): puede no recoger lo último.")
         e.update(cv_base_id=elegido["id"], cv_base_motivo=motivo, cv_base_contenido=elegido["contenido"])
         return e
 
