@@ -24,6 +24,14 @@ def hay_viva(s: Session, oferta_id: int) -> bool:
                      {"i": oferta_id}).first() is not None
 
 
+def cerrada_previa(s: Session, oferta_id: int) -> dict | None:
+    """La última candidatura cerrada de esta oferta, si la hay (para avisar antes de repetirla)."""
+    f = s.execute(text("select id, motivo_cierre, actualizado_en from candidaturas "
+                       "where oferta_id = :i and estado = 'cerrada' order by id desc limit 1"),
+                  {"i": oferta_id}).mappings().first()
+    return dict(f) if f else None
+
+
 def crear(s: Session, usuaria_id: int, oferta_id: int) -> int:
     return s.execute(text("insert into candidaturas (usuaria_id, oferta_id) values (:u, :o) returning id"),
                      {"u": usuaria_id, "o": oferta_id}).scalar_one()

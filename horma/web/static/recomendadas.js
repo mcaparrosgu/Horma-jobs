@@ -125,15 +125,23 @@ function celdaCandidatura(o) {
   const td = celda("Candidatura");
   const b = nodo("button", "Preparar candidatura", "secundario");
   b.type = "button";
+  let repetir = false;
   b.addEventListener("click", async () => {
     b.disabled = true;
-    const r = await api("/api/candidaturas", { metodo: "POST", cuerpo: { oferta_id: o.id } });
+    const r = await api("/api/candidaturas", { metodo: "POST", cuerpo: { oferta_id: o.id, repetir } });
     if (r.ok) {
       location.href = `/candidaturas/${r.datos.id}`;
       return;
     }
     b.disabled = false;
     avisar(r.motivo, true);
+    if (r.estado === 409 && /Ya preparaste/.test(r.motivo || "") && !repetir) {
+      repetir = true;
+      b.textContent = "Preparar otra igualmente";
+      const a = nodo("a", "Ver cerradas", "bloque");
+      a.href = "/candidaturas";
+      td.append(a);
+    }
     if (r.estado === 409 && /CV base/i.test(r.motivo || "") && !td.querySelector("a")) {
       const a = nodo("a", "Generar CV base", "bloque");
       a.href = "/cv-base";

@@ -80,7 +80,9 @@ transversales (RT-xx) están en [system.md](../system.md) y las respuestas del C
 - **RF-3.7b** CUANDO la usuaria pulse «Preparar candidatura» en una oferta recomendada, el sistema
   DEBERÁ crear la candidatura y lanzar su preparación sin pedirle que elija CV base. SI no tiene
   ningún CV base válido, ENTONCES DEBERÁ pedirle que genere uno primero. NO DEBERÁ haber dos
-  candidaturas no cerradas para la misma oferta (P9).
+  candidaturas no cerradas para la misma oferta (P9). SI la oferta ya tuvo una candidatura cerrada,
+  ENTONCES DEBERÁ avisar de que ya se preparó (con su fecha y motivo de cierre) y solo crear otra
+  si la usuaria lo confirma.
 - **RF-3.8** MIENTRAS la candidatura esté en `borrador`, la usuaria DEBERÁ poder ver qué CV base
   eligió Horma y por qué, el CV y la carta adaptados, los huecos con su propuesta y los avisos
   (errores de verificación y problemas de los jueces), editarlos a mano o descartarla (P4). Lo que

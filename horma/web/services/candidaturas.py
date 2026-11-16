@@ -58,7 +58,7 @@ def _transicionar(s, usuaria_id: int, c: dict, destino: str, **datos) -> None:
 
 
 # --- crear, tablero y detalle ------------------------------------------------------------------
-def crear(engine: Engine, usuaria_id: int, oferta_id: int) -> dict:
+def crear(engine: Engine, usuaria_id: int, oferta_id: int, repetir: bool = False) -> dict:
     a = ajustes()
     with sesion_de(engine, usuaria_id) as s:
         if not repo.oferta_procesada(s, oferta_id):
@@ -69,6 +69,12 @@ def crear(engine: Engine, usuaria_id: int, oferta_id: int) -> dict:
             raise ErrorCandidatura(409, "Genera un CV base primero: sin él no se puede preparar.")
         if repo.hay_viva(s, oferta_id):
             raise ErrorCandidatura(409, "Ya tienes una candidatura abierta para esta oferta.")
+        previa = None if repetir else repo.cerrada_previa(s, oferta_id)
+        if previa:
+            motivo = f" (motivo: {previa['motivo_cierre']})" if previa["motivo_cierre"] else ""
+            raise ErrorCandidatura(409, f"Ya preparaste el CV y la carta para esta oferta el "
+                                        f"{previa['actualizado_en']:%d/%m/%Y} y se cerró{motivo}. "
+                                        "Revisa Candidaturas > Cerradas o confirma para preparar otra.")
         try:
             with s.begin_nested():
                 candidatura_id = repo.crear(s, usuaria_id, oferta_id)

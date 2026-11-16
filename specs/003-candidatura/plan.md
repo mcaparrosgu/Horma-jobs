@@ -98,7 +98,7 @@ nuevo se añade a `agents/registry.py:11-14` y al contrato «independence» de `
 **API** (sesión; escritura con CSRF; RLS «propia»)
 | Ruta | Qué hace |
 |---|---|
-| `POST /api/candidaturas` | `{oferta_id}`. Comprueba que tenga al menos un CV base válido (si no, 409 con «genera un CV base primero»), que no haya otra candidatura no cerrada para esa oferta (409) y encola `candidatura` |
+| `POST /api/candidaturas` | `{oferta_id}`. Comprueba que tenga al menos un CV base válido (si no, 409 con «genera un CV base primero»), que no haya otra candidatura no cerrada para esa oferta (409), que no haya una cerrada sin confirmar (409 «Ya preparaste…»; con `repetir: true` se crea otra) y encola `candidatura` |
 | `GET /api/candidaturas` · `GET /api/candidaturas/{id}` | Tablero (agrupado por estado) y detalle con CV, carta, huecos, avisos e historial |
 | `PATCH /api/candidaturas/{id}` | Solo en `borrador`: edita CV o carta; vuelve a pasar `verificar_trazabilidad` (sin modelo) y actualiza los avisos |
 | `POST /api/candidaturas/{id}/guardar-cv-base` | Solo en `borrador`: `{nombre}`. Sobrescribe el `cv_base` de la candidatura con su CV adaptado actual y el nombre (409 si el nombre ya existe en su cuenta). Guarda antes la versión anterior y lo registra en el historial de la candidatura |

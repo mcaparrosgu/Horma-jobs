@@ -85,7 +85,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 ### Fase 3: candidatura y seguimiento
 
 1. `uv run alembic upgrade head` aplica la migración 0006 (candidaturas, historial y versiones de CV base).
-2. En `/recomendadas`, «Preparar candidatura» crea la candidatura; el worker elige el CV base y
+2. En `/recomendadas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker elige el CV base y
    redacta CV y carta. En `/candidaturas` las ves por estado: revisas, editas, apruebas, descargas
    los PDF y sigues el proceso (enviada, entrevista, cerrada). Cada CV base guarda su historial en `/cv-base`.
 3. Para probarlo sin web: `horma flujo correr candidatura` y `horma flujo correr clasificar_respuesta`
