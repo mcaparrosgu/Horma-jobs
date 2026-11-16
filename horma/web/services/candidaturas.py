@@ -1,6 +1,6 @@
-"""Servicio de candidaturas (fase 3): crear, editar, guardar encima del CV base, aprobar, transiciones,
-PDF y respuesta de la empresa. Solo la dueña toca su candidatura (RLS «propia»: para las demás no existe).
-Ninguna de estas operaciones llama al modelo salvo encolar `candidatura` y `clasificar_respuesta`."""
+"""Servicio de candidaturas (fase 3): crear, editar, reintentar, aprobar, transiciones y PDF. Solo la
+dueña toca su candidatura (RLS «propia»: para las demás no existe). Ninguna operación llama al modelo
+salvo encolar `candidatura` (crear y reintentar)."""
 from datetime import date
 
 from sqlalchemy import Engine
@@ -8,18 +8,16 @@ from sqlalchemy.exc import IntegrityError
 
 from horma.config import ajustes
 from horma.flows.candidatura import texto_oferta
-from horma.schemas.candidatura import ESTADOS, TransicionInvalida, transicion
+from horma.schemas.candidatura import ESTADOS, TransicionInvalida, aviso_de_error, transicion
+from horma.tools.avisos_vigentes import avisos_vigentes
 from horma.tools.generar_pdf import generar_pdf
 from horma.tools.medir_ats import errores_ats
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_trazabilidad
 from horma.web.db import sesion_de
 from horma.web.repositories import candidaturas as repo
-from horma.web.repositories import cv as repo_cv
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles, tareas
-
-PREFIJO_DESFASADO = "El CV base «"  # aviso que escribe el flujo; al editar se conserva
 
 
 class ErrorCandidatura(Exception):
@@ -53,8 +51,7 @@ def _transicionar(s, usuaria_id: int, c: dict, destino: str, **datos) -> None:
     except TransicionInvalida as e:
         raise ErrorCandidatura(409, str(e)) from e
     repo.registrar_evento(s, usuaria_id, c["id"], de=c["estado"], a=destino, motivo=datos.get("motivo"),
-                          canal=datos.get("canal"), origen=datos.get("origen", "usuaria"),
-                          etiqueta_respuesta=datos.get("etiqueta_respuesta"))
+                          canal=datos.get("canal"))
 
 
 # --- crear, tablero y detalle ------------------------------------------------------------------
@@ -104,33 +101,37 @@ def detalle(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
         if f is None:
             raise ErrorCandidatura(404, "No existe esa candidatura")
         eventos = repo.eventos(s, candidatura_id)
-    clasificando = f.pop("respuesta_pendiente") is not None  # el correo pegado nunca sale a la pantalla
     union = ("oferta_titulo", "oferta_empresa", "cv_base_nombre", "cv_base_desfasado")
     return {**{k: v for k, v in f.items() if k not in union},
             "oferta": {"id": f["oferta_id"], "titulo": f["oferta_titulo"], "empresa": f["oferta_empresa"]},
             "cv_base": ({"id": f["cv_base_id"], "nombre": f["cv_base_nombre"],
                          "desfasado": bool(f["cv_base_desfasado"])} if f["cv_base_id"] else None),
-            "clasificando": clasificando, "eventos": eventos}
+            "eventos": eventos}
 
 
 # --- edición -----------------------------------------------------------------------------------
-def _avisos(s, c: dict, cv: str, carta: str) -> list[str]:
-    """Recalcula los avisos con las mismas herramientas que el flujo y sin llamar al modelo: lo que ella
-    escribe no tiene traza y sale como aviso para que lo revise (RF-3.8)."""
+def _avisos(s, c: dict, cv: str, carta: str) -> list[dict]:
+    """Recalcula los avisos como el flujo y sin llamar al modelo: los errores de las herramientas de código
+    y los problemas del juez cuya frase sigue en el texto (también los del documento que no se editó).
+    Lo que ella escribe no tiene traza y sale como aviso para que lo revise (RF-3.8)."""
     perfil = perfiles.por_version(s, c["perfil_version"]) if c["perfil_version"] else None
     maestro = (perfil or {}).get("cv_maestro") or ""
     base = repo.contenido_cv_base(s, c["cv_base_id"])
     oferta = repo_ofertas.completas(s, [c["oferta_id"]]).get(c["oferta_id"])
     fuentes_cv = [x for x in (maestro, base) if x]
     fuentes_carta = [*fuentes_cv, *([texto_oferta(oferta)] if oferta else [])]
-    avisos = [a for a in c["avisos"] if a.startswith(PREFIJO_DESFASADO)]
-    avisos += [f"Formato del CV para ATS: {x}" for x in errores_ats(cv)]
-    avisos += [f"CV: {x}" for x in verificar_trazabilidad(cv, c["cv_traza"], fuentes_cv or [""])]
-    avisos += [f"CV, rasgo personal: {x}" for x in rasgos_personales(cv)]
-    avisos += [f"Carta: {x}" for x in verificar_trazabilidad(
-        carta, c["carta_traza"], fuentes_carta or [""], formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)]
-    avisos += [f"Carta, rasgo personal: {x}" for x in rasgos_personales(carta)]
-    return list(dict.fromkeys(avisos))
+    errores_cv = [f"Formato del CV para ATS: {x}" for x in errores_ats(cv)]
+    errores_cv += verificar_trazabilidad(cv, c["cv_traza"], fuentes_cv or [""])
+    errores_cv += [f"Rasgo personal en el CV: {x}" for x in rasgos_personales(cv)]
+    errores_carta = verificar_trazabilidad(
+        carta, c["carta_traza"], fuentes_carta or [""], formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)
+    errores_carta += [f"Rasgo personal en la carta: {x}" for x in rasgos_personales(carta)]
+    avisos = [*(aviso_de_error("cv", x, cv) for x in errores_cv),
+              *(aviso_de_error("carta", x, carta) for x in errores_carta),
+              *avisos_vigentes("cv", cv, c["problemas_juez"]),
+              *avisos_vigentes("carta", carta, c["problemas_juez"])]
+    unicos = {(a.documento, a.frase, a.mensaje): a for a in avisos}
+    return [a.model_dump(mode="json") for a in unicos.values()]
 
 
 def editar(engine: Engine, usuaria_id: int, candidatura_id: int, cv: str | None, carta: str | None) -> dict:
@@ -146,45 +147,37 @@ def editar(engine: Engine, usuaria_id: int, candidatura_id: int, cv: str | None,
     return {"id": candidatura_id, "avisos": avisos, "preparacion": preparacion}
 
 
-def guardar_cv_base(engine: Engine, usuaria_id: int, candidatura_id: int, nombre: str) -> dict:
-    """Guarda el CV adaptado encima del CV base del que partió (RF-3.8). Es texto suyo: no se vuelve a
-    comprobar contra el CV, pero el nombre es único y la versión anterior queda en el historial."""
-    with sesion_de(engine, usuaria_id) as s:
-        c = _cargar(s, candidatura_id)
-        _en_borrador(c)
-        _preparada(c)
-        if c["cv_base_id"] is None or not c["cv_contenido"].strip():
-            raise ErrorCandidatura(409, "No hay un CV adaptado que guardar.")
-        if repo_cv.nombre_en_uso(s, nombre, excepto_base=c["cv_base_id"]):
-            raise ErrorCandidatura(409, "Ya tienes un CV con ese nombre.")
-        if not perfiles.editar_cv_base(s, c["cv_base_id"], nombre, c["cv_contenido"],
-                                       origen="candidatura", candidatura_id=candidatura_id):
-            raise ErrorCandidatura(404, "El CV base ya no existe.")
-        repo.registrar_evento(s, usuaria_id, candidatura_id, tipo="cv_base_guardado", motivo=nombre)
-    return {"id": candidatura_id, "cv_base_id": c["cv_base_id"], "nombre": nombre}
-
-
 # --- aprobar y transiciones --------------------------------------------------------------------
-def aprobar(engine: Engine, usuaria_id: int, candidatura_id: int, documento: str,
-            cv_estetico_id: int | None, avisos_revisados: bool) -> dict:
+def aprobar(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
+    """Los avisos no bloquean: pulsar «Aprobar y descargar» cuenta como haberlos revisado (RF-3.8a)."""
     with sesion_de(engine, usuaria_id) as s:
         c = _cargar(s, candidatura_id)
         _en_borrador(c)
         _preparada(c)
-        if (c["avisos"] or c["preparacion"] == "pendiente_de_ti") and not avisos_revisados:
-            raise ErrorCandidatura(400, "Revisa los avisos y márcalos como revisados antes de aprobar.")
-        if documento == "estetico":
-            if cv_estetico_id is None or not repo.cv_estetico_valido(s, cv_estetico_id):
-                raise ErrorCandidatura(422, "Elige uno de tus CV estéticos.")
-        else:
-            cv_estetico_id = None
         _transicionar(s, usuaria_id, c, "aprobada")
-        repo.aprobar(s, candidatura_id, documento, cv_estetico_id)
+        repo.aprobar(s, candidatura_id)
     return {"id": candidatura_id, "estado": "aprobada"}
 
 
-def marcar_enviada(engine: Engine, usuaria_id: int, candidatura_id: int, fecha: date, canal: str,
-                   canal_otro: str | None) -> dict:
+def reintentar(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
+    """Vuelve a lanzar la preparación de esta misma candidatura, con el mismo tope de coste (RF-3.8e)."""
+    a = ajustes()
+    with sesion_de(engine, usuaria_id) as s:
+        c = _cargar(s, candidatura_id)
+        if c["preparacion"] != "error":
+            raise ErrorCandidatura(409, "Solo se puede reintentar cuando la preparación ha fallado.")
+        if tareas.sin_terminar(s, "candidatura", candidatura_id):
+            raise ErrorCandidatura(409, "Ya se está preparando.")
+        repo.reiniciar_preparacion(s, candidatura_id)
+        tarea = tareas.encolar(s, usuaria_id, "candidatura", candidatura_id, a.tope_coste_candidatura,
+                               a.tope_reintentos_tarea)
+    return {"id": candidatura_id, "tarea_id": tarea}
+
+
+def marcar_enviada(engine: Engine, usuaria_id: int, candidatura_id: int, fecha: date | None,
+                   canal: str | None, canal_otro: str | None) -> dict:
+    """Sin fecha, la de hoy; el canal es opcional (RF-3.8b)."""
+    fecha = fecha or date.today()
     with sesion_de(engine, usuaria_id) as s:
         c = _cargar(s, candidatura_id)
         _transicionar(s, usuaria_id, c, "enviada", fecha=fecha, canal=canal, canal_otro=canal_otro)
@@ -209,60 +202,16 @@ def cerrar(engine: Engine, usuaria_id: int, candidatura_id: int, motivo: str) ->
 
 
 # --- descargas ---------------------------------------------------------------------------------
-def documento_pdf(engine: Engine, usuaria_id: int, candidatura_id: int, cual: str) -> tuple[str, bytes | int]:
-    """`("pdf", bytes)` o `("estetico", id del CV estético)`. Solo desde que se aprobó (RF-3.8c)."""
+def documento_pdf(engine: Engine, usuaria_id: int, candidatura_id: int, cual: str) -> bytes:
+    """PDF del CV adaptado o de la carta. Solo desde que se aprobó (RF-3.8c)."""
     with sesion_de(engine, usuaria_id) as s:
         c = repo.detalle(s, candidatura_id)
-    if c is None:
-        raise ErrorCandidatura(404, "No existe esa candidatura")
-    if c["documento"] is None:
+        if c is None:
+            raise ErrorCandidatura(404, "No existe esa candidatura")
+        aprobada = c["estado"] in ("aprobada", "enviada", "entrevista") or (
+            c["estado"] == "cerrada" and repo.fue_aprobada(s, candidatura_id))
+    if not aprobada:
         raise ErrorCandidatura(403, "Los PDF se pueden descargar cuando apruebas la candidatura.")
-    if cual == "cv" and c["documento"] == "estetico":
-        if c["cv_estetico_id"] is None:
-            raise ErrorCandidatura(404, "El CV estético que elegiste ya no existe.")
-        return "estetico", c["cv_estetico_id"]
     texto = c["cv_contenido"] if cual == "cv" else c["carta_contenido"]
     titulo = f"{'CV' if cual == 'cv' else 'Carta de presentación'} · {c['oferta_titulo'] or 'oferta'}"
-    return "pdf", generar_pdf(texto, titulo)
-
-
-# --- respuesta de la empresa -------------------------------------------------------------------
-def pegar_respuesta(engine: Engine, usuaria_id: int, candidatura_id: int, texto: str) -> dict:
-    a = ajustes()
-    with sesion_de(engine, usuaria_id) as s:
-        c = _cargar(s, candidatura_id)
-        if c["estado"] == "cerrada":
-            raise ErrorCandidatura(409, "Una candidatura cerrada no admite más cambios.")
-        en_cola = tareas.sin_terminar(s, "clasificar_respuesta", candidatura_id)
-        if c["respuesta_pendiente"] is not None or en_cola:
-            raise ErrorCandidatura(409, "Ya se está clasificando una respuesta.")
-        repo.guardar_respuesta_pendiente(s, candidatura_id, texto)
-        tarea = tareas.encolar(s, usuaria_id, "clasificar_respuesta", candidatura_id,
-                               a.tope_coste_respuesta, a.tope_reintentos_tarea)
-    return {"id": candidatura_id, "tarea_id": tarea}
-
-
-def confirmar_respuesta(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
-    """Aplica la propuesta si sigue siendo legal desde el estado de ahora."""
-    with sesion_de(engine, usuaria_id) as s:
-        c = _cargar(s, candidatura_id)
-        p = c["respuesta_propuesta"]
-        if not p or p["tipo"] == "ninguna":
-            raise ErrorCandidatura(409, "No hay ninguna propuesta que confirmar.")
-        etiqueta = p.get("etiqueta")
-        if p["tipo"] == "nota":
-            repo.registrar_evento(s, usuaria_id, candidatura_id, tipo="nota", origen="respuesta",
-                                  etiqueta_respuesta=etiqueta)
-        else:
-            _transicionar(s, usuaria_id, c, p["destino"], motivo=p.get("motivo"), origen="respuesta",
-                          etiqueta_respuesta=etiqueta)
-            repo.cambiar_estado(s, candidatura_id, p["destino"], p.get("motivo"))
-        repo.borrar_propuesta(s, candidatura_id)
-    return {"id": candidatura_id}
-
-
-def descartar_respuesta(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
-    with sesion_de(engine, usuaria_id) as s:
-        _cargar(s, candidatura_id)
-        repo.borrar_propuesta(s, candidatura_id)
-    return {"id": candidatura_id}
+    return generar_pdf(texto, titulo)

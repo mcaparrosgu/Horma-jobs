@@ -90,47 +90,88 @@ def test_tablero_apila_las_columnas_en_movil():
     assert ".tablero" in movil
 
 
-# --- T19 · candidatura --------------------------------------------------------------------------
-def test_candidatura_muestra_cv_base_elegido_documentos_huecos_y_avisos():
+# --- T19 y T31 · candidatura simplificada ------------------------------------------------------
+def test_revisa_esto_une_huecos_y_avisos_cada_aviso_junto_a_su_frase():
     js = leer("candidatura.js")
-    for pieza in ("cv_base_motivo", "cv_contenido", "carta_contenido", "huecos", "avisos", "eventos",
-                  "cvBonito", "propuesta", "cobertura_ats"):
+    assert "Revisa esto" in js and "c.huecos" in js and "c.avisos" in js
+    assert "a.frase" in js and "a.mensaje" in js and "a.documento" in js   # el aviso va con su frase
+    assert js.count('"Revisa esto"') == 1 and "Avisos:" not in js        # una sola lista
+    assert "`CV: " not in js and "`Carta: " not in js and "Carta, rasgo" not in js  # sin prefijos técnicos
+
+
+def test_detalles_va_plegado_con_cv_base_motivo_y_porcentaje_ats():
+    js = leer("candidatura.js")
+    assert '"details"' in js and '"Detalles"' in js
+    corte = js[js.index("function detalles"):js.index("// --- botones")]
+    for pieza in ("cv_base", "cv_base_motivo", "cobertura_ats"):
+        assert pieza in corte, pieza
+    cabecera = js[js.index("function cabecera"):js.index("// --- «Revisa esto»")]
+    assert "cv_base" not in cabecera and "cobertura_ats" not in cabecera   # fuera de la vista principal
+
+
+def test_candidatura_muestra_los_documentos_y_el_historial_y_los_edita_sin_guardar_como_base():
+    js = leer("candidatura.js")
+    for pieza in ("cv_contenido", "carta_contenido", "eventos", "cvBonito"):
         assert pieza in js, pieza
+    assert 'metodo: "PATCH"' in js
+    for ya_no in ("Guardar como mi CV base", "guardar-cv-base", "cvEditado"):
+        assert ya_no not in js, ya_no
 
 
-def test_candidatura_edita_y_ofrece_guardar_como_cv_base_con_aviso_de_historial():
+def test_aprobar_y_descargar_no_tiene_casilla_ni_eleccion_de_cv():
     js = leer("candidatura.js")
-    assert 'metodo: "PATCH"' in js and "cv_contenido" in js
-    assert "Guardar como mi CV base" in js and "/guardar-cv-base" in js
-    assert "La versión anterior queda en el historial" in js
+    assert "Aprobar y descargar" in js and "/aprobar" in js
+    for ya_no in ("He revisado los avisos", "avisos_revisados", "cv_estetico_id", "estetico", "checkbox",
+                  "radio", "/api/cv"):
+        assert ya_no not in js, ya_no
+    assert "cv.pdf" in js and "carta.pdf" in js
 
 
-def test_aprobar_exige_la_casilla_si_hay_avisos_y_elige_documento():
+def test_marcar_como_enviada_con_canal_opcional_y_sin_fecha():
     js = leer("candidatura.js")
-    assert "He revisado los avisos" in js and "avisos_revisados" in js
-    assert "/aprobar" in js and "documento" in js and "cv_estetico_id" in js and "/api/cv" in js
-    assert ".disabled" in js                                                # el botón espera a la casilla
+    assert "Marcar como enviada" in js and "/enviada" in js and "Sin indicar" in js
+    for canal in ("correo", "web", "linkedin", "otro"):
+        assert f'"{canal}"' in js
+    assert 'type = "date"' not in js and "fecha:" not in js              # la fecha es la de hoy
+
+
+def test_dos_botones_de_respuesta_segun_el_estado_y_nada_de_pegar_el_correo():
+    js = leer("candidatura.js")
+    assert "Me han llamado" in js and "Me han rechazado" in js
+    assert "/entrevista" in js and '{ motivo: "rechazo" }' in js
+    assert 'c.estado === "enviada"' in js                      # «Me han llamado» solo desde enviada
+    for ya_no in ("/respuesta", "clasificando", "respuesta_propuesta", "Analizar respuesta"):
+        assert ya_no not in js, ya_no
+
+
+def test_reintentar_solo_cuando_la_preparacion_fallo():
+    js = leer("candidatura.js")
+    assert "Reintentar" in js and "/reintentar" in js
+    assert 'c.preparacion === "error"' in js and "motivo_error" in js
 
 
 def test_los_botones_cambian_con_el_estado():
     js = leer("candidatura.js")
-    for ruta in ("/enviada", "/entrevista", "/cerrar", "/respuesta", "/respuesta/confirmar",
-                 "/respuesta/descartar", "cv.pdf", "carta.pdf"):
-        assert ruta in js, ruta
     for estado in ("borrador", "aprobada", "enviada", "entrevista", "cerrada"):
         assert f'"{estado}"' in js, estado
-    for canal in ("correo", "web", "linkedin", "otro"):
-        assert f'"{canal}"' in js
-    for motivo in ("rechazo", "descartada", "retirada"):
+    for motivo in ("descartada", "retirada"):
         assert f'"{motivo}"' in js
 
 
-def test_la_pantalla_espera_mientras_se_prepara_o_se_clasifica():
+def test_la_pantalla_espera_solo_mientras_se_prepara():
     js = leer("candidatura.js")
-    assert "en_curso" in js and "clasificando" in js and "setTimeout" in js
+    assert "en_curso" in js and "setTimeout" in js
 
 
 # --- T20 · recomendadas y CV base ---------------------------------------------------------------
+def test_los_textos_de_recomendadas_y_cv_base_no_hablan_de_elegir_cv_ni_de_cv_estetico():
+    for nombre in ("recomendadas", "cv-base"):
+        js = leer(f"{nombre}.js")
+        assert "estético" not in js and "guardas una candidatura" not in js
+        assert "desde una candidatura" not in js
+    assert "Horma elige tu CV base" in leer("recomendadas.js")
+
+
 def test_recomendadas_tiene_preparar_candidatura_que_no_pide_cv_base():
     js = leer("recomendadas.js")
     assert "Preparar candidatura" in js and "/api/candidaturas" in js and "oferta_id" in js

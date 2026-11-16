@@ -16,9 +16,8 @@ Canal = Literal["correo", "web", "linkedin", "otro"]  # lista ampliable (P3)
 MotivoCierre = Literal["rechazo", "descartada", "retirada"]
 EtiquetaRespuesta = Literal["entrevista", "rechazo", "piden_informacion", "otro"]
 TipoProblema = Literal["sin_origen", "inflado", "promesa", "rasgo_personal", "repite_cv"]
-TipoEvento = Literal["transicion", "nota", "cv_base_guardado"]
-OrigenEvento = Literal["usuaria", "respuesta"]
-Documento = Literal["adaptado", "estetico"]  # solo la fila de BD; sale con la migración 0007 (T28)
+TipoEvento = Literal["transicion", "nota"]
+OrigenEvento = Literal["usuaria"]
 DocumentoRevisado = Literal["cv", "carta"]
 
 ESTADOS: tuple[str, ...] = get_args(Estado)
@@ -115,7 +114,7 @@ def aviso_de_error(documento: str, error: str, contenido: str = "") -> Aviso:
 
 
 class Candidatura(BaseModel):
-    """Fila de `candidaturas` (migración 0006)."""
+    """Fila de `candidaturas` (migraciones 0006 y 0007)."""
 
     id: int | None = None
     usuaria_id: int
@@ -132,13 +131,12 @@ class Candidatura(BaseModel):
     carta_contenido: str = ""
     carta_traza: list[TrazaFrase] = Field(default_factory=list)
     huecos: list[Hueco] = Field(default_factory=list)
-    avisos: list[str] = Field(default_factory=list)
+    avisos: list[Aviso] = Field(default_factory=list)
+    problemas_juez: list[Problema] = Field(default_factory=list)
     cobertura_ats: float | None = Field(default=None, ge=0, le=1)
-    vueltas_cv: int = Field(default=0, ge=0)
-    vueltas_carta: int = Field(default=0, ge=0)
+    redacciones_cv: int = Field(default=0, ge=0)
+    redacciones_carta: int = Field(default=0, ge=0)
     instrucciones_embebidas: list[str] = Field(default_factory=list)
-    documento: Documento | None = None
-    cv_estetico_id: int | None = None
     canal: Canal | None = None
     canal_otro: str | None = Field(default=None, max_length=MAX_CANAL_OTRO)
     enviada_en: date | None = None
@@ -158,7 +156,6 @@ class EventoCandidatura(BaseModel):
     canal: Canal | None = None
     origen: OrigenEvento = "usuaria"
     tipo: TipoEvento = "transicion"
-    etiqueta_respuesta: EtiquetaRespuesta | None = None
     creado_en: datetime | None = None
 
 
@@ -203,7 +200,8 @@ class TransicionInvalida(ValueError):
 def transicion(estado: str, destino: str, motivo: str | None = None, *, fecha: date | None = None,
                canal: str | None = None, canal_otro: str | None = None) -> str:
     """Valida el paso de `estado` a `destino` y devuelve `destino`; si no es legal, lanza
-    `TransicionInvalida`. `cerrada` exige un motivo y es final; `enviada` exige fecha y canal."""
+    `TransicionInvalida`. `cerrada` exige un motivo y es final; `enviada` exige la fecha (el canal es
+    opcional, P3)."""
     if estado not in ESTADOS or destino not in ESTADOS:
         raise TransicionInvalida(f"Estado desconocido: «{estado}» → «{destino}»")
     if estado == "cerrada":
@@ -215,9 +213,9 @@ def transicion(estado: str, destino: str, motivo: str | None = None, *, fecha: d
     if _SIGUIENTE.get(estado) != destino:
         raise TransicionInvalida(f"No se puede pasar de «{estado}» a «{destino}»")
     if destino == "enviada":
-        if fecha is None or canal is None:
-            raise TransicionInvalida("Para marcarla como enviada hacen falta la fecha y el canal")
-        if canal not in CANALES:
+        if fecha is None:
+            raise TransicionInvalida("Para marcarla como enviada hace falta la fecha")
+        if canal is not None and canal not in CANALES:
             raise TransicionInvalida(f"Canal desconocido: «{canal}»")
         if canal_otro is not None and canal != "otro":
             raise TransicionInvalida("El texto del canal solo vale con «otro»")
