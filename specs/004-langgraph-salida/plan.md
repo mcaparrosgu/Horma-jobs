@@ -127,15 +127,15 @@ class Flow(Protocol):
   - `calidad` (push y PR): ruff, lint-imports, pytest (la suite de flujos se parametriza por las dos
     implementaciones) y los 8 sets con `--simulado`; `cv` se corre con las dos implementaciones.
   - **`evals-reales`** (nuevo): solo con `pull_request` hacia `main` y con `workflow_dispatch`. Hace
-    `needs: calidad`, tiene `ANTHROPIC_API_KEY` y `HORMA_FLOW_IMPL=langgraph`, y corre los 8 sets con el
-    modelo real y `--tope-coste 1.0`. Si la clave está vacía, falla con un mensaje claro y no pasa a
+    `needs: calidad`, tiene `ANTHROPIC_API_KEY` y `HORMA_FLOW_IMPL=langgraph`, y corre con el
+    modelo real y `--tope-coste 1.0` todos los sets salvo `recomendacion`, que queda fuera hasta el plan
+    del `matcher` (con el modelo real su `nota` da 0,67-0,71 frente a 0,9; sigue en `calidad`, simulado). Si la clave está vacía, falla con un mensaje claro y no pasa a
     simulado. Sube `evals/resultados/`.
-- **Clave vacía:** el secreto existe (`gh secret list`), pero el último run avisó de que faltaba.
-  Hay que comprobar si es un secreto de entorno o de Dependabot, o si tiene el valor vacío. Mar lo
-  vuelve a fijar con `gh secret set ANTHROPIC_API_KEY`. Un paso imprime solo si la clave tiene longitud
-  mayor que 0, nunca su valor.
+- **Clave vacía:** resuelto en T11. Se volvió a fijar con `gh secret set ANTHROPIC_API_KEY` y llega
+  bien. Un paso comprueba solo que no esté vacía, nunca imprime su valor.
 - **Protección de `main`** (la activa Mar en GitHub, Settings → Branches): exigir PR, y exigir en verde
-  `secretos`, `calidad` y `evals-reales`. Después ya no se puede hacer push directo a `main`.
+  `secretos`, `calidad` y `evals-reales`. Activa desde T11 (también para administradores): ya no se
+  puede hacer push directo a `main`.
 
 ## Guardarraíles (RF-4.5)
 - **`horma/llm/vigilancia.py`** (código puro):

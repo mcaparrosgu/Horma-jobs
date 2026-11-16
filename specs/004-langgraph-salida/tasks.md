@@ -135,7 +135,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     un PR lanza los dos jobs y un push solo `calidad`. El paso que comprueba la clave no imprime su
     valor.
   - **Cubre:** RF-4.4c.
-- [ ] T11 — Clave y protección de rama (**con Mar**).
+- [x] T11 — Clave y protección de rama (**con Mar**).
   - **Qué se hace:** diagnosticar por qué la clave llega vacía y que Mar la vuelva a fijar
     (`gh secret set ANTHROPIC_API_KEY`). Mar activa la protección de `main` (PR obligatorio; `secretos`,
     `calidad` y `evals-reales` en verde).
@@ -143,6 +143,12 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - un PR real pasa `evals-reales` con el modelo (**OK de Mar antes de gastar**, unos pocos USD);
     - un PR con un umbral rebajado a propósito en una rama de prueba no se puede fusionar.
   - **Cubre:** RF-4.4c, RF-4.4d.
+  - **Hecho (16-nov-2026):** clave fijada de nuevo (llegaba bien); `main` protegida (PR obligatorio;
+    `secretos`, `calidad` y `evals-reales`, también para administradores). Un PR real pasó
+    `evals-reales` con el modelo (unos 1,2 USD en total) y otro con la cobertura ATS subida a 0,99
+    quedó bloqueado. Dos ajustes: el caso 12 de `perfil` pasa a «dependiente» (un reponedor es
+    ambiguo entre `ventas_comercial` y `logistica`) y `recomendacion` sale de `evals-reales` hasta el
+    plan del `matcher` (con el modelo real `nota` da 0,67-0,71 frente a 0,9); sigue en `calidad`.
 
 ### Bloque D · Guardarraíles y red teaming (RF-4.5)
 - [ ] T12 — Vigilancia de entrada y de salida (`horma/llm/vigilancia.py`).
@@ -264,8 +270,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - Verificar aclaraciones, spec, plan y tareas (campo `verified` de cada documento) antes de T01.
 - Preguntar al profesor dónde desplegar (P6). Bloquea solo T19.
 - Instalar `langgraph` si `uv` falla con certificados (T01).
-- Fijar de nuevo la clave de Anthropic en GitHub y activar la protección de `main` (T11).
-- OK antes de gastar en T11 y T14.
+- OK antes de gastar en T14 (T11 ya hecha).
 - Una cuenta SMTP para las alertas (T22). Sin ella funcionan la pantalla y el log.
 - Prueba manual del bloque B, instalación de la PWA (T15), HTTPS en local (T18), la prueba final (T24)
   y la firma de la revisión de líneas rojas (T23).

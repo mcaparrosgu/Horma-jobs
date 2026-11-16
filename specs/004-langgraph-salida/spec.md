@@ -71,7 +71,8 @@ destino del despliegue de RF-4.6 queda pendiente del profesor (P6).
 - **RF-4.4c** En cada push, CI DEBERÁ correr tests, estilo, arquitectura y todos los evals en simulado.
   CUANDO se abra o actualice un PR a `main`, CI DEBERÁ correr además todos los evals con el modelo real
   y la implementación activa, con el tope de 1 USD por set; SI falta la clave, ENTONCES el job DEBERÁ
-  fallar, no pasar a simulado (P3).
+  fallar, no pasar a simulado (P3). Excepción: `recomendacion` no corre con el modelo real en CI
+  hasta el plan del `matcher` (su `nota` no alcanza el umbral con el modelo real); sigue en simulado.
 - **RF-4.4d** `main` DEBERÁ estar protegida para que un PR no se pueda fusionar si un job de CI falla.
 
 ### Guardarraíles y red teaming (RF-4.5)
