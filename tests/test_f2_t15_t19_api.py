@@ -600,7 +600,8 @@ def test_el_genero_de_los_puestos_se_fija_y_se_cambia_despues(app, motor_app):
     c, h, _ = entrar(app)
     _perfil_hecho(motor_app, _usuaria_id(motor_app, "google-A"))
     for valor in ("femenino", "masculino"):
-        r = c.patch("/api/perfil/datos", headers=h, json={"campo": "genero_puestos", "dato": {"valor": valor}})
+        cuerpo = {"campo": "genero_puestos", "dato": {"valor": valor}}
+        r = c.patch("/api/perfil/datos", headers=h, json=cuerpo)
         assert r.status_code == 201
         assert c.get("/api/perfil").json()["perfil"]["genero_puestos"] == valor
     r = c.patch("/api/perfil/datos", headers=h, json={"campo": "genero_puestos", "dato": {"valor": "otro"}})
