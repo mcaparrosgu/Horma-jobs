@@ -100,6 +100,8 @@ Decidido el 15-nov-2026. Se retoma **cuando todas las fases estén construidas**
 
 **Punto de partida (medido el 15-nov-2026 con el modelo real, 21 casos):** `nota` 0,67 (7 casos fuera de ±10: 02, 04, 10, 13, 15, 18, 21); `condiciones` 1,00 (ahora las calcula código); `sin_rasgos` 1,00; adversarias 0,67 (solo por la `nota` del caso 21).
 
+**Segunda medición (16-nov-2026, en CI de la fase 4):** `nota` 0,71 (6 casos fuera de ±10: 02, 03, 13, 15, 18, 21). Por eso `recomendacion` no corre con el modelo real en `evals-reales` hasta este plan; al terminarlo hay que volver a incluirlo en `.github/workflows/ci.yml`.
+
 **Puerta de salida:** ≥ 90 % de los casos dentro de ±10 con el modelo real, estable en las 3 ejecuciones; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con citas verificadas; y una revisión manual de Mar sobre una muestra de 20 recomendaciones.
 
 ## Decidido al planificar
