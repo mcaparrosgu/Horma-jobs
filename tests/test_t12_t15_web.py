@@ -118,8 +118,10 @@ def test_el_js_pinta_siempre_con_textcontent():
     js = (static / "app.js").read_text(encoding="utf-8")
     assert "innerHTML" not in js and "insertAdjacentHTML" not in js and "eval(" not in js
     assert "textContent" in js
-    assert "<script" not in (static / "index.html").read_text(encoding="utf-8").replace(
-        '<script src="/static/app.js"', "")
+    html = (static / "index.html").read_text(encoding="utf-8")
+    for permitido in ('<script src="/static/app.js"', '<script src="/static/pwa.js"'):  # solo externos
+        html = html.replace(permitido, "")
+    assert "<script" not in html
 
 
 # --- T15: camino completo --------------------------------------------------------------------

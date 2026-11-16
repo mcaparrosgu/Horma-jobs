@@ -98,6 +98,15 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 2. `HORMA_FLOW_IMPL=langgraph` en `.env` activa el flujo con pausa: el worker prepara CV y carta y se para
    antes de `entregar`; al aprobar se reanuda y los PDF quedan fijos. Con `plain` (valor por defecto del
    código) todo funciona como en la fase 3, y los PDF se generan al descargar.
+3. Web instalable (PWA): manifest, iconos y `/sw.js` (guarda solo `/static/*`, nunca `/api/*`) y una
+   página «Sin conexión». `/salud` responde sin datos.
+4. Límites de ritmo por minuto en `.env`: `LIMITE_LOGIN_POR_MINUTO` (por IP), `LIMITE_CV_POR_MINUTO` y
+   `LIMITE_CANDIDATURAS_POR_MINUTO` (por usuaria; crear y reintentar comparten contador). Al pasarse, 429.
+5. Perfil de producción: copia `.env.produccion.example` a `.env.produccion`, rellénalo y ejecuta
+   `docker compose --env-file .env.produccion -f docker-compose.yml -f docker-compose.prod.yml up -d`.
+   Solo Caddy publica puertos (80 y 443, HTTPS); con `HORMA_DOMINIO=localhost` usa su CA interna. Con
+   `APP_ENV=produccion` salen HSTS y `Permissions-Policy` y la API no arranca con secretos cortos, vacíos
+   o de ejemplo, ni con `GOOGLE_REDIRECT_URI` sin https. El despliegue en un servidor espera al profesor (T19).
 
 ## Consola
 

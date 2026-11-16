@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from horma.config import ajustes
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.db import sesion_de
+from horma.web.limites import limite_subida_cv
 from horma.web.repositories import cv as repo
 from horma.web.repositories import perfiles, tareas
 from horma.web.services import cv as servicio
@@ -28,7 +29,7 @@ def _nombre(valor: str) -> str:
     return valor.strip()
 
 
-@router.post("/api/cv", status_code=201, dependencies=[Depends(exigir_csrf)])
+@router.post("/api/cv", status_code=201, dependencies=[Depends(exigir_csrf), Depends(limite_subida_cv)])
 def subir(request: Request, archivo: Annotated[UploadFile, File()], nombre: str | None = Form(default=None),
           clase: str = Form(default="fuente"), usuaria_id: int = Depends(usuaria_actual)):
     contenido = archivo.file.read(ajustes().max_cv_bytes + 1)
