@@ -8,6 +8,7 @@ from alembic import command
 from alembic.config import Config
 from pydantic import BaseModel
 from sqlalchemy import text
+from test_f3_t12_t13_bd_worker import FELIZ, _candidatura, _encolar, _fila, _oferta, _perfil_y_cv_base
 
 from horma.llm import metricas
 from horma.llm.gateway import completar
@@ -15,8 +16,6 @@ from horma.llm.simulado import ProveedorSimulado
 from horma.web.db import sesion_de, sesion_sin_usuaria
 from horma.web.queue import worker
 from horma.web.repositories import tareas
-
-from test_f3_t12_t13_bd_worker import FELIZ, _candidatura, _encolar, _fila, _oferta, _perfil_y_cv_base
 
 pytestmark = pytest.mark.bd
 RAIZ = Path(__file__).resolve().parent.parent
