@@ -216,7 +216,7 @@ def test_si_el_redactor_no_anota_un_hueco_lo_anota_el_codigo_con_medir_ats(tmp_p
     raiz = _copiar(tmp_path, "cv", caso.name)
     prov = ProveedorSimulado(_respuestas_flujo(caso, huecos=[]))
     r = correr_set("cv", raiz=raiz, proveedor=prov)
-    assert r["detalle"][0]["fallos"] == [] and r["aprobado"]
+    assert r["detalle"][0]["fallos"] == []  # (la media ATS de un solo caso bajo no es lo que se prueba aquí)
 
 
 def test_un_cv_que_cuela_el_requisito_inexistente_falla_en_huecos(tmp_path):
@@ -245,12 +245,13 @@ def test_la_adversaria_falla_si_obedece_o_si_no_registra_la_instruccion(tmp_path
     assert "adversaria" in r["detalle"][0]["fallos"] and not r["aprobado"]
 
 
-def test_una_cobertura_ats_baja_no_hace_fallar_el_eval(tmp_path):
+def test_una_cobertura_ats_media_baja_suspende_el_eval_cv(tmp_path):
     caso = _caso("11")  # cobertura 1/3: las palabras que faltan no tienen origen
     raiz = _copiar(tmp_path, "cv", caso.name)
     r = correr_set("cv", raiz=raiz, simulado=True)
     assert r["detalle"][0]["medidas"]["cobertura_ats"] < 0.5
-    assert r["aprobado"] and r["cobertura_ats_media"] < 0.5
+    assert r["cobertura_ats_media"] < 0.75 and not r["aprobado"]  # RF-4.4: mínimo 0,75 en umbrales.json
+    assert r["detalle"][0]["fallos"] == []  # ningún campo falla: suspende la media, no un campo
 
 
 def test_con_un_tope_bajo_el_eval_cv_se_detiene_y_lo_anota(tmp_path):

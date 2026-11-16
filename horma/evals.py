@@ -15,11 +15,14 @@ Sets:
   sembrado pasa por `comprobar` (código) y, si no lo rechaza, por `juez-candidatura`. `flujo`: el
   flujo `candidatura` completo (≤ 5 llamadas). `seleccion`: solo `elegir_cv_base`, por código y sin coste.
   Mide sembrados rechazados, datos idénticos, huecos, adversaria, selección y llamadas (todo al 100 %);
-  la cobertura ATS se registra sin umbral.
+  la cobertura ATS media debe llegar al mínimo de `umbrales.json` (0,75).
 - `respuestas` (fase 3): flujo clasificar_respuesta sobre un correo; esperado = {etiqueta}. Mide la
   etiqueta (≥ 0,9) y que los correos con instrucciones no propongan ningún cambio (100 %).
 Un caso es adversario si su esperado tiene instrucciones embebidas: debe acertar TODOS los campos
 (adversarias al 100 %, RT-07). Cada set puede exigir además campos al 100 % (`exigidos`).
+
+Umbrales (RF-4.4): viven en `evals/umbrales.json`, uno por set (`campos`: precisión mínima por campo)
+y, en `cv`, `cobertura_ats_media`. Un set sin entrada en el archivo da error.
 
 Tope de coste (RF-2.17): `correr_set(tope_coste=…)` suma el coste de las llamadas al modelo
 (`metricas.capturar()`); al superarlo deja de correr casos y lo anota en el resultado.
@@ -473,17 +476,37 @@ def _valor(datos: dict, campo: str):
     return d
 
 
+UMBRALES = Path(__file__).resolve().parent.parent / "evals" / "umbrales.json"
+
+
+def cargar_umbrales(nombre: str, ruta: Path | None = None) -> dict:
+    """Umbrales del set desde el archivo; sin entrada (o sin `campos`) es un error, sin valor por defecto."""
+    ruta = ruta or UMBRALES
+    datos = json.loads(ruta.read_text(encoding="utf-8"))
+    entrada = datos.get(nombre)
+    if not isinstance(entrada, dict) or "campos" not in entrada:
+        raise LookupError(f"el set «{nombre}» no tiene umbrales en {ruta.name}")
+    return entrada
+
+
+def cobertura_suficiente(media: float | None, minimo: float | None) -> bool:
+    """Sin mínimo o sin medidas (p. ej. un solo caso de selección) no hay nada que exigir."""
+    return minimo is None or media is None or round(media, 4) >= minimo
+
+
 def casos_de(raiz: Path, nombre: str, solo: str | None = None) -> list[Path]:
     casos = sorted(p for p in (raiz / nombre / "casos").iterdir() if p.is_dir())
     return [c for c in casos if c.name == solo] if solo else casos
 
 
 def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
-               umbral: float = 0.9, solo: str | None = None, simulado: bool = False,
-               tope_coste: float | None = None, flujo: str | None = None) -> dict:
+               solo: str | None = None, simulado: bool = False, tope_coste: float | None = None,
+               flujo: str | None = None, ruta_umbrales: Path | None = None) -> dict:
     """Con `simulado`, cada caso responde con su propio esperado: solo prueba el harness.
     Con `tope_coste` (en USD), deja de correr casos en cuanto el coste acumulado lo supera."""
     s = SETS[nombre]
+    umbrales = cargar_umbrales(nombre, ruta_umbrales)
+    umbral = umbrales["campos"]
     correr = functools.partial(_correr_cv, impl=flujo) if nombre == "cv" else s.correr
     casos = casos_de(raiz, nombre, solo)
     aciertos = dict.fromkeys(s.campos, 0)
@@ -524,15 +547,17 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
     tasa_adversarias = round(adversarias_ok / adversarias, 4) if adversarias else 1.0
     coberturas = [d["medidas"]["cobertura_ats"] for d in detalle
                   if d.get("medidas", {}).get("cobertura_ats") is not None]
+    cobertura_media = round(sum(coberturas) / len(coberturas), 4) if coberturas else None
     aprobado = (not detenido and all(v >= umbral for k, v in campos.items() if k not in s.exigidos)
                 and all(campos[k] == 1.0 for k in s.exigidos if k in campos)
-                and tasa_adversarias == 1.0)
+                and tasa_adversarias == 1.0
+                and cobertura_suficiente(cobertura_media, umbrales.get("cobertura_ats_media")))
     res = {"set": nombre, "fecha": datetime.now().isoformat(timespec="seconds"),
            "simulado": simulado, "umbral": umbral, "casos": len(casos), "casos_ejecutados": n,
            "campos": campos, "adversarias": tasa_adversarias, "coste": coste,
            "tope_coste": tope_coste, "detenido_por_coste": detenido, "aprobado": aprobado,
-           # Registrada, sin umbral (RF-4.4): no entra en `aprobado`.
-           "cobertura_ats_media": round(sum(coberturas) / len(coberturas), 4) if coberturas else None,
+           "cobertura_ats_media": cobertura_media,
+           "umbral_cobertura_ats_media": umbrales.get("cobertura_ats_media"),
            "detalle": detalle}
     destino = raiz / "resultados"
     destino.mkdir(parents=True, exist_ok=True)

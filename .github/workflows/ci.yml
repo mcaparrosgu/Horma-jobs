@@ -3,6 +3,7 @@ name: CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   secretos:
@@ -45,47 +46,47 @@ jobs:
           docker compose up -d --wait postgres
       - name: Tests (incluye RLS, cola y camino completo)
         run: uv run pytest -q
-      - name: Evals de ofertas y fuentes
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Evals en simulado (prueban el harness y los umbrales de evals/umbrales.json; NO miden el modelo)
         run: |
-          if [ -n "$ANTHROPIC_API_KEY" ]; then
-            uv run horma eval correr ofertas
-            uv run horma eval correr fuentes
-          else
-            echo "::warning::Sin ANTHROPIC_API_KEY: solo se prueba el harness en modo simulado; NO se mide el modelo."
-            uv run horma eval correr ofertas --simulado
-            uv run horma eval correr fuentes --simulado
-          fi
-      - name: Evals de la fase 2 (perfil, CV base y recomendación; tope de 1 USD por ejecución)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          if [ -n "$ANTHROPIC_API_KEY" ]; then
-            uv run horma eval correr perfil --tope-coste 1.0
-            uv run horma eval correr cv-base --tope-coste 1.0
-            uv run horma eval correr recomendacion --tope-coste 1.0
-          else
-            echo "::warning::Sin ANTHROPIC_API_KEY: solo se prueba el harness en modo simulado; NO se mide el modelo."
-            uv run horma eval correr perfil --simulado
-            uv run horma eval correr cv-base --simulado
-            uv run horma eval correr recomendacion --simulado
-          fi
-      - name: Evals de la fase 3 (CV y carta, y respuestas de empresas; tope de 1 USD por ejecución)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          if [ -n "$ANTHROPIC_API_KEY" ]; then
-            uv run horma eval correr cv --tope-coste 1.0
-            uv run horma eval correr respuestas --tope-coste 1.0
-          else
-            echo "::warning::Sin ANTHROPIC_API_KEY: solo se prueba el harness en modo simulado; NO se mide el modelo."
-            uv run horma eval correr cv --simulado
-            uv run horma eval correr respuestas --simulado
-          fi
+          for set in ofertas fuentes perfil cv-base recomendacion respuestas; do
+            uv run horma eval correr "$set" --simulado
+          done
+          uv run horma eval correr cv --simulado --flujo plain
+          uv run horma eval correr cv --simulado --flujo langgraph
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ejecuciones-de-evals
+          name: ejecuciones-de-evals-simulado
+          path: evals/resultados/
+          if-no-files-found: ignore
+
+  # Mide el modelo de verdad (RF-4.4c). Solo en PR a main y a mano; no pasa a simulado si falta la clave.
+  evals-reales:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      HORMA_FLOW_IMPL: langgraph
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar la clave (sin imprimirla)
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::Falta el secreto ANTHROPIC_API_KEY: las evals reales no pueden pasar a simulado."
+            exit 1
+          fi
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync
+      - name: Evals con el modelo real (tope de 1 USD por set)
+        run: |
+          for set in ofertas fuentes perfil cv-base recomendacion respuestas; do
+            uv run horma eval correr "$set" --tope-coste 1.0
+          done
+          uv run horma eval correr cv --tope-coste 1.0 --flujo langgraph
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ejecuciones-de-evals-reales
           path: evals/resultados/
           if-no-files-found: ignore
