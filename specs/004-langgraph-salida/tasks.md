@@ -277,5 +277,9 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - **Después del bloque G, antes de dar la fase por cerrada:** la prueba final de Mar (T24, plan en
   `docs/plan-pruebas-fase4.md`) y su firma de `docs/revision-lineas-rojas.md` (T23). Acordado el 16-nov:
   no bloquean la fusión del PR del bloque G.
+- **Estabilizar el set `ofertas` de `evals-reales`** (anotado el 16-nov en el PR #7): falló dos veces con campos
+  distintos (`titulo` 0,88; `adversarias` 0,83, umbral 0,9) y aprobó en local con el mismo código (0,92 y 1,00).
+  Averiguar qué caso adversario oscila y arreglar el prompt, el caso o el umbral. Mientras tanto, el job
+  `evals-reales` puede fallar sin que el código esté mal y, al cortarse en el primer set, no mide los siguientes.
 - Después del bloque G: probar `/costes` en navegador y móvil, y el correo de alertas con una cuenta SMTP
   real (T21, T22).
