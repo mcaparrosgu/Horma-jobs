@@ -1,10 +1,14 @@
-"""Fase 3 · T01: esquemas de candidatura y máquina de estados (RF-3.1, RF-3.7, RF-3.8b, RF-3.9)."""
+"""Fase 3 · T01 y T23: esquemas de candidatura, avisos y máquina de estados (RF-3.1, RF-3.4, RF-3.6c,
+RF-3.7, RF-3.8b, RF-3.9)."""
 from datetime import date
 
 import pytest
 from pydantic import ValidationError
 
 from horma.schemas.candidatura import (
+    TEXTOS_ERROR,
+    TEXTOS_PROBLEMA,
+    Aviso,
     Candidatura,
     EstadoCandidatura,
     EventoCandidatura,
@@ -12,6 +16,8 @@ from horma.schemas.candidatura import (
     Problema,
     TransicionInvalida,
     TrazaFrase,
+    aviso_de_error,
+    aviso_de_problema,
     transicion,
     transicion_por_respuesta,
 )
@@ -118,10 +124,76 @@ def test_traza_frase_se_importa_tambien_desde_el_agente_de_la_fase_2():
 
 
 def test_problema_y_hueco():
-    assert Problema(tipo="repite_cv", frase="f", motivo="m").tipo == "repite_cv"
+    assert Problema(documento="carta", tipo="repite_cv", frase="f", motivo="m").tipo == "repite_cv"
     with pytest.raises(ValidationError):
-        Problema(tipo="otra_cosa", frase="f", motivo="m")
+        Problema(documento="carta", tipo="otra_cosa", frase="f", motivo="m")
+    with pytest.raises(ValidationError):  # el documento es obligatorio
+        Problema(tipo="inflado", frase="f", motivo="m")
     assert Hueco(requisito="carné B", propuesta="Añade tu carné si lo tienes").requisito == "carné B"
+
+
+def test_un_repite_cv_en_el_cv_no_valida():
+    with pytest.raises(ValidationError):
+        Problema(documento="cv", tipo="repite_cv", frase="f", motivo="m")
+    assert Problema(documento="cv", tipo="inflado", frase="f", motivo="m").documento == "cv"
+
+
+PREFIJOS_TECNICOS = ("CV:", "Carta:", "juez", "Juez", "(", "sin_origen", "repite_cv", "rasgo_personal",
+                     "Frase sin origen", "ATS")
+
+
+@pytest.mark.parametrize("tipo", list(TEXTOS_PROBLEMA))
+def test_cada_tipo_de_problema_da_un_aviso_en_llano(tipo):
+    documento = "carta" if tipo == "repite_cv" else "cv"
+    a = aviso_de_problema(Problema(documento=documento, tipo=tipo, frase="Una frase", motivo="x"))
+    assert isinstance(a, Aviso) and (a.documento, a.frase) == (documento, "Una frase")
+    assert not any(p in a.mensaje for p in PREFIJOS_TECNICOS) and a.mensaje.endswith((".", ";"))
+
+
+def test_la_tabla_de_problemas_cubre_todos_los_tipos():
+    from typing import get_args
+
+    from horma.schemas.candidatura import TipoProblema
+    assert set(TEXTOS_PROBLEMA) == set(get_args(TipoProblema))
+
+
+@pytest.mark.parametrize("error, clave, frase", [
+    ("Fecha que no está en ninguna de las fuentes: 2019", "fecha", "Camarera · Bar Sol · 2019"),
+    ("Frase sin origen en la traza: «Dirigí un hotel»", "sin_traza", "Dirigí un hotel"),
+    ("El fragmento no está en ninguna de las fuentes: «Otra cosa» (frase «Mi frase»)", "fragmento",
+     "Mi frase"),
+    ("«jefa» no aparece en el fragmento de origen de la frase «Fui jefa de sala»", "dato_nuevo",
+     "Fui jefa de sala"),
+    ("Rasgo personal en el CV: edad: joven", "rasgo", None),
+    ("Rasgo personal en la carta: sexo: mujer", "rasgo", None),
+    ("Formato del CV para ATS: lleva una tabla", "formato", None),
+    ("Algo que nadie previó", "otro", None),
+])
+def test_cada_error_de_comprobar_da_un_aviso_en_llano_junto_a_su_frase(error, clave, frase):
+    contenido = "## Experiencia" + chr(10) + "Camarera · Bar Sol · 2019" + chr(10)
+    a = aviso_de_error("cv", error, contenido)
+    assert a.frase == frase and a.documento == "cv"
+    dato = {"fecha": "2019", "dato_nuevo": "jefa", "rasgo": error.split(": ", 1)[-1],
+            "formato": "lleva una tabla"}.get(clave, "")
+    assert a.mensaje == TEXTOS_ERROR[clave].format(dato=dato)
+    assert not any(p in a.mensaje.replace("(" + dato + ")", "") for p in PREFIJOS_TECNICOS)
+
+
+def test_los_errores_reales_de_las_herramientas_se_reconocen():
+    """Acopla el clasificador a los mensajes que producen `verificar_trazabilidad` y `medir_ats`."""
+    from horma.tools.medir_ats import errores_ats
+    from horma.tools.verificar_trazabilidad import verificar_trazabilidad
+    cv = "## Experiencia" + chr(10) + "Directora en Hotel Ritz, 2010-2015"
+    traza = [{"frase": "Directora", "fragmento": "Camarera"}]
+    errores = verificar_trazabilidad(cv, [], "Camarera")
+    errores += verificar_trazabilidad("Directora", traza, ["Camarera"])
+    errores += verificar_trazabilidad("Directora", [{"frase": "Directora", "fragmento": "Camarera"}],
+                                      ["Camarera en Bar Sol"])
+    assert errores
+    for e in errores:
+        assert aviso_de_error("cv", e).mensaje != TEXTOS_ERROR["otro"], e
+    assert all(aviso_de_error("cv", f"Formato del CV para ATS: {x}").mensaje != TEXTOS_ERROR["otro"]
+               for x in errores_ats("| a | b |"))
 
 
 def test_candidatura_nace_en_borrador_en_curso():
@@ -140,9 +212,21 @@ def test_evento_de_candidatura():
         EventoCandidatura(candidatura_id=1, tipo="otro_tipo")
 
 
-def test_estado_del_flujo_arranca_con_contadores_a_cero():
+def test_estado_del_flujo_arranca_sin_vuelta_ni_redacciones():
     e = EstadoCandidatura()
-    assert (e.vueltas_cv, e.vueltas_carta) == (0, 0)
-    assert e.preparacion == "en_curso"
+    assert (e.vuelta_hecha, e.redacciones_cv, e.redacciones_carta) == (False, 0, 0)
+    assert e.preparacion == "en_curso" and e.avisos == [] and e.problemas_juez == []
+    assert not hasattr(e, "vueltas_cv") and not hasattr(e, "vueltas_carta")
     with pytest.raises(ValidationError):
-        EstadoCandidatura(vueltas_cv=-1)
+        EstadoCandidatura(redacciones_cv=-1)
+    with pytest.raises(ValidationError):  # cada documento se redacta como máximo 2 veces
+        EstadoCandidatura(redacciones_carta=3)
+
+
+def test_el_estado_del_flujo_guarda_avisos_estructurados_y_problemas_del_juez():
+    e = EstadoCandidatura(avisos=[{"documento": "carta", "frase": "x", "mensaje": "Revisa esto."}],
+                          problemas_juez=[{"documento": "cv", "tipo": "inflado", "frase": "f",
+                                           "motivo": "m"}])
+    assert e.avisos[0].documento == "carta" and e.problemas_juez[0].tipo == "inflado"
+    with pytest.raises(ValidationError):
+        EstadoCandidatura(avisos=["texto suelto"])

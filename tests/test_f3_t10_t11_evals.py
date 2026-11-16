@@ -1,5 +1,5 @@
-"""Fase 3 · T10-T11: evals `cv` y `respuestas` (puerta simulada) (RF-3.1b, RF-3.2 a RF-3.6b, RF-3.9,
-RF-3.12, RT-07, RT-11)."""
+"""Fase 3 · T10-T11 y T27: evals `cv` (juez único) y `respuestas` (puerta simulada) (RF-3.1 a RF-3.6c,
+RF-3.9, RF-3.12, RT-07, RT-11)."""
 import json
 import shutil
 from pathlib import Path
@@ -124,7 +124,8 @@ def test_eval_cv_simulado_pasa_al_100_y_registra_la_cobertura_ats(tmp_path):
     raiz = _copiar(tmp_path, "cv", *(c.name for c in _casos("cv")))
     r = correr_set("cv", raiz=raiz, simulado=True)
     assert r["aprobado"] and r["casos"] == 14 and r["adversarias"] == 1.0
-    assert r["campos"] == {c: 1.0 for c in ("rechazados", "datos", "huecos", "adversaria", "seleccion")}
+    assert r["campos"] == {c: 1.0 for c in ("rechazados", "datos", "huecos", "adversaria", "seleccion",
+                                           "llamadas")}
     assert 0 < r["cobertura_ats_media"] <= 1
     assert {d["caso"] for d in r["detalle"] if "medidas" in d} == {
         c.name for c in _casos("cv") if c.name[3:8] == "flujo"}
@@ -133,9 +134,24 @@ def test_eval_cv_simulado_pasa_al_100_y_registra_la_cobertura_ats(tmp_path):
 def test_un_sembrado_que_el_juez_deja_pasar_no_aprueba(tmp_path):
     caso = _caso("06")
     raiz = _copiar(tmp_path, "cv", caso.name)
-    prov = ProveedorSimulado([{"veredicto": "aprobado", "problemas": []}])
+    prov = ProveedorSimulado([{"veredicto_cv": "aprobado", "veredicto_carta": "aprobado", "problemas": []}])
     r = correr_set("cv", raiz=raiz, proveedor=prov)
     assert r["detalle"][0]["fallos"] == ["rechazados"] and not r["aprobado"]
+    assert len(prov.llamadas) == 1  # un solo juez, una sola llamada
+
+
+def test_un_sembrado_pasa_por_comprobar_y_despues_por_el_juez_unico_con_su_documento(tmp_path):
+    for prefijo, documento in (("06", "cv"), ("09", "carta")):
+        caso = _caso(prefijo)
+        raiz = _copiar(tmp_path / prefijo, "cv", caso.name)
+        r = correr_set("cv", raiz=raiz, simulado=True)
+        assert r["aprobado"] and r["detalle"][0]["fallos"] == [], documento
+    # El juez que señala el documento equivocado no rechaza el sembrado.
+    raiz = _copiar(tmp_path / "otro", "cv", _caso("09").name)
+    prov = ProveedorSimulado([{"veredicto_cv": "corregir", "veredicto_carta": "aprobado", "problemas": [
+        {"documento": "cv", "tipo": "inflado", "frase": "x", "motivo": "m"}]}])
+    r = correr_set("cv", raiz=raiz, proveedor=prov)
+    assert r["detalle"][0]["fallos"] == ["rechazados"]
 
 
 def test_un_sembrado_del_codigo_nunca_llega_al_juez(tmp_path):
@@ -146,11 +162,20 @@ def test_un_sembrado_del_codigo_nunca_llega_al_juez(tmp_path):
     assert r["aprobado"] and prov.llamadas == []
 
 
+def test_la_seleccion_la_hace_el_codigo_sin_llamar_al_modelo(tmp_path):
+    for caso in (_caso("13"), _caso("14")):
+        raiz = _copiar(tmp_path / caso.name, "cv", caso.name)
+        prov = ProveedorSimulado([])
+        r = correr_set("cv", raiz=raiz, proveedor=prov)
+        assert r["aprobado"] and r["detalle"][0]["fallos"] == [] and prov.llamadas == [] and r["coste"] == 0
+
+
 def test_una_seleccion_equivocada_no_aprueba(tmp_path):
     caso = _caso("13")
     raiz = _copiar(tmp_path, "cv", caso.name)
-    prov = ProveedorSimulado([{"cv_base_id": 1, "motivo": "El de hostelería."}])
-    r = correr_set("cv", raiz=raiz, proveedor=prov)
+    ruta = raiz / "cv" / "casos" / caso.name / "esperado.json"
+    ruta.write_text(json.dumps({**_json(ruta), "cv_base_id": 1}), encoding="utf-8")
+    r = correr_set("cv", raiz=raiz, proveedor=ProveedorSimulado([]))
     assert r["detalle"][0]["fallos"] == ["seleccion"] and not r["aprobado"]
 
 
@@ -159,9 +184,20 @@ def _respuestas_flujo(caso, **cambios):
     e = _entrada(caso)
     esperado = EsperadoCv.model_validate_json((caso / "esperado.json").read_text(encoding="utf-8"))
     r = SETS["cv"].simuladas(esperado, e)
-    i = 1 if len(e["cvs_base"]) > 1 else 0  # posición del redactor (el selector va delante)
-    r[i] = {**r[i], **cambios}
+    r[0] = {**r[0], **cambios}  # el redactor del CV va primero: el CV base lo elige el código
     return r
+
+
+def test_los_casos_de_flujo_hacen_entre_3_y_5_llamadas_y_mas_de_5_fallan(tmp_path):
+    caso = _caso("10")
+    raiz = _copiar(tmp_path, "cv", caso.name)
+    r = correr_set("cv", raiz=raiz, simulado=True)
+    assert r["detalle"][0]["medidas"]["llamadas"] == 3 and r["campos"]["llamadas"] == 1.0
+    from horma.evals import _comparar_cv
+    de_6 = {"modo": "flujo", "cv_base_id": 1, "cv": "", "traza": [], "carta": "", "huecos": [], "maestro": "",
+            "base": "", "instrucciones_embebidas": [], "medidas": {"llamadas": 6}}
+    esperado = {"cv_base_id": None, "instrucciones_embebidas": False, "huecos": [], "prohibidas": []}
+    assert "llamadas" in _comparar_cv(de_6, esperado)
 
 
 def test_un_cv_con_un_dato_inventado_falla_en_datos(tmp_path):

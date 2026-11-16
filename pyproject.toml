@@ -78,11 +78,9 @@ modules = [
   "horma.agents.generador_cv_base",
   "horma.agents.matcher",
   "horma.agents.redactor_cv",
-  "horma.agents.juez_cv",
   "horma.agents.redactor_carta",
-  "horma.agents.juez_carta",
+  "horma.agents.juez_candidatura",
   "horma.agents.clasificador_respuesta",
-  "horma.agents.selector_cv_base",
 ]
 
 [[tool.importlinter.contracts]]
