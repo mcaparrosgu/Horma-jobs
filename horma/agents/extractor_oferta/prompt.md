@@ -14,8 +14,9 @@ Reglas:
 - `salario`: números tal como aparecen (sin convertir periodos) y la moneda en código ISO si es
   evidente.
 - `titulo`: solo el nombre del puesto, sin empresa, sector, ciudad ni «para…», pero conservando los calificativos del puesto
-  («bilingüe», «junior») (p. ej.
-  «Camarera/o», no «Camarera/o para restaurante»).
+  («bilingüe», «junior»), su especialidad o etapa y la tecnología entre paréntesis si el titular la trae
+  (p. ej. «Camarera/o», no «Camarera/o para restaurante»; «Profesor/a de matemáticas de secundaria»;
+  «Frontend Developer (React)»).
 - `contrato`: solo el tipo de contrato en una o dos palabras (p. ej. «indefinido», «temporal»,
   «prácticas», «autónomo»); sin jornada ni otros datos. Vacío si el texto no lo dice.
 - `idiomas`: los idiomas que se piden, en español y en minúsculas.
