@@ -15,6 +15,7 @@ router = APIRouter()
 
 class Nueva(BaseModel):
     oferta_id: int
+    repetir: bool = False  # confirma preparar otra aunque ya haya una cerrada para la oferta
 
 
 class Edicion(BaseModel):
@@ -56,7 +57,7 @@ def _llamar(funcion, request: Request, usuaria_id: int, *args):
 @router.post("/api/candidaturas", status_code=202, dependencies=[Depends(exigir_csrf)])
 def crear(datos: Nueva, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Crea la candidatura en borrador y encola su preparación; el CV base lo elige Horma (RF-3.1b)."""
-    return _llamar(servicio.crear, request, usuaria_id, datos.oferta_id)
+    return _llamar(servicio.crear, request, usuaria_id, datos.oferta_id, datos.repetir)
 
 
 @router.get("/api/candidaturas")

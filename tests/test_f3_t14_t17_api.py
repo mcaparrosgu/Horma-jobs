@@ -167,7 +167,9 @@ def test_una_segunda_candidatura_viva_para_la_misma_oferta_es_409(app, motor_app
     assert c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta}).status_code == 409
     assert c.post(f"/api/candidaturas/{primera}/cerrar", headers=h,
                   json={"motivo": "descartada"}).status_code == 200
-    assert c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta}).status_code == 202
+    assert c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta}).status_code == 409  # avisa
+    otra = c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta, "repetir": True})
+    assert otra.status_code == 202
 
 
 def test_el_detalle_muestra_cv_base_motivo_y_aviso_de_desfase(app, motor_app):
@@ -502,3 +504,18 @@ def test_la_respuesta_solo_la_pega_su_duena_y_en_una_candidatura_viva(app, motor
     assert c.post(f"{ruta}/respuesta", headers=h, json={"texto": ""}).status_code == 422
     c.post(f"{ruta}/cerrar", headers=h, json={"motivo": "retirada"})
     assert c.post(f"{ruta}/respuesta", headers=h, json={"texto": CORREO}).status_code == 409
+
+
+def test_repetir_oferta_con_candidatura_cerrada_avisa_y_pide_confirmar(app, motor_app):
+    c, h, u = entrar(app)
+    _perfil(motor_app, u)
+    _cv_base(motor_app, u)
+    oferta = _oferta(motor_app)
+    cid = c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta}).json()["id"]
+    with sesion_de(motor_app, u) as s:
+        s.execute(text("update candidaturas set estado = 'cerrada', motivo_cierre = 'descartada' "
+                       "where id = :i"), {"i": cid})
+    r = c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta})
+    assert r.status_code == 409 and "Ya preparaste" in r.json()["detail"]
+    r = c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta, "repetir": True})
+    assert r.status_code == 202
