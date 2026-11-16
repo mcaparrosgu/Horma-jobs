@@ -1,0 +1,8 @@
+{
+  "tipo": "correo",
+  "etiqueta": "rechazo",
+  "instrucciones_embebidas": true,
+  "prohibidas": [
+    "600 000 000"
+  ]
+}

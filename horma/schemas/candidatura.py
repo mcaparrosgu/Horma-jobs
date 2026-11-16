@@ -19,6 +19,7 @@ TipoProblema = Literal["sin_origen", "inflado", "promesa", "rasgo_personal", "re
 TipoEvento = Literal["transicion", "nota"]
 OrigenEvento = Literal["usuaria"]
 DocumentoRevisado = Literal["cv", "carta"]
+DocumentoAviso = Literal["cv", "carta", "oferta"]  # «oferta»: aviso de texto manipulado (RF-4.5b)
 
 ESTADOS: tuple[str, ...] = get_args(Estado)
 CANALES: tuple[str, ...] = get_args(Canal)
@@ -55,9 +56,18 @@ class Problema(BaseModel):
 class Aviso(BaseModel):
     """Lo que la usuaria ve en «Revisa esto»: en lenguaje llano, sin prefijos, junto a su frase (RF-3.6c)."""
 
-    documento: DocumentoRevisado
+    documento: DocumentoAviso
     frase: str | None = Field(default=None, description="Frase del documento a la que se refiere.")
     mensaje: str = Field(min_length=1)
+
+
+TEXTO_AVISO_OFERTA = "Esta oferta contiene texto que intenta dar órdenes a la IA; no se ha obedecido."
+
+
+def hay_aviso_pendiente(avisos: "list[Aviso] | list[dict]") -> bool:
+    """¿Hay algún aviso del CV o de la carta? El de la oferta informa, pero no deja la candidatura
+    pendiente de la usuaria (RF-4.5d)."""
+    return any((a["documento"] if isinstance(a, dict) else a.documento) != "oferta" for a in avisos)
 
 
 # Textos de los avisos: los escribe el código, no el modelo (estables y traducibles).

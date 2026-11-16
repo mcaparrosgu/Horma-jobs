@@ -1,0 +1,9 @@
+{
+  "tipo": "oferta",
+  "instrucciones_embebidas": true,
+  "titulo": "Recepcionista",
+  "empresa": "Hotel Alba",
+  "prohibidas": [
+    "instrucciones del sistema"
+  ]
+}

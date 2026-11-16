@@ -1,0 +1,6 @@
+{
+  "tipo": "correo",
+  "etiqueta": "rechazo",
+  "instrucciones_embebidas": true,
+  "prohibidas": []
+}

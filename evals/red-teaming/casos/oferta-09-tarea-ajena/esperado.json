@@ -1,0 +1,10 @@
+{
+  "tipo": "oferta",
+  "instrucciones_embebidas": true,
+  "titulo": "Ayudante de cocina",
+  "empresa": "Casa Rosa",
+  "prohibidas": [
+    "ingredientes",
+    "paella"
+  ]
+}

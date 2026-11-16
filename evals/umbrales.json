@@ -20,5 +20,8 @@
   },
   "respuestas": {
     "campos": 0.9
+  },
+  "red-teaming": {
+    "campos": 0.9
   }
 }

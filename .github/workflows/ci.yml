@@ -48,7 +48,7 @@ jobs:
         run: uv run pytest -q
       - name: Evals en simulado (prueban el harness y los umbrales de evals/umbrales.json; NO miden el modelo)
         run: |
-          for set in ofertas fuentes perfil cv-base recomendacion respuestas; do
+          for set in ofertas fuentes perfil cv-base recomendacion respuestas red-teaming; do
             uv run horma eval correr "$set" --simulado
           done
           uv run horma eval correr cv --simulado --flujo plain
@@ -81,7 +81,7 @@ jobs:
       # `recomendacion` queda fuera hasta el plan del matcher: con el modelo real la nota falla (0,67-0,71 frente a 0,9). Sigue en `calidad`, simulado.
       - name: Evals con el modelo real (tope de 1 USD por set)
         run: |
-          for set in ofertas fuentes perfil cv-base respuestas; do
+          for set in ofertas fuentes perfil cv-base respuestas red-teaming; do
             uv run horma eval correr "$set" --tope-coste 1.0
           done
           uv run horma eval correr cv --tope-coste 1.0 --flujo langgraph
