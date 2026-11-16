@@ -5,14 +5,14 @@
   "resumen": null,
   "experiencias": [
     {
-      "puesto": "Reponedor",
+      "puesto": "Dependiente",
       "empresa": "Hipermercado Costa",
       "inicio": "2018",
       "fin": "2024",
       "origen": {
         "fuente": "cv",
         "cv_id": 1,
-        "fragmento": "Reponedor en Hipermercado Costa, Almería, 2018-2024"
+        "fragmento": "Dependiente en Hipermercado Costa, Almería, 2018-2024"
       }
     }
   ],

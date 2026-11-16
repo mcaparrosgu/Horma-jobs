@@ -114,9 +114,9 @@ def _texto(ruta: str) -> str:
 
 def test_ci_corre_los_dos_sets_de_la_fase_3_con_tope_y_en_simulado_sin_clave():
     ci = _texto(".github/workflows/ci.yml")
-    for orden in ("eval correr cv --tope-coste 1.0", "eval correr respuestas --tope-coste 1.0",
-                  "eval correr cv --simulado", "eval correr respuestas --simulado"):
-        assert orden in ci
+    simulado, real = ci.split("evals-reales:")
+    assert "eval correr cv --simulado" in simulado and "respuestas" in simulado
+    assert "eval correr cv --tope-coste 1.0" in real and "respuestas" in real
 
 
 def test_env_example_marca_los_topes_nuevos_como_de_construccion():

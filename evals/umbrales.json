@@ -1,0 +1,24 @@
+{
+  "ofertas": {
+    "campos": 0.9
+  },
+  "fuentes": {
+    "campos": 0.9
+  },
+  "perfil": {
+    "campos": 0.9
+  },
+  "cv-base": {
+    "campos": 0.9
+  },
+  "recomendacion": {
+    "campos": 0.9
+  },
+  "cv": {
+    "campos": 0.9,
+    "cobertura_ats_media": 0.75
+  },
+  "respuestas": {
+    "campos": 0.9
+  }
+}

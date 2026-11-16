@@ -81,7 +81,7 @@ def test_harness_compara_campo_a_campo_y_deja_ejecucion_fechada(tmp_path):
     prov = ProveedorSimulado(_respuestas({"titulo": "A", "empresa": "X"},
                                          {"titulo": "B", "empresa": "MAL"}))
     metricas.vaciar()
-    res = correr_set("ofertas", raiz=tmp_path, proveedor=prov, umbral=0.9)
+    res = correr_set("ofertas", raiz=tmp_path, proveedor=prov)
     assert res["campos"]["titulo"] == 1.0
     assert res["campos"]["empresa"] == 0.5  # «MAL» no está en el texto: se descarta
     assert res["aprobado"] is False
@@ -92,8 +92,7 @@ def test_harness_compara_campo_a_campo_y_deja_ejecucion_fechada(tmp_path):
 def test_harness_aprueba_si_todo_coincide(tmp_path):
     _caso(tmp_path, "00", {"titulo": "A", "empresa": "X"})
     res = correr_set("ofertas", raiz=tmp_path,
-                     proveedor=ProveedorSimulado(_respuestas({"titulo": "A", "empresa": "x "})),
-                     umbral=0.9)
+                     proveedor=ProveedorSimulado(_respuestas({"titulo": "A", "empresa": "x "})))
     assert res["aprobado"] is True  # normaliza mayúsculas y espacios
 
 
