@@ -47,7 +47,8 @@ DOWNGRADE = """
 ALTER TABLE cv_base_versiones
     DROP CONSTRAINT cv_base_versiones_origen_check,
     ADD COLUMN candidatura_id integer REFERENCES candidaturas(id) ON DELETE SET NULL,
-    ADD CONSTRAINT cv_base_versiones_origen_check CHECK (origen IN ('candidatura', 'edicion', 'restauracion'));
+    ADD CONSTRAINT cv_base_versiones_origen_check
+        CHECK (origen IN ('candidatura', 'edicion', 'restauracion'));
 
 ALTER TABLE candidatura_eventos
     DROP CONSTRAINT candidatura_eventos_origen_check, DROP CONSTRAINT candidatura_eventos_tipo_check,

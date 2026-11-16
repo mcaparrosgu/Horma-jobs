@@ -190,7 +190,8 @@ def editar_cv_base(s: Session, cv_id: int, nombre: str | None, contenido: str | 
     """Cambia el nombre y/o el texto de un CV base ya hecho. El texto editado es de ella, no del modelo.
 
     Antes de sobrescribir guarda la versión que se va a sustituir en `cv_base_versiones` (RF-3.8d), en
-    la misma transacción. `origen` dice qué la sustituye: `edicion` manual o `restauracion`. Si no cambia nada, no se guarda versión."""
+    la misma transacción. `origen` dice qué la sustituye: `edicion` manual o `restauracion`.
+    Si no cambia nada, no se guarda versión."""
     actual = s.execute(text("select usuaria_id, nombre, contenido from cv_base "
                             "where id = :i and estado = 'hecho' for update"), {"i": cv_id}).mappings().first()
     if actual is None:
