@@ -45,6 +45,11 @@ class Ajustes(BaseSettings):
     # Fase 3: topes de construcción (USD); el de uso real se fija al medir el coste, antes de usuarias
     tope_coste_candidatura: float = 1.00
 
+    # Fase 4 · Límites de ritmo por minuto (RF-4.6d): login por IP; CV y candidaturas por usuaria
+    limite_login_por_minuto: int = 20
+    limite_cv_por_minuto: int = 10
+    limite_candidaturas_por_minuto: int = 10
+
     # Fase 4: implementación del flujo `candidatura` ("plain" o "langgraph")
     horma_flow_impl: str = "plain"
 

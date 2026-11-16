@@ -178,7 +178,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Cubre:** RF-4.5e, RT-07, RT-11.
 
 ### Bloque E · Salida segura (RF-4.6)
-- [ ] T15 — PWA.
+- [x] T15 — PWA. *(Hecha; falta la verificación de Mar: Lighthouse y móvil.)*
   - **Qué se hace:** manifest, iconos con la identidad del proyecto, `/sw.js` en la raíz,
     `offline.html` y la CSP con `manifest-src` y `worker-src`.
   - **Test:**
@@ -188,14 +188,14 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - el JS no usa `innerHTML`.
   - **Verificación de Mar:** Lighthouse marca la web como instalable y se instala en el móvil.
   - **Cubre:** RF-4.6.
-- [ ] T16 — Cabeceras, arranque en producción y `/salud`.
+- [x] T16 — Cabeceras, arranque en producción y `/salud`.
   - **Test:**
     - con `APP_ENV=produccion` salen HSTS y `Permissions-Policy`, y en desarrollo no sale HSTS;
     - la API no arranca con un `SESSION_SECRET` corto o del ejemplo, con una contraseña de la BD del
       ejemplo ni con un `GOOGLE_REDIRECT_URI` sin https;
     - `/salud` responde sin datos.
   - **Cubre:** RF-4.6b, RF-4.6c.
-- [ ] T17 — Límites de ritmo (`web/limites.py`).
+- [x] T17 — Límites de ritmo (`web/limites.py`).
   - **Qué se hace:** generalizar la ventana de `auth/claves.py` y aplicarla en el login, la subida de
     CV y la creación y reintento de candidaturas.
   - **Test:**
@@ -204,7 +204,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - `POST /ofertas` sigue igual;
     - los límites salen de `.env`.
   - **Cubre:** RF-4.6d.
-- [ ] T18 — Perfil de producción.
+- [x] T18 — Perfil de producción. *(Hecha; falta la verificación de Mar: `https://localhost`.)*
   - **Qué se hace:** `docker-compose.prod.yml`, `Caddyfile`, `.env.produccion.example` (y su excepción
     en `.gitignore`) y `uvicorn` con las cabeceras del proxy.
   - **Test:** `docker compose -f docker-compose.yml -f docker-compose.prod.yml config` no publica los

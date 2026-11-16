@@ -1,0 +1,7 @@
+# Proxy de producción (RF-4.6b): termina HTTPS y reenvía a la API, que no publica puertos.
+# HORMA_DOMINIO=localhost → Caddy usa su CA interna (HTTPS local con aviso del navegador).
+# Con un dominio real, Caddy pide y renueva el certificado solo.
+{$HORMA_DOMINIO:localhost} {
+	encode gzip
+	reverse_proxy api:8000
+}

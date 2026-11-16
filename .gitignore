@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.produccion.example
 
 # Python
 __pycache__/
@@ -54,3 +55,4 @@ docs/plan-pruebas-fase4.md
 
 # Brief de diseño del frontend (documento de trabajo, nunca se publica)
 docs/brief-frontend.md
+docs/prompt-claude-design-muestra.md
