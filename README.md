@@ -133,7 +133,9 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
   Los umbrales viven en `evals/umbrales.json` (no se rebajan desde la consola; `cv` exige además
   cobertura ATS media ≥ 0,75). `--flujo plain|langgraph` elige la implementación de `candidatura`.
 - CI: `calidad` corre tests, estilo y todos los evals en simulado en cada push; `evals-reales` mide el
-  modelo (langgraph, 1 USD por set) en cada PR a `main` y a mano, y falla si falta `ANTHROPIC_API_KEY`.
+  modelo (langgraph, 1 USD por set; `recomendacion` queda fuera hasta mejorar el `matcher`) en cada PR a
+  `main` y a mano, y falla si falta `ANTHROPIC_API_KEY`. `main` está protegida: solo se cambia con PR y
+  con `secretos`, `calidad` y `evals-reales` en verde.
 - `uv run horma eval importar-correccion --archivo caso.json`: enseña una corrección de la usuaria
   (se exporta desde la pantalla de recomendadas) y, solo si confirmas, la copia a
   `evals/recomendacion/casos/`. Nada entra en los evals sin pasar por aquí.
