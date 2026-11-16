@@ -21,6 +21,8 @@ dependencies = [
   "python-docx>=1.2.0",
   "python-multipart>=0.0.33",
   "fpdf2>=2.9.0",
+  "langgraph>=1.2.22",
+  "langgraph-checkpoint-postgres>=3.2.1",
 ]
 
 [project.scripts]
@@ -95,6 +97,14 @@ name = "La consola y el ingestor pasan por la API, nunca por la BD (RF-1.2)"
 type = "forbidden"
 source_modules = ["horma.cli", "horma.ingesta"]
 forbidden_modules = ["horma.web", "sqlalchemy", "psycopg"]
+
+[[tool.importlinter.contracts]]
+name = "Solo horma.flows.grafo importa langgraph (RT-12)"
+type = "forbidden"
+source_modules = ["horma"]
+forbidden_modules = ["langgraph"]
+ignore_imports = ["horma.flows.grafo -> langgraph"]
+allow_indirect_imports = true
 
 [tool.ruff.lint.per-file-ignores]
 "horma/cli.py" = ["B008"]

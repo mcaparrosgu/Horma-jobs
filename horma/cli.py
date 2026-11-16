@@ -10,7 +10,7 @@ import typer
 from horma.agents.registry import AGENTES
 from horma.config import ajustes
 from horma.flows.base import ErrorDePaso
-from horma.flows.registry import FLUJOS, RESULTADO
+from horma.flows.registry import FLUJOS, IMPLEMENTACIONES, RESULTADO, crear_flujo
 from horma.llm import SalidaInvalida
 from horma.llm.simulado import ProveedorSimulado
 
@@ -200,7 +200,11 @@ def flujo_correr(
             deps["resolver"] = None  # sin red
     else:
         _sin_clave_de_anthropic()
-    f = FLUJOS[nombre](**deps)
+    try:
+        f = crear_flujo(nombre, **deps)
+    except ValueError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(2) from e
     orden = f.pasos()
     if traza:
         traza.mkdir(parents=True, exist_ok=True)
@@ -222,6 +226,9 @@ def flujo_correr(
 def _correr_pasos(f, orden, estado, paso_a_paso, traza):
     paso, n = f.inicio, 0
     while paso is not None:
+        if paso in f.pausas:
+            typer.echo(f"En pausa: falta la aprobación (antes de «{paso}»).")
+            break
         n += 1
         antes = copy.deepcopy(estado)
         estado = f.run_step(paso, estado)
@@ -367,9 +374,16 @@ def correr_eval(
     tope_coste: float = typer.Option(1.0, help="Tope de coste por ejecución, en USD: al superarlo "
                                                "el eval se detiene (RF-2.17)."),
     raiz: Path = typer.Option(Path("evals"), help="Carpeta de evals."),
+    flujo_impl: str | None = typer.Option(None, "--flujo", help="Implementación del flujo `candidatura` "
+                                          "(plain o langgraph); por defecto, HORMA_FLOW_IMPL."),
 ) -> None:
     """Corre un set de evals y deja la ejecución en evals/resultados/."""
     from horma.evals import SETS, correr_set
+
+    if flujo_impl is not None and flujo_impl not in IMPLEMENTACIONES:
+        typer.echo(f"--flujo desconocido: «{flujo_impl}». Valores válidos: {', '.join(IMPLEMENTACIONES)}.",
+                   err=True)
+        raise typer.Exit(2)
 
     if conjunto not in SETS:
         typer.echo(f"Set desconocido: {conjunto}", err=True)
@@ -377,7 +391,7 @@ def correr_eval(
     if not simulado:
         _sin_clave_de_anthropic()
     res = correr_set(conjunto, raiz=raiz, umbral=umbral, solo=solo, simulado=simulado,
-                     tope_coste=tope_coste)
+                     tope_coste=tope_coste, flujo=flujo_impl)
     for campo, valor in res["campos"].items():
         typer.echo(f"{campo:<30}{valor:.2f}")
     typer.echo(f"{'adversarias':<30}{res['adversarias']:.2f}")

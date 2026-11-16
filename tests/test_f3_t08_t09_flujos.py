@@ -3,13 +3,28 @@ simulada) (RF-3.1, RF-3.1b, RF-3.3, RF-3.5, RF-3.6c, RF-3.9, RT-07, RT-12)."""
 import pytest
 
 from horma.flows.base import ErrorDePaso, Flow
-from horma.flows.candidatura import crear as crear_candidatura
 from horma.flows.clasificar_respuesta import crear as crear_clasificar
-from horma.flows.registry import FLUJOS, RESULTADO
+from horma.flows.registry import FLUJOS, IMPLEMENTACIONES, RESULTADO, crear_flujo
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.candidatura import TEXTOS_ERROR, TEXTOS_PROBLEMA, EstadoCandidatura
 from horma.schemas.oferta import Auditoria, Oferta
 from horma.schemas.taxonomia import Taxonomia
+
+_IMPL = "plain"
+
+
+def crear_candidatura(proveedor=None):
+    return crear_flujo("candidatura", _IMPL, proveedor=proveedor)
+
+
+@pytest.fixture(autouse=True, params=IMPLEMENTACIONES)
+def _implementacion(request):
+    """Toda la suite corre con las dos implementaciones del flujo (fase 4, RF-4.2)."""
+    global _IMPL
+    _IMPL = request.param
+    yield
+    _IMPL = "plain"
+
 
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
        "stack": ["tpv"]}
@@ -78,7 +93,7 @@ def test_el_flujo_esta_en_el_registro():
 
 def test_cumple_la_interfaz_flow_y_tiene_los_pasos_del_plan():
     flujo = crear_candidatura(proveedor=ProveedorSimulado([]))
-    assert isinstance(flujo, Flow) and flujo.pasos() == PASOS
+    assert isinstance(flujo, Flow) and flujo.pasos() == [*PASOS, "entregar"]
 
 
 def test_sin_problemas_son_3_llamadas_y_termina_en_lista():
