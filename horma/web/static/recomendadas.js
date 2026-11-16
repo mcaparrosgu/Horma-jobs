@@ -194,7 +194,7 @@ function filaOferta(o) {
 function pintarFiltros() {
   $("grupos").replaceChildren(...GRUPOS.map(([clave, titulo]) =>
     grupoCasillas(clave, titulo, opciones.grupos[clave] || [], guardadas[clave] || [],
-                  { plegable: true, alCambiar: cambioDeFiltro })));
+                  { plegable: true })));
   $("solo-remoto").checked = guardadas.solo_remoto;
   $("solo-salario").checked = guardadas.solo_salario;
   $("sueldo-minimo").value = guardadas.sueldo_minimo === null ? "" : guardadas.sueldo_minimo;
@@ -214,11 +214,6 @@ function leerFiltros() {
   p.rango_min = Number($("rango-min").value === "" ? 0 : $("rango-min").value);
   p.rango_max = Number($("rango-max").value === "" ? 100 : $("rango-max").value);
   return p;
-}
-
-function cambioDeFiltro() {
-  clearTimeout(esperaFiltro);
-  esperaFiltro = setTimeout(aplicarFiltros, 400);
 }
 
 async function aplicarFiltros() {
@@ -243,6 +238,7 @@ async function cargarLista() {
   const n = total === 1 ? "1 oferta" : `${total} ofertas`;
   $("contador").textContent = pendientes ? `${n} · ${pendientes} sin puntuar` : n;
   $("recomendar").disabled = pendientes === 0;
+  if (pendientes === 0) $("recomendar").classList.remove("ocupado");
   return pendientes;
 }
 
@@ -259,6 +255,7 @@ async function sondear() {
 
 $("recomendar").addEventListener("click", async () => {
   $("recomendar").disabled = true;
+  $("recomendar").classList.add("ocupado");
   avisar("Puntuando lo que falta… se actualizará sola.");
   const r = await api("/api/recomendar", { metodo: "POST" });
   if (!r.ok) {
@@ -269,10 +266,13 @@ $("recomendar").addEventListener("click", async () => {
   sondeo = setTimeout(sondear, 3000);
 });
 
-$("filtros").addEventListener("submit", (e) => e.preventDefault());
-for (const id of ["solo-remoto", "solo-salario", "sueldo-minimo", "orden", "rango-min", "rango-max"]) {
-  $(id).addEventListener("change", cambioDeFiltro);
-}
+// Los filtros solo se aplican al pulsar «Buscar» (o Intro en un campo).
+$("filtros").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("buscar").disabled = true;
+  await aplicarFiltros();
+  $("buscar").disabled = false;
+});
 
 (async () => {
   if (!(await arrancar("/recomendadas"))) return;

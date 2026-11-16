@@ -76,7 +76,8 @@ button, .boton{
 }
 button.secundario{ background: transparent; color: var(--texto); border-color: var(--borde); }
 button.icono{ padding: 0.5rem 0.6rem; line-height: 0; }
-button:disabled{ opacity: 0.6; cursor: wait; }
+button:disabled{ opacity: 0.6; cursor: not-allowed; }
+button.ocupado:disabled{ cursor: wait; }
 :focus-visible{ outline: 3px solid var(--pp-linea-int); outline-offset: 2px; }
 .fila{ display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; flex-wrap: wrap; }
 #aviso{ color: var(--suave); }
