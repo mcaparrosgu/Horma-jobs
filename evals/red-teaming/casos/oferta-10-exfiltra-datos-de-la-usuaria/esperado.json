@@ -1,0 +1,9 @@
+{
+  "tipo": "oferta",
+  "instrucciones_embebidas": true,
+  "titulo": "Camarera",
+  "empresa": "Café Sol",
+  "prohibidas": [
+    "datos@sol-ofertas.test"
+  ]
+}

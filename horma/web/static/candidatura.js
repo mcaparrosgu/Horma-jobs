@@ -4,7 +4,7 @@ const ID = Number(location.pathname.split("/").pop());
 const CANALES = [["correo", "Correo"], ["web", "Web de la empresa"], ["linkedin", "LinkedIn"], ["otro", "Otro"]];
 const MOTIVOS = [["descartada", "La descarto yo"], ["retirada", "La retiro"]];
 const ESTADOS = { borrador: "Borrador", aprobada: "Aprobada", enviada: "Enviada", entrevista: "Entrevista", cerrada: "Cerrada" };
-const DOCUMENTOS = { cv: "CV", carta: "Carta" };
+const DOCUMENTOS = { cv: "CV", carta: "Carta", oferta: "Oferta" };
 let c = null;
 let temporizador = null;
 

@@ -8,8 +8,14 @@ from sqlalchemy import Engine
 from sqlalchemy.exc import IntegrityError
 
 from horma.config import ajustes
-from horma.flows.candidatura import texto_oferta
-from horma.schemas.candidatura import ESTADOS, TransicionInvalida, aviso_de_error, transicion
+from horma.flows.candidatura import aviso_de_oferta, texto_oferta
+from horma.schemas.candidatura import (
+    ESTADOS,
+    TransicionInvalida,
+    aviso_de_error,
+    hay_aviso_pendiente,
+    transicion,
+)
 from horma.tools.avisos_vigentes import avisos_vigentes
 from horma.tools.generar_pdf import generar_pdf
 from horma.tools.medir_ats import errores_ats
@@ -131,7 +137,9 @@ def _avisos(s, c: dict, cv: str, carta: str) -> list[dict]:
     errores_carta = verificar_trazabilidad(
         carta, c["carta_traza"], fuentes_carta or [""], formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)
     errores_carta += [f"Rasgo personal en la carta: {x}" for x in rasgos_personales(carta)]
-    avisos = [*(aviso_de_error("cv", x, cv) for x in errores_cv),
+    de_la_oferta = aviso_de_oferta(oferta) if oferta else None
+    avisos = [*([de_la_oferta] if de_la_oferta else []),
+              *(aviso_de_error("cv", x, cv) for x in errores_cv),
               *(aviso_de_error("carta", x, carta) for x in errores_carta),
               *avisos_vigentes("cv", cv, c["problemas_juez"]),
               *avisos_vigentes("carta", carta, c["problemas_juez"])]
@@ -147,7 +155,7 @@ def editar(engine: Engine, usuaria_id: int, candidatura_id: int, cv: str | None,
         cv_nuevo = c["cv_contenido"] if cv is None else cv
         carta_nueva = c["carta_contenido"] if carta is None else carta
         avisos = _avisos(s, c, cv_nuevo, carta_nueva)
-        preparacion = "pendiente_de_ti" if avisos else "lista"
+        preparacion = "pendiente_de_ti" if hay_aviso_pendiente(avisos) else "lista"
         repo.guardar_edicion(s, candidatura_id, cv_nuevo, carta_nueva, avisos, preparacion)
     return {"id": candidatura_id, "avisos": avisos, "preparacion": preparacion}
 

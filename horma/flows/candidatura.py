@@ -27,7 +27,15 @@ from horma.flows.base import Decision, Paso
 from horma.flows.grafo import LangGraphFlow
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
-from horma.schemas.candidatura import EstadoCandidatura, Problema, aviso_de_error
+from horma.llm.vigilancia import senales_entrada
+from horma.schemas.candidatura import (
+    TEXTO_AVISO_OFERTA,
+    Aviso,
+    EstadoCandidatura,
+    Problema,
+    aviso_de_error,
+    hay_aviso_pendiente,
+)
 from horma.schemas.oferta import Oferta
 from horma.tools.avisos_vigentes import avisos_vigentes
 from horma.tools.elegir_cv_base import elegir_cv_base
@@ -45,6 +53,15 @@ def texto_oferta(oferta: Oferta) -> str:
     partes = [oferta.titulo, oferta.empresa, oferta.ubicacion, oferta.contrato, *oferta.idiomas,
               *oferta.requisitos, *oferta.taxonomia.stack]
     return "\n".join(p for p in partes if p)
+
+
+def aviso_de_oferta(oferta: Oferta) -> Aviso | None:
+    """Aviso fijo si la oferta tiene señales de manipulación (RF-4.5b): por su texto o porque la
+    auditoría de la fase 1 ya encontró instrucciones embebidas. Solo informa; no cambia nada más."""
+    texto = "\n".join([texto_oferta(oferta), *oferta.instrucciones_embebidas])
+    if oferta.instrucciones_embebidas or senales_entrada(texto):
+        return Aviso(documento="oferta", mensaje=TEXTO_AVISO_OFERTA)
+    return None
 
 
 def _sumar(e: dict, nuevas: list[str]) -> None:
@@ -171,13 +188,15 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
                     for p in e["ausentes_sin_origen"] if p.casefold() not in vistos)]
         e["huecos"] = list({h["requisito"].casefold(): h for h in huecos}.values())
         errores_del_cv = [*e["errores_formato"], *e["errores_cv"]]
-        avisos = [*(aviso_de_error("cv", x, e["cv_contenido"]) for x in errores_del_cv),
+        de_la_oferta = aviso_de_oferta(Oferta.model_validate(e["oferta"]))
+        avisos = [*([de_la_oferta] if de_la_oferta else []),
+                  *(aviso_de_error("cv", x, e["cv_contenido"]) for x in errores_del_cv),
                   *(aviso_de_error("carta", x, e["carta_contenido"]) for x in e["errores_carta"]),
                   *avisos_vigentes("cv", e["cv_contenido"], e["problemas_juez"]),
                   *avisos_vigentes("carta", e["carta_contenido"], e["problemas_juez"])]
         e["avisos"] = [a.model_dump(mode="json") for a in
                        {(a.documento, a.frase, a.mensaje): a for a in avisos}.values()]
-        e["preparacion"] = "pendiente_de_ti" if e["avisos"] else "lista"
+        e["preparacion"] = "pendiente_de_ti" if hay_aviso_pendiente(e["avisos"]) else "lista"
         validar(e)
         return e
 
