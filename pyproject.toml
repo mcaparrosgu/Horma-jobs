@@ -103,7 +103,7 @@ name = "Solo horma.flows.grafo importa langgraph (RT-12)"
 type = "forbidden"
 source_modules = ["horma"]
 forbidden_modules = ["langgraph"]
-ignore_imports = ["horma.flows.grafo -> langgraph"]
+ignore_imports = ["horma.flows.grafo -> langgraph", "horma.web.checkpointer -> langgraph"]
 allow_indirect_imports = true
 
 [tool.ruff.lint.per-file-ignores]

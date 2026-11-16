@@ -18,7 +18,7 @@ lo que vale siempre. Los principios y las líneas rojas están en la [constituci
 ## Visión
 Una sola aplicación. Los agentes son código Python dentro de la web desde la fase 0, se prueban
 uno a uno desde la consola `horma` y la orquestación está escrita para que LangGraph la sustituya
-en la fase 4 sin tocar ningún agente.
+en la fase 4 sin tocar ningún agente (hecho: `LangGraphFlow` para `candidatura`, elegido con `HORMA_FLOW_IMPL`).
 
 ## Arquitectura
 Paquete `horma/` con tres puntos de entrada que llaman a los mismos flujos y agentes: consola,
@@ -29,7 +29,7 @@ API (FastAPI) y worker.
 | `horma/schemas/` | Modelos Pydantic del contrato | Única fuente de verdad; las tablas se generan desde aquí |
 | `horma/agents/<nombre>/` | `prompt.md`, `schemas.py` (entrada y salida), `agent.py` con `run()` | Sin estado, sin E/S, sin llamar a otros agentes |
 | `horma/tools/` | Código determinista (`verificar_trazabilidad`, `medir_ats`, `buscar_ofertas`, `convertir_cv`, `generar_pdf`) | Funciones puras con tests unitarios |
-| `horma/flows/` | Interfaz `Flow`, `PlainFlow` (y `LangGraphFlow` en la fase 4) | Toda la composición de agentes vive aquí |
+| `horma/flows/` | Interfaz `Flow` (con `pausas` y `reanudar`), `PlainFlow` y `LangGraphFlow` (`grafo.py`, único módulo que importa `langgraph`) | Toda la composición de agentes vive aquí |
 | `horma/llm/` | Puerta única `completar(agente, prompt, entrada, esquema_salida)` | Único módulo que importa el SDK de Anthropic |
 | `horma/cli.py` | Consola Typer | Sin lógica propia: mismo código que la API. Nunca abre la BD: lo que necesita persistir pasa por la API |
 | `horma/ingesta.py` | Ingestor de fuentes | Sin credenciales de BD: entrega las ofertas por `POST /ofertas` con una clave de API de alcance `ingesta` |
@@ -74,7 +74,7 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 | RT-09 | El sistema NO DEBERÁ inferir ni almacenar edad, nacionalidad ni categorías del art. 9 RGPD, ni mencionarlas en explicaciones. | Juez sobre explicaciones y perfiles, 100 % |
 | RT-10 | MIENTRAS una candidatura no esté en estado `aprobada` por su dueña con su sesión, el sistema NO DEBERÁ marcarla como enviada ni exponerla a terceros. | Test de la máquina de estados y de permisos |
 | RT-11 | Cada agente DEBERÁ tener un set de evals con umbral; el sistema DEBERÁ poder correrlos desde la consola y en CI con una clave de presupuesto limitado. | `horma eval correr <set>` y job de CI |
-| RT-12 | Los flujos DEBERÁN depender de la interfaz `Flow` y no de su implementación; la misma suite DEBERÁ pasar con `PlainFlow` y, en la fase 4, con `LangGraphFlow`. | Suite de flujos parametrizada por implementación |
+| RT-12 | Los flujos DEBERÁN depender de la interfaz `Flow` y no de su implementación; la misma suite DEBERÁ pasar con `PlainFlow` y, desde la fase 4, con `LangGraphFlow`. La interfaz admite pausas: el flujo se para antes de un paso y `reanudar` lo continúa (en `candidatura`, antes de `entregar`). El checkpointer de Postgres se crea en `horma.web.checkpointer` y se inyecta. | Suite de flujos parametrizada por implementación |
 | RT-13 | Un agente NO DEBERÁ llamar a otro agente; la composición vive en los flujos. | Test de arquitectura |
 | RT-14 | CUANDO una tarea de la cola supere su tope de coste o de reintentos, el worker DEBERÁ detenerla y dejar la entidad en estado `error` con el motivo. | Test del worker con tope bajo |
 

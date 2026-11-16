@@ -97,6 +97,18 @@ def fue_aprobada(s: Session, candidatura_id: int) -> bool:
                      {"i": candidatura_id}).first() is not None
 
 
+def guardar_pdfs(s: Session, candidatura_id: int, cv_pdf: bytes, carta_pdf: bytes) -> None:
+    """Los PDF con el texto aprobado y cuándo se entregaron: desde aquí las descargas no cambian (RF-4.3b)."""
+    s.execute(text("update candidaturas set cv_pdf = :cv, carta_pdf = :ca, entregada_en = now() "
+                   "where id = :i"), {"i": candidatura_id, "cv": cv_pdf, "ca": carta_pdf})
+
+
+def pdf_guardado(s: Session, candidatura_id: int, cual: str) -> bytes | None:
+    col = "cv_pdf" if cual == "cv" else "carta_pdf"
+    v = s.execute(text(f"select {col} from candidaturas where id = :i"), {"i": candidatura_id}).scalar()
+    return bytes(v) if v is not None else None
+
+
 def reiniciar_preparacion(s: Session, candidatura_id: int) -> None:
     s.execute(text("update candidaturas set preparacion = 'en_curso', motivo_error = null, "
                    "actualizado_en = now() where id = :i"), {"i": candidatura_id})

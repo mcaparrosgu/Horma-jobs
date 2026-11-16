@@ -71,7 +71,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Cubre:** RF-4.1b, RF-4.2.
 
 ### Bloque B · Pausa y entrega (RF-4.3)
-- [ ] T05 — Migración 0008 y checkpointer.
+- [x] T05 — Migración 0008 y checkpointer.
   - **Qué se hace:**
     - `candidaturas`: `cv_pdf`, `carta_pdf` y `entregada_en`;
     - `llm_llamadas.senales_entrada`;
@@ -85,7 +85,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - la RLS de `candidaturas` no cambia (una usuaria no lee las de otra);
     - `alertas` no la lee una sesión que no es de admin.
   - **Cubre:** RF-4.3, RF-4.3e, RF-4.7b.
-- [ ] T06 — Worker con hilo.
+- [x] T06 — Worker con hilo.
   - **Qué se hace:** el worker corre `candidatura` con `hilo=f"candidatura-{id}"` y el checkpointer de
     Postgres (con `langgraph`), y «Reintentar» borra el hilo antes de encolar.
   - **Test:**
@@ -94,7 +94,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - reintentar empieza de cero: no reutiliza la vuelta anterior;
     - con `plain`, todo sigue como antes.
   - **Cubre:** RF-4.3.
-- [ ] T07 — Aprobar reanuda y descargas fijas.
+- [x] T07 — Aprobar reanuda y descargas fijas.
   - **Qué se hace:** `services.aprobar` hace la transición y después reanuda con el texto de la fila,
     guarda los PDF y `entregada_en` y borra el hilo. `documento_pdf` sirve lo guardado. `cerrar` borra
     el hilo.
@@ -107,7 +107,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - ningún texto de la oferta reanuda;
     - cerrar en `borrador` borra el hilo.
   - **Cubre:** RF-4.3b a RF-4.3f, RT-10.
-- [ ] T08 — Consola con pausa.
+- [x] T08 — Consola con pausa.
   - **Qué se hace:** `flujo correr candidatura` se para en la pausa y lo dice; `--aprobar` sigue con
     `entregar` y guarda los PDF en `--traza`. Se pasa la implementación por defecto a `langgraph` en
     `.env.example`.

@@ -1,6 +1,7 @@
 """Servicio de candidaturas (fase 3): crear, editar, reintentar, aprobar, transiciones y PDF. Solo la
 dueña toca su candidatura (RLS «propia»: para las demás no existe). Ninguna operación llama al modelo
 salvo encolar `candidatura` (crear y reintentar)."""
+import logging
 from datetime import date
 
 from sqlalchemy import Engine
@@ -14,10 +15,13 @@ from horma.tools.generar_pdf import generar_pdf
 from horma.tools.medir_ats import errores_ats
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_trazabilidad
+from horma.web import checkpointer
 from horma.web.db import sesion_de
 from horma.web.repositories import candidaturas as repo
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles, tareas
+
+log = logging.getLogger("horma.candidaturas")
 
 
 class ErrorCandidatura(Exception):
@@ -101,7 +105,8 @@ def detalle(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
         if f is None:
             raise ErrorCandidatura(404, "No existe esa candidatura")
         eventos = repo.eventos(s, candidatura_id)
-    union = ("oferta_titulo", "oferta_empresa", "cv_base_nombre", "cv_base_desfasado")
+    union = ("oferta_titulo", "oferta_empresa", "cv_base_nombre", "cv_base_desfasado", "cv_pdf",
+             "carta_pdf")
     return {**{k: v for k, v in f.items() if k not in union},
             "oferta": {"id": f["oferta_id"], "titulo": f["oferta_titulo"], "empresa": f["oferta_empresa"]},
             "cv_base": ({"id": f["cv_base_id"], "nombre": f["cv_base_nombre"],
@@ -149,14 +154,39 @@ def editar(engine: Engine, usuaria_id: int, candidatura_id: int, cv: str | None,
 
 # --- aprobar y transiciones --------------------------------------------------------------------
 def aprobar(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
-    """Los avisos no bloquean: pulsar «Aprobar y descargar» cuenta como haberlos revisado (RF-3.8a)."""
+    """Los avisos no bloquean: pulsar «Aprobar y descargar» cuenta como haberlos revisado (RF-3.8a).
+    Primero se guarda la aprobación; después se reanuda el flujo (`entregar`) con el texto de la fila y se
+    guardan los PDF. Si la reanudación falla, la aprobación sigue en pie y las descargas generan el PDF al
+    momento (RF-4.3d)."""
     with sesion_de(engine, usuaria_id) as s:
         c = _cargar(s, candidatura_id)
         _en_borrador(c)
         _preparada(c)
         _transicionar(s, usuaria_id, c, "aprobada")
         repo.aprobar(s, candidatura_id)
+        oferta = repo_ofertas.completas(s, [c["oferta_id"]]).get(c["oferta_id"])
+    _entregar(engine, usuaria_id, c, oferta)
     return {"id": candidatura_id, "estado": "aprobada"}
+
+
+def _entregar(engine: Engine, usuaria_id: int, c: dict, oferta) -> None:
+    """Reanuda con el texto de la fila (lo que la usuaria aprobó) y guarda los PDF. Nunca rompe la
+    aprobación; en el log solo quedan el paso y el tipo del error, sin texto."""
+    cid = c["id"]
+    try:
+        textos = {"cv_contenido": c["cv_contenido"], "carta_contenido": c["carta_contenido"]}
+        estado = {**textos, "oferta": oferta.model_dump(mode="json") if oferta else {},
+                  "en_pausa": "entregar"}
+        r = checkpointer.flujo_candidatura(engine).reanudar(checkpointer.hilo_de(cid), textos, estado=estado)
+        with sesion_de(engine, usuaria_id) as s:
+            repo.guardar_pdfs(s, cid, r["cv_pdf"], r["carta_pdf"])
+    except Exception as e:  # noqa: BLE001 - la aprobación ya está guardada
+        paso = getattr(e, "paso", "entregar")
+        causa = getattr(e, "causa", e)
+        log.warning("candidatura %s: falló la entrega en el paso %s (%s); los PDF se generan al descargar",
+                    cid, paso, type(causa).__name__)
+    finally:
+        checkpointer.borrar_hilo(engine, cid)
 
 
 def reintentar(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
@@ -171,6 +201,7 @@ def reintentar(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
         repo.reiniciar_preparacion(s, candidatura_id)
         tarea = tareas.encolar(s, usuaria_id, "candidatura", candidatura_id, a.tope_coste_candidatura,
                                a.tope_reintentos_tarea)
+    checkpointer.borrar_hilo(engine, candidatura_id)  # empieza de cero, sin la vuelta anterior
     return {"id": candidatura_id, "tarea_id": tarea}
 
 
@@ -198,6 +229,7 @@ def cerrar(engine: Engine, usuaria_id: int, candidatura_id: int, motivo: str) ->
         c = _cargar(s, candidatura_id)
         _transicionar(s, usuaria_id, c, "cerrada", motivo=motivo)
         repo.cambiar_estado(s, candidatura_id, "cerrada", motivo)
+    checkpointer.borrar_hilo(engine, candidatura_id)
     return {"id": candidatura_id, "estado": "cerrada", "motivo_cierre": motivo}
 
 
@@ -210,8 +242,11 @@ def documento_pdf(engine: Engine, usuaria_id: int, candidatura_id: int, cual: st
             raise ErrorCandidatura(404, "No existe esa candidatura")
         aprobada = c["estado"] in ("aprobada", "enviada", "entrevista") or (
             c["estado"] == "cerrada" and repo.fue_aprobada(s, candidatura_id))
+        guardado = repo.pdf_guardado(s, candidatura_id, cual) if aprobada else None
     if not aprobada:
         raise ErrorCandidatura(403, "Los PDF se pueden descargar cuando apruebas la candidatura.")
+    if guardado is not None:
+        return guardado
     texto = c["cv_contenido"] if cual == "cv" else c["carta_contenido"]
     titulo = f"{'CV' if cual == 'cv' else 'Carta de presentación'} · {c['oferta_titulo'] or 'oferta'}"
     return generar_pdf(texto, titulo)

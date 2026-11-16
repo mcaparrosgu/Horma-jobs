@@ -83,5 +83,6 @@ def bd_limpia(motor_migrador):
         c.execute(text("TRUNCATE origen, ofertas, tareas, llm_llamadas, usuarias, fuentes, "
                        "calificaciones_fuente, ejecuciones_ingesta, claves_api, cv_archivos, perfiles, "
                        "preferencias, cv_base, matches, candidaturas, candidatura_eventos, "
-                       "cv_base_versiones RESTART IDENTITY CASCADE"))
+                       "cv_base_versiones, alertas, checkpoints, checkpoint_blobs, checkpoint_writes "
+                       "RESTART IDENTITY CASCADE"))
         sembrar_fuentes(c)

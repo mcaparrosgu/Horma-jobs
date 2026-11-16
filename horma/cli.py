@@ -110,8 +110,15 @@ def flujo_listar() -> None:
         typer.echo(f"{nombre}: {' → '.join(fabrica(proveedor=ProveedorSimulado([])).pasos())}")
 
 
+def _serializar(valor):
+    """Los bytes (PDF) no caben en JSON: se dejan como su tamaño."""
+    if isinstance(valor, bytes):
+        return f"<{len(valor)} bytes>"
+    raise TypeError(f"no se puede serializar {type(valor).__name__}")
+
+
 def _resumen(valor) -> str:
-    texto = json.dumps(valor, ensure_ascii=False)
+    texto = json.dumps(valor, ensure_ascii=False, default=_serializar)
     return texto if len(texto) <= 240 else texto[:237] + "…"
 
 
@@ -175,6 +182,8 @@ def flujo_correr(
                                                    "[...]}) para no usar la API."),
     paso_a_paso: bool = typer.Option(False, "--paso-a-paso", help="Pausa tras cada paso."),
     traza: Path | None = typer.Option(None, help="Carpeta donde guardar cada paso como JSON."),
+    aprobar: bool = typer.Option(False, "--aprobar", help="Flujos con pausa (`candidatura`): sigue con "
+                                                          "`entregar` y, con --traza, guarda los dos PDF."),
     salida: Path | None = typer.Option(None, help="Archivo donde guardar el resultado."),
     simulado: bool = typer.Option(False, help="No llama al modelo ni a la red: usa --respuestas."),
     respuestas: Path | None = typer.Option(None, help="JSON con la lista de respuestas simuladas."),
@@ -205,6 +214,9 @@ def flujo_correr(
     except ValueError as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(2) from e
+    if aprobar and not f.pausas:
+        typer.echo(f"--aprobar solo vale en flujos con pausa; «{nombre}» no tiene ninguna.", err=True)
+        raise typer.Exit(2)
     orden = f.pasos()
     if traza:
         traza.mkdir(parents=True, exist_ok=True)
@@ -212,7 +224,7 @@ def flujo_correr(
 
     try:
         with capturar() as llamadas:
-            estado = _correr_pasos(f, orden, estado, paso_a_paso, traza)
+            estado = _correr_pasos(f, orden, estado, paso_a_paso, traza, aprobar)
     except ErrorDePaso as e:
         typer.echo(f"Falló el {e}", err=True)
         raise typer.Exit(1) from e
@@ -223,11 +235,11 @@ def flujo_correr(
     typer.echo(resultado)
 
 
-def _correr_pasos(f, orden, estado, paso_a_paso, traza):
+def _correr_pasos(f, orden, estado, paso_a_paso, traza, aprobar=False):
     paso, n = f.inicio, 0
     while paso is not None:
-        if paso in f.pausas:
-            typer.echo(f"En pausa: falta la aprobación (antes de «{paso}»).")
+        if paso in f.pausas and not aprobar:
+            typer.echo(f"En pausa: falta la aprobación (antes de «{paso}»). Con --aprobar sigue.")
             break
         n += 1
         antes = copy.deepcopy(estado)
@@ -241,12 +253,26 @@ def _correr_pasos(f, orden, estado, paso_a_paso, traza):
         if traza:
             (traza / f"{n:02d}-{paso}.json").write_text(json.dumps(
                 {"paso": paso, "entrada": antes, "salida": estado}, ensure_ascii=False,
-                indent=2), encoding="utf-8")
+                indent=2, default=_serializar), encoding="utf-8")
         paso = f.siguiente(paso, estado)
         if paso_a_paso and paso is not None:
             typer.prompt("  Enter para seguir", default="", show_default=False,
                          prompt_suffix="")
+    if aprobar:
+        _guardar_pdfs(estado, traza)
     return estado
+
+
+def _guardar_pdfs(estado: dict, traza: Path | None) -> None:
+    """Tras `entregar`: los dos PDF van a la carpeta de la traza (datos de prueba, no de usuarias)."""
+    if not (estado.get("cv_pdf") and estado.get("carta_pdf")):
+        return
+    if traza is None:
+        typer.echo("Aprobada, pero sin --traza no hay dónde guardar los PDF.", err=True)
+        return
+    (traza / "cv.pdf").write_bytes(estado["cv_pdf"])
+    (traza / "carta.pdf").write_bytes(estado["carta_pdf"])
+    typer.echo(f"PDF guardados en {traza} (cv.pdf y carta.pdf).")
 
 
 # --- ingesta y fuentes (por la API: la consola no tiene credenciales de la BD) -----------------
