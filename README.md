@@ -92,6 +92,13 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
    (ver Consola).
 4. Puerta de salida: `horma eval correr cv` y `respuestas` con el modelo real (tope de 1 USD, solo de construcción).
 
+### Fase 4 (en construcción): pausa y entrega
+1. `uv run alembic upgrade head` aplica la migración 0008 (PDF guardados, señales de entrada, alertas y las
+   tablas donde LangGraph guarda la pausa).
+2. `HORMA_FLOW_IMPL=langgraph` en `.env` activa el flujo con pausa: el worker prepara CV y carta y se para
+   antes de `entregar`; al aprobar se reanuda y los PDF quedan fijos. Con `plain` (valor por defecto del
+   código) todo funciona como en la fase 3, y los PDF se generan al descargar.
+
 ## Consola
 
 - `uv run horma agente listar` · `uv run horma agente correr <agente> --entrada x [--salida y]`
@@ -109,9 +116,10 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
   `--ofertas` pide el catálogo común a `GET /api/catalogo` con `HORMA_CLAVE_INGESTA`.
 - `uv run horma agente correr extractor-perfil|clasificador-postulante|generador-cv-base|matcher
   --entrada x.json`: cada agente nuevo por separado.
-- `uv run horma flujo correr candidatura --usuaria ana --oferta <id> [--ofertas catalogo.json]
+- `uv run horma flujo correr candidatura --usuaria ana --oferta <id> [--aprobar] [--ofertas catalogo.json]
   [--paso-a-paso --traza trazas/]`: prepara CV y carta en local con la usuaria de prueba
   `evals/cv/usuarias/ana` y una oferta del catálogo (sin `--ofertas`, de `GET /api/catalogo`); no guarda nada.
+  Se para en la pausa; con `--aprobar` sigue con `entregar` y, con `--traza`, guarda `cv.pdf` y `carta.pdf`.
 - `uv run horma flujo correr clasificar_respuesta --entrada r.json`: `r.json` = `{"texto": "…",
   "estado_actual": "enviada"}`; enseña la etiqueta y la transición propuesta.
 - `uv run horma agente correr redactor-cv|redactor-carta|juez-candidatura|clasificador-respuesta

@@ -17,7 +17,6 @@ from sqlalchemy import Engine
 
 from horma.flows import (
     calificar_fuente,
-    candidatura,
     clasificar_perfil,
     generar_cv_base,
     perfilar,
@@ -32,6 +31,7 @@ from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.tools import descargar, dominio
 from horma.tools.buscar_ofertas import buscar_ofertas
+from horma.web import checkpointer
 from horma.web.db import motor, sesion_de, sesion_sistema
 from horma.web.queue import cola
 from horma.web.repositories import candidaturas as repo_candidaturas
@@ -49,6 +49,8 @@ class Dependencias:
     proveedor: Proveedor | None
     resolver: dominio.Resolvedor | None
     descargador: descargar.Descargador
+    engine: Engine | None = None
+    entidad_id: int | None = None
 
 
 class _ProcesarOferta:
@@ -199,7 +201,10 @@ class _Candidatura:
                 "cvs_base": repo_candidaturas.cv_base_para_flujo(s)}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return candidatura.crear(proveedor=d.proveedor).run(estado)
+        """Corre hasta la pausa (antes de `entregar`). Con `langgraph` el estado queda en el hilo de la
+        candidatura hasta que se aprueba o se cierra (RF-4.3)."""
+        flujo = checkpointer.flujo_candidatura(d.engine, proveedor=d.proveedor)
+        return flujo.run(estado, hilo=checkpointer.hilo_de(d.entidad_id))
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_candidaturas.guardar_preparacion(s, tarea["entidad_id"], estado["perfil_version"], estado)
@@ -236,7 +241,8 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
                 raise ValueError(f"tipo de tarea desconocido: {tarea['tipo']}")
             with sesion() as s:
                 entrada = manejador.cargar(s, tarea)
-            estado = manejador.ejecutar(entrada, Dependencias(proveedor, resolver, descargador))
+            deps = Dependencias(proveedor, resolver, descargador, engine, tarea["entidad_id"])
+            estado = manejador.ejecutar(entrada, deps)
         except Exception as e:  # noqa: BLE001 - cualquier fallo cuenta como intento fallido
             error = e
     coste = float(sum(ll.coste for ll in llamadas))
