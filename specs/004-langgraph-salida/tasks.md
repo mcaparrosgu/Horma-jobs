@@ -274,5 +274,8 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - Una cuenta SMTP para las alertas (T22). Sin ella funcionan la pantalla y el log.
 - Prueba manual del bloque B, instalación de la PWA (T15), HTTPS en local (T18), la prueba final (T24)
   y la firma de la revisión de líneas rojas (T23).
+- **Después del bloque G, antes de dar la fase por cerrada:** la prueba final de Mar (T24, plan en
+  `docs/plan-pruebas-fase4.md`) y su firma de `docs/revision-lineas-rojas.md` (T23). Acordado el 16-nov:
+  no bloquean la fusión del PR del bloque G.
 - Después del bloque G: probar `/costes` en navegador y móvil, y el correo de alertas con una cuenta SMTP
   real (T21, T22).
