@@ -396,7 +396,6 @@ def correr_eval(
     solo: str | None = typer.Option(None, help="Correr un solo caso."),
     simulado: bool = typer.Option(False, help="Cada caso responde con su esperado: solo prueba el "
                                               "harness, NO mide el modelo."),
-    umbral: float = typer.Option(0.9, help="Precisión mínima por campo."),
     tope_coste: float = typer.Option(1.0, help="Tope de coste por ejecución, en USD: al superarlo "
                                                "el eval se detiene (RF-2.17)."),
     raiz: Path = typer.Option(Path("evals"), help="Carpeta de evals."),
@@ -416,7 +415,7 @@ def correr_eval(
         raise typer.Exit(2)
     if not simulado:
         _sin_clave_de_anthropic()
-    res = correr_set(conjunto, raiz=raiz, umbral=umbral, solo=solo, simulado=simulado,
+    res = correr_set(conjunto, raiz=raiz, solo=solo, simulado=simulado,
                      tope_coste=tope_coste, flujo=flujo_impl)
     for campo, valor in res["campos"].items():
         typer.echo(f"{campo:<30}{valor:.2f}")

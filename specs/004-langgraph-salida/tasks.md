@@ -118,7 +118,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     navegador con `langgraph`).
 
 ### Bloque C · CI bloqueante (RF-4.4)
-- [ ] T09 — Umbrales en archivo y umbral ATS.
+- [x] T09 — Umbrales en archivo y umbral ATS.
   - **Qué se hace:** `evals/umbrales.json` con los 7 sets actuales (los valores de hoy) y `cv` con
     `cobertura_ats_media: 0.75`. `evals.py` lo lee y `--umbral` sale de la consola.
   - **Test:**
@@ -127,7 +127,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - un set sin entrada en el archivo da error;
     - `eval correr --umbral` ya no existe.
   - **Cubre:** RF-4.4, RF-4.4b.
-- [ ] T10 — Workflow de CI.
+- [x] T10 — Workflow de CI.
   - **Qué se hace:** `calidad` (push y PR, todo simulado, `cv` con las dos implementaciones) y
     `evals-reales` (PR a `main` y `workflow_dispatch`, modelo real, `langgraph`, tope de 1 USD por
     set, falla si no hay clave).
