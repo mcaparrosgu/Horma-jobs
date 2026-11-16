@@ -17,7 +17,7 @@ services:
     # Solo se fía de las cabeceras X-Forwarded-* de Caddy (su IP fija en la red interna)
     command: >-
       uvicorn horma.web.main:crear_app --factory --host 0.0.0.0 --port 8000
-      --proxy-headers --forwarded-allow-ips 172.29.77.2
+      --proxy-headers --forwarded-allow-ips 172.29.77.200
     ports: !reset []
     restart: unless-stopped
     healthcheck:
@@ -44,8 +44,10 @@ services:
     environment:
       HORMA_DOMINIO: ${HORMA_DOMINIO:-localhost}
     ports:
-      - "80:80"
-      - "443:443"
+      # En un servidor, déjalo por defecto (todas las IP). En local, si otro programa (p. ej.
+      # Tailscale) ocupa el 443, pon HORMA_IP_PUBLICA=127.0.0.1.
+      - "${HORMA_IP_PUBLICA:-0.0.0.0}:80:80"
+      - "${HORMA_IP_PUBLICA:-0.0.0.0}:443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_datos:/data  # certificados y su CA interna
@@ -57,7 +59,7 @@ services:
     security_opt: ["no-new-privileges:true"]
     networks:
       default:
-        ipv4_address: 172.29.77.2
+        ipv4_address: 172.29.77.200
     depends_on:
       api:
         condition: service_healthy
@@ -66,7 +68,9 @@ networks:
   default:
     ipam:
       config:
+        # Docker reparte las IP automáticas solo en la mitad baja; Caddy usa una fija de la alta
         - subnet: 172.29.77.0/24
+          ip_range: 172.29.77.0/25
 
 volumes:
   caddy_datos:

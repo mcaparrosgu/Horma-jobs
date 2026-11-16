@@ -178,7 +178,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Cubre:** RF-4.5e, RT-07, RT-11.
 
 ### Bloque E · Salida segura (RF-4.6)
-- [x] T15 — PWA. *(Hecha; falta la verificación de Mar: Lighthouse y móvil.)*
+- [x] T15 — PWA. *(Hecha y verificada por Mar en escritorio el 16-nov; el móvil espera al despliegue real, T19.)*
   - **Qué se hace:** manifest, iconos con la identidad del proyecto, `/sw.js` en la raíz,
     `offline.html` y la CSP con `manifest-src` y `worker-src`.
   - **Test:**
@@ -204,7 +204,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - `POST /ofertas` sigue igual;
     - los límites salen de `.env`.
   - **Cubre:** RF-4.6d.
-- [x] T18 — Perfil de producción. *(Hecha; falta la verificación de Mar: `https://localhost`.)*
+- [x] T18 — Perfil de producción. *(Hecha y verificada por Mar el 16-nov: `https://localhost` y login.)*
   - **Qué se hace:** `docker-compose.prod.yml`, `Caddyfile`, `.env.produccion.example` (y su excepción
     en `.gitignore`) y `uvicorn` con las cabeceras del proxy.
   - **Test:** `docker compose -f docker-compose.yml -f docker-compose.prod.yml config` no publica los

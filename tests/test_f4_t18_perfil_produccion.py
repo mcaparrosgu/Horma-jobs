@@ -47,8 +47,8 @@ def test_la_api_corre_en_produccion_y_solo_se_fia_del_proxy(servicios):
     api = servicios["api"]
     assert api["environment"]["APP_ENV"] == "produccion"
     comando = " ".join(api["command"])
-    assert "--proxy-headers" in comando and "--forwarded-allow-ips 172.29.77.2" in comando
-    assert servicios["caddy"]["networks"]["default"]["ipv4_address"] == "172.29.77.2"
+    assert "--proxy-headers" in comando and "--forwarded-allow-ips 172.29.77.200" in comando
+    assert servicios["caddy"]["networks"]["default"]["ipv4_address"] == "172.29.77.200"
 
 
 def test_el_proxy_tiene_version_fijada_y_no_corre_como_root(servicios):
