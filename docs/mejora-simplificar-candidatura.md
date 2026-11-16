@@ -1,6 +1,6 @@
 # Mejora pendiente: simplificar la candidatura (CV y carta)
 
-Estado: **anotada, sin hacer**. Se aborda cuando termine la fase 4.
+Estado: **especificada como bloque H de la fase 3** (`specs/003-candidatura/`, P12-P17, T23-T32), sin construir. Decidido el 16-nov-2026: se aborda **antes** de la fase 4 (así LangGraph migra el flujo ya simplificado).
 
 ## Por qué
 - **Pantalla:** hasta 9 decisiones antes de tener los PDF.
