@@ -245,7 +245,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Cubre:** RF-4.7b.
 
 ### Bloque G · Cierre (RF-4.8)
-- [ ] T23 — Revisión de líneas rojas.
+- [x] T23 — Revisión de líneas rojas. *(hecha el 16-nov; falta la firma de Mar)*
   - **Qué se hace:** `docs/revision-lineas-rojas.md`, con la tabla de prompts de los agentes activos y
     del flujo de aprobación frente a cada línea roja, la prueba de cada celda y lo que falte. Lo que
     falte se arregla en esta tarea (con su test) o se anota.
@@ -256,7 +256,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     (gitignorado) con los 5 casos que cubren todas las opciones (ver el plan). Mar los ajusta, hace la
     prueba y anota lo que falle. Lo que falle se corrige en esta tarea o se anota en la bitácora.
   - **Cubre:** RF-4.8.
-- [ ] T25 — Documentos y cierre.
+- [x] T25 — Documentos y cierre. *(hecha el 16-nov; falta el PR de cierre con CI en verde)*
   - **Qué se hace:**
     - en `specs/system.md`: RT-12 con la pausa, la decisión de la fase 4, la tabla de fases y el
       módulo `grafo.py`;
@@ -274,3 +274,5 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - Una cuenta SMTP para las alertas (T22). Sin ella funcionan la pantalla y el log.
 - Prueba manual del bloque B, instalación de la PWA (T15), HTTPS en local (T18), la prueba final (T24)
   y la firma de la revisión de líneas rojas (T23).
+- Después del bloque G: probar `/costes` en navegador y móvil, y el correo de alertas con una cuenta SMTP
+  real (T21, T22).

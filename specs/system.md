@@ -92,6 +92,8 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 - **Fase 3 (candidatura, construida):** los flujos `candidatura` y `clasificar_respuesta` corren en el worker y desde la consola (`horma flujo correr`, con `--usuaria` y `--oferta` sin base de datos). La candidatura separa `estado` (la máquina, que solo cambia la usuaria) y `preparacion` (el resultado del flujo: `lista` o `pendiente_de_ti`). Simplificada en el bloque H (16-nov-2026): el CV base de partida lo elige la herramienta `elegir_cv_base` (sin modelo) y un solo juez (`juez-candidatura`) revisa CV y carta con una vuelta como máximo (3-5 llamadas por candidatura). Un CV base editado por ella cuenta como fuente con origen «usuaria»; lo que edita en una candidatura se queda en esa candidatura, y cada CV base guarda un historial de versiones al editarlo desde su pantalla. Los errores de trazabilidad y del juez son avisos junto a su frase (pulsar Aprobar cuenta como revisarlos). El tope de coste por candidatura (1 USD) se comprueba en la puerta única, falle o no la tarea. La respuesta de la empresa se marca con dos botones («Me han llamado», «Me han rechazado»); el flujo `clasificar_respuesta` queda solo para la consola.
 - **Datos de prueba:** inventados; el repositorio versiona fixtures, nunca datos de una persona.
 
+- **Fase 4 (LangGraph, calidad y salida):** LangGraph solo para `candidatura` (`flows/grafo.py`, único módulo que importa `langgraph`; `HORMA_FLOW_IMPL` elige `plain` o `langgraph`). El flujo se para antes de `entregar` con el estado en Postgres y, al aprobar la usuaria, se reanuda y deja los PDF fijos. La puerta del modelo marca por código las órdenes a la IA en la entrada y detecta fugas del prompt en la salida; `main` está protegida (`secretos`, `calidad`, `evals-reales`). `/costes` (solo admins) y las alertas de gasto y errores (pantalla, log y correo SMTP) no llevan datos personales. El despliegue real espera al profesor (P6). **Antes de usuarias reales, el `matcher` debe pasar su plan de perfeccionamiento** (spec de la fase 2).
+
 ## Fases
 | Fase | Feature | Agentes que entran | Puerta de salida |
 |---|---|---|---|
@@ -99,7 +101,7 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 | 1 | `001-ofertas` | `auditor-oferta`, `clasificador-oferta`, `auditor-fuentes` | Precisión ≥ 0,9 por campo; adversarias 100 % |
 | 2 | `002-perfil-recomendacion` | `extractor-perfil`, `clasificador-postulante`, `generador-cv-base`, `matcher` | Evals de perfil y recomendación en verde |
 | 3 | `003-candidatura` | `redactor-cv`, `redactor-carta`, `juez-candidatura`, `clasificador-respuesta` (retirados en el bloque H: `juez-cv`, `juez-carta`, `selector-cv-base`) | Errores sembrados rechazados al 100 %; flujo paso a paso en consola |
-| 4 | `004-langgraph-salida` | ninguno | Misma suite en verde con `LangGraphFlow`; umbrales bloqueantes en CI |
+| 4 | `004-langgraph-salida` | ninguno (cambia `clasificador-respuesta`: añade la línea de art. 9) | Misma suite en verde con `LangGraphFlow`; umbrales bloqueantes en CI (`evals-reales` en los PR a `main`); red-teaming al 100 %; revisión de líneas rojas firmada |
 
 Las fases no tienen fechas: se pasa de una a otra cuando se cumple su puerta. Si hace falta
 recortar, se recortan pantallas, nunca agentes ni evals.
