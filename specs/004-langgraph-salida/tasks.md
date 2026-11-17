@@ -245,18 +245,26 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Cubre:** RF-4.7b.
 
 ### Bloque G · Cierre (RF-4.8)
-- [ ] T23 — Revisión de líneas rojas.
+- [x] T23 — Revisión de líneas rojas. *(hecha el 16-nov; firmada por Mar el 17-nov, alcance: líneas rojas vigentes)*
   - **Qué se hace:** `docs/revision-lineas-rojas.md`, con la tabla de prompts de los agentes activos y
     del flujo de aprobación frente a cada línea roja, la prueba de cada celda y lo que falte. Lo que
     falte se arregla en esta tarea (con su test) o se anota.
-  - **Verificación:** **la firma Mar.**
+  - **Verificación:** **la firma de Mar (hecha el 17-nov).**
   - **Cubre:** RF-4.8b.
-- [ ] T24 — Prueba final de Mar.
+- [ ] T24 — Prueba final de Mar. *(17-nov: los 5 casos los recorrió Claude con el modelo real; falta lo manual y la firma de Mar)*
   - **Qué se hace:** 5 CV inventados en `pruebas-manuales/fase4/` y `docs/plan-pruebas-fase4.md`
     (gitignorado) con los 5 casos que cubren todas las opciones (ver el plan). Mar los ajusta, hace la
     prueba y anota lo que falle. Lo que falle se corrige en esta tarea o se anota en la bitácora.
+  - **Hecho el 17-nov (Claude, por la API y la consola):** todo coincide con lo esperado salvo tres falsos
+    avisos, corregidos con test (`tests/test_f4_t24_falsos_avisos.py`, commit 5444ff6): F1 «Se valora
+    experiencia previa» salía como hueco (`medir_ats`); F2 la carta avisaba de datos que sí estaban en el CV
+    (`verificar_trazabilidad`); F3 «idioma extranjero» activaba el aviso de nacionalidad
+    (`rasgos_personales`). Quedan: el catálogo no tiene ofertas de sanidad (F4, solo anotado) y el plan
+    tenía cinco errores (resultados en `docs/plan-pruebas-fase4.md`).
+  - **Falta (Mar):** la PWA instalada y sin conexión (1.9), Lighthouse y HTTPS en local, `/costes` en
+    navegador y móvil, el correo SMTP real, y **firmar** la prueba.
   - **Cubre:** RF-4.8.
-- [ ] T25 — Documentos y cierre.
+- [x] T25 — Documentos y cierre. *(hecha el 16-nov; falta el PR de cierre con CI en verde)*
   - **Qué se hace:**
     - en `specs/system.md`: RT-12 con la pausa, la decisión de la fase 4, la tabla de fases y el
       módulo `grafo.py`;
@@ -273,4 +281,13 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - OK antes de gastar en T14 (T11 ya hecha).
 - Una cuenta SMTP para las alertas (T22). Sin ella funcionan la pantalla y el log.
 - Prueba manual del bloque B, instalación de la PWA (T15), HTTPS en local (T18), la prueba final (T24)
-  y la firma de la revisión de líneas rojas (T23).
+  (la firma de T23 ya está hecha, 17-nov).
+- **Después del bloque G, antes de dar la fase por cerrada:** la prueba final de Mar (T24, plan en
+  `docs/plan-pruebas-fase4.md`) y su firma de `docs/revision-lineas-rojas.md` (T23). Acordado el 16-nov:
+  no bloquean la fusión del PR del bloque G.
+- **Estabilizar el set `ofertas` de `evals-reales`** (anotado el 16-nov en el PR #7): falló dos veces con campos
+  distintos (`titulo` 0,88; `adversarias` 0,83, umbral 0,9) y aprobó en local con el mismo código (0,92 y 1,00).
+  Averiguar qué caso adversario oscila y arreglar el prompt, el caso o el umbral. Mientras tanto, el job
+  `evals-reales` puede fallar sin que el código esté mal y, al cortarse en el primer set, no mide los siguientes.
+- Después del bloque G: probar `/costes` en navegador y móvil, y el correo de alertas con una cuenta SMTP
+  real (T21, T22).
