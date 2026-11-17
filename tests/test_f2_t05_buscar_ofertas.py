@@ -30,13 +30,14 @@ TABLA = """
 CREATE TEMP TABLE ofertas (
     id int PRIMARY KEY, estado text, recomendable boolean, remoto boolean, sector text, familia text,
     nivel text, pais text, tipo_contrato text, idiomas_norm text[], salario_publicado boolean,
-    salario_anual_eur_min numeric, salario_anual_eur_max numeric, creada_en timestamptz
+    salario_anual_eur_min numeric, salario_anual_eur_max numeric, creada_en timestamptz,
+    usuaria_id int
 ) ON COMMIT DROP
 """
 _DEFECTO = dict(estado="procesada", recomendable=True, remoto=None, sector="hosteleria_turismo",
                 familia="hosteleria_restauracion", nivel="junior", pais="ES", tipo_contrato="indefinido",
                 idiomas_norm=["es"], salario_publicado=True, salario_anual_eur_min=None,
-                salario_anual_eur_max=None, creada_en="2026-11-01")
+                salario_anual_eur_max=None, creada_en="2026-11-01", usuaria_id=None)
 
 
 @pytest.fixture
@@ -157,3 +158,14 @@ def test_excluir_ids_y_limite(conexion):
         _insertar(conexion, i, creada_en=f"2026-11-0{i}")
     assert _ids(conexion, excluir_ids=[5, 4]) == [3, 2, 1]
     assert _ids(conexion, limite=2) == [5, 4]
+
+
+def test_las_propias_pasan_siempre_aunque_no_cumplan_nada(conexion):
+    """Fase 5 (RF-5.3e, P17): una oferta propia sale aunque sea fantasma/fraude o no pase los filtros."""
+    _insertar(conexion, 1)  # del catálogo y recomendable
+    _insertar(conexion, 2, recomendable=False)  # del catálogo y fantasma: fuera
+    _insertar(conexion, 3, usuaria_id=7, recomendable=False, pais="FR", familia="otros",
+              salario_publicado=False)  # propia, fantasma y fuera de los filtros: dentro
+    _insertar(conexion, 4, usuaria_id=7, estado="pendiente")  # propia aún sin procesar: fuera
+    prefs = Preferencias(paises=["ES"], familias=["hosteleria_restauracion"], solo_salario=True)
+    assert sorted(f[0] for f in _buscar(conexion, prefs)) == [1, 3]

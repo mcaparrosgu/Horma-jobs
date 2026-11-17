@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Añadir oferta · Horma</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#6b3f2a">
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <div class="pp" aria-hidden="true"></div>
+  <main class="ancho">
+    <header class="cabecera">
+      <a class="logo" href="/"><h1>Horma</h1></a>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </header>
+    <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
+
+    <p class="suave">Pega el texto de una oferta. Es solo tuya: nadie más la ve. Horma la analiza y la puntúa con tu perfil, y aparece siempre en Recomendadas, pase o no tus filtros.</p>
+    <form id="formulario">
+      <label for="texto">Texto de la oferta</label>
+      <textarea id="texto" rows="10" maxlength="20000" required></textarea>
+      <div class="fila">
+        <button id="enviar" type="submit">Añadir oferta</button>
+        <span id="aviso" role="status"></span>
+      </div>
+    </form>
+
+    <h2>Lo último que has añadido</h2>
+    <ul id="lista" class="lista"></ul>
+    <p id="vacio" class="suave" hidden>Todavía no has añadido ninguna oferta.</p>
+  </main>
+  <script src="/static/comun.js"></script>
+  <script src="/static/anadir-oferta.js"></script>
+  <script src="/static/pwa.js"></script>
+</body>
+</html>

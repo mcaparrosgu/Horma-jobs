@@ -100,18 +100,18 @@ real (RF-5.8).
   - **Cubre:** RF-5.1f.
 
 ### Bloque C · Ofertas propias y Recomendadas (RF-5.2, RF-5.3-5.3e)
-- [ ] T10 — Reproducir el limbo.
+- [x] T10 — Reproducir el limbo. *(hecha el 17-nov; `test_f5_t10_limbo.py`, 3 casos que fallan: sin nota, repetida y sin fecha; pasan con T13)*
   - **Qué se hace:** test de extremo a extremo que pega una oferta y espera verla puntuada en
     Recomendadas; un segundo caso pega una oferta repetida. Se anota en el test qué causa falla.
   - **Test:** hoy falla (es el test de la tarea).
   - **Cubre:** RF-5.3.
-- [ ] T11 — Dueña y privacidad.
+- [x] T11 — Dueña y privacidad. *(hecha el 17-nov; migración 0013, también deja al sistema encolar y leer tareas de una usuaria; `/api/catalogo` y los errores de ingesta ya no incluyen las propias)*
   - **Qué se hace:** migración 0013: `ofertas.usuaria_id` y la política de lectura nueva; `recibir`
     con `usuaria_id` desde la web; `repetida` solo dentro de la misma dueña.
   - **Test (RLS):** una oferta de Ana no la ve Berta ni en `/ofertas` ni en Recomendadas ni por id;
     las del catálogo las ven las dos; pegar dos veces la misma no la deja fantasma.
   - **Cubre:** RF-5.3c.
-- [ ] T12 — Puntuar al momento.
+- [x] T12 — Puntuar al momento. *(hecha el 17-nov; entidad de la tarea = id de la usuaria, porque el worker en modo sistema no ve su perfil; tope `TOPE_COSTE_PUNTUAR_PROPIAS`, 1,00 USD)*
   - **Qué se hace:** tarea `puntuar_propias` (todas las propias sin nota para la versión vigente, por
     tandas de 30), encolada al terminar `procesar_oferta` de una oferta con dueña y al cambiar el
     perfil de versión; tope de coste propio.
@@ -119,7 +119,7 @@ real (RF-5.8).
     añadida sin perfil se puntúa sola al construirse el perfil; tras editar el perfil, las propias se
     re-puntúan con la versión nueva.
   - **Cubre:** RF-5.3d.
-- [ ] T13 — Recomendadas: TODAS las propias, con marca.
+- [x] T13 — Recomendadas: TODAS las propias, con marca. *(hecha el 17-nov; T10 pasa)*
   - **Qué se hace:** `buscar_ofertas` deja pasar todas las propias procesadas (sin filtros, rango,
     repetición, fantasma ni fraude); `listado` devuelve `propia`, `analizada_en` y el motivo del
     auditor; marca «Añadida por ti · analizada el <fecha>» y aviso del auditor en `recomendadas.js`; se
@@ -128,12 +128,12 @@ real (RF-5.8).
     tres con su evaluación y su marca (la de fraude, con su aviso) y permiten preparar la candidatura;
     la columna ya no está. T10 pasa.
   - **Cubre:** RF-5.2, RF-5.3e.
-- [ ] T14 — Pestaña «Añadir oferta».
+- [x] T14 — Pestaña «Añadir oferta». *(hecha el 17-nov solo con texto; el campo de URL llega con T18; falta que Mar la compruebe en la web)*
   - **Qué se hace:** `anadir-oferta.html/js` (texto o URL, estado de lo último añadido) y enlace en la
     navegación; se quita el formulario de `index.html`.
   - **Test:** Mar pega una oferta desde la pestaña y la ve puntuada en Recomendadas.
   - **Cubre:** RF-5.3b.
-- [ ] T15 — Marca «Añadida por ti» también en Ofertas.
+- [x] T15 — Marca «Añadida por ti» también en Ofertas. *(hecha el 17-nov)*
   - **Qué se hace:** `/ofertas` devuelve `propia`; la lista la muestra.
   - **Test:** la oferta propia sale marcada en Ofertas solo para su dueña.
   - **Cubre:** RF-5.3c, RF-5.3e.

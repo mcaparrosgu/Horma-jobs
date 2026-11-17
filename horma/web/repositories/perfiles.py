@@ -52,6 +52,13 @@ def vigente(s: Session) -> dict | None:
     return dict(fila) if fila else None
 
 
+def vigente_de(s: Session, usuaria_id: int) -> dict | None:
+    """Como `vigente`, para una usuaria concreta (el worker en modo sistema no tiene sesión de usuaria)."""
+    fila = s.execute(text("select * from perfiles where usuaria_id = :u and estado = 'hecha' "
+                          "order by version desc limit 1"), {"u": usuaria_id}).mappings().first()
+    return dict(fila) if fila else None
+
+
 def por_version(s: Session, version: int) -> dict | None:
     fila = s.execute(text("select * from perfiles where version = :v"), {"v": version}).mappings().first()
     return dict(fila) if fila else None
