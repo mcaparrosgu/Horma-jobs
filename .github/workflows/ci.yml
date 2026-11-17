@@ -3,6 +3,7 @@ name: CI
 on:
   push:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 jobs:
@@ -60,9 +61,10 @@ jobs:
           path: evals/resultados/
           if-no-files-found: ignore
 
-  # Mide el modelo de verdad (RF-4.4c). Solo en PR a main y a mano; no pasa a simulado si falta la clave.
+  # Mide el modelo de verdad (RF-4.4c). Solo en PR a main que NO sean borrador y a mano (gasta dinero:
+  # se trabaja en borrador y se marca «listo para revisión» al terminar); no pasa a simulado si falta la clave.
   evals-reales:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main' && !github.event.pull_request.draft)
     runs-on: ubuntu-latest
     env:
       CI: "true"
