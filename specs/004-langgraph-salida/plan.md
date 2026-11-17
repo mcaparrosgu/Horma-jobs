@@ -190,7 +190,7 @@ class Flow(Protocol):
 - **`web/limites.py`:** generaliza la ventana en memoria de `auth/claves.py:24-40`. Límites
   configurables en `.env`: login por IP, subida de CV, y creación y reintento de candidaturas por
   usuaria (estas dos cuestan dinero). Al pasarse, 429 con un mensaje en llano.
-- **Despliegue real:** tarea bloqueada (P6).
+- **Despliegue real:** de momento local con Compose y PostgreSQL; Vercel, más adelante (P6, 17-nov-2026).
 
 ## Observabilidad (RF-4.7)
 - **`/costes`** (página y `GET /api/costes`, solo admins; mismo patrón que `/ingesta`):
