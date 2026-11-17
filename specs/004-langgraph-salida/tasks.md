@@ -251,7 +251,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     falte se arregla en esta tarea (con su test) o se anota.
   - **Verificación:** **la firma de Mar (hecha el 17-nov).**
   - **Cubre:** RF-4.8b.
-- [ ] T24 — Prueba final de Mar. *(17-nov: los 5 casos los recorrió Claude con el modelo real; falta lo manual y la firma de Mar)*
+- [x] T24 — Prueba final de Mar. *(firmada por Mar el 17-nov; los 5 casos los recorrió Claude con el modelo real)*
   - **Qué se hace:** 5 CV inventados en `pruebas-manuales/fase4/` y `docs/plan-pruebas-fase4.md`
     (gitignorado) con los 5 casos que cubren todas las opciones (ver el plan). Mar los ajusta, hace la
     prueba y anota lo que falle. Lo que falle se corrige en esta tarea o se anota en la bitácora.
@@ -261,8 +261,12 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     (`verificar_trazabilidad`); F3 «idioma extranjero» activaba el aviso de nacionalidad
     (`rasgos_personales`). Quedan: el catálogo no tiene ofertas de sanidad (F4, solo anotado) y el plan
     tenía cinco errores (resultados en `docs/plan-pruebas-fase4.md`).
-  - **Falta (Mar):** la PWA instalada y sin conexión (1.9), Lighthouse y HTTPS en local, `/costes` en
-    navegador y móvil, el correo SMTP real, y **firmar** la prueba.
+  - **Hecho (17-nov):** PWA instalada y sin conexión (Mar, 16-nov, T15) y HTTPS en local (T18); `/costes`
+    como admin y como no admin (403) en Chrome; correo SMTP real con una alerta forzada (llegó, sin datos
+    de usuarias); **firma de Mar el 17-nov**.
+  - **Sin comprobar al firmar:** `/costes` en el móvil (el CSS lo prevé: `.tabla-costes` con
+    `overflow-x: auto`; el móvil real espera a T19) y que el correo de alerta no se repite el mismo día (lo
+    cubre el test de T22). F4 (catálogo sin ofertas de sanidad) sigue solo anotado.
   - **Cubre:** RF-4.8.
 - [x] T25 — Documentos y cierre. *(hecha el 16-nov; PR #7 fusionado en `main` el 17-nov, `875ec18`, con CI en verde)*
   - **Qué se hace:**
@@ -279,15 +283,11 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - Preguntar al profesor dónde desplegar (P6). Bloquea solo T19.
 - Instalar `langgraph` si `uv` falla con certificados (T01).
 - OK antes de gastar en T14 (T11 ya hecha).
-- Una cuenta SMTP para las alertas (T22). Sin ella funcionan la pantalla y el log.
-- Prueba manual del bloque B, instalación de la PWA (T15), HTTPS en local (T18), la prueba final (T24)
-  (la firma de T23 ya está hecha, 17-nov).
-- **Después del bloque G, antes de dar la fase por cerrada:** la prueba final de Mar (T24, plan en
-  `docs/plan-pruebas-fase4.md`) y su firma de `docs/revision-lineas-rojas.md` (T23). Acordado el 16-nov:
-  no bloquean la fusión del PR del bloque G.
+- ~~Una cuenta SMTP para las alertas (T22)~~ *(hecho el 17-nov: Gmail con contraseña de aplicación; sin SMTP siguen funcionando la pantalla y el log)*.
+- ~~Prueba manual del bloque B, PWA (T15), HTTPS (T18), prueba final (T24) y firma de T23~~ *(hechas;
+  T24 firmada el 17-nov)*.
 - **Estabilizar el set `ofertas` de `evals-reales`** (anotado el 16-nov en el PR #7): falló dos veces con campos
   distintos (`titulo` 0,88; `adversarias` 0,83, umbral 0,9) y aprobó en local con el mismo código (0,92 y 1,00).
   Averiguar qué caso adversario oscila y arreglar el prompt, el caso o el umbral. Mientras tanto, el job
   `evals-reales` puede fallar sin que el código esté mal y, al cortarse en el primer set, no mide los siguientes.
-- Después del bloque G: probar `/costes` en navegador y móvil, y el correo de alertas con una cuenta SMTP
-  real (T21, T22).
+- `/costes` en el móvil (T21): probado solo el navegador de escritorio; el móvil, con T19.
