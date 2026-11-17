@@ -245,11 +245,11 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Cubre:** RF-4.7b.
 
 ### Bloque G · Cierre (RF-4.8)
-- [x] T23 — Revisión de líneas rojas. *(hecha el 16-nov; falta la firma de Mar)*
+- [x] T23 — Revisión de líneas rojas. *(hecha el 16-nov; firmada por Mar el 17-nov, alcance: líneas rojas vigentes)*
   - **Qué se hace:** `docs/revision-lineas-rojas.md`, con la tabla de prompts de los agentes activos y
     del flujo de aprobación frente a cada línea roja, la prueba de cada celda y lo que falte. Lo que
     falte se arregla en esta tarea (con su test) o se anota.
-  - **Verificación:** **la firma Mar.**
+  - **Verificación:** **la firma de Mar (hecha el 17-nov).**
   - **Cubre:** RF-4.8b.
 - [ ] T24 — Prueba final de Mar.
   - **Qué se hace:** 5 CV inventados en `pruebas-manuales/fase4/` y `docs/plan-pruebas-fase4.md`
@@ -273,7 +273,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - OK antes de gastar en T14 (T11 ya hecha).
 - Una cuenta SMTP para las alertas (T22). Sin ella funcionan la pantalla y el log.
 - Prueba manual del bloque B, instalación de la PWA (T15), HTTPS en local (T18), la prueba final (T24)
-  y la firma de la revisión de líneas rojas (T23).
+  (la firma de T23 ya está hecha, 17-nov).
 - **Después del bloque G, antes de dar la fase por cerrada:** la prueba final de Mar (T24, plan en
   `docs/plan-pruebas-fase4.md`) y su firma de `docs/revision-lineas-rojas.md` (T23). Acordado el 16-nov:
   no bloquean la fusión del PR del bloque G.
