@@ -14,7 +14,10 @@ from collections.abc import Mapping, Sequence
 _ENCABEZADOS_ATS = ("experiencia", "formacion", "educacion", "idiomas", "habilidades", "competencias",
                     "perfil", "resumen", "certificaciones", "cursos", "contacto")
 _VACIAS = {"de", "del", "la", "el", "los", "las", "en", "y", "e", "o", "a", "al", "con", "para",
-           "un", "una", "por", "se", "su"}
+           "un", "una", "por", "se", "su",
+           # cómo se pide algo, no qué se pide («Se valora experiencia previa», «Imprescindible…»)
+           "valora", "valorable", "valoramos", "valorara", "valoraran", "previa", "previo",
+           "imprescindible", "deseable", "necesaria", "necesario", "requerida", "requerido"}
 _RAIZ = 5  # letras que se comparan de cada palabra
 
 
