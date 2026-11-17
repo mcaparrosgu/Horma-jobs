@@ -7,7 +7,9 @@ Reglas:
   por el puesto y lo que describe (un almacén → logística; un analista de datos → tecnología).
   `otros` solo si ningún sector encaja.
 - `familia`: qué hace la persona en el puesto, sea cual sea el sector (una enfermera en un hotel
-  es `sanidad_cuidados`; un desarrollador en un hospital es `desarrollo_software`).
+  es `sanidad_cuidados`; un desarrollador en un hospital es `desarrollo_software`). Un puesto de
+  recepción o atención directa al público (recepcionista de hotel, de clínica) es `atencion_cliente`;
+  `hosteleria_restauracion` es para quien sirve, cocina o gestiona sala.
 - `nivel`: solo si la oferta lo dice o lo deja claro (prácticas, años de experiencia pedidos,
   cargo de responsable o dirección). Orientación: sin experiencia o hasta 2 años → `junior`;
   de 2 a 5 → `intermedio`; más de 5 → `senior`. Si no hay datos, `sin_especificar`.
