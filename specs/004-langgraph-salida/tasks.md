@@ -213,9 +213,10 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Verificación de Mar:** en local, `https://localhost` abre Horma (con el aviso de la CA interna)
     y el login funciona.
   - **Cubre:** RF-4.6b, RF-4.6c, RF-4.6e.
-- [ ] T19 — **Despliegue real: bloqueada hasta que conteste el profesor (P6).** Cuando conteste, se
-  regenera esta tarea con el destino elegido (coste, dominio, secretos del servidor y copia de
-  seguridad de la BD).
+- [ ] T19 — **Despliegue real: el profesor contestó el 17-nov-2026 (P6): de momento en local con Docker
+  Compose y PostgreSQL (ya cubierto por T17 y T18); más adelante, en Vercel.** Falta que Mar confirme dar
+  esta tarea por cerrada con el despliegue local. Al llegar a Vercel se regenera con el destino (coste,
+  dominio, secretos, copia de la BD) y se revisa la arquitectura.
   - **Cubre:** RF-4.6e.
 
 ### Bloque F · Observabilidad (RF-4.7)
@@ -280,7 +281,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 
 ## Pendiente de la persona (no se puede hacer sin ti)
 - Verificar aclaraciones, spec, plan y tareas (campo `verified` de cada documento) antes de T01.
-- Preguntar al profesor dónde desplegar (P6). Bloquea solo T19.
+- ~~Preguntar al profesor dónde desplegar (P6)~~ *(contestado el 17-nov: local ahora, Vercel después)*.
 - Instalar `langgraph` si `uv` falla con certificados (T01).
 - OK antes de gastar en T14 (T11 ya hecha).
 - ~~Una cuenta SMTP para las alertas (T22)~~ *(hecho el 17-nov: Gmail con contraseña de aplicación; sin SMTP siguen funcionando la pantalla y el log)*.

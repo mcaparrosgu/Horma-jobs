@@ -38,11 +38,13 @@ migrar, la fase 3 no estaba bien cerrada.
   avisa, pero el texto pasa (así no se pierden ofertas legítimas por un falso positivo). Set nuevo
   `evals/red-teaming/` con unas 10 ofertas y unos 10 correos que intentan manipular a la IA, activar un
   envío o sacar datos; exige 100 % sin efecto y corre en CI.
-- P6: ¿Dónde se despliega (RF-4.6)? → R: **pendiente del profesor.** El PDF no nombra destino: solo
+- P6: ¿Dónde se despliega (RF-4.6)? → R: **respondido por el profesor (17-nov-2026): de momento en local, con Docker Compose y PostgreSQL; más adelante, en Vercel.** (Texto previo a la respuesta: El PDF no nombra destino: solo
   propone «Compose para CI y Neon para los entornos compartidos», y la constitución fija «PostgreSQL en
   Docker Compose, sin Neon». Mientras tanto, todo se prepara sin depender del destino (perfil de
   producción, proxy con HTTPS, endurecimiento) y se prueba en local; la tarea de despliegue real queda
-  bloqueada hasta su respuesta.
+  bloqueada hasta su respuesta.)
+  Vercel no ejecuta contenedores ni un Postgres propio ni el worker: al llegar ese momento habrá que
+  revisar la arquitectura y la constitución («PostgreSQL en Docker Compose, sin Neon»).
 - P7: ¿Dónde se ven los costes y cómo avisan las alertas (RF-4.7)? → R: **pantalla de admin `/costes` y
   aviso por correo**. La pantalla muestra coste y errores por día, agente y modelo, sin datos
   personales. Las alertas saltan por gasto del día y por tasa de errores; se ven en la pantalla, se
@@ -75,7 +77,9 @@ migrar, la fase 3 no estaba bien cerrada.
 
 ## Fuera de alcance (anotado, no se construye aquí)
 - LangGraph en los flujos lineales (P1).
-- El despliegue real, hasta que conteste el profesor (P6).
+- El despliegue real en Vercel: el profesor lo sitúa «más adelante» (P6); de momento, local con Compose.
+- Red-teaming (P5): el profesor lo da por poco importante hasta que haya usuarias reales (17-nov-2026). El set
+  y su umbral se mantienen; no se invierte más tiempo en estabilizarlo (PR #8 aparcado).
 - Prueba de uso con personas que no conocen Horma (P8): antes de abrir a usuarias reales.
 - `horma flujo correr --desde <paso>` (ya diferido en la fase 3).
 - Plan para perfeccionar el `matcher` (`specs/002-perfil-recomendacion/spec.md`): obligatorio antes
