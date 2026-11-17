@@ -31,7 +31,7 @@ Mar antes de gastar. Cada bloque va en su rama y con un PR; desde T00, un PR ya 
 real (RF-5.8).
 
 ### T00 · Aparcar `evals-reales` (RF-5.8)
-- [ ] T00 — Solo a mano hasta el lanzamiento.
+- [ ] T00 — Solo a mano hasta el lanzamiento. *(código hecho el 17-nov; falta que Mar quite el check en GitHub y la comprobación con un PR)*
   - **Qué se hace:** en `ci.yml`, `evals-reales` solo con `workflow_dispatch`; Mar quita
     `evals-reales` de los checks obligatorios de `main`; nota en `docs/mejoras-futuras.md` para
     reactivarlo antes de lanzar. Nota en RF-4.4c de la spec de la fase 4.

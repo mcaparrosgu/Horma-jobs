@@ -65,12 +65,12 @@ jobs:
           path: evals/resultados/
           if-no-files-found: ignore
 
-  # Mide el modelo de verdad (RF-4.4c). Solo en PR a main y a mano; no pasa a simulado si falta la clave.
-  # El job siempre corre en esos PR (así el check obligatorio de `main` se cumple), pero solo llama al modelo
-  # si el PR toca algo que lo afecta: `horma/`, `evals/`, `config/`, las dependencias o este archivo.
-  # Un PR de solo specs, README, docs o tests termina en verde sin gastar nada.
+  # Mide el modelo de verdad (RF-4.4c). APARCADO hasta el lanzamiento (RF-5.8 de la fase 5): solo a mano
+  # (Actions > CI > Run workflow) y con el OK de Mar. No corre en push ni en PR, así que no puede ser un
+  # check obligatorio de `main`. Reactivar antes de lanzar (ver docs/mejoras-futuras.md).
+  # No pasa a simulado si falta la clave.
   evals-reales:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
       CI: "true"

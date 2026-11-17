@@ -74,6 +74,8 @@ PostgreSQL, y más adelante Vercel (P6).
   y la implementación activa, con el tope de 1 USD por set; SI falta la clave, ENTONCES el job DEBERÁ
   fallar, no pasar a simulado (P3). Excepción: `recomendacion` no corre con el modelo real en CI
   hasta el plan del `matcher` (su `nota` no alcanza el umbral con el modelo real); sigue en simulado.
+  *Nota (17-nov-2026): la parte del modelo real en cada PR queda aparcada por RF-5.8 de la fase 5;
+  `evals-reales` solo corre a mano hasta el lanzamiento.*
 - **RF-4.4d** `main` DEBERÁ estar protegida para que un PR no se pueda fusionar si un job de CI falla.
 
 ### Guardarraíles y red teaming (RF-4.5)
