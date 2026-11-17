@@ -152,7 +152,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
   cobertura ATS media ≥ 0,75). `--flujo plain|langgraph` elige la implementación de `candidatura`.
 - CI: `calidad` corre tests, estilo y todos los evals en simulado en cada push; `evals-reales` mide el
   modelo (langgraph, 1 USD por set; `recomendacion` queda fuera hasta mejorar el `matcher`) en cada PR a
-  `main` y a mano, y falla si falta `ANTHROPIC_API_KEY`. `main` está protegida: solo se cambia con PR y
+  `main` que toque `horma/`, `evals/`, `config/`, las dependencias o `ci.yml`, y a mano (un PR de solo docs o
+  tests pasa sin gastar); falla si falta `ANTHROPIC_API_KEY`. Un push nuevo cancela la ejecución anterior. `main` está protegida: solo se cambia con PR y
   con `secretos`, `calidad` y `evals-reales` en verde.
 - `uv run horma eval importar-correccion --archivo caso.json`: enseña una corrección de la usuaria
   (se exporta desde la pantalla de recomendadas) y, solo si confirmas, la copia a
