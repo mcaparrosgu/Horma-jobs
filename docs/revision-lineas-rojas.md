@@ -65,6 +65,30 @@ Revisión hecha el 16-nov-2026 sobre los 12 `prompt.md` de `horma/agents/` y el 
 | 3 | El set `red-teaming` cubre ofertas y correos; no cubre CV con órdenes ni ediciones de la usuaria | **Anotado:** los CV con órdenes los cubren los casos 11 y 12 del eval `perfil` y G; ampliar el set antes de usuarias reales |
 | 4 | Los prompts no se comprueban con evals reales tras el cambio del hallazgo 1 | **Pendiente:** lo mide `evals-reales` en el PR de cierre (`respuestas` debe seguir ≥ umbral) |
 
+## Encargados del tratamiento
+
+### Apify (lector de URL, fase 5 · T16) — leído el 18-nov-2026 en fuente oficial
+
+Apify Technologies s.r.o. (Praga) leería páginas de ofertas que la usuaria pega por URL. Sale de su
+documentación en `docs.apify.com/legal` y `docs.apify.com/security`.
+
+| Punto | Resultado |
+|---|---|
+| Dónde guarda los datos | **Contradicción.** Seguridad: AWS `us-east-1` (EE. UU.), S3 y DynamoDB. Privacidad: «principalmente UE y EE. UU.». No hay región UE elegible |
+| Cuánto tiempo | Plan gratis: las 10 últimas ejecuciones, 4 meses. Plan de pago: configurable (sin valor publicado). Logs: sin plazo publicado |
+| Subencargados | **No obtenida:** solo con NDA; la lista web (`trust.apify.com/subprocessors`) no se pudo leer |
+| DPA (art. 28) | Sí; se incorpora al contrato sin firmar (actualizado 8-jul-2026). Apify actúa como encargado. No menciona la lectura de web pública ni la excluye; la licitud de la instrucción es del cliente |
+| Transferencias fuera del EEE | Cláusulas contractuales tipo (módulo 4) y adenda del Reino Unido. Marco UE-EE. UU. (DPF): no aparece |
+| Borrado | Almacenes con nombre, a petición; los demás caducan. Borrado definitivo sin plazo en días |
+| Seguridad | SOC 2 Tipo II; cifrado en tránsito y en reposo (informe no leído) |
+| Entrenamiento de IA | No usa datos de clientes salvo acuerdo expreso |
+
+**Riesgo bajo, no nulo:** las ofertas son texto público de empresas y casi sin datos personales (a veces
+nombre y correo de quien contrata). No viajan CV ni datos de la usuaria. Pero la ubicación en EE. UU. y la
+lista de subencargados sin ver impiden darlo por «confirmado» al pie de la letra (RF-5.3i).
+
+**Decisión de Mar (18-nov-2026):** [x] Apify (aceptando lo anterior y pidiendo la lista a `privacy@apify.com`) · [ ] ScrapingBee
+
 ## Firma
 
 La revisión es mía; la responsabilidad de darla por buena es de Mar.
