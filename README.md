@@ -28,6 +28,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 2. **Perfil y recomendación** (`002-perfil-recomendacion`)
 3. **Candidatura y seguimiento** (`003-candidatura`)
 4. **LangGraph, calidad y salida** (`004-langgraph-salida`)
+5. **Correcciones del profesor** (`005-correcciones-profesor`, planificada)
 
 Cada fase se cierra con sus evals en verde.
 
