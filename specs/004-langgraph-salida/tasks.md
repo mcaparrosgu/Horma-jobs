@@ -264,7 +264,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Falta (Mar):** la PWA instalada y sin conexión (1.9), Lighthouse y HTTPS en local, `/costes` en
     navegador y móvil, el correo SMTP real, y **firmar** la prueba.
   - **Cubre:** RF-4.8.
-- [x] T25 — Documentos y cierre. *(hecha el 16-nov; falta el PR de cierre con CI en verde)*
+- [x] T25 — Documentos y cierre. *(hecha el 16-nov; PR #7 fusionado en `main` el 17-nov, `875ec18`, con CI en verde)*
   - **Qué se hace:**
     - en `specs/system.md`: RT-12 con la pausa, la decisión de la fase 4, la tabla de fases y el
       módulo `grafo.py`;
