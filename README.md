@@ -92,7 +92,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
    (ver Consola).
 4. Puerta de salida: `horma eval correr cv` y `respuestas` con el modelo real (tope de 1 USD, solo de construcción).
 
-### Fase 4 (en construcción): pausa y entrega
+### Fase 4 (código completo; falta despliegue, T19): pausa, calidad y salida
 1. `uv run alembic upgrade head` aplica la migración 0008 (PDF guardados, señales de entrada, alertas y las
    tablas donde LangGraph guarda la pausa).
 2. `HORMA_FLOW_IMPL=langgraph` en `.env` activa el flujo con pausa: el worker prepara CV y carta y se para
@@ -107,6 +107,15 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
    Solo Caddy publica puertos (80 y 443, HTTPS); con `HORMA_DOMINIO=localhost` usa su CA interna. Con
    `APP_ENV=produccion` salen HSTS y `Permissions-Policy` y la API no arranca con secretos cortos, vacíos
    o de ejemplo, ni con `GOOGLE_REDIRECT_URI` sin https. El despliegue en un servidor espera al profesor (T19).
+6. Observabilidad: `/costes` (solo `HORMA_ADMINS`) muestra coste y errores por día, agente y modelo, sin datos
+   personales. Las alertas (`ALERTA_GASTO_DIA_USD`, `ALERTA_TASA_ERRORES`, `ALERTA_MIN_LLAMADAS`,
+   `ALERTA_INTERVALO_MIN`) salen en `/costes`, en el log y, con `SMTP_HOST`, `SMTP_*` y `ALERTAS_CORREO`, por
+   correo. `LOG_LEVEL` se aplica en la API y el worker.
+7. Guardarraíles: la entrada se vigila por código (marca, no bloquea) y el set `evals/red-teaming/` debe pasar
+   al 100 %. La revisión de cada prompt frente a las líneas rojas está en `docs/revision-lineas-rojas.md`.
+8. **Antes de abrir Horma a usuarias reales:** el `matcher` debe pasar su plan de perfeccionamiento
+   (`specs/002-perfil-recomendacion/spec.md`); hoy su `nota` mide 0,67 y la recomendación está fuera de
+   `evals-reales`.
 
 ## Consola
 
