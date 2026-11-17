@@ -37,9 +37,9 @@ def _copiar(tmp_path, nombre, caso):
 
 
 # --- T11: fixtures de perfil -------------------------------------------------------------------
-def test_fixtures_de_perfil_son_12_validas_de_5_sectores_y_2_adversarias():
+def test_fixtures_de_perfil_son_14_validas_de_5_sectores_y_2_adversarias():
     casos = _casos("perfil")
-    assert len(casos) == 12
+    assert len(casos) == 14
     sectores, adversarias, con_pendientes = set(), 0, 0
     for c in casos:
         p = Perfil.model_validate_json((c / "esperado.json").read_text(encoding="utf-8"))
@@ -71,7 +71,7 @@ def test_el_esperado_de_perfil_no_lleva_rasgos_personales_pero_alguna_entrada_si
 
 def test_eval_perfil_simulado_pasa_al_100(tmp_path):
     r = correr_set("perfil", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 12 and r["adversarias"] == 1.0
+    assert r["aprobado"] and r["casos"] == 14 and r["adversarias"] == 1.0
     assert set(r["campos"]) >= {"cargos", "empresas", "fechas", "titulaciones", "idiomas",
                                 "sector", "familia", "pendientes", "sin_sensibles"}
     assert all(v == 1.0 for v in r["campos"].values()), r["campos"]

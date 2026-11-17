@@ -116,6 +116,9 @@ def _resumen_perfil(p: dict) -> dict:
             "fechas": _lista(_periodo(x) for x in [*exp, *form]),
             "titulaciones": _lista(x["titulo"] for x in form),
             "idiomas": _lista(x["idioma"] for x in p.get("idiomas") or []),
+            "proyectos": _lista(x["nombre"] for x in p.get("proyectos") or []),
+            "certificaciones": _lista(x["nombre"] for x in p.get("certificaciones") or []),
+            "otros": _lista(x["valor"] for x in p.get("otros") or []),
             "sector": tax.get("sector"), "familia": tax.get("familia")}
 
 
@@ -147,8 +150,7 @@ def _correr_perfil(estado: dict, prov: Proveedor | None) -> dict:
 
 def _respuestas_perfil(e: Perfil, entrada: dict) -> list[dict]:
     perfil = e.model_copy(update={"taxonomia": None}).model_dump(mode="json")
-    maestro = "\n\n".join(cv["texto"] for cv in entrada["cvs"])
-    return [{"perfil": perfil, "cv_maestro": maestro}, e.taxonomia.model_dump(mode="json")]
+    return [{"perfil": perfil}, e.taxonomia.model_dump(mode="json")]
 
 
 # --- cv-base -----------------------------------------------------------------------------------
