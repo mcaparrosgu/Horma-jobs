@@ -4,7 +4,9 @@ Código puro: NO ejecuta nada ni abre la base de datos; devuelve el texto SQL y 
 repositorio los ejecuta (frontera «solo la API y el worker leen Postgres»).
 
 Reglas:
-- Solo ofertas procesadas y recomendables (ni fantasma ni fraude).
+- Solo ofertas procesadas y recomendables (ni fantasma ni fraude), SALVO las propias de la usuaria
+  (`usuaria_id` con valor; la RLS deja ver solo las suyas): esas pasan siempre, sin filtros ni
+  recomendable, y la usuaria decide qué hacer con ellas (RF-5.3e, P17).
 - Solo se descarta una oferta si el dato EXISTE y no coincide con el filtro. Si falta (o no es
   comparable), pasa (P2, P17). Un grupo de preferencias vacío no filtra.
 - Una oferta remota o sin país fijo pasa el filtro de país; si la usuaria marca «REMOTO», también
@@ -27,7 +29,7 @@ class Consulta:
 
 def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
                    excluir_ids: list[int] | tuple[int, ...] = (), limite: int | None = None) -> Consulta:
-    condiciones = ["estado = 'procesada'", "recomendable"]
+    condiciones = ["recomendable"]
     p: dict = {}
 
     def lista(nombre: str, valores: list) -> str:
@@ -59,9 +61,11 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
         p["sueldo_minimo"] = prefs.sueldo_minimo
         condiciones.append("((salario_anual_eur_min IS NULL AND salario_anual_eur_max IS NULL) OR "
                            "coalesce(salario_anual_eur_max, salario_anual_eur_min) >= :sueldo_minimo)")
+    catalogo = " AND ".join(condiciones)
+    donde = ["estado = 'procesada'", f"(usuaria_id IS NOT NULL OR ({catalogo}))"]
     if excluir_ids:
         p["excluir_ids"] = list(excluir_ids)
-        condiciones.append("NOT (id = ANY(CAST(:excluir_ids AS int[])))")
+        donde.append("NOT (id = ANY(CAST(:excluir_ids AS int[])))")
 
     orden = ["creada_en DESC", "id DESC"]
     if prefs.orden == "compatibles":
@@ -77,7 +81,7 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
             orden.insert(0, "(" + " + ".join(puntos) + ") DESC")
 
     sql = ("SELECT id, (salario_anual_eur_min IS NOT NULL OR salario_anual_eur_max IS NOT NULL) "
-           "AS sueldo_comparable FROM ofertas WHERE " + " AND ".join(condiciones)
+           "AS sueldo_comparable FROM ofertas WHERE " + " AND ".join(donde)
            + " ORDER BY " + ", ".join(orden))
     if limite is not None:
         p["limite"] = limite

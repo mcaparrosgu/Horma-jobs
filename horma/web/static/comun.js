@@ -7,6 +7,7 @@ const PESTANAS = [
   ["Perfil", "/perfil"],
   ["Preferencias", "/preferencias"],
   ["CV base", "/cv-base"],
+  ["Añadir oferta", "/anadir-oferta"],
   ["Recomendadas", "/recomendadas"],
   ["Candidaturas", "/candidaturas"],
 ];

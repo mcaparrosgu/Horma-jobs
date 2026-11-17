@@ -10,7 +10,8 @@ from fastapi.responses import FileResponse, RedirectResponse
 router = APIRouter()
 ESTATICOS = Path(__file__).resolve().parent.parent / "static"
 PAGINAS = {"/perfil": "perfil.html", "/preferencias": "preferencias.html", "/cv-base": "cv-base.html",
-           "/recomendadas": "recomendadas.html", "/candidaturas": "candidaturas.html",
+           "/recomendadas": "recomendadas.html", "/anadir-oferta": "anadir-oferta.html",
+           "/candidaturas": "candidaturas.html",
            "/candidaturas/{candidatura_id}": "candidatura.html"}
 
 

@@ -23,6 +23,7 @@ class NuevaOferta(BaseModel):
 def crear(datos: NuevaOferta, request: Request, response: Response):
     """Con sesión y CSRF (web) o con clave de API (ingesta o empresa). RF-1.3."""
     clave_id = None
+    usuaria_id = None
     if claves.portador(request):
         clave = claves.clave_valida(request, {"ofertas", "ingesta"})
         if datos.fuente and clave.alcance != "ingesta":
@@ -30,13 +31,15 @@ def crear(datos: NuevaOferta, request: Request, response: Response):
         claves.contar_ritmo(request, clave)
         clave_id = clave.id
     else:
-        exigir_csrf(request, usuaria_actual(request))
+        usuaria_id = usuaria_actual(request)
+        exigir_csrf(request, usuaria_id)
         if datos.fuente:
             raise HTTPException(status_code=403, detail="Solo la ingesta entrega en nombre de una fuente")
     engine = request.app.state.engine
     try:
         r = servicio.recibir(engine, datos.texto, fuente=datos.fuente, clave_id=clave_id,
-                             id_externo=datos.id_externo, url=datos.url)
+                             id_externo=datos.id_externo, url=datos.url,
+                             usuaria_id=usuaria_id)
     except servicio.FuenteNoValida as e:
         raise HTTPException(status_code=409, detail=f"Fuente no válida o inactiva: {e}") from e
     if not r["nueva"]:

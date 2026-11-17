@@ -10,7 +10,7 @@ from horma.web.main import crear_app
 
 ESTATICOS = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
 PAGINAS = {"/perfil": "perfil", "/preferencias": "preferencias", "/cv-base": "cv-base",
-           "/recomendadas": "recomendadas"}
+           "/recomendadas": "recomendadas", "/anadir-oferta": "anadir-oferta"}
 PROHIBIDO = ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function")
 
 
@@ -66,12 +66,13 @@ def test_cada_pagina_lleva_marco_pestanas_y_sus_propios_scripts(ruta, nombre):
 def test_las_pestanas_son_las_cuatro_de_la_maqueta():
     js = leer("comun.js")
     for etiqueta, ruta in (("Perfil", "/perfil"), ("Preferencias", "/preferencias"),
-                           ("CV base", "/cv-base"), ("Recomendadas", "/recomendadas")):
+                           ("CV base", "/cv-base"), ("Añadir oferta", "/anadir-oferta"),
+                           ("Recomendadas", "/recomendadas")):
         assert f'"{etiqueta}"' in js and f'"{ruta}"' in js
 
 
 def test_el_js_de_las_pantallas_pinta_solo_con_textcontent():
-    for nombre in ("comun", "perfil", "preferencias", "cv-base", "recomendadas"):
+    for nombre in ("comun", "perfil", "preferencias", "cv-base", "recomendadas", "anadir-oferta"):
         js = leer(f"{nombre}.js")
         for malo in PROHIBIDO:
             assert malo not in js, f"{nombre}.js usa {malo}"
@@ -106,7 +107,7 @@ def test_recomendadas_sigue_la_maqueta():
     html, js = leer("recomendadas.html"), leer("recomendadas.js")
     assert "Cómo leer las recomendaciones" in html and "<details" in html   # bloque plegable
     assert 'id="contador"' in html and 'id="filtros"' in html               # contador y barra
-    for columna in ("Oferta", "Puesto", "Compatibilidad", "Condiciones", "Salario", "Lugar", "Publicado"):
+    for columna in ("Oferta", "Puesto", "Compatibilidad", "Salario", "Lugar", "Publicado"):
         assert f'"{columna}"' in js
     assert js.count('"?"') >= 1 and "AYUDA" in js                            # «?» que explica cada columna
     assert "/api/recomendaciones" in js and "/api/recomendar" in js
@@ -114,6 +115,8 @@ def test_recomendadas_sigue_la_maqueta():
     assert "sin_puntuar" in js and "o.salario" in js                          # salario: texto de la oferta
     assert 'value="recientes"' in html and 'value="compatibles"' in html     # ordenación
     assert "rango" in js
+    assert '"Condiciones"' not in js and "cond-" not in js                    # fase 5, RF-5.2: sin columna
+    assert "Añadida por ti · analizada el" in js and "aviso_auditor" in js    # fase 5, RF-5.3e
 
 
 def test_en_movil_las_filas_pasan_a_tarjetas():

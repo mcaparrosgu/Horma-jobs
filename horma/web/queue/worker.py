@@ -6,6 +6,7 @@ Tipos de tarea (la carga es siempre un id, nunca texto):
   copiada y pendiente), `generar_cv_base`, `recomendar` (id de la versión del perfil con la que se
   trabaja). Las de una usuaria se ejecutan con su sesión (RLS); las demás, en modo sistema.
 - `regenerar_cv_base` (fase 5; id del CV base): lo vuelve a generar con el perfil vigente.
+- `puntuar_propias` (fase 5; id de la usuaria): puntúa las ofertas que ella añadió.
 - `candidatura` (fase 3; id de la candidatura): CV y carta para una oferta.
 El tope de coste vale para cualquier tarea: se corta en la puerta única (`metricas.capturar(tope=…)`) y
 una tarea que lo supera queda en `error` sin reintento y sin guardar su resultado.
@@ -66,9 +67,20 @@ class _ProcesarOferta:
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_ofertas.guardar(s, tarea["entidad_id"], Oferta.model_validate(estado["oferta"]),
                              [tuple(o) for o in estado["origenes"]])
+        if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
+            _encolar_puntuar_propias(s, usuaria)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_ofertas.marcar_error(s, tarea["entidad_id"], motivo)
+
+
+def _encolar_puntuar_propias(s, usuaria_id: int) -> None:
+    """Una sola tarea pendiente por usuaria: recoge todas las propias sin nota para su perfil vigente
+    (RF-5.3d). La carga es el id de la usuaria porque el worker, en modo sistema, no ve su perfil."""
+    if not repo_tareas.pendiente(s, "puntuar_propias", usuaria_id):
+        a = ajustes()
+        repo_tareas.encolar(s, usuaria_id, "puntuar_propias", usuaria_id, a.tope_coste_puntuar_propias,
+                            a.tope_reintentos_tarea)
 
 
 class _CalificarFuente:
@@ -115,6 +127,8 @@ class _Perfilar:
                                      estado["cv_maestro"])
         repo_perfiles.aplicar_preferencias_del_cv(
             s, tarea["usuaria_id"], Preferencias.model_validate(estado["preferencias"]))
+        if repo_ofertas.hay_propias(s):  # las añadidas antes de tener perfil se puntúan solas
+            _encolar_puntuar_propias(s, tarea["usuaria_id"])
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_perfiles.marcar_error_perfil(s, tarea["entidad_id"], motivo)
@@ -133,6 +147,8 @@ class _ClasificarPerfil:
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         perfil = Perfil.model_validate({**estado["perfil"], "taxonomia": estado["taxonomia"]})
         repo_perfiles.guardar_perfil(s, tarea["usuaria_id"], tarea["entidad_id"], perfil)
+        if repo_ofertas.hay_propias(s):  # perfil nuevo: las propias se puntúan con su versión
+            _encolar_puntuar_propias(s, tarea["usuaria_id"])
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_perfiles.marcar_error_perfil(s, tarea["entidad_id"], motivo)
@@ -216,6 +232,35 @@ class _Recomendar:
         """Sin fila propia: el motivo queda en la tarea."""
 
 
+class _PuntuarPropias(_Recomendar):
+    """Puntúa TODAS las ofertas propias de la usuaria sin nota para su perfil vigente, sin filtros ni
+    rango (RF-5.3d, RF-5.3e). Por tandas de 30 con el mismo flujo que `recomendar`. Entidad = id de la
+    usuaria. Sin perfil o sin ofertas pendientes no hace nada (y no llama al modelo)."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        fila = repo_perfiles.vigente(s)
+        if fila is None:
+            return {"candidatas": []}
+        perfil = repo_perfiles.perfil_modelo(fila)
+        prefs = repo_perfiles.preferencias(s).model_copy(update={"rango_min": 0, "rango_max": 100})
+        ids = repo_ofertas.propias_sin_nota(s, tarea["usuaria_id"], fila["version"],
+                                            recomendar.MAX_TANDAS * recomendar.TANDA)
+        ofertas = repo_ofertas.completas(s, ids)
+        return {"perfil": perfil.model_dump(mode="json"), "preferencias": prefs.model_dump(mode="json"),
+                "candidatas": [{"oferta_id": i, "oferta": ofertas[i].model_dump(mode="json")}
+                               for i in ids if i in ofertas],
+                "ya_puntuadas": [], "_version": fila["version"]}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        if not estado["candidatas"]:
+            return {**estado, "recomendaciones": []}
+        return super().ejecutar(estado, d)
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        if estado["recomendaciones"]:
+            super().guardar(s, tarea, estado)
+
+
 class _Candidatura:
     """Prepara CV y carta para una oferta (entidad = id de la candidatura): carga el perfil vigente, el
     CV maestro y todos los CV base de la usuaria; el flujo elige uno."""
@@ -251,7 +296,8 @@ MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _Procesar
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
                "regenerar_cv_base": _RegenerarCvBase(),
-               "recomendar": _Recomendar(), "candidatura": _Candidatura()}
+               "recomendar": _Recomendar(), "puntuar_propias": _PuntuarPropias(),
+               "candidatura": _Candidatura()}
 
 
 def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
