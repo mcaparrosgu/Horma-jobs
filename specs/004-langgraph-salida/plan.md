@@ -126,7 +126,9 @@ class Flow(Protocol):
   - `secretos` sigue igual.
   - `calidad` (push y PR): ruff, lint-imports, pytest (la suite de flujos se parametriza por las dos
     implementaciones) y los 8 sets con `--simulado`; `cv` se corre con las dos implementaciones.
-  - **`evals-reales`** (nuevo): solo con `pull_request` hacia `main` y con `workflow_dispatch`. Hace
+  - **`evals-reales`** (nuevo): solo con `pull_request` hacia `main` y con `workflow_dispatch`; el job siempre
+    corre en esos PR, pero solo llama al modelo si cambian `horma/`, `evals/`, `config/`, las dependencias o
+    `ci.yml` (refinamiento de P3, 17-nov); un push nuevo cancela la ejecución anterior. Hace
     `needs: calidad`, tiene `ANTHROPIC_API_KEY` y `HORMA_FLOW_IMPL=langgraph`, y corre con el
     modelo real y `--tope-coste 1.0` todos los sets salvo `recomendacion`, que queda fuera hasta el plan
     del `matcher` (con el modelo real su `nota` da 0,67-0,71 frente a 0,9; sigue en `calidad`, simulado). Si la clave está vacía, falla con un mensaje claro y no pasa a
