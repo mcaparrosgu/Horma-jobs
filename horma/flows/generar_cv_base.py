@@ -1,7 +1,10 @@
 """Flujo generar_cv_base (RF-2.9): elegir_destinos → generar → verificar → (reintento) →
 cerrar_destino → … → componer. Sin acceso a la base de datos.
 
-Estado de entrada: {"perfil": Perfil, "cv_maestro": str, "preferencias"?: Preferencias}.
+Estado de entrada: {"perfil": Perfil, "cv_maestro": str, "preferencias"?: Preferencias,
+"destinos"?: [{sector, familia}], "visibilidad"?: {clave_experiencia: completa|condensada|oculta}}.
+Con `destinos` solo se generan esos (regenerar un CV base). La visibilidad la marca la usuaria (RF-5.1g)
+y el código la comprueba como la trazabilidad.
 Estado de salida: además, "cv_base" = {"guardados": [{destino, contenido, traza, intentos}],
 "rechazados": [{destino, motivo, errores}]}.
 
@@ -9,12 +12,13 @@ Hasta 4 destinos (sector y familia) de la taxonomía del perfil y de las prefere
 genera como máximo 2 veces: el segundo intento recibe los errores del primero. Un CV que no pasa
 `verificar_trazabilidad` no se guarda y deja el motivo (RT-08)."""
 from horma.agents.generador_cv_base.agent import GeneradorCvBase
-from horma.agents.generador_cv_base.schemas import Destino, EntradaGeneradorCvBase
+from horma.agents.generador_cv_base.schemas import Destino, EntradaGeneradorCvBase, ReglaVisibilidad
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.tools.verificar_trazabilidad import verificar_idiomas, verificar_trazabilidad
+from horma.tools.visibilidad_cv import clave_experiencia, verificar_visibilidad
 
 MAX_DESTINOS = 4
 MAX_INTENTOS = 2
@@ -28,10 +32,13 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         tax = perfil.taxonomia
         sector = tax.sector if tax else "otros"
         familia = tax.familia if tax else "otros"
-        candidatos = ([(sector, familia)] if tax else [])
-        candidatos += [(sector, f) for f in prefs.familias]
-        candidatos += [(s, familia) for s in prefs.sectores]
-        destinos = list(dict.fromkeys(candidatos))[:MAX_DESTINOS]
+        if e.get("destinos"):  # regenerar: la usuaria pide uno concreto (RF-5.1e)
+            destinos = [(d["sector"], d["familia"]) for d in e["destinos"]][:MAX_DESTINOS]
+        else:
+            candidatos = ([(sector, familia)] if tax else [])
+            candidatos += [(sector, f) for f in prefs.familias]
+            candidatos += [(s, familia) for s in prefs.sectores]
+            destinos = list(dict.fromkeys(candidatos))[:MAX_DESTINOS]
         if not destinos:
             raise ValueError("el perfil no tiene taxonomía ni hay preferencias: no hay destino")
         e.update(destinos=[Destino(sector=s, familia=f).model_dump(mode="json") for s, f in destinos],
@@ -40,10 +47,14 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
 
     def generar(e: dict) -> dict:
         e["intento"] += 1
+        perfil = Perfil.model_validate(e["perfil"])
+        marcas = e.get("visibilidad") or {}
+        reglas = [ReglaVisibilidad(puesto=x.puesto, empresa=x.empresa, inicio=x.inicio,
+                                   valor=marcas[clave_experiencia(x)])
+                  for x in perfil.experiencias if clave_experiencia(x) in marcas]
         r = GeneradorCvBase.run(EntradaGeneradorCvBase(
-            cv_maestro=e["cv_maestro"], perfil=Perfil.model_validate(e["perfil"]).model_copy(
-                update={"instrucciones_embebidas": []}),
-            destino=Destino.model_validate(e["destinos"][e["indice"]]),
+            cv_maestro=e["cv_maestro"], perfil=perfil.model_copy(update={"instrucciones_embebidas": []}),
+            destino=Destino.model_validate(e["destinos"][e["indice"]]), visibilidad=reglas,
             errores_previos=e["errores"]), proveedor=proveedor)
         e["borrador"] = r.model_dump(mode="json")
         return e
@@ -51,7 +62,9 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
     def verificar(e: dict) -> dict:
         b = e["borrador"]
         e["errores"] = verificar_trazabilidad(b["contenido"], b["traza"], e["cv_maestro"])
-        e["errores"] += verificar_idiomas(b["contenido"], Perfil.model_validate(e["perfil"]))
+        perfil = Perfil.model_validate(e["perfil"])
+        e["errores"] += verificar_idiomas(b["contenido"], perfil)
+        e["errores"] += verificar_visibilidad(b["contenido"], perfil, e.get("visibilidad") or {})
         return e
 
     def cerrar_destino(e: dict) -> dict:

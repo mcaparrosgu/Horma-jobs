@@ -130,9 +130,9 @@ def test_comparador_de_perfil_detecta_rasgos_personales():
 
 
 # --- T11: cv-base ------------------------------------------------------------------------------
-def test_fixtures_de_cv_base_son_5_de_5_sectores():
+def test_fixtures_de_cv_base_son_5_de_5_sectores_y_dos_de_visibilidad():
     casos = _casos("cv-base")
-    assert len(casos) == 5
+    assert len(casos) == 7  # los 5 sectores + oculta y condensada (fase 5, T08)
     sectores = set()
     for c in casos:
         e = _json(c / "entrada.json")
@@ -140,12 +140,12 @@ def test_fixtures_de_cv_base_son_5_de_5_sectores():
         Preferencias.model_validate(e.get("preferencias") or {})
         assert e["cv_maestro"].strip() and _json(c / "esperado.json")["destinos"] >= 1
         assert not errores_ats(e["cv_maestro"]), c.name
-    assert len(sectores) == 5
+    assert len(sectores) == 5  # los de visibilidad repiten el sector de hostelería
 
 
 def test_eval_cv_base_simulado_pasa_al_100():
     r = correr_set("cv-base", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 5
+    assert r["aprobado"] and r["casos"] == 7
     assert r["campos"] == {"verificacion": 1.0, "ats": 1.0}
 
 
@@ -263,7 +263,7 @@ def test_el_eval_se_detiene_al_superar_el_tope_y_deja_constancia(tmp_path):
 
 def test_con_tope_holgado_corre_todo_y_anota_el_coste():
     r = correr_set("cv-base", raiz=RAIZ, simulado=True, tope_coste=1.0)
-    assert r["detenido_por_coste"] is False and r["casos_ejecutados"] == r["casos"] == 5
+    assert r["detenido_por_coste"] is False and r["casos_ejecutados"] == r["casos"] == 7
     assert 0 < r["coste"] < 1.0 and r["tope_coste"] == 1.0
 
 

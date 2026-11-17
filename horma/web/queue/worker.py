@@ -3,8 +3,9 @@
 Tipos de tarea (la carga es siempre un id, nunca texto):
 - `procesar_oferta` / `extraer_oferta` (catálogo, modo sistema) y `calificar_fuente` (fase 1).
 - `perfilar` (id de una versión nueva y pendiente del perfil), `clasificar_perfil` (id de una versión
-  copiada y pendiente), `generar_cv_base` y `recomendar` (id de la versión del perfil con la que se
+  copiada y pendiente), `generar_cv_base`, `recomendar` (id de la versión del perfil con la que se
   trabaja). Las de una usuaria se ejecutan con su sesión (RLS); las demás, en modo sistema.
+- `regenerar_cv_base` (fase 5; id del CV base): lo vuelve a generar con el perfil vigente.
 - `candidatura` (fase 3; id de la candidatura): CV y carta para una oferta.
 El tope de coste vale para cualquier tarea: se corta en la puerta única (`metricas.capturar(tope=…)`) y
 una tarea que lo supera queda en `error` sin reintento y sin guardar su resultado.
@@ -157,6 +158,37 @@ class _GenerarCvBase:
             repo_perfiles.marcar_error_cv_base(s, tarea["usuaria_id"], fila["version"], motivo)
 
 
+class _RegenerarCvBase:
+    """Vuelve a generar un CV base concreto (id del CV base) con el perfil vigente. Solo a petición."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        datos = repo_perfiles.datos_para_regenerar(s, tarea["entidad_id"])
+        if datos is None:
+            raise ValueError("el CV base ya no existe")
+        fila = repo_perfiles.vigente(s)
+        if fila is None:
+            raise ValueError("el perfil no está listo")
+        return {"perfil": repo_perfiles.perfil_modelo(fila).model_dump(mode="json"),
+                "cv_maestro": fila["cv_maestro"],
+                "preferencias": repo_perfiles.preferencias(s).model_dump(mode="json"),
+                "destinos": [{"sector": datos["sector"], "familia": datos["familia"]}],
+                "visibilidad": datos["visibilidad"] or {}, "_version": fila["version"]}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        salida = generar_cv_base.crear(proveedor=d.proveedor).run(estado)
+        if not salida["cv_base"]["guardados"]:  # no pasó la verificación: no se toca el CV
+            rechazo = salida["cv_base"]["rechazados"][0]
+            raise ValueError(f"la regeneración no pasó la verificación: {rechazo['motivo']}")
+        return salida
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_perfiles.regenerar_cv_base(s, tarea["entidad_id"], estado["_version"],
+                                        estado["cv_base"]["guardados"][0])
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        repo_perfiles.marcar_error_regeneracion(s, tarea["entidad_id"], motivo)
+
+
 class _Recomendar:
     """Puntúa las ofertas que pasan el filtro y aún no tienen nota para esta versión del perfil."""
 
@@ -218,6 +250,7 @@ class _Candidatura:
 MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
+               "regenerar_cv_base": _RegenerarCvBase(),
                "recomendar": _Recomendar(), "candidatura": _Candidatura()}
 
 

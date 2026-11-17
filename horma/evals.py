@@ -65,6 +65,7 @@ from horma.schemas.perfil import Perfil
 from horma.tools.medir_ats import errores_ats  # noqa: F401  (movida a tools; se reexporta)
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, frases, verificar_trazabilidad
+from horma.tools.visibilidad_cv import clave_experiencia, normalizar
 
 
 @dataclass(frozen=True)
@@ -171,8 +172,33 @@ def _comparar_cv_base(obtenido: dict, esperado: dict) -> list[str]:
     return fallos
 
 
+def _aplicar_visibilidad(maestro: str, entrada: dict) -> str:
+    """Lo que haría un modelo obediente con las experiencias marcadas (RF-5.1g): una `oculta` se quita
+    entera (cabecera y viñetas); una `condensada` se queda sin sus viñetas."""
+    perfil = Perfil.model_validate(entrada["perfil"])
+    marcas = entrada.get("visibilidad") or {}
+    por_experiencia = [(x, marcas.get(clave_experiencia(x))) for x in perfil.experiencias]
+    salida: list[str] = []
+    descartar_vinetas = False
+    for linea in maestro.splitlines():
+        if linea.lstrip().startswith("- "):
+            if descartar_vinetas:
+                continue
+        else:
+            descartar_vinetas = False
+            norm = normalizar(linea)
+            for x, valor in por_experiencia:
+                if valor and normalizar(x.puesto) in norm and normalizar(x.empresa) in norm:
+                    descartar_vinetas = True
+                    if valor == "oculta":
+                        linea = ""
+        if linea or not descartar_vinetas:
+            salida.append(linea)
+    return "\n".join(salida)
+
+
 def _respuestas_cv_base(e: EsperadoCvBase, entrada: dict) -> list[dict]:
-    maestro = entrada["cv_maestro"]
+    maestro = _aplicar_visibilidad(entrada["cv_maestro"], entrada)
     traza = [{"frase": f, "fragmento": f} for f in frases(maestro)]
     return [{"contenido": maestro, "traza": traza}] * e.destinos
 
