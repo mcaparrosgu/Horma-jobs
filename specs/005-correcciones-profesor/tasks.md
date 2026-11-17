@@ -31,7 +31,7 @@ Mar antes de gastar. Cada bloque va en su rama y con un PR; desde T00, un PR ya 
 real (RF-5.8).
 
 ### T00 · Aparcar `evals-reales` (RF-5.8)
-- [ ] T00 — Solo a mano hasta el lanzamiento. *(código hecho el 17-nov; falta que Mar quite el check en GitHub y la comprobación con un PR)*
+- [x] T00 — Solo a mano hasta el lanzamiento. *(fusionada con el PR #10 el 17-nov; `main` exige solo `secretos` y `calidad`)*
   - **Qué se hace:** en `ci.yml`, `evals-reales` solo con `workflow_dispatch`; Mar quita
     `evals-reales` de los checks obligatorios de `main`; nota en `docs/mejoras-futuras.md` para
     reactivarlo antes de lanzar. Nota en RF-4.4c de la spec de la fase 4.
@@ -40,31 +40,31 @@ real (RF-5.8).
   - **Cubre:** RF-5.8.
 
 ### Bloque A · Perfil y CV maestro (RF-5.1-5.1d)
-- [ ] T01 — `componer_cv_maestro`.
+- [x] T01 — `componer_cv_maestro`. *(hecha el 17-nov)*
   - **Qué se hace:** tool de código puro que convierte un `Perfil` en el Markdown del maestro, con
     los encabezados fijos del plan.
   - **Test:** el mismo perfil da el mismo texto; cada dato del perfil aparece en su sección; un dato
     quitado no aparece; sin rasgos personales.
   - **Cubre:** RF-5.1.
-- [ ] T02 — Secciones nuevas del perfil.
+- [x] T02 — Secciones nuevas del perfil. *(hecha el 17-nov; `corregir` sin índice añade un dato a la lista)*
   - **Qué se hace:** `Proyecto`, `Certificacion` y `OtroDato` en `schemas/perfil.py`; `LISTAS` del
     servicio; `componer_cv_maestro` las incluye.
   - **Test:** se pueden añadir, corregir y quitar por la API con origen «usuaria»; un campo prohibido
     (edad) sigue fallando.
   - **Cubre:** RF-5.1c.
-- [ ] T03 — El maestro manda tras editar.
+- [x] T03 — El maestro manda tras editar. *(hecha el 17-nov; migración 0010, que T11 ya no puede usar: la de ofertas será la 0011)*
   - **Qué se hace:** `_nueva_version` guarda `componer_cv_maestro(perfil)`; `perfilar` también lo usa;
     el extractor deja de escribir `cv_maestro` (prompt y esquema). Migración 0010 (solo la parte de
     recomponer los maestros existentes).
   - **Test:** editar una experiencia cambia el maestro de la versión nueva; con respuestas simuladas,
     un CV adaptado que usa el dato editado no da errores de trazabilidad; lo borrado no aparece.
   - **Cubre:** RF-5.1, RF-5.1b.
-- [ ] T04 — Extractor con secciones nuevas y su eval.
+- [x] T04 — Extractor con secciones nuevas y su eval. *(hecha el 17-nov; casos 13 y 14; el eval de perfil pasa a 14 casos)*
   - **Qué se hace:** prompt del `extractor_perfil` (proyectos, certificaciones, otros, cada uno con su
     cita); casos nuevos en `evals/perfil/`.
   - **Test:** `horma eval correr perfil --simulado` en umbral con los casos nuevos.
   - **Cubre:** RF-5.1c.
-- [ ] T05 — Pantalla del perfil.
+- [ ] T05 — Pantalla del perfil. *(código hecho el 17-nov; falta que Mar lo compruebe en la web)*
   - **Qué se hace:** las tres secciones en `perfil.html/js` con su texto de ayuda y los ejemplos de la
     spec; el aviso «Lo que edites aquí manda sobre tus CV subidos…».
   - **Test:** Mar lo comprueba en la web (paso del plan de pruebas): ve las secciones, la ayuda y el

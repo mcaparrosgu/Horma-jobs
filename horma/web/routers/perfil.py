@@ -1,6 +1,4 @@
 """Perfil con versiones (RF-2.2 a 2.4): verlo con sus orígenes y pendientes, responder o corregir."""
-from typing import Literal
-
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
@@ -18,8 +16,7 @@ class Respuesta(BaseModel):
 
 
 class Correccion(BaseModel):
-    campo: Literal["experiencias", "formacion", "idiomas", "habilidades", "titular", "resumen",
-                   "genero_puestos"]
+    campo: str
     indice: int | None = None
     dato: dict | None = None
 

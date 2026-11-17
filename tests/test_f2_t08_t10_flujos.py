@@ -42,7 +42,7 @@ def test_perfilar_compone_perfil_con_origen_taxonomia_y_preferencias_del_cv():
     assert prefs["familias"] == ["hosteleria_restauracion"]
     assert prefs["sectores"] == ["hosteleria_turismo"] and prefs["idiomas"] == ["en"]
     assert prefs["origen"]["familias"] == "cv" and prefs["solo_remoto"] is False
-    assert e["cv_maestro"].startswith("# Ana")
+    assert "Camarera · Bar Sol" in e["cv_maestro"] and "## Idiomas" in e["cv_maestro"]
     assert flujo.pasos() == ["extraer", "verificar_origen", "quitar_sensibles", "clasificar",
                              "preferencias_desde_cv", "componer"]
 

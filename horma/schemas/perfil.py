@@ -65,6 +65,27 @@ class DatoTexto(_ConOrigen):
     origen: OrigenDato
 
 
+class Proyecto(_ConOrigen):
+    nombre: str = Field(min_length=1)
+    descripcion: str | None = None
+    fecha: str | None = Field(default=None, description="AAAA o AAAA-MM, si aparece.")
+    origen: OrigenDato
+
+
+class Certificacion(_ConOrigen):
+    nombre: str = Field(min_length=1)
+    entidad: str | None = None
+    fecha: str | None = Field(default=None, description="AAAA o AAAA-MM, si aparece.")
+    origen: OrigenDato
+
+
+class OtroDato(_ConOrigen):
+    """Lo que no encaja en otra sección y ella quiere en su CV (carnet de conducir, disponibilidad…)."""
+
+    valor: str = Field(min_length=1)
+    origen: OrigenDato
+
+
 class PreguntaPendiente(BaseModel):
     """Lo que falta, es ambiguo o se contradice entre CV: se le pregunta a la usuaria."""
 
@@ -91,6 +112,9 @@ class Perfil(BaseModel):
     formacion: list[Formacion] = Field(default_factory=list)
     idiomas: list[IdiomaPerfil] = Field(default_factory=list)
     habilidades: list[Habilidad] = Field(default_factory=list)
+    proyectos: list[Proyecto] = Field(default_factory=list)
+    certificaciones: list[Certificacion] = Field(default_factory=list)
+    otros: list[OtroDato] = Field(default_factory=list)
     taxonomia: Taxonomia | None = None
     preguntas_pendientes: list[PreguntaPendiente] = Field(default_factory=list)
     instrucciones_embebidas: list[str] = Field(default_factory=list)

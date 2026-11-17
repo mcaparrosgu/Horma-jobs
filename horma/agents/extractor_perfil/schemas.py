@@ -15,5 +15,3 @@ class EntradaExtractorPerfil(BaseModel):
 
 class SalidaExtractorPerfil(BaseModel):
     perfil: Perfil
-    cv_maestro: str = Field(min_length=1,
-                            description="CV maestro en Markdown, con todo lo que dicen los CV.")

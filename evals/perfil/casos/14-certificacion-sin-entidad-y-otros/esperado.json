@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "titular": null,
+  "resumen": null,
+  "habilidades": [],
+  "idiomas": [],
+  "formacion": [],
+  "experiencias": [
+    {
+      "puesto": "Auxiliar administrativo",
+      "empresa": "Gestoría Levante",
+      "inicio": "2018",
+      "fin": "2023",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Auxiliar administrativo en Gestoría Levante, 2018-2023"
+      }
+    }
+  ],
+  "proyectos": [],
+  "certificaciones": [
+    {
+      "nombre": "Excel avanzado",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Excel avanzado"
+      }
+    }
+  ],
+  "otros": [
+    {
+      "valor": "Disponibilidad inmediata",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Disponibilidad inmediata"
+      }
+    },
+    {
+      "valor": "Incorporación en Valencia",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Incorporación en Valencia"
+      }
+    }
+  ],
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": [],
+  "nombre": "Pablo Ruiz",
+  "taxonomia": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "junior",
+    "stack": []
+  }
+}
