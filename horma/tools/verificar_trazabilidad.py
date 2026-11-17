@@ -152,8 +152,11 @@ def verificar_trazabilidad(contenido: str, traza: Sequence, fuentes: str | Seque
         if not any(_clave(fragmento) in c for c in claves_fuentes):
             errores.append(f"El fragmento no está en {nombre}: «{fragmento}» (frase «{frase}»)")
             continue
-        # 4. la frase no añade datos a su fragmento
+        # 4. la frase no añade datos a su fragmento. En la carta, una frase puede juntar datos de varias
+        # líneas del CV: vale cualquier palabra que esté en alguna fuente (lo inventado sigue sin valer).
         en_fragmento = {p.casefold() for p in _palabras(fragmento)}
+        if por_frase:
+            en_fragmento |= {p.casefold() for f in lista for p in _palabras(f)}
         raices = {_raiz(p) for p in en_fragmento}
         for termino in _terminos_a_comprobar(frase, cabeceras=not por_frase):
             if termino not in en_fragmento and _raiz(termino) not in raices:

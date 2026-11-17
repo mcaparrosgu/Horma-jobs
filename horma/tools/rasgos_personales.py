@@ -19,7 +19,9 @@ _PATRONES: dict[str, list[str]] = {
         r"\banciana?\b", r"\bveterana?\b",
     ],
     "nacionalidad": [
-        r"\bnacionalidad\b", r"\bextranjer[oa]s?\b", r"\binmigrante", r"\bciudadan[oa] de\b",
+        # «idioma/lengua extranjera» y «en el extranjero» no hablan de la persona
+        r"\bnacionalidad\b", r"(?<!idioma )(?<!idiomas )(?<!lengua )(?<!lenguas )(?<!el )\bextranjer[oa]s?\b",
+        r"\binmigrante", r"\bciudadan[oa] de\b",
         r"\bde origen (?:espanol|extranjero|marroqui|latino)",
     ],
     "sexo": [r"\b(?:mujer|mujeres|hombre|hombres|varon|varones|femenin[oa]s?|masculin[oa]s?)\b"],
