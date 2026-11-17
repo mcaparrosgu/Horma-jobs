@@ -5,6 +5,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Un push nuevo cancela la ejecución anterior del mismo PR o rama: sin evals duplicados (cuestan dinero).
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   secretos:
     runs-on: ubuntu-latest
@@ -61,6 +66,9 @@ jobs:
           if-no-files-found: ignore
 
   # Mide el modelo de verdad (RF-4.4c). Solo en PR a main y a mano; no pasa a simulado si falta la clave.
+  # El job siempre corre en esos PR (así el check obligatorio de `main` se cumple), pero solo llama al modelo
+  # si el PR toca algo que lo afecta: `horma/`, `evals/`, `config/`, las dependencias o este archivo.
+  # Un PR de solo specs, README, docs o tests termina en verde sin gastar nada.
   evals-reales:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
     runs-on: ubuntu-latest
@@ -70,23 +78,48 @@ jobs:
       HORMA_FLOW_IMPL: langgraph
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: ¿El PR toca algo que afecta al modelo?
+        id: cambios
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "relevante=true" >> "$GITHUB_OUTPUT"
+            echo "Ejecución manual: se mide con el modelo."
+            exit 0
+          fi
+          cambiados=$(git diff --name-only "$BASE_SHA" HEAD)
+          echo "Archivos cambiados:"; echo "$cambiados"
+          if echo "$cambiados" | grep -Eq '^(horma/|evals/|config/|pyproject\.toml$|uv\.lock$|\.github/workflows/ci\.yml$)'; then
+            echo "relevante=true" >> "$GITHUB_OUTPUT"
+            echo "Hay cambios que afectan al modelo: se mide."
+          else
+            echo "relevante=false" >> "$GITHUB_OUTPUT"
+            echo "Solo specs, docs o tests: no se llama al modelo."
+          fi
       - name: Comprobar la clave (sin imprimirla)
+        if: steps.cambios.outputs.relevante == 'true'
         run: |
           if [ -z "$ANTHROPIC_API_KEY" ]; then
             echo "::error::Falta el secreto ANTHROPIC_API_KEY: las evals reales no pueden pasar a simulado."
             exit 1
           fi
-      - uses: astral-sh/setup-uv@v5
-      - run: uv sync
+      - if: steps.cambios.outputs.relevante == 'true'
+        uses: astral-sh/setup-uv@v5
+      - if: steps.cambios.outputs.relevante == 'true'
+        run: uv sync
       # `recomendacion` queda fuera hasta el plan del matcher: con el modelo real la nota falla (0,67-0,71 frente a 0,9). Sigue en `calidad`, simulado.
       - name: Evals con el modelo real (tope de 1 USD por set)
+        if: steps.cambios.outputs.relevante == 'true'
         run: |
           for set in ofertas fuentes perfil cv-base respuestas red-teaming; do
             uv run horma eval correr "$set" --tope-coste 1.0
           done
           uv run horma eval correr cv --tope-coste 1.0 --flujo langgraph
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.cambios.outputs.relevante == 'true'
         with:
           name: ejecuciones-de-evals-reales
           path: evals/resultados/
