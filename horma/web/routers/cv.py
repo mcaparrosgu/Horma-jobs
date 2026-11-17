@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from horma.config import ajustes
+from horma.tools.visibilidad_cv import VALORES
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.db import sesion_de
 from horma.web.limites import limite_subida_cv
@@ -23,6 +24,10 @@ class Nombre(BaseModel):
 class EdicionCvBase(BaseModel):
     nombre: str | None = Field(default=None, min_length=1, max_length=80)
     contenido: str | None = Field(default=None, min_length=1, max_length=20000)
+
+
+class VisibilidadCvBase(BaseModel):
+    visibilidad: dict[str, str] = Field(default_factory=dict, max_length=60)
 
 
 def _nombre(valor: str) -> str:
@@ -111,6 +116,37 @@ def generar_cv_base(request: Request, usuaria_id: int = Depends(usuaria_actual))
     return {"tarea_id": tarea, "perfil_version": fila["version"]}
 
 
+@router.post("/api/cv-base/{cv_id}/regenerar", status_code=202, dependencies=[Depends(exigir_csrf)])
+def regenerar_cv_base(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """Vuelve a generar ese CV base con el perfil vigente. Solo al pulsar el botón (RF-5.1e)."""
+    a = ajustes()
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        if perfiles.datos_para_regenerar(s, cv_id) is None:
+            raise HTTPException(status_code=404, detail="No existe ese CV base.")
+        if tareas.sin_terminar(s, "regenerar_cv_base", cv_id):
+            raise HTTPException(status_code=409, detail="Ya se está regenerando.")
+        tarea = tareas.encolar(s, usuaria_id, "regenerar_cv_base", cv_id, a.tope_coste_cv_base,
+                               a.tope_reintentos_tarea)
+    return {"tarea_id": tarea}
+
+
+@router.put("/api/cv-base/{cv_id}/visibilidad", dependencies=[Depends(exigir_csrf)])
+def visibilidad_cv_base(cv_id: int, datos: VisibilidadCvBase, request: Request,
+                        usuaria_id: int = Depends(usuaria_actual)):
+    """Marca cada experiencia del CV base como completa, condensada u oculta (RF-5.1g). Lo que se
+    envíe sustituye lo marcado antes; vacío = todo automático. Se aplica al regenerar."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        if perfiles.datos_para_regenerar(s, cv_id) is None:
+            raise HTTPException(status_code=404, detail="No existe ese CV base.")
+        claves = {e["clave"] for e in perfiles.experiencias_marcables(s)}
+        for clave, valor in datos.visibilidad.items():
+            if valor not in VALORES or clave not in claves:
+                raise HTTPException(status_code=422, detail="Esa marca no es válida: elige completa, "
+                                    "condensada u oculta para una experiencia de tu perfil.")
+        perfiles.guardar_visibilidad(s, cv_id, datos.visibilidad)
+    return {"visibilidad": datos.visibilidad}
+
+
 @router.get("/api/cv-base")
 def listar_cv_base(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Los CV base verificados. Los rechazados no salen como CV: solo su motivo, en `avisos`."""
@@ -118,11 +154,14 @@ def listar_cv_base(request: Request, usuaria_id: int = Depends(usuaria_actual)):
         filas = perfiles.listar_cv_base(s)
         vigente = perfiles.vigente(s)
         en_curso = bool(vigente) and tareas.sin_terminar(s, "generar_cv_base", vigente["id"])
+        experiencias = perfiles.experiencias_marcables(s)
+        regenerando = [f["id"] for f in filas
+                       if f["estado"] == "hecho" and tareas.sin_terminar(s, "regenerar_cv_base", f["id"])]
     return {"cv_base": [f for f in filas if f["estado"] == "hecho"],
             "avisos": [{"nombre": f["nombre"], "estado": f["estado"], "motivo": f["motivo_error"],
                         "perfil_version": f["perfil_version"]}
                        for f in filas if f["estado"] != "hecho" and not f["desfasado"]],
-            "generando": en_curso}
+            "generando": en_curso, "regenerando": regenerando, "experiencias": experiencias}
 
 
 @router.patch("/api/cv-base/{cv_id}", dependencies=[Depends(exigir_csrf)])

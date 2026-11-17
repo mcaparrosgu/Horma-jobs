@@ -9,6 +9,8 @@ from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.comparar_versiones import comparar_versiones
+from horma.tools.cv_base_afectado import lineas_cambiadas
+from horma.tools.visibilidad_cv import clave_experiencia, nombre_experiencia
 
 _j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
 GRUPOS_DEL_CV = ("familias", "sectores", "idiomas")
@@ -167,13 +169,19 @@ def _nombre_cv_base(destino: dict, version: int) -> str:
 
 
 def listar_cv_base(s: Session) -> list[dict]:
-    """Todos los CV base de la usuaria; `desfasado` = calculado con una versión anterior a la vigente."""
-    filas = s.execute(text(
+    """Todos los CV base de la usuaria. `desfasado` (RF-5.1e): el perfil ha avanzado Y algún dato de la
+    traza del CV ya no está en el maestro vigente; `cambios` = esas líneas, tal como estaban."""
+    filas = [dict(f) for f in s.execute(text(
         "select c.id, c.nombre, c.sector, c.familia, c.contenido, c.estado, c.motivo_error, "
-        "c.perfil_version, c.creado_en, "
-        "c.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
-        "as desfasado from cv_base c order by c.id")).mappings().all()
-    return [dict(f) for f in filas]
+        "c.perfil_version, c.creado_en, c.traza, c.visibilidad "
+        "from cv_base c order by c.id")).mappings().all()]
+    actual = vigente(s)
+    for f in filas:
+        traza = f.pop("traza") or []
+        cambios = (lineas_cambiadas(traza, actual["cv_maestro"])
+                   if actual and f["perfil_version"] < actual["version"] else [])
+        f["cambios"], f["desfasado"] = cambios, bool(cambios)
+    return filas
 
 
 def hay_cv_base_hecho(s: Session, perfil_version: int) -> bool:
@@ -209,6 +217,46 @@ def editar_cv_base(s: Session, cv_id: int, nombre: str | None, contenido: str | 
     s.execute(text("update cv_base set nombre = :n, contenido = :c where id = :i"),
               {"i": cv_id, "n": nuevo_nombre, "c": nuevo_contenido})
     return True
+
+
+def datos_para_regenerar(s: Session, cv_id: int) -> dict | None:
+    """Destino del CV base que se va a regenerar; `None` si no existe o no está hecho."""
+    fila = s.execute(text("select sector, familia, visibilidad from cv_base "
+                          "where id = :i and estado = 'hecho'"), {"i": cv_id}).mappings().first()
+    return dict(fila) if fila else None
+
+
+def experiencias_marcables(s: Session) -> list[dict]:
+    """Las experiencias del perfil vigente con su clave estable, para marcar su visibilidad (RF-5.1g)."""
+    fila = vigente(s)
+    if fila is None:
+        return []
+    return [{"clave": clave_experiencia(x), "nombre": nombre_experiencia(x),
+             "periodo": " - ".join(p for p in (x.inicio, x.fin) if p)}
+            for x in perfil_modelo(fila).experiencias]
+
+
+def guardar_visibilidad(s: Session, cv_id: int, visibilidad: dict[str, str]) -> bool:
+    return s.execute(text("update cv_base set visibilidad = cast(:v as jsonb) "
+                          "where id = :i and estado = 'hecho'"),
+                     {"i": cv_id, "v": _j(visibilidad)}).rowcount == 1
+
+
+def regenerar_cv_base(s: Session, cv_id: int, perfil_version: int, guardado: dict) -> bool:
+    """Sustituye el contenido, la traza y la versión del perfil del CV base. La versión anterior va al
+    historial con origen `regeneracion` (misma transacción). Mantiene el nombre que le puso la usuaria."""
+    if not editar_cv_base(s, cv_id, None, guardado["contenido"], origen="regeneracion"):
+        return False
+    s.execute(text("update cv_base set traza = cast(:t as jsonb), perfil_version = :v, "
+                   "motivo_error = null where id = :i"),
+              {"i": cv_id, "t": _j(guardado["traza"]), "v": perfil_version})
+    return True
+
+
+def marcar_error_regeneracion(s: Session, cv_id: int, motivo: str) -> None:
+    """El CV se queda como estaba; el motivo se ve en su tarjeta."""
+    s.execute(text("update cv_base set motivo_error = :m where id = :i and estado = 'hecho'"),
+              {"i": cv_id, "m": motivo[:500]})
 
 
 def versiones_cv_base(s: Session, cv_id: int) -> list[dict] | None:

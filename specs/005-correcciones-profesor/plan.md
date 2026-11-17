@@ -165,7 +165,10 @@ solo usa el worker, inyectable como `descargar.Descargador` para los tests.
 - Antes del lanzamiento: se vuelve a poner `pull_request` y el check obligatorio. Queda anotado en
   `docs/mejoras-futuras.md`.
 
-## Modelo de datos (migración 0010, reversible)
+## Modelo de datos (migraciones reversibles)
+Numeración real: 0010 (bloque A, recomponer maestros), 0011 (`origen` «regeneracion») y 0012
+(`cv_base.visibilidad`) del bloque B; el resto de cambios, en la 0013 (bloque C) y siguientes.
+
 | Tabla | Cambio |
 |---|---|
 | `ofertas` | `+ usuaria_id integer NULL REFERENCES usuarias ON DELETE CASCADE`; política de lectura nueva (ver arriba) |

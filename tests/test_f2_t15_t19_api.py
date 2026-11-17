@@ -438,7 +438,8 @@ def test_al_cambiar_el_perfil_los_cv_base_salen_desfasados_sin_regenerarse(app, 
     with sesion_de(motor_app, u) as s:
         perfiles.guardar_cv_base(s, u, 1, {"guardados": [{
             "destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
-            "contenido": "x", "traza": [], "intentos": 1}], "rechazados": []})
+            "contenido": "x", "traza": [{"frase": "x", "fragmento": "Dato que el perfil nuevo ya no tiene"}],
+            "intentos": 1}], "rechazados": []})
     c.post("/api/perfil/respuestas", headers=h, json={"indice": 0})
     assert c.get("/api/cv-base").json()["cv_base"][0]["desfasado"] is True
     assert "generar_cv_base" not in [t.tipo for t in _tareas(motor_app)]

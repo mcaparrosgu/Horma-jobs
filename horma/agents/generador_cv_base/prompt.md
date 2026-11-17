@@ -16,6 +16,12 @@ Reglas:
   `## Experiencia` en ese género (camarera/camarero, cocinera/cocinero…) aunque el CV maestro los
   traiga mezclados; no cambies el nombre de las titulaciones oficiales. Si está vacío, deja cada
   puesto como está en el maestro. La traza sigue citando el fragmento original del maestro.
+- Experiencias de otro sector: las que no tienen que ver con el destino van CONDENSADAS en una sola
+  línea (puesto · empresa · fechas, sin descripción), para no dejar huecos en las fechas. Las que sí
+  tienen que ver, completas, con su descripción.
+- `visibilidad`: si la usuaria ha marcado una experiencia, lo marcado manda sobre la regla anterior.
+  `completa`: con su descripción. `condensada`: una sola línea, sin descripción. `oculta`: no
+  aparece en ninguna parte del CV base. El código rechaza el CV si no lo respetas.
 - `traza`: una entrada por cada línea del CV base que no sea un encabezado, con `frase` (la línea
   tal cual, sin viñeta) y `fragmento` (cita LITERAL del CV maestro de la que sale). Una frase sin
   traza se rechaza.

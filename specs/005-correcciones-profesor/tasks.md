@@ -72,27 +72,27 @@ real (RF-5.8).
   - **Cubre:** RF-5.1c, RF-5.1d.
 
 ### Bloque B · CV base y candidaturas desfasadas (RF-5.1e-5.1g)
-- [ ] T06 — Desfasado por traza.
+- [x] T06 — Desfasado por traza. *(hecha el 17-nov; la lista de CV base devuelve `cambios` y `desfasado`)*
   - **Qué se hace:** `cv_base_afectado(traza, maestro_nuevo)`; `listar_cv_base` lo usa y devuelve qué
     líneas cambiaron.
   - **Test:** editar una experiencia de hostelería marca el CV base que la cita y no el de construcción
     que no la usa.
   - **Cubre:** RF-5.1e.
-- [ ] T07 — Regenerar un CV base.
+- [x] T07 — Regenerar un CV base. *(hecha el 17-nov; tarea nueva `regenerar_cv_base` (id del CV base); migración 0011, así que la de ofertas de T11 será la 0013)*
   - **Qué se hace:** `POST /api/cv-base/{id}/regenerar`; `generar_cv_base` acepta `destinos` y
     `cv_base_id`; se guarda con `origen="regeneracion"` (migración: valor nuevo); botón en
     `cv-base.html/js`.
   - **Test:** regenerar sustituye el contenido y deja la versión anterior en el historial; nada se
     regenera sin pulsar el botón.
   - **Cubre:** RF-5.1e.
-- [ ] T08 — Visibilidad de experiencias en el CV base.
+- [x] T08 — Visibilidad de experiencias en el CV base. *(hecha el 17-nov; migración 0012; el selector lleva una cuarta opción, «Automática», para lo no marcado; evals 06 y 07)*
   - **Qué se hace:** `cv_base.visibilidad` (migración), regla en el prompt del generador, comprobación
     con código y selector «completa / condensada / oculta» por experiencia en la web. Por defecto, la
     de otro sector, condensada.
   - **Test:** una «oculta» no aparece; una «condensada» ocupa una línea; al regenerar se respeta lo
     marcado; casos nuevos en `evals/cv-base/` en simulado.
   - **Cubre:** RF-5.1g.
-- [ ] T09 — Borradores con una versión anterior del perfil.
+- [x] T09 — Borradores con una versión anterior del perfil. *(hecha el 17-nov; falta que Mar lo compruebe en la web)*
   - **Qué se hace:** `desfasada` en el detalle de la candidatura; `reintentar` admite un borrador
     desfasado; aviso y botón «Volver a preparar» en `candidatura.html/js`.
   - **Test:** tras editar el perfil, el borrador muestra el aviso; rehacer lo prepara con la versión
@@ -106,7 +106,7 @@ real (RF-5.8).
   - **Test:** hoy falla (es el test de la tarea).
   - **Cubre:** RF-5.3.
 - [ ] T11 — Dueña y privacidad.
-  - **Qué se hace:** migración 0010: `ofertas.usuaria_id` y la política de lectura nueva; `recibir`
+  - **Qué se hace:** migración 0013: `ofertas.usuaria_id` y la política de lectura nueva; `recibir`
     con `usuaria_id` desde la web; `repetida` solo dentro de la misma dueña.
   - **Test (RLS):** una oferta de Ana no la ve Berta ni en `/ofertas` ni en Recomendadas ni por id;
     las del catálogo las ven las dos; pegar dos veces la misma no la deja fantasma.
