@@ -25,7 +25,8 @@ Los requisitos transversales (RT-xx) están en [system.md](../system.md) y las r
 en [clarifications.md](./clarifications.md) (se citan como P1…P9).
 
 **Cambios sobre el PDF:** RF-4.8 lo hace Mar con 5 casos en lugar de con cinco personas (P8). El
-destino del despliegue de RF-4.6 queda pendiente del profesor (P6).
+destino del despliegue de RF-4.6 lo fijó el profesor el 17-nov-2026: de momento local con Docker Compose y
+PostgreSQL, y más adelante Vercel (P6).
 
 ## Requisitos (EARS)
 
@@ -108,8 +109,9 @@ destino del despliegue de RF-4.6 queda pendiente del profesor (P6).
 - **RF-4.6d** El sistema DEBERÁ limitar el ritmo, además de en `POST /ofertas`, en el login, la subida
   de CV y la creación y reintento de candidaturas, por usuaria o por IP, y responder 429 al pasarse.
   Los límites de tamaño actuales (64 KB por petición y `MAX_CV_BYTES`) se mantienen.
-- **RF-4.6e** El despliegue real en un servidor DEBERÁ esperar a la respuesta del profesor sobre el
-  destino (P6). Hasta entonces, el perfil de producción DEBERÁ probarse en local con HTTPS.
+- **RF-4.6e** De momento, el despliegue DEBERÁ ser local con Docker Compose y PostgreSQL, con el perfil de
+  producción probado con HTTPS (P6, respuesta del profesor del 17-nov-2026). El despliegue en Vercel queda
+  para más adelante y exigirá revisar arquitectura y constitución.
 
 ### Observabilidad (RF-4.7)
 - **RF-4.7** Una pantalla `/costes`, solo para admins (`HORMA_ADMINS`), DEBERÁ mostrar a partir de
@@ -150,8 +152,8 @@ destino del despliegue de RF-4.6 queda pendiente del profesor (P6).
       envía su correo (test con SMTP simulado).
 - [ ] Ningún motivo de error ni registro contiene texto de la usuaria (test).
 - [ ] Prueba final de Mar con los 5 casos hecha y anotada; revisión de líneas rojas firmada.
-- [ ] Despliegue real: **bloqueado hasta la respuesta del profesor** (P6). No impide cerrar el resto de la
-      fase, pero la fase no se da por cerrada del todo hasta hacerlo o hasta que se descarte.
+- [ ] Despliegue: el profesor respondió el 17-nov-2026 (P6): de momento local con Compose y PostgreSQL;
+      Vercel, más adelante. Falta que Mar confirme dar por cerrada la fase con el despliegue local.
 
 ## Riesgos
 - **Gasto:** cada PR con el modelo real cuesta unos pocos USD (tope de 1 USD por set, 8 sets).
@@ -159,7 +161,7 @@ destino del despliegue de RF-4.6 queda pendiente del profesor (P6).
   por PR.
 - **Datos en el checkpoint:** guarda CV y carta mientras dura la pausa; por eso se borra al entregar o
   cerrar (RF-4.3e).
-- **Despliegue real:** coste mensual y Horma expuesta a internet; queda a la espera del profesor (P6).
+- **Despliegue real:** coste mensual y Horma expuesta a internet; de momento solo local (P6); Vercel, más adelante.
 - **Falsos positivos de la capa de entrada:** marca pero no bloquea, así que un falso positivo solo
   produce un aviso de más.
 
