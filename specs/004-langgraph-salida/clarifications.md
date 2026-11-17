@@ -66,6 +66,10 @@ migrar, la fase 3 no estaba bien cerrada.
   se cierra (minimización de datos), y solo lo tocan el worker y la API.
 - Los umbrales de todos los sets se guardan en un archivo versionado; CI no puede rebajarlos con
   opciones de la consola.
+- **Refinamiento de P3 (17-nov, por coste):** `evals-reales` sigue siendo obligatorio en cada PR a `main`, pero
+  solo llama al modelo si el PR toca `horma/`, `evals/`, `config/`, `pyproject.toml`, `uv.lock` o `ci.yml`; un PR
+  de solo specs, README, docs o tests termina en verde sin gasto (cada ejecución real cuesta unos 1,8 USD). Además,
+  un push nuevo cancela la ejecución anterior del mismo PR (`concurrency`).
 - Las alertas y los registros nunca llevan texto de la usuaria: el motivo de error de una tarea se
   guarda como paso + tipo de error + mensaje fijo.
 
