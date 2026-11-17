@@ -1,4 +1,4 @@
-"""T10 (RF-4.4c): `calidad` corre todo en simulado y `evals-reales` usa el modelo solo en PR a main."""
+"""T10 (RF-4.4c): `calidad` corre todo en simulado y `evals-reales` usa el modelo solo a mano (RF-5.8)."""
 from pathlib import Path
 
 import yaml
@@ -27,9 +27,11 @@ def test_calidad_corre_todo_en_simulado_y_cv_con_las_dos_implementaciones():
     assert "--simulado" in texto and "--tope-coste" not in texto
 
 
-def test_evals_reales_solo_en_pr_a_main_o_a_mano_con_langgraph_y_tope():
+def test_evals_reales_solo_a_mano_con_langgraph_y_tope():
+    # RF-5.8: aparcado hasta el lanzamiento; ni en push ni en PR.
     job = _ci()["jobs"]["evals-reales"]
-    assert "workflow_dispatch" in job["if"] and "base_ref == 'main'" in job["if"]
+    assert job["if"] == "github.event_name == 'workflow_dispatch'"
+    assert "pull_request" not in job["if"] and "base_ref" not in job["if"]
     assert job["env"]["HORMA_FLOW_IMPL"] == "langgraph"
     texto = yaml.dump(job, width=10_000)
     assert "--simulado" not in texto  # no pasa a simulado nunca
