@@ -3,10 +3,10 @@ type: revision
 title: Horma — Revisión de líneas rojas (fase 4, RF-4.8b)
 description: Cada prompt de los 12 agentes activos y el flujo de aprobación frente a cada línea roja de la constitución, con su prueba y lo pendiente.
 tags: [lineas-rojas, seguridad, rgpd]
-status: draft
+status: verified
 sources: [../specs/constitution.md, ../specs/004-langgraph-salida/spec.md]
 generated: { by: claude-code, at: 2026-11-16 }
-verified: { by: null, at: null }
+verified: { by: Mar, at: 2026-11-17 }
 stale_after: null
 ---
 
@@ -69,4 +69,6 @@ Revisión hecha el 16-nov-2026 sobre los 12 `prompt.md` de `horma/agents/` y el 
 
 La revisión es mía; la responsabilidad de darla por buena es de Mar.
 
-- [ ] Revisada y firmada por Mar: ____________________ (fecha: __________)
+- [x] Revisada y firmada por Mar (fecha: 17-nov-2026).
+
+**Alcance de la firma:** vale para las líneas rojas **vigentes** de `specs/constitution.md` a 17-nov-2026 (envío solo con aprobación; nunca inferir ni guardar edad, nacionalidad ni art. 9). No fija esas reglas: si cambian, se revisa de nuevo y se firma otra vez. Los hallazgos 3 y 4 siguen abiertos.
