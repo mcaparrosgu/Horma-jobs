@@ -3,7 +3,8 @@
 el resultado.
 
 Estado de entrada: {"usuaria_id": int, "perfil_version": int, "oferta": Oferta, "cv_maestro": str,
-"cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...]}
+"cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...],
+"guia_estilo": GuiaEstilo | None (opcional, RF-5.6e)}
 (todos los CV base de la usuaria; el código descarta los rechazados y los de otras usuarias).
 Estado de salida: además, lo de `EstadoCandidatura` (cv_base_id, cv_base_motivo, cv_contenido, cv_traza,
 carta_contenido, carta_traza, huecos, avisos, problemas_juez, cobertura_ats, vuelta_hecha,
@@ -36,6 +37,7 @@ from horma.schemas.candidatura import (
     aviso_de_error,
     hay_aviso_pendiente,
 )
+from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.oferta import Oferta
 from horma.tools.avisos_vigentes import avisos_vigentes
 from horma.tools.elegir_cv_base import elegir_cv_base
@@ -66,6 +68,11 @@ def aviso_de_oferta(oferta: Oferta) -> Aviso | None:
     return None
 
 
+def _guia(e: dict) -> GuiaEstilo | None:
+    """La guía de estilo de la usuaria, si la hay (RF-5.6e). Sin ella, todo se redacta como siempre."""
+    return GuiaEstilo.model_validate(e["guia_estilo"]) if e.get("guia_estilo") else None
+
+
 def _sumar(e: dict, nuevas: list[str]) -> None:
     e["instrucciones_embebidas"] = list(dict.fromkeys([*e.get("instrucciones_embebidas", []), *nuevas]))
 
@@ -82,7 +89,7 @@ def _como_problemas(errores: list[str]) -> list[Problema]:
 CLAVES_INTERNAS = frozenset({
     "errores_cv", "errores_carta", "errores_formato", "palabras_sugeridas", "ausentes_sin_origen",
     "huecos_redactor", "rehacer", "cv_base_contenido", "cv_maestro", "cvs_base", "oferta", "usuaria_id",
-    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado"})
+    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo"})
 
 
 CLAVES_ESTADO = frozenset(EstadoCandidatura.model_fields) | CLAVES_INTERNAS
@@ -123,7 +130,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
             errores_previos=[*e["errores_cv"], *e["errores_formato"]],
             problemas_previos=[Problema.model_validate(p) for p in e["problemas_juez"]
                                if p["documento"] == "cv"],
-            palabras_sugeridas=e["palabras_sugeridas"]), proveedor=proveedor)
+            palabras_sugeridas=e["palabras_sugeridas"], guia_estilo=_guia(e)), proveedor=proveedor)
         _sumar(e, r.instrucciones_embebidas)
         e.update(cv_contenido=r.contenido, cv_traza=[t.model_dump(mode="json") for t in r.traza],
                  huecos_redactor=[h.model_dump(mode="json") for h in r.huecos])
@@ -137,7 +144,8 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         r = RedactorCarta.run(EntradaRedactorCarta(
             cv_maestro=e["cv_maestro"], cv_adaptado=e["cv_contenido"], oferta=oferta,
             sector=oferta.taxonomia.sector, errores_previos=[],
-            problemas_previos=[*problemas, *_como_problemas(e["errores_carta"])]), proveedor=proveedor)
+            problemas_previos=[*problemas, *_como_problemas(e["errores_carta"])],
+            guia_estilo=_guia(e)), proveedor=proveedor)
         _sumar(e, r.instrucciones_embebidas)
         e.update(carta_contenido=r.contenido, carta_traza=[t.model_dump(mode="json") for t in r.traza])
         return e
@@ -176,7 +184,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         r = JuezCandidatura.run(EntradaJuezCandidatura(
             cv=e["cv_contenido"], cv_traza=e["cv_traza"], carta=e["carta_contenido"],
             carta_traza=e["carta_traza"], cv_maestro=e["cv_maestro"], cv_base=e["cv_base_contenido"],
-            oferta=Oferta.model_validate(e["oferta"])), proveedor=proveedor)
+            oferta=Oferta.model_validate(e["oferta"]), guia_estilo=_guia(e)), proveedor=proveedor)
         _sumar(e, r.instrucciones_embebidas)
         e["problemas_juez"] = [p.model_dump(mode="json") for p in r.problemas]
         # Si el CV falla se rehace el CV y, después, la carta (que se apoya en él); si solo falla la carta,

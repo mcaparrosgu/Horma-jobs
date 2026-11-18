@@ -42,6 +42,7 @@ class Ajustes(BaseSettings):
     tope_coste_cv_base: float = 0.50
     tope_coste_recomendar: float = 1.00
     tope_coste_puntuar_propias: float = 1.00  # fase 5: las ofertas que la usuaria añade
+    tope_coste_estilo: float = 0.50  # fase 5: la guía de estilo (una llamada)
 
     # Fase 5 · Lector de URL (Apify). Sin token no se lee ninguna URL; límite por usuaria y hora (RF-5.3j)
     apify_token: str = ""

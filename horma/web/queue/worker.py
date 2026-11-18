@@ -9,6 +9,7 @@ Tipos de tarea (la carga es siempre un id, nunca texto):
 - `puntuar_propias` (fase 5; id de la usuaria): puntúa las ofertas que ella añadió.
 - `candidatura` (fase 3; id de la candidatura): CV y carta para una oferta.
 - `leer_url` (fase 5; id de la importación): lee la página con el proveedor y crea la oferta propia.
+- `analizar_estilo` (fase 5; id de la usuaria): guía de estilo con sus CV y cartas.
 El tope de coste vale para cualquier tarea: se corta en la puerta única (`metricas.capturar(tope=…)`) y
 una tarea que lo supera queda en `error` sin reintento y sin guardar su resultado.
 """
@@ -21,6 +22,7 @@ from sqlalchemy import Engine
 
 from horma.config import ajustes
 from horma.flows import (
+    analizar_estilo,
     calificar_fuente,
     clasificar_perfil,
     generar_cv_base,
@@ -31,6 +33,7 @@ from horma.flows import (
 from horma.llm import metricas
 from horma.llm.proveedor import Proveedor
 from horma.logs import configurar_logs, motivo_seguro
+from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.fuente import CalificacionFuente
 from horma.schemas.oferta import Oferta
 from horma.schemas.perfil import Perfil
@@ -44,12 +47,14 @@ from horma.web import alertas, checkpointer
 from horma.web.db import motor, sesion_de, sesion_sistema
 from horma.web.queue import cola
 from horma.web.repositories import candidaturas as repo_candidaturas
+from horma.web.repositories import estilo as repo_estilo
 from horma.web.repositories import importaciones as repo_importaciones
 from horma.web.repositories import ingesta as repo_ingesta
 from horma.web.repositories import matches as repo_matches
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles as repo_perfiles
 from horma.web.repositories import tareas as repo_tareas
+from horma.web.services import estilo as servicio_estilo
 from horma.web.services import ofertas as servicio_ofertas
 
 log = logging.getLogger("horma.worker")
@@ -137,6 +142,7 @@ class _Perfilar:
             s, tarea["usuaria_id"], Preferencias.model_validate(estado["preferencias"]))
         if repo_ofertas.hay_propias(s):  # las añadidas antes de tener perfil se puntúan solas
             _encolar_puntuar_propias(s, tarea["usuaria_id"])
+        servicio_estilo.encolar_si_no_hay_guia(s, tarea["usuaria_id"])  # la primera vez (RF-5.6d)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_perfiles.marcar_error_perfil(s, tarea["entidad_id"], motivo)
@@ -283,9 +289,11 @@ class _Candidatura:
         oferta = repo_ofertas.completas(s, [c["oferta_id"]]).get(c["oferta_id"])
         if oferta is None:
             raise ValueError(f"la oferta {c['oferta_id']} no está procesada")
+        guia = repo_estilo.guia(s)
         return {"usuaria_id": tarea["usuaria_id"], "perfil_version": perfil["version"],
                 "oferta": oferta.model_dump(mode="json"), "cv_maestro": perfil["cv_maestro"],
-                "cvs_base": repo_candidaturas.cv_base_para_flujo(s)}
+                "cvs_base": repo_candidaturas.cv_base_para_flujo(s),
+                "guia_estilo": guia["guia"] if guia else None}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         """Corre hasta la pausa (antes de `entregar`). Con `langgraph` el estado queda en el hilo de la
@@ -325,12 +333,33 @@ class _LeerUrl:
         repo_importaciones.marcar_error(s, tarea["entidad_id"], MOTIVO_LECTURA)  # fijo: sin detalles
 
 
+class _AnalizarEstilo:
+    """Analiza cómo escribe la usuaria (entidad = id de la usuaria). Una llamada al modelo; solo se encola
+    la primera vez o con el botón «Volver a analizar mi estilo» (RF-5.6d)."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        documentos = repo_estilo.documentos(s)
+        if not documentos:
+            raise ValueError("la usuaria no tiene documentos para analizar su estilo")
+        return {"documentos": documentos}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        return analizar_estilo.crear(proveedor=d.proveedor).run(estado)
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_estilo.guardar(s, tarea["usuaria_id"], GuiaEstilo.model_validate(estado["guia"]), "modelo")
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        """Sin fila propia: el motivo queda en la tarea."""
+
+
 MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
                "regenerar_cv_base": _RegenerarCvBase(),
                "recomendar": _Recomendar(), "puntuar_propias": _PuntuarPropias(),
-               "candidatura": _Candidatura(), "leer_url": _LeerUrl()}
+               "candidatura": _Candidatura(), "leer_url": _LeerUrl(),
+               "analizar_estilo": _AnalizarEstilo()}
 
 
 def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,

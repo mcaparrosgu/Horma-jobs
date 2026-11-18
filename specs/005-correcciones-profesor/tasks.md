@@ -192,30 +192,30 @@ real (RF-5.8).
   - **Cubre:** RF-5.4e, RF-5.7e.
 
 ### Bloque F · Guía de estilo (RF-5.6)
-- [ ] T24 — Subir cartas y «Lo escribí yo».
+- [x] T24 — Subir cartas y «Lo escribí yo». *(hecha el 18-nov; migración 0015 (`clase` `carta`, `escrito_por_ella` y la tabla `estilo`); `PUT /api/cv/{id}/escrito-por-ella`; casilla y clase «Carta» en el perfil)*
   - **Qué se hace:** migración (`clase` `carta`, `escrito_por_ella`); subida y lista en el perfil.
   - **Test:** una carta subida no entra en `perfilar`; la marca se guarda y se puede cambiar.
   - **Cubre:** RF-5.6.
-- [ ] T25 — Agente `analizador_estilo`.
+- [x] T25 — Agente `analizador_estilo`. *(hecha el 18-nov; `instrucciones_embebidas` va en la salida del agente, no dentro de `GuiaEstilo`, para que nunca llegue a los redactores; el código de después es `tools/depurar_guia.py`)*
   - **Qué se hace:** `prompt.md`, esquemas (`GuiaEstilo`), `run()`; código tras el agente que quita
     citas sin origen y comprueba rasgos personales; ejecutable con `horma agente correr`.
   - **Test:** con la puerta simulada, una cita inventada se quita; una guía con «es una persona
     tranquila» se rechaza; instrucciones embebidas registradas y sin efecto.
   - **Cubre:** RF-5.6b, RF-5.6c.
-- [ ] T26 — Una sola vez y botón.
+- [x] T26 — Una sola vez y botón. *(hecha el 18-nov; se encola al acabar `perfilar` o al subir una carta solo si no hay guía; `GET`/`POST /api/estilo/analizar`/`PUT /api/estilo`; sección «Tu estilo de redacción» en el perfil con el botón. Una guía editada que describe a la persona o trae rasgos personales se rechaza con 422)*
   - **Qué se hace:** tabla `estilo`, flujo y tarea `analizar_estilo`; se encola solo si no hay guía;
     `POST /api/estilo/analizar` y `PUT /api/estilo`; la guía editable en el perfil y el botón «Volver a
     analizar mi estilo» en la configuración.
   - **Test:** subir un segundo CV con guía ya hecha no llama al modelo; el botón sí; lo editado por
     ella se marca `origen=usuaria` y se respeta.
   - **Cubre:** RF-5.6d.
-- [ ] T27 — Los redactores siguen la guía.
+- [x] T27 — Los redactores siguen la guía. *(hecha el 18-nov; `guia_estilo` también entra en el juez de la candidatura (cierra lo que dejó T22); el generador de CV base no la recibe)*
   - **Qué se hace:** `guia_estilo` en las entradas de `redactor_cv`, `redactor_carta` y juez; el worker
     la carga; reglas en los prompts.
   - **Test:** con respuestas simuladas, la guía llega a las tres llamadas; sin guía, todo igual que
     antes; la trazabilidad no cambia.
   - **Cubre:** RF-5.6e.
-- [ ] T28 — Eval `estilo`.
+- [x] T28 — Eval `estilo`. *(simulado hecho el 18-nov: `evals/estilo/` 8 casos (2 adversarias), umbral `estilo` 0,9, y casos 22-23 con guía en `evals/cv/`. **Falta la medición con el modelo real, que pide el OK de Mar**)*
   - **Qué se hace:** `evals/estilo/` (unas 8 usuarias inventadas, 2 adversarias), set en `evals.py` y
     umbral en `umbrales.json`; casos con guía en `evals/cv/`.
   - **Test:** en simulado, en umbral; con el modelo real (OK de Mar), `sin_rasgos` y `sin_efecto` al
