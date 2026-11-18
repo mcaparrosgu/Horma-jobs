@@ -87,7 +87,9 @@ documentación en `docs.apify.com/legal` y `docs.apify.com/security`.
 nombre y correo de quien contrata). No viajan CV ni datos de la usuaria. Pero la ubicación en EE. UU. y la
 lista de subencargados sin ver impiden darlo por «confirmado» al pie de la letra (RF-5.3i).
 
-**Decisión de Mar (18-nov-2026):** [x] Apify (aceptando lo anterior y pidiendo la lista a `privacy@apify.com`) · [ ] ScrapingBee
+**Decisión de Mar (18-nov-2026):** [x] Apify · [ ] ScrapingBee. El 18-nov Mar decidió **no pedir** la lista de subencargados a `privacy@apify.com` y seguir adelante con el riesgo descrito arriba.
+
+**Prueba real (18-nov-2026):** una ejecución de `apify/rag-web-browser` (modo síncrono, token en cabecera) con `job-boards.greenhouse.io/anthropic`: HTTP 201, 8,7 s, un resultado con `markdown` (~9.000 caracteres) y `metadata`. Entrada usada: `query` = la URL, `maxResults` = 1. Coste: céntimos.
 
 ## Firma
 

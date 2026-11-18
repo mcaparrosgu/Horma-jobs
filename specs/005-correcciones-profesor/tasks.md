@@ -139,7 +139,7 @@ real (RF-5.8).
   - **Cubre:** RF-5.3c, RF-5.3e.
 
 ### Bloque D · Ingesta por URL con Apify (RF-5.3f-5.3j)
-- [ ] T16 — Confirmar el RGPD de Apify (bloquea T18).
+- [x] T16 — Confirmar el RGPD de Apify (bloquea T18). *(hecha el 18-nov; Mar aceptó el riesgo y decidió no pedir la lista de subencargados; prueba real OK: `query` = URL, devuelve `markdown`)*
   - **Qué se hace:** leer en fuente oficial dónde guarda los datos, cuánto tiempo, sus subencargados
     y si su DPA cubre este uso; probar una vez el actor `rag-web-browser` con una URL de prueba (con OK
     de Mar). Anotarlo en `docs/revision-lineas-rojas.md` («Encargados del tratamiento»).
