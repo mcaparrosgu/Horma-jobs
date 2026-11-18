@@ -52,7 +52,7 @@ def test_el_eval_cv_base_tiene_el_perfil_corto_aceptado_y_las_muletillas_rechaza
     # Largo, fechas al revés y resumen que no casa solo van en `cv` y en los tests: el modelo real los
     # corrige o los condensa y el CV base sale bien (medido el 18-nov, T23).
     assert len(rechazados) == 1  # las muletillas
-    # Un perfil corto ya no se rechaza: el mínimo baja al 80 % del maestro (prueba manual, 18-nov).
+    # Un perfil corto ya no se rechaza: el mínimo baja al 60 % del maestro (prueba manual, 18-nov).
     corto = entradas["08-perfil-corto"]["cv_maestro"]
     assert validar_cv(corto) and validar_cv(corto, corto) == []
 

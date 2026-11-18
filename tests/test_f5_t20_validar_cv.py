@@ -29,12 +29,12 @@ def test_cv_de_1200_palabras_es_demasiado_largo():
     assert len(errores) == 1 and "largo" in errores[0] and "1.000" in errores[0]
 
 
-def test_con_un_maestro_corto_el_minimo_baja_al_80_por_ciento():
+def test_con_un_maestro_corto_el_minimo_baja_al_60_por_ciento():
     maestro = " ".join(["dato"] * 102)  # perfil corto, como el de la prueba manual de Mar (18-nov)
-    assert palabras_minimas(maestro) == 81
+    assert palabras_minimas(maestro) == 61
     assert validar_cv(_cv(73), maestro) == []  # ~92 palabras: antes se rechazaba por menos de 250
-    errores = validar_cv(_cv(50), maestro)  # ~69 palabras: pierde más del 20 % del perfil
-    assert len(errores) == 1 and "corto" in errores[0] and "81" in errores[0]
+    errores = validar_cv(_cv(30), maestro)  # ~49 palabras: pierde más del 40 % del perfil
+    assert len(errores) == 1 and "corto" in errores[0] and "61" in errores[0]
 
 
 def test_con_un_maestro_largo_el_minimo_sigue_siendo_250():
