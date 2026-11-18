@@ -5,6 +5,7 @@ import shutil
 import unicodedata
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from horma.cli import app
@@ -130,9 +131,10 @@ def test_comparador_de_perfil_detecta_rasgos_personales():
 
 
 # --- T11: cv-base ------------------------------------------------------------------------------
+@pytest.mark.usefixtures("limites_reales")
 def test_fixtures_de_cv_base_son_5_de_5_sectores_y_dos_de_visibilidad():
     casos = _casos("cv-base")
-    assert len(casos) == 7  # los 5 sectores + oculta y condensada (fase 5, T08)
+    assert len(casos) == 9  # 5 sectores, oculta y condensada (T08) y 2 rechazados (T23)
     sectores = set()
     for c in casos:
         e = _json(c / "entrada.json")
@@ -143,9 +145,10 @@ def test_fixtures_de_cv_base_son_5_de_5_sectores_y_dos_de_visibilidad():
     assert len(sectores) == 5  # los de visibilidad repiten el sector de hostelería
 
 
+@pytest.mark.usefixtures("limites_reales")
 def test_eval_cv_base_simulado_pasa_al_100():
     r = correr_set("cv-base", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 7
+    assert r["aprobado"] and r["casos"] == 9
     assert r["campos"] == {"verificacion": 1.0, "ats": 1.0}
 
 
@@ -261,13 +264,15 @@ def test_el_eval_se_detiene_al_superar_el_tope_y_deja_constancia(tmp_path):
     assert guardado["detenido_por_coste"] is True and guardado["casos_ejecutados"] == r["casos_ejecutados"]
 
 
+@pytest.mark.usefixtures("limites_reales")
 def test_con_tope_holgado_corre_todo_y_anota_el_coste():
     r = correr_set("cv-base", raiz=RAIZ, simulado=True, tope_coste=1.0)
-    assert r["detenido_por_coste"] is False and r["casos_ejecutados"] == r["casos"] == 7
+    assert r["detenido_por_coste"] is False and r["casos_ejecutados"] == r["casos"] == 9
     assert 0 < r["coste"] < 1.0 and r["tope_coste"] == 1.0
 
 
 # --- T12: consola ------------------------------------------------------------------------------
+@pytest.mark.usefixtures("limites_reales")
 def test_consola_corre_los_tres_sets_nuevos_en_simulado():
     for nombre in ("perfil", "cv-base", "recomendacion"):
         r = CliRunner().invoke(app, ["eval", "correr", nombre, "--simulado"])

@@ -12,6 +12,9 @@ from horma.web.db import sesion_de
 from horma.web.queue import worker
 from horma.web.repositories import perfiles
 
+pytestmark = pytest.mark.usefixtures("juez_automatico")
+
+
 _BAR = "Camarera · Bar Sol · 2020-2023"
 _LINEAS = ["## Idiomas", "Inglés B2", "## Experiencia", _BAR]  # mismo contenido que BUENO, otro orden
 NUEVO = {"contenido": "\n".join(_LINEAS), "traza": BUENO["traza"]}

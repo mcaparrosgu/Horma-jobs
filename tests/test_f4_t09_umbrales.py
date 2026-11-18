@@ -31,6 +31,7 @@ def test_un_set_sin_entrada_en_el_archivo_da_error(tmp_path):
         correr_set("fuentes", raiz=RAIZ, simulado=True, ruta_umbrales=ruta)
 
 
+@pytest.mark.usefixtures("limites_reales")
 def test_cv_suspende_si_el_minimo_de_cobertura_supera_la_media(tmp_path):
     raiz = tmp_path / "evals"
     shutil.copytree(RAIZ / "cv", raiz / "cv", ignore=shutil.ignore_patterns("resultados"))

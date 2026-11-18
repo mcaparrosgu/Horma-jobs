@@ -1,0 +1,22 @@
+{
+  "modo": "sembrado",
+  "usuaria": "ana",
+  "cv_base_id": 1,
+  "oferta": "camarera-bar-luna",
+  "documento": "cv",
+  "contenido": "## Experiencia\nCamarera · Bar Sol · 2021-2024\n- Apasionada por la atención al cliente\n- Gestión de la caja al cierre\n",
+  "traza": [
+    {
+      "frase": "Camarera · Bar Sol · 2021-2024",
+      "fragmento": "Camarera · Bar Sol · 2021-2024"
+    },
+    {
+      "frase": "Apasionada por la atención al cliente",
+      "fragmento": "Atención de mesas y barra en un bar de 40 plazas"
+    },
+    {
+      "frase": "Gestión de la caja al cierre",
+      "fragmento": "Gestión de la caja al cierre"
+    }
+  ]
+}

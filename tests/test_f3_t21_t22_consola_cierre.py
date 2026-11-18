@@ -99,6 +99,7 @@ def test_flujo_correr_clasificar_respuesta_en_simulado(tmp_path):
     assert len(list((tmp_path / "t").iterdir())) == 3
 
 
+@pytest.mark.usefixtures("limites_reales")
 @pytest.mark.parametrize("conjunto", ["cv", "respuestas"])
 def test_eval_correr_cv_y_respuestas_en_simulado(conjunto):
     r = CliRunner().invoke(cli, ["eval", "correr", conjunto, "--simulado"])

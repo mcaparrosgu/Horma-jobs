@@ -6,14 +6,19 @@ Sets:
   esperado = CalificacionFuente.
 - `perfil`: flujo perfilar sobre `casos/<id>/entrada.json` ({cvs}); esperado = Perfil. Mide cargos,
   empresas, fechas, titulaciones, idiomas, taxonomía, pendientes y ausencia de rasgos personales.
-- `cv-base`: flujo generar_cv_base sobre `entrada.json` ({perfil, cv_maestro, preferencias});
-  esperado = {destinos}. Mide que cada CV pase `verificar_trazabilidad` y sea compatible con ATS.
+- `cv-base`: flujo generar_cv_base sobre `entrada.json` ({perfil, cv_maestro, preferencias}); esperado =
+  {destinos, rechazados}. Mide que cada CV pase `verificar_trazabilidad`, `validar_cv`, `muletillas_ia` y
+  el juez, y sea compatible con ATS. Los casos con `rechazados` > 0 (maestro corto o con muletillas, fase 5)
+  comprueban que el flujo no guarda ese CV; `juez_simulado` (un tipo de problema) hace que el juez
+  simulado señale ese problema. Largo, fechas al revés y resumen que no casa se miden en `cv` (modo
+  `formato` y sembrados) y en los tests: el modelo real los corrige y el CV base sale bien.
 - `recomendacion`: flujo recomendar con un par perfil-oferta (`entrada.json`); esperado = {nota,
   condiciones}. Mide la nota (±10), el nivel de condiciones y que la explicación no cite rasgos.
 - `cv` (fase 3): tres modos en `casos/<id>/entrada.json` (`modo`), con la usuaria de prueba de
   `usuarias/<nombre>/` y las ofertas de `ofertas/<nombre>.json`. `sembrado`: un CV o carta con un error
   sembrado pasa por `comprobar` (código) y, si no lo rechaza, por `juez-candidatura`. `flujo`: el
   flujo `candidatura` completo (≤ 5 llamadas). `seleccion`: solo `elegir_cv_base`, por código y sin coste.
+  `formato` (fase 5): solo `validar_cv` sobre un CV entero, por código y sin coste.
   Mide sembrados rechazados, datos idénticos, huecos, adversaria, selección y llamadas (todo al 100 %);
   la cobertura ATS media debe llegar al mínimo de `umbrales.json` (0,75).
 - `respuestas` (fase 3): flujo clasificar_respuesta sobre un correo; esperado = {etiqueta}. Mide la
@@ -63,7 +68,9 @@ from horma.schemas.fuente import CalificacionFuente
 from horma.schemas.oferta import Auditoria, Oferta, OfertaExtraida, Taxonomia
 from horma.schemas.perfil import Perfil
 from horma.tools.medir_ats import errores_ats  # noqa: F401  (movida a tools; se reexporta)
+from horma.tools.muletillas_ia import errores_muletillas
 from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.validar_cv import validar_cv
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, frases, verificar_trazabilidad
 from horma.tools.visibilidad_cv import clave_experiencia, normalizar
 
@@ -159,15 +166,18 @@ class EsperadoCvBase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     destinos: int = Field(ge=1, le=generar_cv_base.MAX_DESTINOS)
+    rechazados: int = Field(default=0, ge=0, description="Destinos que el flujo no debe guardar (fase 5).")
 
 
 def _comparar_cv_base(obtenido: dict, esperado: dict) -> list[str]:
     guardados = obtenido.get("guardados") or []
     fallos = []
-    if (len(guardados) != esperado["destinos"] or obtenido.get("rechazados")
+    rechazados = esperado.get("rechazados", 0)
+    if (len(guardados) != esperado["destinos"] - rechazados
+            or len(obtenido.get("rechazados") or []) != rechazados
             or any(g["intentos"] > generar_cv_base.MAX_INTENTOS for g in guardados)):
         fallos.append("verificacion")
-    if not guardados or any(errores_ats(g["contenido"]) for g in guardados):
+    if (not guardados and not rechazados) or any(errores_ats(g["contenido"]) for g in guardados):
         fallos.append("ats")
     return fallos
 
@@ -199,8 +209,17 @@ def _aplicar_visibilidad(maestro: str, entrada: dict) -> str:
 
 def _respuestas_cv_base(e: EsperadoCvBase, entrada: dict) -> list[dict]:
     maestro = _aplicar_visibilidad(entrada["cv_maestro"], entrada)
-    traza = [{"frase": f, "fragmento": f} for f in frases(maestro)]
-    return [{"contenido": maestro, "traza": traza}] * e.destinos
+    generado = {"contenido": maestro, "traza": [{"frase": f, "fragmento": f} for f in frases(maestro)]}
+    juez = {"veredicto_cv": "aprobado", "veredicto_carta": "aprobado", "problemas": []}
+    if entrada.get("juez_simulado"):  # un modelo que señala ese problema en el CV generado
+        juez = {"veredicto_cv": "corregir", "veredicto_carta": "aprobado", "problemas": [{
+            "documento": "cv", "tipo": entrada["juez_simulado"], "frase": generado["traza"][0]["frase"],
+            "motivo": "Problema sembrado en el caso."}]}
+    if validar_cv(maestro) or errores_muletillas("cv", maestro):  # el código lo rechaza sin llamar al juez
+        return [generado, generado] * e.destinos  # el segundo intento repite lo mismo
+    if e.rechazados:
+        return [generado, juez, generado, juez] * e.destinos
+    return [generado, juez] * e.destinos  # generador y juez (RF-5.4d)
 
 
 # --- recomendacion -----------------------------------------------------------------------------
@@ -254,7 +273,7 @@ def _leer_json(caso: Path) -> dict:
 class EsperadoCv(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    tipo: Literal["sembrado", "flujo", "seleccion"]
+    tipo: Literal["sembrado", "flujo", "seleccion", "formato"]
     error: str = Field(default="", description="Sembrado: qué error lleva el documento.")
     rechazado_por: Literal["verificador", "juez"] | None = None
     problema: TipoProblema | None = Field(default=None, description="Sembrado juzgado: lo que debe señalar.")
@@ -337,6 +356,9 @@ def _estado_candidatura(e: dict) -> dict:
 def _correr_cv(e: dict, prov: Proveedor | None, impl: str | None = None) -> dict:
     if e["modo"] == "sembrado":
         return _revisar_sembrado(e, prov)
+    if e["modo"] == "formato":  # longitud, secciones y fechas: solo código, sin modelo (RF-5.4)
+        errores = validar_cv(e["contenido"])
+        return {"modo": "formato", "rechazado_por": "verificador" if errores else None, "errores": errores}
     flujo = crear_flujo("candidatura", impl, proveedor=prov)
     if e["modo"] == "seleccion":
         r = flujo.run_step("elegir_cv_base", _estado_candidatura(e))
@@ -353,7 +375,7 @@ def _correr_cv(e: dict, prov: Proveedor | None, impl: str | None = None) -> dict
 
 
 def _comparar_cv(o: dict, esperado: dict) -> list[str]:
-    if o["modo"] == "sembrado":
+    if o["modo"] in ("sembrado", "formato"):
         return [] if o["rechazado_por"] == esperado["rechazado_por"] else ["rechazados"]
     if o["modo"] == "seleccion":
         return [] if o["cv_base_id"] == esperado["cv_base_id"] else ["seleccion"]
@@ -381,8 +403,8 @@ def _comparar_cv(o: dict, esperado: dict) -> list[str]:
 
 
 def _respuestas_cv(e: EsperadoCv, entrada: dict) -> list[dict]:
-    if e.tipo == "seleccion":
-        return []  # la elige el código: no hay llamada al modelo
+    if e.tipo in ("seleccion", "formato"):
+        return []  # lo hace el código: no hay llamada al modelo
     if e.tipo == "sembrado":
         if e.rechazado_por == "verificador":
             return []

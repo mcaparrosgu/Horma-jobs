@@ -41,7 +41,9 @@ from horma.tools.avisos_vigentes import avisos_vigentes
 from horma.tools.elegir_cv_base import elegir_cv_base
 from horma.tools.generar_pdf import generar_pdf
 from horma.tools.medir_ats import medir_ats
+from horma.tools.muletillas_ia import errores_muletillas
 from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.validar_cv import validar_cv
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_trazabilidad
 
 PROPUESTA_HUECO = ("La oferta lo pide y no aparece en tu perfil: si lo tienes, añádelo tú a tu CV "
@@ -141,21 +143,25 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         return e
 
     def comprobar(e: dict) -> dict:
-        """Todo con código: trazabilidad y rasgos personales de los dos documentos y ATS del CV."""
+        """Todo con código: trazabilidad, rasgos personales y muletillas de IA de los dos documentos, y
+        longitud, secciones, fechas y ATS del CV."""
         validar(e)
         oferta = Oferta.model_validate(e["oferta"])
         fuentes_cv = [e["cv_maestro"], e["cv_base_contenido"]]
         e["errores_cv"] = [
             *verificar_trazabilidad(e["cv_contenido"], e["cv_traza"], fuentes_cv),
-            *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])]]
+            *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])],
+            *errores_muletillas("cv", e["cv_contenido"])]
         e["errores_carta"] = [
             *verificar_trazabilidad(e["carta_contenido"], e["carta_traza"],
                                     [*fuentes_cv, texto_oferta(oferta)],
                                     formulas_cortesia=FORMULAS_CORTESIA, por_frase=True),
-            *[f"Rasgo personal en la carta: {r}" for r in rasgos_personales(e["carta_contenido"])]]
+            *[f"Rasgo personal en la carta: {r}" for r in rasgos_personales(e["carta_contenido"])],
+            *errores_muletillas("carta", e["carta_contenido"])]
         m = medir_ats(e["cv_contenido"], oferta, fuentes_cv)
         e.update(cobertura_ats=m["cobertura"],
-                 errores_formato=[f"Formato del CV para ATS: {x}" for x in m["errores_formato"]],
+                 errores_formato=[*[f"Estructura del CV: {x}" for x in validar_cv(e["cv_contenido"])],
+                                  *[f"Formato del CV para ATS: {x}" for x in m["errores_formato"]]],
                  palabras_sugeridas=m["ausentes_con_origen"], ausentes_sin_origen=m["ausentes_sin_origen"])
         return e
 
