@@ -159,7 +159,7 @@ real (RF-5.8).
     importación en `error` con el motivo fijo y la web pide pegar el texto; pasarse del límite da 429;
     el token no sale en ningún log.
   - **Cubre:** RF-5.3f, RF-5.3j.
-- [ ] T19 — Prueba real de URL (con OK de Mar).
+- [ ] T19 — Prueba real de URL (con OK de Mar). *(lecturas hechas el 18-nov con OK de Mar, sin pasar por el perfil ni el modelo; falta decidir si se hace la parte de Recomendadas. Vetada: LinkedIn rechazada sin leer. Resultado de 5 URL: web de empresa (Metricool) 2.273 car., oferta completa; Greenhouse 1.075 car. pero era el listado de la empresa, no la oferta; Lever 256 car., página 404 (oferta cerrada) que se aceptó como texto; portal pequeño (Asaja) tiempo agotado a los 60 s; jobboardly 325 car., solo la cabecera de la página. Hallazgo, ya corregido el 18-nov: `leer_pagina` daba por buena una página de error corta; ahora exige 400 caracteres y rechaza las de menos de 1.500 con frases de error (404, not found, captcha…). En esta máquina hace falta el almacén de certificados de Windows para `httpx`)*
   - **Qué se hace:** 5 URL reales de ofertas (Greenhouse, Lever, web de empresa, portal pequeño, una
     con JavaScript) y una vetada; se anota cuáles se leen.
   - **Test:** las legales llegan a Recomendadas; la vetada pide pegar el texto.
