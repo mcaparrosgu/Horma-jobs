@@ -16,7 +16,7 @@ from horma.web.queue import worker
 
 TOKEN = "token-secreto-de-prueba"
 URL = "https://job-boards.greenhouse.io/hotelmar/jobs/1"
-PAGINA = "# Camarera de sala\n\nHotel Mar busca camarera de sala para la temporada. " * 5
+PAGINA = "# Camarera de sala\n\nHotel Mar busca camarera de sala para la temporada. " * 12
 
 
 # --- leer_pagina (sin base de datos) -----------------------------------------------------------
@@ -64,6 +64,30 @@ def test_un_fallo_o_una_pagina_vacia_dan_lectura_fallida(respuesta):
     with pytest.raises(LecturaFallida) as e:
         leer_pagina(URL, cliente=_cliente(lambda req: respuesta), token=TOKEN)
     assert TOKEN not in str(e.value)
+
+
+PAGINAS_DE_ERROR = [  # lo que devolvió Apify en la prueba real de T19 (18-nov) y otras páginas típicas
+    "Not found - 404 error. Sorry, we couldn't find anything here. The job posting you're looking for "
+    "might have closed, or it has been removed. (404 error). [Jobs at Tinybird](https://jobs.lever.co/tinybird)",
+    "Barcelona Jobs: Tech, Creative & Multilingual Roles [Skip to main content](https://x.test/#main) " * 3,
+    "Esta oferta ya no está disponible. La página que buscas no existe o ha sido eliminada. " * 5,
+    "Access denied. Please verify you are human: complete the CAPTCHA to continue. " * 6,
+    "Oferta no encontrada (error 404). Vuelve al listado de empleos de la empresa. " * 5,
+]
+
+
+@pytest.mark.parametrize("pagina", PAGINAS_DE_ERROR)
+def test_una_pagina_de_error_o_sin_oferta_no_se_da_por_leida(pagina):
+    with pytest.raises(LecturaFallida):
+        leer_pagina(URL, cliente=_cliente(_ok(pagina)), token=TOKEN)
+
+
+def test_una_oferta_larga_que_menciona_404_o_not_found_si_se_lee():
+    oferta = ("Camarera de sala. Funciones: atender mesas, montar eventos y gestionar reservas. "
+              "Si no encuentras la sala (not found), pregunta en recepción. "
+              "Error 404 en la caja: avisa al jefe. ") * 25
+    assert len(oferta) > 1500
+    assert leer_pagina(URL, cliente=_cliente(_ok(oferta)), token=TOKEN)
 
 
 def test_un_tiempo_agotado_da_lectura_fallida():
