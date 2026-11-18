@@ -35,6 +35,10 @@ Reglas:
   «formacion», «idiomas») y, si ayuda, se concreta con puntos («experiencias.Hotel Marina.fechas»).
 - `inicio` y `fin` de experiencias y formación: AAAA o AAAA-MM tal como aparecen; «actual» si el CV
   lo dice; vacío si no aparecen.
+- Un puesto o una titulación NUNCA se omite por tener fechas que faltan o son vagas («varios años»):
+  inclúyelo con `inicio` y `fin` vacíos, con su cita literal, y pregunta las fechas en
+  `preguntas_pendientes`. Lo de «no incluyas ese dato» vale para valores que se contradicen, no para
+  perder una experiencia.
 - Un idioma NUNCA se omite: si aparece en algún CV, va al perfil aunque el nivel falte o los CV no
   coincidan en él (p. ej. «Inglés B1» en uno y «nivel medio de inglés» en otro). En ese caso añade una
   entrada de `idiomas` por cada mención, cada una con su nivel y su cita literal; el código se
