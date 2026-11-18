@@ -8,11 +8,13 @@ Tipos de tarea (la carga es siempre un id, nunca texto):
 - `regenerar_cv_base` (fase 5; id del CV base): lo vuelve a generar con el perfil vigente.
 - `puntuar_propias` (fase 5; id de la usuaria): puntúa las ofertas que ella añadió.
 - `candidatura` (fase 3; id de la candidatura): CV y carta para una oferta.
+- `leer_url` (fase 5; id de la importación): lee la página con el proveedor y crea la oferta propia.
 El tope de coste vale para cualquier tarea: se corta en la puerta única (`metricas.capturar(tope=…)`) y
 una tarea que lo supera queda en `error` sin reintento y sin guardar su resultado.
 """
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from sqlalchemy import Engine
@@ -35,15 +37,20 @@ from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.tools import descargar, dominio
 from horma.tools.buscar_ofertas import buscar_ofertas
+from horma.tools.leer_pagina import MENSAJE as MOTIVO_LECTURA
+from horma.tools.leer_pagina import leer_pagina
+from horma.tools.validar_url import validar_url
 from horma.web import alertas, checkpointer
 from horma.web.db import motor, sesion_de, sesion_sistema
 from horma.web.queue import cola
 from horma.web.repositories import candidaturas as repo_candidaturas
+from horma.web.repositories import importaciones as repo_importaciones
 from horma.web.repositories import ingesta as repo_ingesta
 from horma.web.repositories import matches as repo_matches
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles as repo_perfiles
 from horma.web.repositories import tareas as repo_tareas
+from horma.web.services import ofertas as servicio_ofertas
 
 log = logging.getLogger("horma.worker")
 
@@ -55,6 +62,7 @@ class Dependencias:
     descargador: descargar.Descargador
     engine: Engine | None = None
     entidad_id: int | None = None
+    lector: Callable[[str], str] = leer_pagina
 
 
 class _ProcesarOferta:
@@ -292,17 +300,43 @@ class _Candidatura:
         repo_candidaturas.marcar_error(s, tarea["entidad_id"], motivo)
 
 
+class _LeerUrl:
+    """Lee la URL de una importación y entrega el texto a `recibir`, como una oferta pegada: privada de la
+    usuaria y con su URL guardada (RF-5.3f). Entidad = id de la importación. Cualquier fallo deja un motivo
+    fijo (la web pide pegar el texto) y no se reintenta: cada lectura cuesta."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        fila = repo_importaciones.fila(s, tarea["entidad_id"])
+        if fila is None:
+            raise ValueError(f"no existe la importación {tarea['entidad_id']} de esta usuaria")
+        if (motivo := validar_url(fila["url"])) is not None:  # otra vez: pasó tiempo desde que se pidió
+            raise ValueError(motivo)
+        return {"url": fila["url"], "usuaria_id": tarea["usuaria_id"]}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        texto = d.lector(estado["url"])
+        r = servicio_ofertas.recibir(d.engine, texto, url=estado["url"], usuaria_id=estado["usuaria_id"])
+        return {"oferta_id": r["id"]}
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_importaciones.marcar_leida(s, tarea["entidad_id"], estado["oferta_id"])
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        repo_importaciones.marcar_error(s, tarea["entidad_id"], MOTIVO_LECTURA)  # fijo: sin detalles
+
+
 MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
                "regenerar_cv_base": _RegenerarCvBase(),
                "recomendar": _Recomendar(), "puntuar_propias": _PuntuarPropias(),
-               "candidatura": _Candidatura()}
+               "candidatura": _Candidatura(), "leer_url": _LeerUrl()}
 
 
 def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
                  resolver: dominio.Resolvedor | None = dominio.resuelve,
-                 descargador: descargar.Descargador = descargar.descargar_http) -> str | None:
+                 descargador: descargar.Descargador = descargar.descargar_http,
+                 lector: Callable[[str], str] = leer_pagina) -> str | None:
     """Procesa una tarea. Devuelve el estado final de la tarea o None si no había ninguna."""
     tarea = cola.reclamar(engine)
     if tarea is None:
@@ -322,7 +356,7 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
                 raise ValueError(f"tipo de tarea desconocido: {tarea['tipo']}")
             with sesion() as s:
                 entrada = manejador.cargar(s, tarea)
-            deps = Dependencias(proveedor, resolver, descargador, engine, tarea["entidad_id"])
+            deps = Dependencias(proveedor, resolver, descargador, engine, tarea["entidad_id"], lector)
             estado = manejador.ejecutar(entrada, deps)
         except Exception as e:  # noqa: BLE001 - cualquier fallo cuenta como intento fallido
             error = e

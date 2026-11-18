@@ -17,7 +17,16 @@
     </header>
     <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
 
-    <p class="suave">Pega el texto de una oferta. Es solo tuya: nadie más la ve. Horma la analiza y la puntúa con tu perfil, y aparece siempre en Recomendadas, pase o no tus filtros.</p>
+    <p class="suave">Pega el texto de una oferta o la dirección de su página. Es solo tuya: nadie más la ve. Horma la analiza y la puntúa con tu perfil, y aparece siempre en Recomendadas, pase o no tus filtros.</p>
+    <form id="formulario-url">
+      <label for="url">Dirección de la oferta</label>
+      <input id="url" type="url" maxlength="2000" placeholder="https://…" autocomplete="off">
+      <div class="fila">
+        <button id="enviar-url" type="submit">Leer oferta</button>
+        <span id="aviso-url" role="status"></span>
+      </div>
+      <p class="suave">Para leerla, la dirección se envía a Apify, un proveedor externo. LinkedIn, Indeed, Glassdoor e InfoJobs no se pueden leer: pega su texto.</p>
+    </form>
     <form id="formulario">
       <label for="texto">Texto de la oferta</label>
       <textarea id="texto" rows="10" maxlength="20000" required></textarea>
