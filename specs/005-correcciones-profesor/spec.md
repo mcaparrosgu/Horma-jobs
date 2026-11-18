@@ -130,8 +130,9 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
   fuentes: Adzuna (activar), Himalayas, Jobicy y Remotive (P11).
 - **RF-5.5b** InfoJobs (API oficial) DEBERÁ configurarse, pero NO DEBERÁ activarse hasta tener sus
   condiciones de uso por escrito. Necesita una segunda llamada por oferta para traer la descripción.
-- **RF-5.5c** Greenhouse y Lever DEBERÁN poder añadirse empresa a empresa (una fuente por empresa),
-  con la lista corta que dé Mar.
+- **RF-5.5c** Greenhouse y Lever DEBERÁN poder añadirse empresa a empresa (una fuente por empresa).
+  Mar quiere **todas las empresas de Greenhouse** (metabuscador): Claude investiga cómo descubrirlas
+  y qué permiten sus condiciones antes de ingerir (18-nov).
 - **RF-5.5d** Cada oferta de una fuente DEBERÁ enlazar al original y citar la fuente. El catálogo NO
   DEBERÁ exponerse hacia fuera ni publicarse como `JobPosting`. Las ofertas caducadas DEBERÁN
   borrarse cuando la fuente lo exija (Himalayas), y DEBERÁN respetarse los límites de peticiones de

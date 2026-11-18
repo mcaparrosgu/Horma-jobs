@@ -229,7 +229,7 @@ real (RF-5.8).
   - **Test:** con respuestas grabadas (inventadas), un array en la raíz, una fuente con detalle y una
     con `cada_horas` que no se pide antes de tiempo.
   - **Cubre:** RF-5.5, RF-5.5b, RF-5.5d.
-- [~] T30 — Himalayas, Jobicy, Remotive y Adzuna. *(18-nov: las cuatro configuradas e inactivas en `config/endpoints.json` (forma de cada API comprobada con una petición real); la oferta guarda copia de la atribución (`ofertas.atribucion`) y se ve en Recomendadas; `caduca_en` + borrado de caducadas al cerrar cada ejecución (se conservan las que tienen candidatura). Falta la calificación con el modelo real y activarlas: pide OK de gasto de Mar. Aviso: las condiciones de Remotive prohíben mostrar sus ofertas «para captar altas»; Mar decide)*
+- [~] T30 — Himalayas, Jobicy, Remotive y Adzuna. *(18-nov: las cuatro configuradas e inactivas en `config/endpoints.json` (forma de cada API comprobada con una petición real); la oferta guarda copia de la atribución (`ofertas.atribucion`) y se ve en Recomendadas; `caduca_en` + borrado de caducadas al cerrar cada ejecución (se conservan las que tienen candidatura). Calificación real en local (OK de Mar, 18-nov, céntimos): **Jobicy y Himalayas APTAS; Remotive NO APTA** (condiciones prohíben copiar ofertas y crear bases de datos; queda inactiva, decisión de Mar pendiente de confirmar); **Adzuna: 403 al leer su web**, hay que darle a mano la URL de condiciones (`--condiciones`) o mirar su API. Falta guardar las calificaciones con web y worker arrancados y activar: se hace en la prueba manual)*
   - **Qué se hace:** entradas en `config/endpoints.json`, calificación con `calificar_fuente` y
     activación; atribución visible en la oferta; borrado de caducadas de Himalayas.
   - **Test:** con respuestas grabadas, cada fuente da ofertas normalizadas con enlace y atribución; la
@@ -240,7 +240,7 @@ real (RF-5.8).
     sus condiciones (lo envía ella).
   - **Test:** la ingesta no la llama mientras esté inactiva.
   - **Cubre:** RF-5.5b.
-- [ ] T32 — Greenhouse y Lever por empresa.
+- [ ] T32 — Greenhouse y Lever por empresa. *(**Cambio de alcance, Mar 18-nov:** no una lista corta, sino TODAS las empresas de Greenhouse (Horma es un metabuscador). Investigación a cargo de Claude: Greenhouse no publica un directorio global, cada empresa tiene su «board token»; hay que averiguar cómo descubrirlos (sitemaps, buscadores, listados públicos), comprobar que cada token responde y respetar condiciones y límites. Se hace en la prueba manual; Lever (misma idea) se decide después)*
   - **Qué se hace:** una entrada por empresa de la lista de Mar (pendiente de que la dé).
   - **Test:** con respuestas grabadas, cada empresa da sus ofertas con enlace al original.
   - **Cubre:** RF-5.5c.
