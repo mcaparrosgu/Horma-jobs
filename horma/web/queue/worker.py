@@ -431,6 +431,8 @@ def main() -> None:
     configurar_logs()
     engine = motor()
     log.info("worker en marcha")
+    if (n := cola.reencolar_interrumpidas(engine)):
+        log.warning("%s tarea(s) interrumpidas por una parada anterior vuelven a la cola", n)
     if not alertas.correo_configurado(ajustes()):
         log.warning("SMTP_HOST o ALERTAS_CORREO sin configurar: las alertas solo salen en pantalla y log")
     ultima: float | None = None
