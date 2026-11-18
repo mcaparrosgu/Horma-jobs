@@ -389,6 +389,32 @@ def calificar(
     _mostrar_calificacion(c)
 
 
+@fuente.command("greenhouse")
+def greenhouse_anadir(
+    tokens: list[str] = typer.Argument(..., help="«Board tokens» (boards.greenhouse.io/<token>)."),
+    pausa: float = typer.Option(1.0, help="Segundos entre peticiones."),
+) -> None:
+    """Comprueba cada token y añade las empresas que responden a config/greenhouse.json (T32)."""
+    import httpx
+
+    from horma.tools import greenhouse
+
+    validas, rechazadas = [], []
+    with httpx.Client() as http:
+        for i, token in enumerate(dict.fromkeys(t.strip().lower() for t in tokens)):
+            if i:
+                _esperar(pausa)
+            nombre = greenhouse.validar_token(token, http)
+            if nombre:
+                validas.append({"token": token, "nombre": nombre})
+            else:
+                rechazadas.append(token)
+    nuevas = greenhouse.anadir(greenhouse.RUTA, validas)
+    typer.echo(f"{len(validas)} responden ({nuevas} nuevas en config/greenhouse.json); "
+               f"sin respuesta: {', '.join(rechazadas) or 'ninguna'}.")
+    typer.echo("Quedan inactivas: se siembran con una migración y se activan con una calificación apta.")
+
+
 # --- eval --------------------------------------------------------------------------------------
 @evals.command("correr")
 def correr_eval(

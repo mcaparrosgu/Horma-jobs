@@ -1,0 +1,100 @@
+{
+ "empresas": [
+  {
+   "token": "airbnb",
+   "nombre": "Airbnb"
+  },
+  {
+   "token": "anthropic",
+   "nombre": "Anthropic"
+  },
+  {
+   "token": "bitpanda",
+   "nombre": "Bitpanda"
+  },
+  {
+   "token": "cabify",
+   "nombre": "Cabify"
+  },
+  {
+   "token": "canonical",
+   "nombre": "Canonical"
+  },
+  {
+   "token": "cloudflare",
+   "nombre": "Cloudflare"
+  },
+  {
+   "token": "coinbase",
+   "nombre": "Coinbase"
+  },
+  {
+   "token": "databricks",
+   "nombre": "Databricks"
+  },
+  {
+   "token": "datadog",
+   "nombre": "Datadog"
+  },
+  {
+   "token": "elastic",
+   "nombre": "Elastic"
+  },
+  {
+   "token": "figma",
+   "nombre": "Figma"
+  },
+  {
+   "token": "freenow",
+   "nombre": "Freenow by Lyft"
+  },
+  {
+   "token": "gitlab",
+   "nombre": "GitLab"
+  },
+  {
+   "token": "grafanalabs",
+   "nombre": "Grafana Labs"
+  },
+  {
+   "token": "instacart",
+   "nombre": "Instacart"
+  },
+  {
+   "token": "mongodb",
+   "nombre": "MongoDB"
+  },
+  {
+   "token": "mozilla",
+   "nombre": "Mozilla"
+  },
+  {
+   "token": "n26",
+   "nombre": "N26"
+  },
+  {
+   "token": "okta",
+   "nombre": "Okta"
+  },
+  {
+   "token": "stripe",
+   "nombre": "Stripe"
+  },
+  {
+   "token": "twilio",
+   "nombre": "Twilio"
+  },
+  {
+   "token": "typeform",
+   "nombre": "Typeform"
+  },
+  {
+   "token": "wallapop",
+   "nombre": "Wallapop"
+  },
+  {
+   "token": "wikimedia",
+   "nombre": "Wikimedia Foundation"
+  }
+ ]
+}
