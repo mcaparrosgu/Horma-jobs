@@ -110,7 +110,7 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
 
 ### Validar los CV generados (RF-5.4)
 - **RF-5.4** El sistema DEBERÁ comprobar con código, en cada CV adaptado y en cada CV base, que: la
-  longitud está entre unas 250 y 1.000 palabras (1-2 páginas, P10); tiene las secciones obligatorias
+  longitud está entre unas 250 y 1.000 palabras (1-2 páginas, P10; con un perfil corto, el mínimo baja al 80 % de las palabras del maestro); tiene las secciones obligatorias
   (al menos Experiencia o Formación); y sus fechas son válidas y en orden (el fin no es anterior al
   inicio).
 - **RF-5.4b** El `juez_candidatura` DEBERÁ señalar, además de lo actual, problemas de **coherencia**:

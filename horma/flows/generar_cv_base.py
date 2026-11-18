@@ -79,7 +79,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         perfil = Perfil.model_validate(e["perfil"])
         e["errores"] += verificar_idiomas(b["contenido"], perfil)
         e["errores"] += verificar_visibilidad(b["contenido"], perfil, e.get("visibilidad") or {})
-        e["errores"] += [f"Estructura del CV: {x}" for x in validar_cv(b["contenido"])]
+        e["errores"] += [f"Estructura del CV: {x}" for x in validar_cv(b["contenido"], e["cv_maestro"])]
         e["errores"] += errores_muletillas("cv", b["contenido"])
         if not e["errores"]:  # el código manda: el juez solo se gasta si el código lo deja pasar (RF-5.4d)
             e["errores"] = _juzgar(b, e["cv_maestro"], proveedor)

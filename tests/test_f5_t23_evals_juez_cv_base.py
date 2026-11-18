@@ -44,15 +44,17 @@ def test_el_eval_cv_tiene_los_casos_de_longitud_fechas_resumen_muletillas_y_fras
     assert errores["muletilla_ia"].rechazado_por == "verificador"  # la lista la busca el código
 
 
-def test_el_eval_cv_base_tiene_los_casos_de_cv_corto_y_muletillas():
+def test_el_eval_cv_base_tiene_el_perfil_corto_aceptado_y_las_muletillas_rechazadas():
     entradas = {n: _json(c / "entrada.json") for n, c in _casos("cv-base").items()}
     esperados = {n: EsperadoCvBase.model_validate(_json(c / "esperado.json"))
                  for n, c in _casos("cv-base").items()}
     rechazados = [n for n, e in esperados.items() if e.rechazados]
     # Largo, fechas al revés y resumen que no casa solo van en `cv` y en los tests: el modelo real los
     # corrige o los condensa y el CV base sale bien (medido el 18-nov, T23).
-    assert len(rechazados) == 2
-    assert sum(1 for n in rechazados if validar_cv(entradas[n]["cv_maestro"])) == 1  # el corto
+    assert len(rechazados) == 1  # las muletillas
+    # Un perfil corto ya no se rechaza: el mínimo baja al 80 % del maestro (prueba manual, 18-nov).
+    corto = entradas["08-perfil-corto"]["cv_maestro"]
+    assert validar_cv(corto) and validar_cv(corto, corto) == []
 
 
 def test_los_formatos_los_decide_el_codigo_y_no_llaman_al_modelo():

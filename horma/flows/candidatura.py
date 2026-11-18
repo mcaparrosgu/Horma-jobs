@@ -168,7 +168,8 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
             *errores_muletillas("carta", e["carta_contenido"])]
         m = medir_ats(e["cv_contenido"], oferta, fuentes_cv)
         e.update(cobertura_ats=m["cobertura"],
-                 errores_formato=[*[f"Estructura del CV: {x}" for x in validar_cv(e["cv_contenido"])],
+                 errores_formato=[*[f"Estructura del CV: {x}"
+                                     for x in validar_cv(e["cv_contenido"], e["cv_maestro"])],
                                   *[f"Formato del CV para ATS: {x}" for x in m["errores_formato"]]],
                  palabras_sugeridas=m["ausentes_con_origen"], ausentes_sin_origen=m["ausentes_sin_origen"])
         return e

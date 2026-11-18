@@ -222,7 +222,8 @@ def _respuestas_cv_base(e: EsperadoCvBase, entrada: dict) -> list[dict]:
         juez = {"veredicto_cv": "corregir", "veredicto_carta": "aprobado", "problemas": [{
             "documento": "cv", "tipo": entrada["juez_simulado"], "frase": generado["traza"][0]["frase"],
             "motivo": "Problema sembrado en el caso."}]}
-    if validar_cv(maestro) or errores_muletillas("cv", maestro):  # el código lo rechaza sin llamar al juez
+    # El código lo rechaza sin llamar al juez.
+    if validar_cv(maestro, entrada["cv_maestro"]) or errores_muletillas("cv", maestro):
         return [generado, generado] * e.destinos  # el segundo intento repite lo mismo
     if e.rechazados:
         return [generado, juez, generado, juez] * e.destinos
