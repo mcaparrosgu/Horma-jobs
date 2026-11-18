@@ -1,7 +1,9 @@
 """Comprobaciones de código sobre un CV generado (RF-5.4): longitud, secciones y fechas.
 
 Código puro. Devuelve los errores en llano (vacío si no hay ninguno):
-- entre `CV_PALABRAS_MIN` y `CV_PALABRAS_MAX` palabras (una o dos páginas);
+- entre `CV_PALABRAS_MIN` y `CV_PALABRAS_MAX` palabras (una o dos páginas). Si se pasa el CV maestro, el
+  mínimo baja a `FRACCION_MAESTRO` (80 %) de sus palabras cuando el maestro es corto: un CV no puede
+  tener más contenido que el perfil del que sale, y una usuaria con poca experiencia no queda bloqueada;
 - al menos un encabezado `## Experiencia` o `## Formación`;
 - periodos `AAAA` o `AAAA-MM` con fin ≥ inicio (el fin puede ser «actual», «presente» u «hoy»);
   los meses van de 01 a 12."""
@@ -10,6 +12,7 @@ import unicodedata
 
 CV_PALABRAS_MIN = 250
 CV_PALABRAS_MAX = 1000
+FRACCION_MAESTRO = 0.8
 
 _FECHA = r"(?:19|20)\d{2}(?:-\d{2})?"
 _PERIODO = re.compile(rf"(?<![\d-])({_FECHA})\s*[-–—]\s*({_FECHA}|actual|presente|hoy)(?![\d-])",
@@ -31,14 +34,22 @@ def _mes_valido(fecha: str) -> bool:
     return not mes or 1 <= int(mes) <= 12
 
 
-def validar_cv(texto: str) -> list[str]:
+def palabras_minimas(maestro: str | None = None) -> int:
+    """Mínimo de palabras de un CV: `CV_PALABRAS_MIN`, o el 80 % del maestro si este es más corto."""
+    if maestro is None:
+        return CV_PALABRAS_MIN
+    return min(CV_PALABRAS_MIN, int(len(maestro.split()) * FRACCION_MAESTRO))
+
+
+def validar_cv(texto: str, maestro: str | None = None) -> list[str]:
     errores: list[str] = []
     palabras = len(texto.split())
+    minimo = palabras_minimas(maestro)
     if palabras > CV_PALABRAS_MAX:
         maximo = f"{CV_PALABRAS_MAX:,}".replace(",", ".")
         errores.append(f"El CV es demasiado largo: {palabras} palabras (máximo {maximo}).")
-    elif palabras < CV_PALABRAS_MIN:
-        errores.append(f"El CV es demasiado corto: {palabras} palabras (mínimo {CV_PALABRAS_MIN}).")
+    elif palabras < minimo:
+        errores.append(f"El CV es demasiado corto: {palabras} palabras (mínimo {minimo}).")
     if not _SECCION.search(_sin_acentos(texto)):
         errores.append("Al CV le falta la sección Experiencia o la sección Formación.")
     for inicio, fin in dict.fromkeys(_PERIODO.findall(texto)):
