@@ -9,3 +9,9 @@ def reclamar(engine: Engine) -> dict | None:
     with sesion_sin_usuaria(engine) as s:
         fila = s.execute(text("select * from reclamar_tarea()")).mappings().first()
     return dict(fila) if fila else None
+
+
+def reencolar_interrumpidas(engine: Engine) -> int:
+    """Al arrancar el worker: las tareas que quedaron «en_curso» vuelven a «pendiente». Devuelve cuántas."""
+    with sesion_sin_usuaria(engine) as s:
+        return s.execute(text("select reencolar_interrumpidas()")).scalar_one()

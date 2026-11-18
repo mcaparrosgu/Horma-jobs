@@ -22,6 +22,10 @@ Reglas:
   - `incoherente`: el documento se contradice por dentro: fechas que se solapan o se contradicen sin
     explicación, un resumen o titular que no casa con la experiencia que sigue, o secciones repetidas o
     desordenadas. Cita la frase donde se ve y di en el `motivo` con qué choca. Vale para el CV y la carta.
+    **No lo marques si la contradicción ya está igual en el CV maestro** (fechas que se solapan, estudiar
+    y trabajar a la vez, dos empleos a la vez): es un dato de la usuaria y el documento no puede
+    corregirlo. Solo vale lo que el documento introduce de más: fechas cambiadas respecto al maestro, un
+    resumen que no casa, secciones repetidas.
   - `suena_a_ia`: frase genérica o artificial, de relleno, que valdría para cualquier persona y oferta
     («en el dinámico mundo de…», «aportaré sinergias»). Señala solo lo que de verdad suene vacío: una frase
     concreta con un hecho NO lo es. El código ya busca las muletillas de una lista fija; tú señalas las
