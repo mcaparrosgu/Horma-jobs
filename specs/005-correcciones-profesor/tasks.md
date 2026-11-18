@@ -260,3 +260,12 @@ real (RF-5.8).
     agentes que cambiaron (`perfil`, `cv`, `cv-base`, `estilo`).
   - **Test:** sets en umbral con el modelo real; si no se lanza, queda anotado como pendiente para
     antes del lanzamiento.
+
+## Cierre de la fase 5: pasos pendientes, por orden
+Bloques A-H construidos (rama `fase5-bloque-h`). Para cerrar la fase, en este orden:
+1. **Eval `perfil` (T35):** investigar por qué falla con el modelo real (casos 02, 06 y 07; fechas y titulaciones 0,86 < 0,9), ajustar extractor o eval y repetir (≈0,43 USD, con OK de Mar).
+2. **T32:** todas las empresas de Greenhouse. Claude investiga cómo descubrir los «board tokens», comprueba que responden, respeta condiciones y límites; Mar revisa la propuesta antes de activar. Lever, después.
+3. **T30/T31:** guardar la calificación de Jobicy y Himalayas (aptas) y activarlas; confirmar Remotive inactiva; Adzuna con la URL de condiciones (`--condiciones`) o su API; Mar envía el correo a InfoJobs.
+4. **Prueba manual de Mar** con `docs/plan-pruebas-fase5.md`: cubre T05, T14, T18 y T19 (parte Recomendadas) y anota lo que falle.
+5. **PR a `main`** de las ramas de la fase 5, solo cuando Mar lo pida.
+Antes de usuarias reales: plan del `matcher` y reactivar `evals-reales` (`docs/mejoras-futuras.md`, punto 6).
