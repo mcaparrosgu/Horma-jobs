@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      con_modelo_real:
+        description: "Medir con el modelo real (evals-reales). GASTA saldo de Anthropic (~2 USD). Sin marcar, solo corren secretos y calidad."
+        type: boolean
+        default: false
 
 # Un push nuevo cancela la ejecución anterior del mismo PR o rama: sin evals duplicados (cuestan dinero).
 concurrency:
@@ -66,11 +71,12 @@ jobs:
           if-no-files-found: ignore
 
   # Mide el modelo de verdad (RF-4.4c). APARCADO hasta el lanzamiento (RF-5.8 de la fase 5): solo a mano
-  # (Actions > CI > Run workflow) y con el OK de Mar. No corre en push ni en PR, así que no puede ser un
-  # check obligatorio de `main`. Reactivar antes de lanzar (ver docs/mejoras-futuras.md).
+  # (Actions > CI > Run workflow) y marcando la casilla `con_modelo_real`; sin marcarla no gasta. No corre
+  # en push ni en PR, así que no puede ser un check obligatorio de `main`. Reactivar antes de lanzar
+  # (ver docs/mejoras-futuras.md).
   # No pasa a simulado si falta la clave.
   evals-reales:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && inputs.con_modelo_real
     runs-on: ubuntu-latest
     env:
       CI: "true"
