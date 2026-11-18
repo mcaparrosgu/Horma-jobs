@@ -255,7 +255,7 @@ real (RF-5.8).
     perfil y secciones, CV base y visibilidad, borrador desfasado, añadir oferta por texto y por URL,
     privacidad con dos cuentas, estilo y muletillas.
   - **Test:** Mar lo recorre y anota lo que falle.
-- [ ] T35 — Medición real al cerrar la fase (opcional, con OK de Mar).
+- [~] T35 — Medición real al cerrar la fase (opcional, con OK de Mar). *(18-nov, OK de Mar, ≈2,55 USD: `cv` 23/23, `cv-base` 9/9 y `estilo` 8/8 APROBADOS; **`perfil` NO APROBADO** (14 casos; fechas y titulaciones 0,86, umbral 0,9; fallan los casos 02, 06 y 07). Primera medición real con las secciones nuevas: puede ser regresión del extractor o expectativas del eval. **Pendiente:** investigar y ajustar extractor o eval (otra pasada ≈0,43 USD, con OK de Mar))*
   - **Qué se hace:** si Mar lo pide, lanzar `evals-reales` a mano una vez (~1,8 USD) para medir los
     agentes que cambiaron (`perfil`, `cv`, `cv-base`, `estilo`).
   - **Test:** sets en umbral con el modelo real; si no se lanza, queda anotado como pendiente para
