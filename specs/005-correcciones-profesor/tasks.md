@@ -246,11 +246,11 @@ real (RF-5.8).
   - **Cubre:** RF-5.5c.
 
 ### Bloque H · Cierre
-- [ ] T33 — Coherencia documental.
+- [x] T33 — Coherencia documental. *(18-nov: `specs/index.md`, README y `docs/mejoras-futuras.md` (puntos 7-9) al día; ningún RT cambia; `system.md` sin tocar, con su tabla de fases en la 4: Mar decide si se añade la 5)*
   - **Qué se hace:** `specs/index.md`, `specs/system.md` (si cambia algún RT), README y
     `docs/mejoras-futuras.md` al día.
   - **Test:** Mar lo revisa.
-- [ ] T34 — Plan de pruebas manuales de la fase 5.
+- [x] T34 — Plan de pruebas manuales de la fase 5. *(escrito el 18-nov: 9 apartados, incluye el cierre de T30 y T32; falta que Mar lo recorra)*
   - **Qué se hace:** `docs/plan-pruebas-fase5.md` (gitignorado), cada paso con su explicación breve:
     perfil y secciones, CV base y visibilidad, borrador desfasado, añadir oferta por texto y por URL,
     privacidad con dos cuentas, estilo y muletillas.
