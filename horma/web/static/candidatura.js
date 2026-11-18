@@ -218,6 +218,27 @@ function historial() {
   return s;
 }
 
+// --- borrador de una versión anterior del perfil (RF-5.1f) ---------------------------------------
+function avisoDesfasada() {
+  const d = nodo("div", null, "tarjeta");
+  d.append(nodo("p", "Preparada con una versión anterior de tu perfil", "alerta"));
+  d.append(nodo("p", "Puedes aprobarla igualmente. Si prefieres que use tu perfil actual, vuelve a prepararla.", "suave"));
+  const fila = nodo("div", null, "fila");
+  const volver = boton("Volver a preparar", () => {
+    volver.hidden = true;
+    const conf = nodo("div", null, "fila");
+    conf.append(
+      nodo("span", "Se perderá lo que hayas editado en este borrador."),
+      boton("Sí, volver a preparar", () => accion(`/api/candidaturas/${ID}/reintentar`, {}, "Preparando de nuevo…"), "secundario"),
+      boton("Cancelar", () => { conf.remove(); volver.hidden = false; }, "secundario"),
+    );
+    d.append(conf);
+  }, "secundario");
+  fila.append(volver);
+  d.append(fila);
+  return d;
+}
+
 // --- pintar -------------------------------------------------------------------------------------
 function pintar() {
   const partes = [cabecera()];
@@ -227,6 +248,7 @@ function pintar() {
     partes.push(nodo("p", c.motivo_error || "No se pudo preparar esta candidatura.", "alerta"));
     partes.push(boton("Reintentar", () => accion(`/api/candidaturas/${ID}/reintentar`, {}, "Preparando de nuevo…")));
   } else {
+    if (c.desfasada) partes.push(avisoDesfasada());
     partes.push(revisaEsto(), documento("CV adaptado", "cv_contenido"),
       documento("Carta de presentación", "carta_contenido"), detalles());
     if (c.estado === "borrador") partes.push(aprobar());

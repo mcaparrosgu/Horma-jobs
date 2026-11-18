@@ -39,24 +39,7 @@
       }
     }
   ],
-  "habilidades": [
-    {
-      "nombre": "Carné C+E",
-      "origen": {
-        "fuente": "cv",
-        "cv_id": 1,
-        "fragmento": "Carné C+E"
-      }
-    },
-    {
-      "nombre": "CAP",
-      "origen": {
-        "fuente": "cv",
-        "cv_id": 1,
-        "fragmento": "CAP"
-      }
-    }
-  ],
+  "habilidades": [],
   "taxonomia": {
     "sector": "logistica_transporte",
     "familia": "logistica_transporte",
@@ -64,5 +47,25 @@
     "stack": []
   },
   "preguntas_pendientes": [],
-  "instrucciones_embebidas": []
+  "instrucciones_embebidas": [],
+  "certificaciones": [
+    {
+      "nombre": "CAP en vigor",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "CAP en vigor"
+      }
+    }
+  ],
+  "otros": [
+    {
+      "valor": "Carné C+E",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Carné C+E"
+      }
+    }
+  ]
 }

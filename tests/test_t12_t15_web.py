@@ -84,11 +84,13 @@ def test_texto_vacio_o_enorme_se_rechaza(cliente):
     assert cliente.post("/ofertas", json={"texto": "a" * 20001}, headers=h).status_code == 422
 
 
-def test_el_catalogo_es_comun_a_todas_las_usuarias(cliente):
-    """Fase 1 (catálogo común): lo que publica A también lo ve B."""
+def test_el_catalogo_es_comun_y_lo_pegado_por_una_usuaria_es_solo_suyo(cliente, motor_app):
+    """Lo que llega de las fuentes lo ven todas; lo que pega A es privado de A (RF-5.3c, fase 5)."""
+    from horma.web.services import ofertas as servicio
+    servicio.recibir(motor_app, "Oferta del catálogo")
     csrf_a = entrar(cliente, "google-A")
     cliente.post("/ofertas", json={"texto": TEXTO}, headers={"X-CSRF-Token": csrf_a})
-    assert len(cliente.get("/ofertas").json()) == 1
+    assert len(cliente.get("/ofertas").json()) == 2
     cliente.post("/auth/logout", headers={"X-CSRF-Token": csrf_a})
     entrar(cliente, "google-B")
     assert len(cliente.get("/ofertas").json()) == 1

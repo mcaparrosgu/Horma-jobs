@@ -26,6 +26,7 @@ function etiquetas(o) {
 function tarjeta(o) {
   const li = nodo("li", null, "tarjeta");
   li.append(etiquetas(o));
+  if (o.propia) li.append(nodo("span", "Añadida por ti", "estado bien"));
   li.append(nodo("h3", o.titulo || "Oferta sin procesar todavía"));
   const detalle = [o.empresa, o.ubicacion, o.contrato].filter(Boolean).join(" · ");
   if (detalle) li.append(nodo("p", detalle));
@@ -89,33 +90,11 @@ async function iniciar() {
   $("salir").hidden = false;
   $("ir-ingesta").hidden = !yo.admin;
   $("ir-perfil").hidden = false;
+  $("ir-anadir").hidden = false;
   $("ir-recomendadas").hidden = false;
   if (yo.sub) $("mi-sub").textContent = `Tu identificador de Google (para HORMA_ADMINS): ${yo.sub}`;
   await cargarLista();
 }
-
-$("formulario").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const boton = e.target.querySelector("button");
-  const aviso = $("aviso");
-  boton.disabled = true;
-  aviso.className = "";
-  aviso.textContent = "Enviando…";
-  const r = await fetch("/ofertas", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf },
-    body: JSON.stringify({ texto: $("texto").value }),
-  });
-  boton.disabled = false;
-  if (r.ok) {
-    $("texto").value = "";
-    aviso.textContent = "Oferta guardada; se está procesando.";
-    await cargarLista();
-  } else {
-    aviso.className = "error";
-    aviso.textContent = r.status === 422 ? "El texto está vacío o es demasiado largo." : "No se pudo guardar.";
-  }
-});
 
 $("salir").addEventListener("click", async () => {
   await fetch("/auth/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });

@@ -113,7 +113,7 @@ solo usa el worker, inyectable como `descargar.Descargador` para los tests.
   usa ScrapingBee con la misma firma.
 
 ## Validar CV y «que no suene a IA» (RF-5.4, RF-5.7)
-- **`validar_cv(texto) -> list[str]`**: palabras entre `CV_PALABRAS_MIN=250` y `CV_PALABRAS_MAX=1000`;
+- **`validar_cv(texto, maestro=None) -> list[str]`**: palabras entre `CV_PALABRAS_MIN=250` y `CV_PALABRAS_MAX=1000`; si el maestro tiene menos de 417 palabras, el mínimo baja al 60 % de las suyas (un CV no puede tener más que su perfil; prueba manual 18-nov);
   encabezado `## Experiencia` o `## Formación`; fechas `AAAA` o `AAAA-MM` con fin ≥ inicio. Errores en
   llano.
 - **`muletillas_ia(texto) -> list[str]`**: busca en `assets/muletillas_ia.json` (expresiones en
@@ -165,7 +165,10 @@ solo usa el worker, inyectable como `descargar.Descargador` para los tests.
 - Antes del lanzamiento: se vuelve a poner `pull_request` y el check obligatorio. Queda anotado en
   `docs/mejoras-futuras.md`.
 
-## Modelo de datos (migración 0010, reversible)
+## Modelo de datos (migraciones reversibles)
+Numeración real: 0010 (bloque A, recomponer maestros), 0011 (`origen` «regeneracion») y 0012
+(`cv_base.visibilidad`) del bloque B; el resto de cambios, en la 0013 (bloque C) y siguientes.
+
 | Tabla | Cambio |
 |---|---|
 | `ofertas` | `+ usuaria_id integer NULL REFERENCES usuarias ON DELETE CASCADE`; política de lectura nueva (ver arriba) |

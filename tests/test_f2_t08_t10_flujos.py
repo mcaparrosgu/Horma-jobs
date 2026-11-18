@@ -10,6 +10,9 @@ from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 
+pytestmark = pytest.mark.usefixtures("juez_automatico")
+
+
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
        "stack": []}
 CV1 = "Ana Pérez\nCamarera en Bar Sol, 2020-2023\nGrado en Turismo, Universidad de Valencia\nInglés B2"
@@ -42,7 +45,7 @@ def test_perfilar_compone_perfil_con_origen_taxonomia_y_preferencias_del_cv():
     assert prefs["familias"] == ["hosteleria_restauracion"]
     assert prefs["sectores"] == ["hosteleria_turismo"] and prefs["idiomas"] == ["en"]
     assert prefs["origen"]["familias"] == "cv" and prefs["solo_remoto"] is False
-    assert e["cv_maestro"].startswith("# Ana")
+    assert "Camarera · Bar Sol" in e["cv_maestro"] and "## Idiomas" in e["cv_maestro"]
     assert flujo.pasos() == ["extraer", "verificar_origen", "quitar_sensibles", "clasificar",
                              "preferencias_desde_cv", "componer"]
 

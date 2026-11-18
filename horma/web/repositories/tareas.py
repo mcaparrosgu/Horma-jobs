@@ -21,6 +21,12 @@ def sin_terminar(s: Session, tipo: str, entidad_id: int) -> bool:
                      {"t": tipo, "e": entidad_id}).first() is not None
 
 
+def pendiente(s: Session, tipo: str, entidad_id: int) -> bool:
+    """¿Hay una tarea de este tipo y entidad por empezar? Una en curso no cuenta: ya cargó sus datos."""
+    return s.execute(text("select 1 from tareas where tipo = :t and entidad_id = :e "
+                          "and estado = 'pendiente'"), {"t": tipo, "e": entidad_id}).first() is not None
+
+
 def registrar_llamadas(s: Session, tarea_id: int, llamadas: list[Llamada]) -> None:
     for ll in llamadas:
         s.execute(text(

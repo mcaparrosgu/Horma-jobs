@@ -24,7 +24,8 @@ def listado(s: Session, ids: list[int]) -> list[dict]:
     filas = s.execute(text(
         "select o.id, o.titulo, o.empresa, o.ubicacion, o.pais, o.remoto, o.sector, o.familia, o.nivel, "
         "o.salario_publicado, o.salario_rango, o.salario_minimo, o.salario_maximo, o.salario_moneda, "
-        "o.fecha_publicacion, o.url, o.creada_en, "
+        "o.fecha_publicacion, o.url, o.atribucion, o.creada_en, o.usuaria_id is not null as propia, "
+        "o.procesada_en as analizada_en, o.fantasma, o.motivos_fantasma, o.fraude, o.senales_fraude, "
         "(o.salario_anual_eur_min is not null or o.salario_anual_eur_max is not null) "
         "as sueldo_comparable, m.nota, m.condiciones, m.explicacion, m.cita_perfil, m.cita_oferta, "
         "m.retirada, m.correccion, m.perfil_version, "

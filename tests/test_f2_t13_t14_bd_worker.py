@@ -14,14 +14,14 @@ from horma.web.queue import worker
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import tareas
 
-pytestmark = pytest.mark.bd
+pytestmark = [pytest.mark.bd, pytest.mark.usefixtures("juez_automatico")]
 
 CV = "Ana Pérez\nCamarera en Bar Sol, 2020-2023\nInglés B2"
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
        "stack": []}
-BUENO = {"contenido": "## Experiencia\nCamarera en Bar Sol, 2020-2023\n## Idiomas\nInglés B2",
-         "traza": [{"frase": "Camarera en Bar Sol, 2020-2023",
-                    "fragmento": "Camarera en Bar Sol, 2020-2023"},
+BUENO = {"contenido": "## Experiencia\nCamarera · Bar Sol · 2020-2023\n## Idiomas\nInglés B2",
+         "traza": [{"frase": "Camarera · Bar Sol · 2020-2023",
+                    "fragmento": "Camarera · Bar Sol · 2020-2023"},
                    {"frase": "Inglés B2", "fragmento": "Inglés B2"}]}
 MALO = {"contenido": "## Experiencia\nDirectora en Hotel Ritz, 2010-2015", "traza": []}
 EXPLICACION = "Tiene experiencia en sala. La oferta pide camarera con experiencia."
@@ -59,8 +59,7 @@ def _extraccion(cv_id):
                           "origen": {"fuente": "cv", "cv_id": cv_id,
                                      "fragmento": "Camarera en Bar Sol, 2020-2023"}}],
         "idiomas": [{"idioma": "en", "nivel": "B2",
-                     "origen": {"fuente": "cv", "cv_id": cv_id, "fragmento": "Inglés B2"}}]},
-        "cv_maestro": "# Ana Pérez\n\nCamarera en Bar Sol, 2020-2023\n\nInglés B2\n"}
+                     "origen": {"fuente": "cv", "cv_id": cv_id, "fragmento": "Inglés B2"}}]}}
 
 
 def _perfilar_hecho(motor, u):
@@ -180,7 +179,7 @@ def test_perfilar_guarda_version_origenes_y_preferencias_del_cv(motor_app, bd_li
                                   "and entidad_id=:i order by campo"), {"i": pid}).all()
         prefs = s.execute(text("select familias, sectores, idiomas, origen from preferencias")).one()
         t = s.execute(text("select estado, coste_acumulado from tareas")).one()
-    assert p.version == 1 and p.estado == "hecha" and p.cv_maestro.startswith("# Ana")
+    assert p.version == 1 and p.estado == "hecha" and "Camarera · Bar Sol" in p.cv_maestro
     assert p.familia == "hosteleria_restauracion" and p.datos["experiencias"][0]["puesto"] == "Camarera"
     assert dict(origenes) == {"experiencias.0": "Camarera en Bar Sol, 2020-2023",
                               "idiomas.0": "Inglés B2"}

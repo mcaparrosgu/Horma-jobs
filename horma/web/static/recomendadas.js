@@ -4,7 +4,6 @@ const AYUDA = [
   ["Oferta", "El título de la oferta y la empresa que la publica. El enlace lleva a la oferta original."],
   ["Puesto", "El tipo de trabajo según la clasificación de Horma, sea cual sea el sector."],
   ["Compatibilidad", "Nota de 0 a 100 de lo bien que encajan tu experiencia y formación con lo que pide la oferta. Orienta, no decide. «Por qué» explica la nota."],
-  ["Condiciones", "Cómo encajan las condiciones de trabajo (alto, medio o bajo) con lo que buscas, y el nivel que pide la oferta."],
   ["Salario", "Tal como lo dice la oferta, sin convertirlo. Si no lo publica, lo verás indicado."],
   ["Lugar", "El país donde está el puesto, o «Remoto»."],
   ["Publicado", "El día en que se publicó la oferta (o, si no lo dice, el día en que llegó a Horma)."],
@@ -161,8 +160,15 @@ function filaOferta(o) {
     titulo.rel = "noopener noreferrer";
   }
   titulo.classList.add("titulo-oferta");
-  tr.append(celda("Oferta", titulo, nodo("span", o.empresa || "Empresa sin indicar", "suave bloque")));
-  tr.append(celda("Puesto", nodo("span", etiqueta(o.familia), `etiqueta-puesto ${colorDe(o.familia)}`)));
+  const celdaOferta = celda("Oferta", titulo, nodo("span", o.empresa || "Empresa sin indicar", "suave bloque"));
+  if (o.atribucion) celdaOferta.append(nodo("span", o.atribucion, "suave bloque"));  // cita de la fuente (RF-5.5d)
+  if (o.propia) {  // las que añade la usuaria salen siempre, con su marca y lo que vio el auditor (RF-5.3e)
+    celdaOferta.append(nodo("span", `Añadida por ti · analizada el ${fecha(o.analizada_en)}`, "estado bien bloque"));
+    if (o.aviso_auditor) celdaOferta.append(nodo("span", o.aviso_auditor, "estado error bloque"));
+  }
+  tr.append(celdaOferta);
+  tr.append(celda("Puesto", nodo("span", etiqueta(o.familia), `etiqueta-puesto ${colorDe(o.familia)}`),
+                  nodo("span", etiqueta(o.nivel), "suave bloque")));
 
   const comp = celda("Compatibilidad");
   if (o.sin_puntuar) {
@@ -178,10 +184,6 @@ function filaOferta(o) {
   }
   tr.append(comp);
 
-  const nivelCond = o.sin_puntuar ? null : o.condiciones;
-  tr.append(celda("Condiciones",
-    nivelCond ? nodo("span", etiqueta(nivelCond), `estado cond-${nivelCond}`) : nodo("span", "—", "suave"),
-    nodo("span", etiqueta(o.nivel), "suave bloque")));
   tr.append(celda("Salario", nodo("span", o.salario || "No publicado", o.salario ? "" : "suave")));
   const lugar = [o.remoto ? "Remoto" : null, o.pais].filter(Boolean).join(" · ") || o.ubicacion || "—";
   tr.append(celda("Lugar", nodo("span", lugar)));

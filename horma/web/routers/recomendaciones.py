@@ -37,6 +37,22 @@ def _salario(f: dict) -> str | None:
     return " - ".join(dict.fromkeys(partes)) + (f" {f['salario_moneda']}" if f["salario_moneda"] else "")
 
 
+_MOTIVOS_FANTASMA = {"sin_fecha": "no trae fecha de publicación", "repetida": "ya la habías añadido",
+                     "generica": "el texto es demasiado genérico"}
+
+
+def _aviso_auditor(f: dict) -> str | None:
+    """Lo que el auditor vio en la oferta, para que la usuaria decida (RF-5.3e). Solo avisa; no oculta."""
+    avisos = []
+    if f["fraude"]:
+        senales = "; ".join(f["senales_fraude"] or [])
+        avisos.append("Posibles señales de fraude" + (f": {senales}" if senales else ""))
+    if f["fantasma"]:
+        motivos = ", ".join(_MOTIVOS_FANTASMA.get(m, m) for m in f["motivos_fantasma"] or [])
+        avisos.append("Podría ser una oferta fantasma" + (f" ({motivos})" if motivos else ""))
+    return ". ".join(avisos) or None
+
+
 def _rango(valor: str | None, base: Preferencias) -> tuple[int, int]:
     if not valor:
         return base.rango_min, base.rango_max
@@ -94,9 +110,10 @@ def listar(request: Request, usuaria_id: int = Depends(usuaria_actual),
         filas = repo.listado(s, ids)
     salida = []
     for f in filas:
-        if f["nota"] is not None and not minimo <= f["nota"] <= maximo:
-            continue
-        salida.append({**f, "salario": _salario(f), "sin_puntuar": f["nota"] is None})
+        if not f["propia"] and f["nota"] is not None and not minimo <= f["nota"] <= maximo:
+            continue  # el rango no esconde las ofertas propias (RF-5.3e)
+        salida.append({**f, "salario": _salario(f), "sin_puntuar": f["nota"] is None,
+                       "aviso_auditor": _aviso_auditor(f) if f["propia"] else None})
     if prefs.orden == "compatibles":  # lo puntuado primero, de más a menos nota; el resto, al final
         salida.sort(key=lambda f: -1 if f["nota"] is None else f["nota"], reverse=True)
     return {"total": len(salida), "rango": [minimo, maximo],
@@ -147,7 +164,8 @@ def catalogo(request: Request):
     with sesion_sistema(request.app.state.engine) as s:
         ids = [f[0] for f in s.execute(text(
             "select id from ofertas where estado = 'procesada' and recomendable "
-            "order by fecha_publicacion desc nulls last, id desc limit :n"), {"n": CATALOGO_MAX})]
+            "and usuaria_id is null order by fecha_publicacion desc nulls last, id desc limit :n"),
+            {"n": CATALOGO_MAX})]
         completas = repo_ofertas.completas(s, ids)
     return {"ofertas": [{"oferta_id": i, "oferta": completas[i].model_dump(mode="json")}
                         for i in ids if i in completas]}

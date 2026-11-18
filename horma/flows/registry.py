@@ -1,6 +1,7 @@
 """Nombre → fábrica del flujo (la usan la consola, el worker y los evals)."""
 from horma.config import ajustes
 from horma.flows import (
+    analizar_estilo,
     calificar_fuente,
     candidatura,
     clasificar_perfil,
@@ -14,12 +15,13 @@ from horma.flows import (
 FLUJOS = {"procesar_oferta": procesar_oferta.crear, "calificar_fuente": calificar_fuente.crear,
           "perfilar": perfilar.crear, "clasificar_perfil": clasificar_perfil.crear,
           "generar_cv_base": generar_cv_base.crear, "recomendar": recomendar.crear,
-          "candidatura": candidatura.crear, "clasificar_respuesta": clasificar_respuesta.crear}
+          "candidatura": candidatura.crear, "clasificar_respuesta": clasificar_respuesta.crear,
+          "analizar_estilo": analizar_estilo.crear}
 # Clave del estado final donde cada flujo deja su resultado.
 RESULTADO = {"procesar_oferta": "oferta", "calificar_fuente": "calificacion", "perfilar": "perfil",
              "clasificar_perfil": "taxonomia", "generar_cv_base": "cv_base",
              "recomendar": "recomendaciones", "candidatura": "preparacion",
-             "clasificar_respuesta": "propuesta"}
+             "clasificar_respuesta": "propuesta", "analizar_estilo": "guia"}
 
 IMPLEMENTACIONES = ("plain", "langgraph")
 # Fase 4 (P1): LangGraph solo para `candidatura`; los demás flujos siguen siendo lineales.

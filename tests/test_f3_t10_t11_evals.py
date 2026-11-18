@@ -10,6 +10,7 @@ from horma.evals import SETS, EsperadoCv, EsperadoRespuesta, cargar_usuaria, cor
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.oferta import Oferta
 from horma.schemas.perfil import Perfil
+from horma.tools.muletillas_ia import errores_muletillas
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_trazabilidad
 
@@ -70,20 +71,25 @@ def test_las_ofertas_de_prueba_son_ofertas_validas():
 
 
 # --- T10: fixtures de los casos ----------------------------------------------------------------
+@pytest.mark.usefixtures("limites_reales")
 def test_14_casos_12_de_errores_y_2_de_seleccion_con_su_esperado_valido():
     casos = _casos("cv")
-    assert len(casos) == 14
+    assert len(casos) == 23  # 14 de la fase 3, 7 de la T23 y 2 con guía de estilo (T28)
     tipos = [EsperadoCv.model_validate_json((c / "esperado.json").read_text(encoding="utf-8")).tipo
              for c in casos]
-    assert tipos.count("sembrado") == 9 and tipos.count("flujo") == 3 and tipos.count("seleccion") == 2
+    assert tipos.count("sembrado") == 13 and tipos.count("flujo") == 4 and tipos.count("seleccion") == 2
+    assert tipos.count("formato") == 4
 
 
-def test_los_9_sembrados_cubren_los_errores_del_plan():
+@pytest.mark.usefixtures("limites_reales")
+def test_los_sembrados_cubren_los_errores_del_plan():
     errores = {_json(c / "esperado.json")["error"] for c in _casos("cv") if c.name[3:12] == "sembrado-"}
     assert errores == {"cifra_inventada", "cargo_subido", "fecha_cambiada", "empresa_cambiada",
-                       "titulacion_inventada", "rasgo_personal", "promesa", "inflado", "carta_repite_cv"}
+                       "titulacion_inventada", "rasgo_personal", "promesa", "inflado", "carta_repite_cv",
+                       "resumen_no_casa", "suena_a_ia", "muletilla_ia"}
 
 
+@pytest.mark.usefixtures("limites_reales")
 def test_los_sembrados_del_codigo_los_rechaza_el_verificador_y_los_del_juez_lo_pasan():
     for c in _casos("cv"):
         esperado = _json(c / "esperado.json")
@@ -95,6 +101,7 @@ def test_los_sembrados_del_codigo_los_rechaza_el_verificador_y_los_del_juez_lo_p
         errores = verificar_trazabilidad(
             e["contenido"], e["traza"], [e["cv_maestro"], base],
             formulas_cortesia=FORMULAS_CORTESIA if carta else ())
+        errores += errores_muletillas("carta" if carta else "cv", e["contenido"])
         if esperado["rechazado_por"] == "verificador":
             assert errores, c.name
         else:
@@ -104,7 +111,7 @@ def test_los_sembrados_del_codigo_los_rechaza_el_verificador_y_los_del_juez_lo_p
 def test_los_flujos_incluyen_huecos_adversaria_y_varios_cv_base():
     flujos = [(c, _entrada(c), EsperadoCv.model_validate(_json(c / "esperado.json"))) for c in _casos("cv")
               if _json(c / "esperado.json")["tipo"] == "flujo"]
-    assert len(flujos) == 3
+    assert len(flujos) == 4
     assert any(len(e["cvs_base"]) >= 2 for _, e, _ in flujos)
     assert any(x.huecos for _, _, x in flujos)
     adversaria = [e for _, e, x in flujos if x.instrucciones_embebidas]
@@ -120,10 +127,11 @@ def test_los_casos_de_seleccion_tienen_su_cv_base_esperado_entre_2_o_3():
 
 
 # --- T10: harness ------------------------------------------------------------------------------
+@pytest.mark.usefixtures("limites_reales")
 def test_eval_cv_simulado_pasa_al_100_y_registra_la_cobertura_ats(tmp_path):
     raiz = _copiar(tmp_path, "cv", *(c.name for c in _casos("cv")))
     r = correr_set("cv", raiz=raiz, simulado=True)
-    assert r["aprobado"] and r["casos"] == 14 and r["adversarias"] == 1.0
+    assert r["aprobado"] and r["casos"] == 23 and r["adversarias"] == 1.0
     assert r["campos"] == {c: 1.0 for c in ("rechazados", "datos", "huecos", "adversaria", "seleccion",
                                            "llamadas")}
     assert 0 < r["cobertura_ats_media"] <= 1

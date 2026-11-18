@@ -70,6 +70,8 @@ def _fuente_activa(s, *, fuente_id=None, nombre=None) -> dict:
         raise NoEncontrada(fuente_id or nombre)
     if not f["activa"]:
         raise Conflicto("La fuente no está activa.")
+    if f["cada_horas"] and repo.ejecucion_reciente(s, f["id"], f["cada_horas"]):
+        raise Conflicto(f"La fuente se consulta como mucho cada {f['cada_horas']} h (RF-5.5d).")
     return f
 
 
@@ -102,6 +104,7 @@ def cerrar_ejecucion(engine: Engine, ejecucion_id: int, **numeros) -> None:
     with sesion_sistema(engine) as s:
         if not repo.cerrar_ejecucion(s, ejecucion_id, **numeros):
             raise Conflicto("La ejecución no existe o no está en curso.")
+        repo_ofertas.borrar_caducadas(s)
 
 
 def pedir_calificacion(engine: Engine, url: str) -> dict:

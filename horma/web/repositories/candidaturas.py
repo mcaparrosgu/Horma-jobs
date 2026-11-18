@@ -50,7 +50,10 @@ def detalle(s: Session, candidatura_id: int) -> dict | None:
     f = s.execute(text(
         "select c.*, o.titulo as oferta_titulo, o.empresa as oferta_empresa, b.nombre as cv_base_nombre, "
         "b.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
-        "as cv_base_desfasado from candidaturas c left join ofertas o on o.id = c.oferta_id "
+        "as cv_base_desfasado, "
+        "(c.estado = 'borrador' and c.perfil_version is not null and c.perfil_version < "
+        "coalesce((select max(version) from perfiles where estado = 'hecha'), 0)) as desfasada "
+        "from candidaturas c left join ofertas o on o.id = c.oferta_id "
         "left join cv_base b on b.id = c.cv_base_id where c.id = :i"),
         {"i": candidatura_id}).mappings().first()
     return dict(f) if f else None

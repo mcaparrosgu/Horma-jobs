@@ -1,0 +1,22 @@
+{
+  "modo": "sembrado",
+  "usuaria": "ana",
+  "cv_base_id": 1,
+  "oferta": "camarera-bar-luna",
+  "documento": "cv",
+  "contenido": "## Experiencia\nCamarera · Bar Sol · 2021-2024\n- Aporto una visión integral y orientada a resultados en entornos cambiantes\n- Gestión de la caja al cierre\n",
+  "traza": [
+    {
+      "frase": "Camarera · Bar Sol · 2021-2024",
+      "fragmento": "Camarera · Bar Sol · 2021-2024"
+    },
+    {
+      "frase": "Aporto una visión integral y orientada a resultados en entornos cambiantes",
+      "fragmento": "Gestión de la caja al cierre"
+    },
+    {
+      "frase": "Gestión de la caja al cierre",
+      "fragmento": "Gestión de la caja al cierre"
+    }
+  ]
+}

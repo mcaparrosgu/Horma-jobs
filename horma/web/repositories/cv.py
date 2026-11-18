@@ -2,7 +2,7 @@
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-COLUMNAS = "id, nombre, nombre_original, tipo, clase, tamano, creado_en"
+COLUMNAS = "id, nombre, nombre_original, tipo, clase, tamano, creado_en, escrito_por_ella"
 
 
 def listar(s: Session) -> list[dict]:
@@ -28,12 +28,12 @@ def nombre_en_uso(s: Session, nombre: str, *, excepto_cv: int | None = None,
 
 
 def crear(s: Session, usuaria_id: int, *, nombre: str, nombre_original: str, ruta: str, tipo: str,
-          clase: str, tamano: int, texto: str | None) -> int:
+          clase: str, tamano: int, texto: str | None, escrito_por_ella: bool = False) -> int:
     return s.execute(text(
-        "insert into cv_archivos (usuaria_id, nombre, nombre_original, ruta, tipo, clase, tamano, texto) "
-        "values (:u, :n, :o, :r, :t, :c, :z, :x) returning id"),
+        "insert into cv_archivos (usuaria_id, nombre, nombre_original, ruta, tipo, clase, tamano, texto, "
+        "escrito_por_ella) values (:u, :n, :o, :r, :t, :c, :z, :x, :e) returning id"),
         {"u": usuaria_id, "n": nombre, "o": nombre_original, "r": ruta, "t": tipo, "c": clase,
-         "z": tamano, "x": texto}).scalar_one()
+         "z": tamano, "x": texto, "e": escrito_por_ella}).scalar_one()
 
 
 def eliminar(s: Session, cv_id: int) -> bool:
@@ -43,3 +43,8 @@ def eliminar(s: Session, cv_id: int) -> bool:
 def renombrar(s: Session, cv_id: int, nombre: str) -> bool:
     return s.execute(text("update cv_archivos set nombre = :n where id = :i"),
                      {"i": cv_id, "n": nombre}).rowcount == 1
+
+
+def marcar_escrito_por_ella(s: Session, cv_id: int, valor: bool) -> bool:
+    return s.execute(text("update cv_archivos set escrito_por_ella = :v where id = :i"),
+                     {"v": valor, "i": cv_id}).rowcount == 1

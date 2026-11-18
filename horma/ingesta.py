@@ -6,6 +6,7 @@ import os
 import re
 import time
 from collections.abc import Mapping
+from datetime import UTC, datetime
 
 import httpx
 
@@ -47,7 +48,8 @@ class ClienteApi:
     def publicar(self, oferta: normalizar.OfertaNormalizada, fuente: str) -> dict:
         return self._pedir("POST", "/ofertas", json={
             "texto": oferta.texto, "fuente": fuente, "id_externo": oferta.id_externo,
-            "url": oferta.url}).json()
+            "url": oferta.url,
+            "caduca_en": oferta.caduca.isoformat() if oferta.caduca else None}).json()
 
     def cerrar(self, ejecucion_id: int, **numeros) -> None:
         self._pedir("POST", f"/api/ingesta/ejecuciones/{ejecucion_id}/fin", json=numeros)
@@ -78,6 +80,22 @@ def _sustituir(valor, permitidas: list[str], entorno: Mapping[str, str]):
     return _VARIABLE.sub(poner, valor)
 
 
+def _detalle(fuente: Fuente, item: dict, http: httpx.Client, cabeceras: dict, auth) -> dict:
+    """Completa la oferta con su llamada de detalle; si falla, se queda con lo que ya tiene."""
+    identificador = normalizar.obtener(item, fuente.mapeo.get("id"))
+    if not identificador:
+        return item
+    try:
+        r = http.get(fuente.detalle.url.replace("{id}", str(identificador)), headers=cabeceras,
+                     auth=auth, timeout=30)
+        r.raise_for_status()
+        extra = normalizar.obtener(r.json(), fuente.detalle.raiz)
+    except (httpx.HTTPError, ValueError) as e:
+        log.warning("detalle de %s no leído: %s", identificador, e)
+        return item
+    return {**item, **extra} if isinstance(extra, dict) else item
+
+
 def leer_fuente(fuente: Fuente, http: httpx.Client, limite: int,
                 entorno: Mapping[str, str] | None = None) -> list[normalizar.OfertaNormalizada]:
     """Llama al endpoint y devuelve hasta `limite` ofertas normalizadas a texto crudo."""
@@ -86,13 +104,21 @@ def leer_fuente(fuente: Fuente, http: httpx.Client, limite: int,
     params = {k: _sustituir(v, variables, entorno) for k, v in fuente.parametros.items()}
     cabeceras = {k: _sustituir(v, variables, entorno) for k, v in fuente.cabeceras.items()}
     cabeceras.setdefault("User-Agent", "HormaBot/0.1 (ingesta de ofertas)")
+    auth = None
+    if fuente.auth_basica:
+        auth = (_sustituir(fuente.auth_basica["usuario"], variables, entorno),
+                _sustituir(fuente.auth_basica["clave"], variables, entorno))
     if fuente.metodo == "GET":
-        r = http.get(fuente.url, params=params, headers=cabeceras, timeout=30)
+        r = http.get(fuente.url, params=params, headers=cabeceras, auth=auth, timeout=30)
     else:
-        r = http.post(fuente.url, json=params, headers=cabeceras, timeout=30)
+        r = http.post(fuente.url, json=params, headers=cabeceras, auth=auth, timeout=30)
     r.raise_for_status()
     items = normalizar.items(r.json(), fuente.mapeo)[:limite]
-    return [normalizar.oferta_a_texto(i, fuente.mapeo) for i in items]
+    if fuente.detalle:
+        items = [_detalle(fuente, i, http, cabeceras, auth) for i in items]
+    ofertas = [normalizar.oferta_a_texto(i, fuente.mapeo) for i in items]
+    ahora = datetime.now(UTC)
+    return [o for o in ofertas if not o.caduca or o.caduca > ahora]  # las caducadas no se piden
 
 
 def _ejecutar(api: ClienteApi, encargo: dict, http_fuentes: httpx.Client,

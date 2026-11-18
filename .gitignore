@@ -52,6 +52,7 @@ pruebas-manuales/
 # Plan de pruebas manuales de la fase 3 (nunca se publica)
 docs/plan-pruebas-fase3.md
 docs/plan-pruebas-fase4.md
+docs/plan-pruebas-fase5.md
 
 # Brief de diseño del frontend (documento de trabajo, nunca se publica)
 docs/brief-frontend.md
@@ -61,3 +62,6 @@ docs/prompt-claude-design-muestra.md
 diseños/
 # Ideas de mejora de Mar (documento de trabajo, nunca se publica)
 docs/mejoras-futuras.md
+
+# Comparativas con otros programas y portales (documento de trabajo, NUNCA se publica)
+docs/comparativas.md
