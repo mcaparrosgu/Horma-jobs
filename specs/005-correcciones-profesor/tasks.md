@@ -151,7 +151,7 @@ real (RF-5.8).
   - **Test:** se rechazan `http`, IP literal, `localhost`, un dominio que resuelve a IP privada, URL con
     credenciales y `es.linkedin.com`; pasa una URL pública de Greenhouse. Mensajes en llano.
   - **Cubre:** RF-5.3g, RF-5.3h.
-- [ ] T18 — `leer_pagina` y tarea `leer_url`.
+- [x] T18 — `leer_pagina` y tarea `leer_url`. *(hecha el 18-nov; migración 0014 `importaciones`; `POST /ofertas/url` (202) y `GET /ofertas/url/{id}`; límite `LIMITE_URL_HORA` por hora; sin reintentos porque cada lectura cuesta; campo de URL en «Añadir oferta»; falta que Mar lo compruebe en la web, con la prueba real de T19)*
   - **Qué se hace:** cliente del proveedor elegido en T16 (token en cabecera, sin proxies, tiempo y
     tamaño máximos); tabla `importaciones`; `POST /api/ofertas/url` con límite de ritmo; manejador del
     worker que pasa el texto a `recibir`. `.env.example` con las claves nuevas.

@@ -60,6 +60,43 @@ $("formulario").addEventListener("submit", async (e) => {
   await cargar();
 });
 
+// Por dirección (RF-5.3f): se lee en segundo plano; si no se puede, se pide pegar el texto.
+const MOTIVO_URL = "La página no se ha podido leer: pega el texto de la oferta.";
+function avisarUrl(texto, error) {
+  const a = $("aviso-url");
+  a.textContent = texto;
+  a.className = error ? "alerta" : "suave";
+}
+
+async function esperarLectura(id) {
+  const r = await api(`/ofertas/url/${id}`);
+  if (!r.ok) return avisarUrl(r.motivo, true);
+  if (r.datos.estado === "pendiente") return setTimeout(() => esperarLectura(id), SONDEO_MS);
+  $("enviar-url").disabled = false;
+  if (r.datos.estado === "error") {
+    avisarUrl(r.datos.motivo || MOTIVO_URL, true);
+    $("texto").focus();
+    return;
+  }
+  $("url").value = "";
+  avisarUrl("Oferta leída. Se está analizando y puntuando; se actualizará sola.");
+  await cargar();
+}
+
+$("formulario-url").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = $("url").value.trim();
+  if (!url) return avisarUrl("Pega la dirección de la oferta.", true);
+  $("enviar-url").disabled = true;
+  avisarUrl("Leyendo la página…");
+  const r = await api("/ofertas/url", { metodo: "POST", cuerpo: { url } });
+  if (!r.ok) {
+    $("enviar-url").disabled = false;
+    return avisarUrl(r.motivo, true);
+  }
+  await esperarLectura(r.datos.id);
+});
+
 (async () => {
   if (!(await arrancar("/anadir-oferta"))) return;
   await cargar();

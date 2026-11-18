@@ -2,10 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 
 from horma.config import ajustes
+from horma.tools.validar_url import validar_url
+from horma.web import limites
 from horma.web.auth import claves
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.db import sesion_de
 from horma.web.queue import worker
+from horma.web.repositories import importaciones, tareas
 from horma.web.repositories import ofertas as repo
 from horma.web.services import ofertas as servicio
 
@@ -47,6 +50,33 @@ def crear(datos: NuevaOferta, request: Request, response: Response):
     elif ajustes().horma_flujo_en_linea:  # solo desarrollo: sin cola ni worker aparte
         r["estado"] = "procesada" if worker.procesar_una(engine) == "hecha" else "pendiente"
     return r
+
+
+class NuevaUrl(BaseModel):
+    url: str = Field(min_length=1, max_length=2000)
+
+
+@router.post("/ofertas/url", status_code=202, dependencies=[Depends(limites.limite_url)])
+def crear_desde_url(datos: NuevaUrl, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """Lee la página con el proveedor y sigue como una oferta pegada, privada de la usuaria (RF-5.3f)."""
+    exigir_csrf(request, usuaria_id)
+    if (motivo := validar_url(datos.url)) is not None:
+        raise HTTPException(status_code=422, detail=motivo)
+    a = ajustes()
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        importacion = importaciones.crear(s, usuaria_id, datos.url.strip())
+        tareas.encolar(s, usuaria_id, "leer_url", importacion, a.tope_coste_tarea, 1)  # sin reintentos
+    return {"id": importacion, "estado": "pendiente"}
+
+
+@router.get("/ofertas/url/{importacion_id}")
+def estado_de_la_url(importacion_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """En qué punto va la lectura de una URL (solo su dueña la ve)."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        fila = importaciones.fila(s, importacion_id)
+    if fila is None:
+        raise HTTPException(status_code=404, detail="No existe esa lectura")
+    return {k: fila[k] for k in ("id", "estado", "motivo", "oferta_id")}
 
 
 @router.get("/ofertas/total")
