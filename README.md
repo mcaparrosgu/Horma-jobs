@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado: fase 1 (ofertas) construida: catálogo común de ofertas, agentes `auditor-oferta`, `clasificador-oferta` y `auditor-fuentes`, flujos `procesar_oferta` y `calificar_fuente` sobre la interfaz `Flow`, ingestor por API, claves de API y dashboard `/ingesta`. Evals medidas con el modelo real el 14-nov-2026 (ambos sets aprobados); el CI las corre con el modelo real (`ANTHROPIC_API_KEY` es secreto del repositorio desde esa fecha).
+> Estado: fases 0 a 4 construidas y fase 5 (correcciones del profesor) construida, pendiente de la prueba manual: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas; Remotive, Adzuna e InfoJobs inactivas). Resumen de la fase 1 (ofertas): catálogo común de ofertas, agentes `auditor-oferta`, `clasificador-oferta` y `auditor-fuentes`, flujos `procesar_oferta` y `calificar_fuente` sobre la interfaz `Flow`, ingestor por API, claves de API y dashboard `/ingesta`. Evals medidas con el modelo real el 14-nov-2026 (ambos sets aprobados); el CI las corre con el modelo real (`ANTHROPIC_API_KEY` es secreto del repositorio desde esa fecha).
 
 ## Cómo trabajamos (SDD)
 
@@ -28,7 +28,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 2. **Perfil y recomendación** (`002-perfil-recomendacion`)
 3. **Candidatura y seguimiento** (`003-candidatura`)
 4. **LangGraph, calidad y salida** (`004-langgraph-salida`)
-5. **Correcciones del profesor** (`005-correcciones-profesor`, planificada)
+5. **Correcciones del profesor** (`005-correcciones-profesor`, construida; falta la prueba manual de Mar)
 
 Cada fase se cierra con sus evals en verde.
 

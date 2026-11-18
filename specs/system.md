@@ -94,6 +94,8 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 
 - **Fase 4 (LangGraph, calidad y salida):** LangGraph solo para `candidatura` (`flows/grafo.py`, único módulo que importa `langgraph`; `HORMA_FLOW_IMPL` elige `plain` o `langgraph`). El flujo se para antes de `entregar` con el estado en Postgres y, al aprobar la usuaria, se reanuda y deja los PDF fijos. La puerta del modelo marca por código las órdenes a la IA en la entrada y detecta fugas del prompt en la salida; `main` está protegida (`secretos`, `calidad`, `evals-reales`). `/costes` (solo admins) y las alertas de gasto y errores (pantalla, log y correo SMTP) no llevan datos personales. El despliegue es, de momento, local con Docker Compose y PostgreSQL; Vercel, más adelante (P6, profesor, 17-nov-2026). El red-teaming no es prioritario hasta que haya usuarias reales. **Antes de usuarias reales, el `matcher` debe pasar su plan de perfeccionamiento** (spec de la fase 2).
 
+- **Fase 5 (correcciones del profesor, construida):** lo que edita la usuaria en el perfil manda sobre los CV subidos (CV maestro). Las ofertas que ella añade (texto o URL, leída con Apify; portales vetados en `horma/assets/portales_vetados.json`) son privadas: solo las ve quien las añadió, por RLS, y entran en Recomendadas con la marca «Añadida por ti». `validar_cv` y `muletillas_ia` son código, sin modelo; el juez revisa además coherencia y que no suene a IA. El agente `analizador_estilo` crea una guía de estilo una sola vez (más botón) que siguen los redactores. Fuentes nuevas con adaptadores de ingesta (Basic auth, detalle, `cada_horas`, atribución visible, borrado de caducadas): Himalayas y Jobicy aptas; Remotive, Adzuna e InfoJobs inactivas. `evals-reales` solo corre a mano hasta el lanzamiento.
+
 ## Fases
 | Fase | Feature | Agentes que entran | Puerta de salida |
 |---|---|---|---|
@@ -102,6 +104,7 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 | 2 | `002-perfil-recomendacion` | `extractor-perfil`, `clasificador-postulante`, `generador-cv-base`, `matcher` | Evals de perfil y recomendación en verde |
 | 3 | `003-candidatura` | `redactor-cv`, `redactor-carta`, `juez-candidatura`, `clasificador-respuesta` (retirados en el bloque H: `juez-cv`, `juez-carta`, `selector-cv-base`) | Errores sembrados rechazados al 100 %; flujo paso a paso en consola |
 | 4 | `004-langgraph-salida` | ninguno (cambia `clasificador-respuesta`: añade la línea de art. 9) | Misma suite en verde con `LangGraphFlow`; umbrales bloqueantes en CI (`evals-reales` en los PR a `main`); red-teaming al 100 %; revisión de líneas rojas firmada |
+| 5 | `005-correcciones-profesor` | `analizador_estilo` (cambian `extractor-perfil`, `juez-candidatura`, `generador-cv-base` y los redactores) | Evals `perfil`, `cv`, `cv-base` y `estilo` en umbral |
 
 Las fases no tienen fechas: se pasa de una a otra cuando se cumple su puerta. Si hace falta
 recortar, se recortan pantallas, nunca agentes ni evals.
