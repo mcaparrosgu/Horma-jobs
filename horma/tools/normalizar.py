@@ -55,7 +55,7 @@ def huella(texto: str) -> str:
 
 def obtener(datos, ruta: str | None):
     """Valor en la ruta `a.b.0.c`; None si no existe."""
-    if not ruta:
+    if not ruta or ruta == "$":  # «$» = la raíz (la respuesta es la propia lista)
         return datos
     actual = datos
     for parte in ruta.split("."):
@@ -87,11 +87,25 @@ def _como_texto(campo: str, valor) -> str | None:
     return html.unescape(str(valor)).strip()
 
 
+def a_fecha_hora(valor) -> datetime | None:
+    """Instante a partir de un epoch o un texto ISO (sin zona = UTC); None si no se entiende."""
+    try:
+        if isinstance(valor, int | float) and not isinstance(valor, bool):
+            return datetime.fromtimestamp(valor, tz=UTC)
+        if isinstance(valor, str) and valor.strip():
+            d = datetime.fromisoformat(valor.strip().replace("Z", "+00:00"))
+            return d if d.tzinfo else d.replace(tzinfo=UTC)
+    except (ValueError, OverflowError, OSError):
+        pass
+    return None
+
+
 @dataclass(frozen=True)
 class OfertaNormalizada:
     texto: str
     id_externo: str
     url: str | None
+    caduca: datetime | None = None
 
 
 def oferta_a_texto(item: dict, mapeo: dict[str, str]) -> OfertaNormalizada:
@@ -106,5 +120,6 @@ def oferta_a_texto(item: dict, mapeo: dict[str, str]) -> OfertaNormalizada:
     texto = "\n".join(lineas)[:MAX_TEXTO]
     id_bruto = obtener(item, mapeo["id"]) if "id" in mapeo else None
     url = _como_texto("url", obtener(item, mapeo["url"])) if "url" in mapeo else None
+    caduca = a_fecha_hora(obtener(item, mapeo["caduca"])) if "caduca" in mapeo else None
     return OfertaNormalizada(texto=texto, id_externo=str(id_bruto) if id_bruto else huella(texto),
-                             url=url)
+                             url=url, caduca=caduca)

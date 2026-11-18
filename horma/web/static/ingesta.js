@@ -1,6 +1,7 @@
 // Dashboard de ingesta. Todo el texto que viene de la API se pinta con textContent: nunca como HTML.
 const $ = (id) => document.getElementById(id);
 let csrf = null;
+let conservados = {};
 let editando = null; // id de la fuente que se edita, o null si es nueva
 let temporizador = null;
 const pendientes = new Set(); // calificaciones que aún no han terminado
@@ -96,6 +97,8 @@ function tarjetaFuente(f) {
 function abrirEditor(f) {
   const form = $("form-fuente");
   editando = f ? f.id : null;
+  // Campos de la fase 5 que el formulario no edita (se editan en config/endpoints.json): se conservan.
+  conservados = f ? { auth_basica: f.auth_basica, detalle: f.detalle, cada_horas: f.cada_horas, atribucion: f.atribucion } : {};
   form.nombre.value = f ? f.nombre : "";
   form.metodo.value = f ? f.metodo : "GET";
   form.web.value = f ? f.web : "";
@@ -129,6 +132,7 @@ $("form-fuente").addEventListener("submit", async (e) => {
       parametros: JSON.parse(form.parametros.value || "{}"),
       cabeceras: JSON.parse(form.cabeceras.value || "{}"),
       mapeo: JSON.parse(form.mapeo.value || "{}"),
+      ...conservados,
     };
   } catch {
     avisar("Parámetros, cabeceras y mapeo tienen que ser JSON válido.", true);

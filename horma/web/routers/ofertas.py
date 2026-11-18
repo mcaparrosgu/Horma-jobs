@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 
@@ -20,6 +22,7 @@ class NuevaOferta(BaseModel):
     fuente: str | None = Field(default=None, max_length=41)
     id_externo: str | None = Field(default=None, max_length=200)
     url: str | None = Field(default=None, max_length=2000)
+    caduca_en: datetime | None = None
 
 
 @router.post("/ofertas", status_code=201)
@@ -42,7 +45,7 @@ def crear(datos: NuevaOferta, request: Request, response: Response):
     try:
         r = servicio.recibir(engine, datos.texto, fuente=datos.fuente, clave_id=clave_id,
                              id_externo=datos.id_externo, url=datos.url,
-                             usuaria_id=usuaria_id)
+                             usuaria_id=usuaria_id, caduca_en=datos.caduca_en)
     except servicio.FuenteNoValida as e:
         raise HTTPException(status_code=409, detail=f"Fuente no válida o inactiva: {e}") from e
     if not r["nueva"]:

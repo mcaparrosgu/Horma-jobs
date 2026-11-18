@@ -1,5 +1,5 @@
 {
-  "_comentario": "Semilla de la tabla fuentes (RF-1.1). Todas empiezan inactivas: solo se activan con una calificación apta. Nunca LinkedIn ni Indeed.",
+  "_comentario": "Semilla de la tabla fuentes (RF-1.1). Todas empiezan inactivas: solo se activan con una calificación apta. Nunca LinkedIn ni Indeed. Fase 5: atribucion = cita que se muestra con cada oferta; cada_horas = intervalo mínimo entre ejecuciones; caduca = fecha tras la cual la fuente exige retirar la oferta.",
   "fuentes": [
     {
       "nombre": "arbeitnow",
@@ -46,6 +46,119 @@
         "url": "redirect_url",
         "descripcion": "description"
       },
+      "cada_horas": 6,
+      "atribucion": "Ofertas de Adzuna (adzuna.es)",
+      "activa": false
+    },
+    {
+      "nombre": "remotive",
+      "web": "https://remotive.com",
+      "url": "https://remotive.com/api/remote-jobs",
+      "metodo": "GET",
+      "parametros": {
+        "limit": 100
+      },
+      "cabeceras": {},
+      "variable_clave": null,
+      "mapeo": {
+        "lista": "jobs",
+        "id": "id",
+        "titulo": "title",
+        "empresa": "company_name",
+        "ubicacion": "candidate_required_location",
+        "contrato": "job_type",
+        "salario": "salary",
+        "fecha": "publication_date",
+        "url": "url",
+        "descripcion": "description"
+      },
+      "cada_horas": 6,
+      "atribucion": "Fuente: Remotive (remotive.com)",
+      "activa": false
+    },
+    {
+      "nombre": "jobicy",
+      "web": "https://jobicy.com",
+      "url": "https://jobicy.com/api/v2/remote-jobs",
+      "metodo": "GET",
+      "parametros": {
+        "count": 50
+      },
+      "cabeceras": {},
+      "variable_clave": null,
+      "mapeo": {
+        "lista": "jobs",
+        "id": "id",
+        "titulo": "jobTitle",
+        "empresa": "companyName",
+        "ubicacion": "jobGeo",
+        "contrato": "jobType",
+        "fecha": "pubDate",
+        "url": "url",
+        "descripcion": "jobDescription"
+      },
+      "cada_horas": 6,
+      "atribucion": "Fuente: Jobicy (jobicy.com)",
+      "activa": false
+    },
+    {
+      "nombre": "infojobs",
+      "_comentario": "API oficial. INACTIVA hasta tener las condiciones de uso por escrito (RF-5.5b). La lista no trae la descripción: `detalle` pide una segunda llamada por oferta.",
+      "web": "https://www.infojobs.net",
+      "url": "https://api.infojobs.net/api/9/offer",
+      "metodo": "GET",
+      "parametros": {
+        "maxResults": 20
+      },
+      "cabeceras": {},
+      "variable_clave": "INFOJOBS_CLIENT_ID,INFOJOBS_CLIENT_SECRET",
+      "auth_basica": {
+        "usuario": "${INFOJOBS_CLIENT_ID}",
+        "clave": "${INFOJOBS_CLIENT_SECRET}"
+      },
+      "mapeo": {
+        "lista": "items",
+        "id": "id",
+        "titulo": "title",
+        "empresa": "author.name",
+        "ubicacion": "city",
+        "contrato": "contractType.value",
+        "salario": "salaryDescription",
+        "fecha": "published",
+        "url": "link",
+        "descripcion": "description"
+      },
+      "detalle": {
+        "url": "https://api.infojobs.net/api/7/offer/{id}"
+      },
+      "cada_horas": 6,
+      "atribucion": "Oferta de InfoJobs (infojobs.net)",
+      "activa": false
+    },
+    {
+      "nombre": "himalayas",
+      "web": "https://himalayas.app",
+      "url": "https://himalayas.app/jobs/api",
+      "metodo": "GET",
+      "parametros": {
+        "limit": 20
+      },
+      "cabeceras": {},
+      "variable_clave": null,
+      "mapeo": {
+        "lista": "jobs",
+        "id": "guid",
+        "titulo": "title",
+        "empresa": "companyName",
+        "ubicacion": "locationRestrictions",
+        "contrato": "employmentType",
+        "fecha": "pubDate",
+        "caduca": "expiryDate",
+        "url": "applicationLink",
+        "descripcion": "description"
+      },
+      "cada_horas": 6,
+      "atribucion": "Fuente: Himalayas (himalayas.app)",
       "activa": false
     }
   ]
