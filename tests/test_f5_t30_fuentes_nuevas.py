@@ -83,7 +83,9 @@ def test_la_oferta_guarda_la_atribucion_de_su_fuente(motor_app, bd_limpia):
     r = servicio_ofertas.recibir(motor_app, "Backend Engineer\nEmpresa: Acme", fuente="remotive",
                                  id_externo="1", url="https://remotive.com/x")
     with sesion_sistema(motor_app) as s:
-        atribucion = s.execute(text("select atribucion from ofertas where id=:i"), {"i": r["id"]}).scalar_one()
+        atribucion = s.execute(
+            text("select atribucion from ofertas where id=:i"), {"i": r["id"]}
+        ).scalar_one()
     assert atribucion == _semilla("remotive").atribucion
 
 
