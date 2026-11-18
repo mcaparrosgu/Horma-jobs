@@ -161,6 +161,7 @@ function filaOferta(o) {
   }
   titulo.classList.add("titulo-oferta");
   const celdaOferta = celda("Oferta", titulo, nodo("span", o.empresa || "Empresa sin indicar", "suave bloque"));
+  if (o.atribucion) celdaOferta.append(nodo("span", o.atribucion, "suave bloque"));  // cita de la fuente (RF-5.5d)
   if (o.propia) {  // las que añade la usuaria salen siempre, con su marca y lo que vio el auditor (RF-5.3e)
     celdaOferta.append(nodo("span", `Añadida por ti · analizada el ${fecha(o.analizada_en)}`, "estado bien bloque"));
     if (o.aviso_auditor) celdaOferta.append(nodo("span", o.aviso_auditor, "estado error bloque"));

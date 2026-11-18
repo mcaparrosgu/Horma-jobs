@@ -162,7 +162,7 @@ def upgrade() -> None:
         op.execute(bloque)
     from horma.web.semilla import sembrar_fuentes
 
-    sembrar_fuentes(op.get_bind())
+    sembrar_fuentes(op.get_bind(), campos_fase5=False)
 
 
 def downgrade() -> None:

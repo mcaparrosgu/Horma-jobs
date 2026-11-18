@@ -33,21 +33,31 @@ def _existente(s: Session, fuente_id, clave_id, id_externo) -> dict | None:
 
 def crear(s: Session, texto: str, *, fuente_id: int | None = None, clave_id: int | None = None,
           id_externo: str | None = None, url: str | None = None,
-          usuaria_id: int | None = None) -> tuple[int, str, bool]:
+          usuaria_id: int | None = None, caduca_en=None,
+          atribucion: str | None = None) -> tuple[int, str, bool]:
     """Guarda la oferta cruda. Devuelve (id, estado, nueva); idempotente por origen + id_externo."""
     if (previa := _existente(s, fuente_id, clave_id, id_externo)):
         return previa["id"], previa["estado"], False
     try:
         with s.begin_nested():
             oid = s.execute(text(
-                "insert into ofertas (texto_crudo, fuente_id, clave_id, id_externo, url, huella, usuaria_id) "
-                "values (:t, :f, :c, :e, :u, :h, :d) returning id"),
+                "insert into ofertas (texto_crudo, fuente_id, clave_id, id_externo, url, huella, usuaria_id, "
+                "caduca_en, atribucion) values (:t, :f, :c, :e, :u, :h, :d, :x, :a) returning id"),
                 {"t": texto, "f": fuente_id, "c": clave_id, "e": id_externo, "u": url,
-                 "h": huella(texto), "d": usuaria_id}).scalar_one()
+                 "h": huella(texto), "d": usuaria_id, "x": caduca_en, "a": atribucion}).scalar_one()
     except IntegrityError:  # otra petición la insertó a la vez
         previa = _existente(s, fuente_id, clave_id, id_externo)
         return previa["id"], previa["estado"], False
     return oid, "pendiente", True
+
+
+def borrar_caducadas(s: Session) -> int:
+    """Borra del catálogo las ofertas cuya fuente las da por caducadas (RF-5.5d, Himalayas), con sus
+    notas. Se conservan las que ya tienen una candidatura: son trabajo de una usuaria."""
+    ids = ("(select id from ofertas o where usuaria_id is null and caduca_en < now() and not exists "
+           "(select 1 from candidaturas c where c.oferta_id = o.id))")
+    s.execute(text(f"delete from matches where oferta_id in {ids}"))
+    return s.execute(text(f"delete from ofertas where id in {ids}")).rowcount
 
 
 def para_procesar(s: Session, oferta_id: int) -> dict:

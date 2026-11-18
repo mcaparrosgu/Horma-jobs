@@ -1,4 +1,6 @@
 """Servicio de ofertas: alta en el catálogo y encolado del flujo procesar_oferta (RF-1.3, RF-1.4)."""
+from datetime import datetime
+
 from sqlalchemy import Engine
 
 from horma.config import ajustes
@@ -16,20 +18,22 @@ class FuenteNoValida(Exception):
 
 def recibir(engine: Engine, texto: str, *, fuente: str | None = None, clave_id: int | None = None,
             id_externo: str | None = None, url: str | None = None,
-            usuaria_id: int | None = None, tope_coste: float | None = None,
+            usuaria_id: int | None = None, caduca_en: datetime | None = None,
+            tope_coste: float | None = None,
             tope_reintentos: int | None = None) -> dict:
     """Guarda la oferta cruda y, si es nueva, encola su procesado. La carga de la cola es el id.
     Con `usuaria_id` la oferta es privada de esa usuaria (RF-5.3c)."""
     a = ajustes()
     with sesion_sistema(engine) as s:
-        fuente_id = None
+        fuente_id = atribucion = None
         if fuente:
             f = repo_ingesta.fuente(s, nombre=fuente)
             if not f or not f["activa"]:
                 raise FuenteNoValida(fuente)
-            fuente_id = f["id"]
+            fuente_id, atribucion = f["id"], f["atribucion"]
         oferta_id, estado, nueva = repo.crear(s, texto, fuente_id=fuente_id, clave_id=clave_id,
-                                              id_externo=id_externo, url=url, usuaria_id=usuaria_id)
+                                              id_externo=id_externo, url=url, usuaria_id=usuaria_id,
+                                              caduca_en=caduca_en, atribucion=atribucion)
         if nueva:
             tareas.encolar(s, None, TIPO_TAREA, oferta_id,
                            a.tope_coste_tarea if tope_coste is None else tope_coste,

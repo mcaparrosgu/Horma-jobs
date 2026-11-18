@@ -13,6 +13,19 @@ SECRETOS_DE_HORMA = {
 _VARIABLE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
 
+class DetalleFuente(BaseModel):
+    """Segunda llamada por oferta para traer lo que la lista no trae (p. ej. la descripción)."""
+    url: str = Field(pattern=r"^https://", description="Usa {id} para el identificador de la oferta.")
+    raiz: str | None = Field(default=None, description="Ruta del objeto de la respuesta (a.b).")
+
+    @field_validator("url")
+    @classmethod
+    def _lleva_id(cls, v: str) -> str:
+        if "{id}" not in v:
+            raise ValueError("la url de detalle debe llevar {id}")
+        return v
+
+
 class Fuente(BaseModel):
     nombre: str = Field(pattern=r"^[a-z0-9][a-z0-9_-]{1,40}$")
     web: str = Field(pattern=r"^https://", description="Portal (se califica su dominio).")
@@ -25,6 +38,19 @@ class Fuente(BaseModel):
                                   "usan como ${VAR} en parámetros y cabeceras.")
     mapeo: dict[str, str] = Field(description="Campo de Horma → ruta en la respuesta (a.b.c).")
     activa: bool = False
+    auth_basica: dict[str, str] | None = Field(
+        default=None, description='Basic auth: {"usuario": "${VAR}", "clave": "${VAR}"}.')
+    detalle: DetalleFuente | None = None
+    cada_horas: int | None = Field(default=None, ge=1, description="Intervalo mínimo entre ejecuciones.")
+    atribucion: str | None = Field(default=None, max_length=200,
+                                   description="Cita de la fuente que se muestra con cada oferta.")
+
+    @field_validator("auth_basica")
+    @classmethod
+    def _auth_completa(cls, v: dict[str, str] | None) -> dict[str, str] | None:
+        if v is not None and set(v) != {"usuario", "clave"}:
+            raise ValueError("auth_basica lleva exactamente usuario y clave")
+        return v
 
     @field_validator("variable_clave")
     @classmethod

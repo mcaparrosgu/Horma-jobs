@@ -223,19 +223,19 @@ real (RF-5.8).
   - **Cubre:** RF-5.6f.
 
 ### Bloque G · Fuentes nuevas (RF-5.5)
-- [ ] T29 — Adaptadores de ingesta.
+- [x] T29 — Adaptadores de ingesta. *(18-nov: `lista: "$"`, `auth_basica`, `detalle` (con `{id}` y `raiz`; si falla, la oferta sigue sin él), `cada_horas` (lo exige el servicio al pedir o empezar una ejecución; las que acabaron en error no cuentan) y `atribucion`; migración 0016; el editor del dashboard conserva los campos nuevos)*
   - **Qué se hace:** `lista: "$"`, Basic auth desde variables y llamada de `detalle` opcional en
     `normalizar`/`ingesta`; `fuentes.cada_horas` y `fuentes.atribucion` (migración).
   - **Test:** con respuestas grabadas (inventadas), un array en la raíz, una fuente con detalle y una
     con `cada_horas` que no se pide antes de tiempo.
   - **Cubre:** RF-5.5, RF-5.5b, RF-5.5d.
-- [ ] T30 — Himalayas, Jobicy, Remotive y Adzuna.
+- [~] T30 — Himalayas, Jobicy, Remotive y Adzuna. *(18-nov: las cuatro configuradas e inactivas en `config/endpoints.json` (forma de cada API comprobada con una petición real); la oferta guarda copia de la atribución (`ofertas.atribucion`) y se ve en Recomendadas; `caduca_en` + borrado de caducadas al cerrar cada ejecución (se conservan las que tienen candidatura). Falta la calificación con el modelo real y activarlas: pide OK de gasto de Mar. Aviso: las condiciones de Remotive prohíben mostrar sus ofertas «para captar altas»; Mar decide)*
   - **Qué se hace:** entradas en `config/endpoints.json`, calificación con `calificar_fuente` y
     activación; atribución visible en la oferta; borrado de caducadas de Himalayas.
   - **Test:** con respuestas grabadas, cada fuente da ofertas normalizadas con enlace y atribución; la
     calificación queda guardada.
   - **Cubre:** RF-5.5, RF-5.5d.
-- [ ] T31 — InfoJobs, configurada e inactiva.
+- [x] T31 — InfoJobs, configurada e inactiva. *(18-nov: entrada con Basic auth y detalle, `activa: false`; el correo a InfoJobs lo envía Mar)*
   - **Qué se hace:** entrada con `activa: false` y mapeo con detalle; correo de Mar a InfoJobs pidiendo
     sus condiciones (lo envía ella).
   - **Test:** la ingesta no la llama mientras esté inactiva.
