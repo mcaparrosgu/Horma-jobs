@@ -113,7 +113,7 @@ solo usa el worker, inyectable como `descargar.Descargador` para los tests.
   usa ScrapingBee con la misma firma.
 
 ## Validar CV y «que no suene a IA» (RF-5.4, RF-5.7)
-- **`validar_cv(texto, maestro=None) -> list[str]`**: palabras entre `CV_PALABRAS_MIN=250` y `CV_PALABRAS_MAX=1000`; si el maestro tiene menos de 312 palabras, el mínimo baja al 80 % de las suyas (un CV no puede tener más que su perfil; prueba manual 18-nov);
+- **`validar_cv(texto, maestro=None) -> list[str]`**: palabras entre `CV_PALABRAS_MIN=250` y `CV_PALABRAS_MAX=1000`; si el maestro tiene menos de 417 palabras, el mínimo baja al 60 % de las suyas (un CV no puede tener más que su perfil; prueba manual 18-nov);
   encabezado `## Experiencia` o `## Formación`; fechas `AAAA` o `AAAA-MM` con fin ≥ inicio. Errores en
   llano.
 - **`muletillas_ia(texto) -> list[str]`**: busca en `assets/muletillas_ia.json` (expresiones en

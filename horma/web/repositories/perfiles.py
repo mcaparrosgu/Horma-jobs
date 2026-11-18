@@ -266,6 +266,11 @@ def marcar_error_regeneracion(s: Session, cv_id: int, motivo: str) -> None:
               {"i": cv_id, "m": motivo[:500]})
 
 
+def limpiar_error_regeneracion(s: Session, cv_id: int) -> None:
+    """Al pedir otra regeneración, el aviso del intento anterior desaparece para no confundir."""
+    s.execute(text("update cv_base set motivo_error = null where id = :i"), {"i": cv_id})
+
+
 def versiones_cv_base(s: Session, cv_id: int) -> list[dict] | None:
     """El historial del CV base, de la más reciente a la más antigua; `None` si el CV base no existe.
     Cada versión se compara con la siguiente (la que la sustituyó; la última, con el texto actual)."""

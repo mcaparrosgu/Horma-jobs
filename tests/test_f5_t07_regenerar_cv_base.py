@@ -107,6 +107,26 @@ def test_la_api_encola_la_regeneracion_solo_al_pedirla(app, motor_app):
     assert c.post(f"/api/cv-base/{cv_id}/regenerar", headers=h).status_code == 409  # ya en curso
 
 
+@pytest.mark.bd
+def test_al_pulsar_regenerar_otra_vez_desaparece_el_aviso_del_intento_anterior(app, motor_app):
+    c, h, _ = entrar(app)
+    u = _usuaria_id(motor_app, "google-A")
+    _perfil_hecho(motor_app, u)
+    with sesion_de(motor_app, u) as s:
+        perfiles.guardar_cv_base(s, u, 1, {"guardados": [{
+            "destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
+            "contenido": "x", "traza": [], "intentos": 1}], "rechazados": []})
+        cv_id = s.execute(text("select id from cv_base")).scalar_one()
+        perfiles.marcar_error_regeneracion(s, cv_id, "reintentos agotados (3): demasiado corto")
+    antes = [x for x in c.get("/api/cv-base").json()["cv_base"] if x["id"] == cv_id][0]
+    assert antes["motivo_error"]  # el aviso se ve mientras no se vuelva a pedir
+    assert c.post(f"/api/cv-base/{cv_id}/regenerar", headers=h).status_code == 202
+    despues = [x for x in c.get("/api/cv-base").json()["cv_base"] if x["id"] == cv_id][0]
+    assert not despues["motivo_error"]
+    with sesion_de(motor_app, u) as s:
+        assert s.execute(text("select motivo_error from cv_base")).scalar_one() is None
+
+
 def test_la_pantalla_tiene_el_boton_regenerar_y_dice_que_ha_cambiado():
     from pathlib import Path
     js = (Path(__file__).parent.parent / "horma" / "web" / "static" / "cv-base.js").read_text("utf-8")

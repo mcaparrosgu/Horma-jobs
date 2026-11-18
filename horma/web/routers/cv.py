@@ -141,6 +141,7 @@ def regenerar_cv_base(cv_id: int, request: Request, usuaria_id: int = Depends(us
             raise HTTPException(status_code=404, detail="No existe ese CV base.")
         if tareas.sin_terminar(s, "regenerar_cv_base", cv_id):
             raise HTTPException(status_code=409, detail="Ya se está regenerando.")
+        perfiles.limpiar_error_regeneracion(s, cv_id)  # el aviso del intento anterior ya no vale
         tarea = tareas.encolar(s, usuaria_id, "regenerar_cv_base", cv_id, a.tope_coste_cv_base,
                                a.tope_reintentos_tarea)
     return {"tarea_id": tarea}

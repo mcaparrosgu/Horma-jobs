@@ -2,7 +2,7 @@
 
 Código puro. Devuelve los errores en llano (vacío si no hay ninguno):
 - entre `CV_PALABRAS_MIN` y `CV_PALABRAS_MAX` palabras (una o dos páginas). Si se pasa el CV maestro, el
-  mínimo baja a `FRACCION_MAESTRO` (80 %) de sus palabras cuando el maestro es corto: un CV no puede
+  mínimo baja a `FRACCION_MAESTRO` (60 %) de sus palabras cuando el maestro es corto: un CV no puede
   tener más contenido que el perfil del que sale, y una usuaria con poca experiencia no queda bloqueada;
 - al menos un encabezado `## Experiencia` o `## Formación`;
 - periodos `AAAA` o `AAAA-MM` con fin ≥ inicio (el fin puede ser «actual», «presente» u «hoy»);
@@ -12,7 +12,7 @@ import unicodedata
 
 CV_PALABRAS_MIN = 250
 CV_PALABRAS_MAX = 1000
-FRACCION_MAESTRO = 0.8
+FRACCION_MAESTRO = 0.6
 
 _FECHA = r"(?:19|20)\d{2}(?:-\d{2})?"
 _PERIODO = re.compile(rf"(?<![\d-])({_FECHA})\s*[-–—]\s*({_FECHA}|actual|presente|hoy)(?![\d-])",
@@ -35,7 +35,7 @@ def _mes_valido(fecha: str) -> bool:
 
 
 def palabras_minimas(maestro: str | None = None) -> int:
-    """Mínimo de palabras de un CV: `CV_PALABRAS_MIN`, o el 80 % del maestro si este es más corto."""
+    """Mínimo de palabras de un CV: `CV_PALABRAS_MIN`, o el 60 % del maestro si este es más corto."""
     if maestro is None:
         return CV_PALABRAS_MIN
     return min(CV_PALABRAS_MIN, int(len(maestro.split()) * FRACCION_MAESTRO))
