@@ -145,7 +145,7 @@ real (RF-5.8).
     de Mar). Anotarlo en `docs/revision-lineas-rojas.md` («Encargados del tratamiento»).
   - **Test:** Mar lee la nota y decide: Apify o ScrapingBee.
   - **Cubre:** RF-5.3i.
-- [ ] T17 — `validar_url` y portales vetados.
+- [x] T17 — `validar_url` y portales vetados. *(hecha el 18-nov; `horma/tools/validar_url.py` devuelve `None` o el motivo en llano; lista en `horma/assets/portales_vetados.json`; 35 tests en `test_f5_t17_validar_url.py`)*
   - **Qué se hace:** tool de código y `assets/portales_vetados.json` (LinkedIn, Indeed, Glassdoor,
     InfoJobs, con subdominios).
   - **Test:** se rechazan `http`, IP literal, `localhost`, un dominio que resuelve a IP privada, URL con
