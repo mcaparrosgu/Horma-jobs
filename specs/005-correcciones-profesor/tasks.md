@@ -215,7 +215,7 @@ real (RF-5.8).
   - **Test:** con respuestas simuladas, la guía llega a las tres llamadas; sin guía, todo igual que
     antes; la trazabilidad no cambia.
   - **Cubre:** RF-5.6e.
-- [x] T28 — Eval `estilo`. *(simulado hecho el 18-nov: `evals/estilo/` 8 casos (2 adversarias), umbral `estilo` 0,9, y casos 22-23 con guía en `evals/cv/`. **Falta la medición con el modelo real, que pide el OK de Mar**)*
+- [x] T28 — Eval `estilo`. *(simulado hecho el 18-nov: `evals/estilo/` 8 casos (2 adversarias), umbral `estilo` 0,9, y casos 22-23 con guía en `evals/cv/`. **Modelo real (OK de Mar, 18-nov, ≈0,12 USD por pasada): `estilo` APROBADO 8/8, `sin_rasgos` y `sin_efecto` al 100 %.** La primera pasada falló `registro` en el caso 08 (CV solo de viñetas, etiqueta ambigua); se le añadió una carta formal para que el registro fuera inequívoco, sin tocar lo esperado)*
   - **Qué se hace:** `evals/estilo/` (unas 8 usuarias inventadas, 2 adversarias), set en `evals.py` y
     umbral en `umbrales.json`; casos con guía en `evals/cv/`.
   - **Test:** en simulado, en umbral; con el modelo real (OK de Mar), `sin_rasgos` y `sin_efecto` al
