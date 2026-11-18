@@ -5,8 +5,8 @@ import logging
 import os
 import re
 import time
-from datetime import UTC, datetime
 from collections.abc import Mapping
+from datetime import UTC, datetime
 
 import httpx
 
