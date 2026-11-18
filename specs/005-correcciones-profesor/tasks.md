@@ -166,26 +166,26 @@ real (RF-5.8).
   - **Cubre:** RF-5.3f, RF-5.3g.
 
 ### Bloque E · Validar CV y «que no suene a IA» (RF-5.4, RF-5.7)
-- [ ] T20 — `validar_cv` y `muletillas_ia`.
+- [x] T20 — `validar_cv` y `muletillas_ia`. *(hecha el 18-nov; `assets/muletillas_ia.json` con 29 expresiones; el «…» admite palabras en medio; `errores_muletillas` da el error con su línea)*
   - **Qué se hace:** las dos tools y `assets/muletillas_ia.json` (lista corta inicial).
   - **Test:** un CV de 1.200 palabras, uno de 150, uno sin Experiencia ni Formación y uno con fin
     anterior al inicio dan su error; «Apasionada por» y «en el dinámico mundo de» se detectan con y
     sin acentos; un CV normal no da nada.
   - **Cubre:** RF-5.4, RF-5.7.
-- [ ] T21 — En el flujo `candidatura`.
+- [x] T21 — En el flujo `candidatura`. *(hecha el 18-nov; los errores de `validar_cv` entran en `errores_formato` («Estructura del CV: …») y las muletillas en `errores_cv` y `errores_carta`; `aviso_de_error` los traduce a llano; llamadas siguen entre 3 y 5, suites `plain` y `langgraph` en verde)*
   - **Qué se hace:** `comprobar` suma las dos tools; los errores entran en la vuelta única y lo que
     queda sale como aviso.
   - **Test:** con respuestas simuladas, un CV largo con una muletilla se rehace una vez y, si sigue,
     sale el aviso; el número de llamadas sigue entre 3 y 5; suites de `plain` y `langgraph` en verde.
   - **Cubre:** RF-5.4c, RF-5.7c.
-- [ ] T22 — Juez ampliado y CV base.
+- [x] T22 — Juez ampliado y CV base. *(hecha el 18-nov; `incoherente` y `suena_a_ia`; `carta`, `cv_base` y `oferta` opcionales; `sin_carta()` fuerza «aprobado» en la carta; el juez del CV base solo corre si el código no halló errores. **Queda para T25-T27:** `guia_estilo` en la entrada del juez, porque `GuiaEstilo` aún no existe)*
   - **Qué se hace:** `TipoProblema` + `incoherente` y `suena_a_ia`; carta y oferta opcionales; prompt
     del juez; `generar_cv_base.verificar` llama a las tools y al juez.
   - **Test:** sin carta, `veredicto_carta` es «aprobado»; un CV base con fechas solapadas vuelve al
     segundo intento con el problema; RF-5.7d: ninguna llamada sale a un detector externo (test de
     arquitectura).
   - **Cubre:** RF-5.4b, RF-5.4d, RF-5.7b, RF-5.7d.
-- [ ] T23 — Evals del juez y del CV base.
+- [x] T23 — Evals del juez y del CV base. *(simulado hecho el 18-nov: `evals/cv/` 21 casos (modo `formato`, solo código) y `evals/cv-base/` 9 (`rechazados` en el esperado, `juez_simulado` en la entrada). **Modelo real (OK de Mar, 18-nov, ≈2,3 USD en total, por encima de lo previsto):** `cv` APROBADO 21/21; `cv-base`  `09-cv-largo`, `10-fechas-incoherentes` y `12-resumen-no-casa` se quitaron de `cv-base` por decisión de Mar (A, 18-nov): con el modelo real el CV base sale bien (condensa el largo; probable que corrija las fechas y que el juez no señale el resumen), así que esos casos solo valen en `cv` (simulado) y en los tests de código. Con los 9 casos que quedan, `cv-base` pasa 9 de 9. CV de prueba alargados a 250-330 palabras; mínimo de 250 se mantiene por decisión de Mar)*
   - **Qué se hace:** casos nuevos en `evals/cv/` y `evals/cv-base/` (largo, corto, fechas
     incoherentes, resumen que no casa, muletillas).
   - **Test:** en simulado, en umbral; con el modelo real (OK de Mar), en umbral.

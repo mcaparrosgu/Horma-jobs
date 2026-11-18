@@ -23,6 +23,9 @@ from horma.web.db import sesion_de
 from horma.web.queue import worker
 from horma.web.repositories import perfiles
 
+pytestmark = pytest.mark.usefixtures("juez_automatico")
+
+
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior", "stack": []}
 ORIGEN = {"fuente": "usuaria", "fragmento": "x"}
 BAR = {"puesto": "Camarera", "empresa": "Bar Sol", "inicio": "2020", "fin": "2023", "origen": ORIGEN}
@@ -201,6 +204,7 @@ def test_si_regenera_ignorando_lo_oculto_no_se_guarda(app, motor_app):
 
 
 # --- los evals ---------------------------------------------------------------------------------
+@pytest.mark.usefixtures("limites_reales")
 def test_el_eval_cv_base_incluye_casos_de_visibilidad_y_pasa_en_simulado():
     from pathlib import Path
 

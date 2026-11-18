@@ -1,0 +1,22 @@
+{
+  "modo": "sembrado",
+  "usuaria": "ana",
+  "cv_base_id": 1,
+  "oferta": "camarera-bar-luna",
+  "documento": "cv",
+  "contenido": "## Resumen\nEspecialista en logística y compras con amplia trayectoria directiva\n## Experiencia\nCamarera · Bar Sol · 2021-2024\n- Atención de mesas y barra en un bar de 40 plazas\n",
+  "traza": [
+    {
+      "frase": "Especialista en logística y compras con amplia trayectoria directiva",
+      "fragmento": "Atención de mesas y barra en un bar de 40 plazas"
+    },
+    {
+      "frase": "Camarera · Bar Sol · 2021-2024",
+      "fragmento": "Camarera · Bar Sol · 2021-2024"
+    },
+    {
+      "frase": "Atención de mesas y barra en un bar de 40 plazas",
+      "fragmento": "Atención de mesas y barra en un bar de 40 plazas"
+    }
+  ]
+}

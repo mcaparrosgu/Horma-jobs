@@ -88,6 +88,7 @@ def test_flujo_correr_paso_a_paso_con_traza_funciona_con_langgraph(tmp_path, mon
     assert sorted(p.name for p in (tmp_path / "t").iterdir())[-1].endswith("componer.json")
 
 
+@pytest.mark.usefixtures("limites_reales")
 @pytest.mark.parametrize("impl", IMPLEMENTACIONES)
 def test_eval_correr_cv_simulado_aprueba_con_las_dos(impl):
     r = CliRunner().invoke(cli, ["eval", "correr", "cv", "--simulado", "--flujo", impl])

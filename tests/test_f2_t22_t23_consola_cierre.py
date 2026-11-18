@@ -118,6 +118,7 @@ def test_hay_un_perfil_de_prueba_valido_para_recomendar():
 
 
 # --- T22: eval correr de los tres sets ------------------------------------------------------------
+@pytest.mark.usefixtures("limites_reales")
 @pytest.mark.parametrize("conjunto", ["perfil", "cv-base", "recomendacion"])
 def test_eval_correr_simulado_de_los_tres_sets_de_la_fase_2(conjunto, tmp_path):
     r = CliRunner().invoke(cli, ["eval", "correr", conjunto, "--simulado", "--raiz",

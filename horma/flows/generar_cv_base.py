@@ -10,18 +10,32 @@ Estado de salida: además, "cv_base" = {"guardados": [{destino, contenido, traza
 
 Hasta 4 destinos (sector y familia) de la taxonomía del perfil y de las preferencias. Cada CV se
 genera como máximo 2 veces: el segundo intento recibe los errores del primero. Un CV que no pasa
-`verificar_trazabilidad` no se guarda y deja el motivo (RT-08)."""
+`verificar_trazabilidad`, `validar_cv`, `muletillas_ia` ni el juez no se guarda y deja el motivo (RT-08,
+RF-5.4d): el juez (una llamada por intento) solo corre si el código no encontró errores."""
 from horma.agents.generador_cv_base.agent import GeneradorCvBase
 from horma.agents.generador_cv_base.schemas import Destino, EntradaGeneradorCvBase, ReglaVisibilidad
+from horma.agents.juez_candidatura.agent import JuezCandidatura
+from horma.agents.juez_candidatura.schemas import EntradaJuezCandidatura, sin_carta
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
+from horma.schemas.candidatura import TrazaFrase
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
+from horma.tools.muletillas_ia import errores_muletillas
+from horma.tools.validar_cv import validar_cv
 from horma.tools.verificar_trazabilidad import verificar_idiomas, verificar_trazabilidad
 from horma.tools.visibilidad_cv import clave_experiencia, verificar_visibilidad
 
 MAX_DESTINOS = 4
 MAX_INTENTOS = 2
+
+
+def _juzgar(borrador: dict, cv_maestro: str, proveedor: Proveedor | None) -> list[str]:
+    """Una llamada al juez con solo el CV base: señala incoherencias y texto que suena a IA (RF-5.4b)."""
+    r = sin_carta(JuezCandidatura.run(EntradaJuezCandidatura(
+        cv=borrador["contenido"], cv_traza=[TrazaFrase.model_validate(t) for t in borrador["traza"]],
+        cv_maestro=cv_maestro), proveedor=proveedor))
+    return [f"El revisor señala ({p.tipo}) la frase «{p.frase}»: {p.motivo}" for p in r.problemas]
 
 
 def crear(proveedor: Proveedor | None = None) -> PlainFlow:
@@ -65,6 +79,10 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         perfil = Perfil.model_validate(e["perfil"])
         e["errores"] += verificar_idiomas(b["contenido"], perfil)
         e["errores"] += verificar_visibilidad(b["contenido"], perfil, e.get("visibilidad") or {})
+        e["errores"] += [f"Estructura del CV: {x}" for x in validar_cv(b["contenido"])]
+        e["errores"] += errores_muletillas("cv", b["contenido"])
+        if not e["errores"]:  # el código manda: el juez solo se gasta si el código lo deja pasar (RF-5.4d)
+            e["errores"] = _juzgar(b, e["cv_maestro"], proveedor)
         return e
 
     def cerrar_destino(e: dict) -> dict:

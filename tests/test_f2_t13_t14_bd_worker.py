@@ -14,7 +14,7 @@ from horma.web.queue import worker
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import tareas
 
-pytestmark = pytest.mark.bd
+pytestmark = [pytest.mark.bd, pytest.mark.usefixtures("juez_automatico")]
 
 CV = "Ana Pérez\nCamarera en Bar Sol, 2020-2023\nInglés B2"
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",

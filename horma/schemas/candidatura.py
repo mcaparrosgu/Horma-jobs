@@ -15,7 +15,8 @@ Preparacion = Literal["en_curso", "lista", "pendiente_de_ti", "error"]
 Canal = Literal["correo", "web", "linkedin", "otro"]  # lista ampliable (P3)
 MotivoCierre = Literal["rechazo", "descartada", "retirada"]
 EtiquetaRespuesta = Literal["entrevista", "rechazo", "piden_informacion", "otro"]
-TipoProblema = Literal["sin_origen", "inflado", "promesa", "rasgo_personal", "repite_cv"]
+TipoProblema = Literal["sin_origen", "inflado", "promesa", "rasgo_personal", "repite_cv", "incoherente",
+                       "suena_a_ia"]
 TipoEvento = Literal["transicion", "nota"]
 OrigenEvento = Literal["usuaria"]
 DocumentoRevisado = Literal["cv", "carta"]
@@ -77,6 +78,8 @@ TEXTOS_PROBLEMA: dict[str, str] = {
     "promesa": "Promete algo que no podemos respaldar; quítalo o suavízalo.",
     "rasgo_personal": "Habla de cómo eres en vez de lo que has hecho; cuenta un hecho.",
     "repite_cv": "Repite lo que ya dice el CV; cuenta por qué encajas con esta oferta.",
+    "incoherente": "No casa con el resto del documento: fechas, resumen o secciones; revisa que cuadre.",
+    "suena_a_ia": "Suena genérico o artificial; cuéntalo con un hecho concreto tuyo.",
 }
 TEXTOS_ERROR: dict[str, str] = {
     "sin_traza": "No hemos podido comprobar de dónde sale esta frase; revisa que sea cierta.",
@@ -85,6 +88,8 @@ TEXTOS_ERROR: dict[str, str] = {
     "fecha": "La fecha {dato} no aparece en lo que sabemos de ti; revisa que sea correcta.",
     "rasgo": "Menciona un dato personal ({dato}); quítalo del documento.",
     "formato": "Para que los filtros de selección lean bien tu CV, revisa esto: {dato}.",
+    "estructura": "Revisa el CV: {dato}.",
+    "muletilla": "Suena a texto genérico de IA («{dato}»); cuéntalo con un hecho tuyo.",
     "otro": "Hay algo que revisar aquí.",
 }
 _RE_FRASE_FINAL = re.compile(r"frase «(.+)»\)?$")
@@ -116,6 +121,12 @@ def aviso_de_error(documento: str, error: str, contenido: str = "") -> Aviso:
         m = _RE_FRASE_FINAL.search(error)
         termino = _RE_COMILLAS.match(error)
         return aviso("dato_nuevo", termino.group(1) if termino else "", m.group(1) if m else None)
+    if error.startswith("Muletilla de IA"):
+        m = _RE_FRASE_FINAL.search(error)
+        dato = error.split(": ", 1)[-1].split(" (frase")[0]
+        return aviso("muletilla", dato, m.group(1) if m else None)
+    if error.startswith("Estructura del CV"):
+        return aviso("estructura", error.split(": ", 1)[-1].rstrip("."))
     if error.startswith("Rasgo personal"):
         return aviso("rasgo", error.split(": ", 1)[-1])
     if error.startswith("Formato del CV"):

@@ -10,6 +10,9 @@ from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 
+pytestmark = pytest.mark.usefixtures("juez_automatico")
+
+
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
        "stack": []}
 CV1 = "Ana Pérez\nCamarera en Bar Sol, 2020-2023\nGrado en Turismo, Universidad de Valencia\nInglés B2"
