@@ -255,7 +255,7 @@ real (RF-5.8).
     perfil y secciones, CV base y visibilidad, borrador desfasado, añadir oferta por texto y por URL,
     privacidad con dos cuentas, estilo y muletillas.
   - **Test:** Mar lo recorre y anota lo que falle.
-- [~] T35 — Medición real al cerrar la fase (opcional, con OK de Mar). *(18-nov, OK de Mar, ≈2,55 USD: `cv` 23/23, `cv-base` 9/9 y `estilo` 8/8 APROBADOS; **`perfil` NO APROBADO** (14 casos; fechas y titulaciones 0,86, umbral 0,9; fallan los casos 02, 06 y 07). Primera medición real con las secciones nuevas: puede ser regresión del extractor o expectativas del eval. **Pendiente:** investigar y ajustar extractor o eval (otra pasada ≈0,43 USD, con OK de Mar))*
+- [~] T35 — Medición real al cerrar la fase (opcional, con OK de Mar). *(18-nov, OK de Mar, ≈2,55 USD: `cv` 23/23, `cv-base` 9/9 y `estilo` 8/8 APROBADOS; **`perfil` NO APROBADO** (14 casos; fechas y titulaciones 0,86, umbral 0,9; fallan los casos 02, 06 y 07). Primera medición real con las secciones nuevas: puede ser regresión del extractor o expectativas del eval. **Causa (18-nov):** casos 02 y 06, `esperado` anterior a `certificaciones`/`otros` (eval); caso 07, el extractor omitía el puesto de fechas vagas («varios años») (extractor: el prompt ahora lo obliga a incluirlo y preguntar). Corregidos; 02, 06 y 07 aprobados con el modelo real (≈0,10 USD). **Pendiente:** pasada completa de `perfil` (≈0,43 USD, con OK de Mar) por el cambio de prompt)*
   - **Qué se hace:** si Mar lo pide, lanzar `evals-reales` a mano una vez (~1,8 USD) para medir los
     agentes que cambiaron (`perfil`, `cv`, `cv-base`, `estilo`).
   - **Test:** sets en umbral con el modelo real; si no se lanza, queda anotado como pendiente para
@@ -263,7 +263,7 @@ real (RF-5.8).
 
 ## Cierre de la fase 5: pasos pendientes, por orden
 Bloques A-H construidos (rama `fase5-bloque-h`). Para cerrar la fase, en este orden:
-1. **Eval `perfil` (T35):** investigar por qué falla con el modelo real (casos 02, 06 y 07; fechas y titulaciones 0,86 < 0,9), ajustar extractor o eval y repetir (≈0,43 USD, con OK de Mar).
+1. **Eval `perfil` (T35):** causa hallada y corregida (ver T35); falta la pasada completa con el modelo real (≈0,43 USD, con OK de Mar).
 2. **T32:** todas las empresas de Greenhouse. Claude investiga cómo descubrir los «board tokens», comprueba que responden, respeta condiciones y límites; Mar revisa la propuesta antes de activar. Lever, después.
 3. **T30/T31:** guardar la calificación de Jobicy y Himalayas (aptas) y activarlas; confirmar Remotive inactiva; Adzuna con la URL de condiciones (`--condiciones`) o su API; Mar envía el correo a InfoJobs.
 4. **Prueba manual de Mar** con `docs/plan-pruebas-fase5.md`: cubre T05, T14, T18 y T19 (parte Recomendadas) y anota lo que falle.
