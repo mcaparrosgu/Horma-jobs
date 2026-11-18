@@ -1,0 +1,18 @@
+{
+  "modo": "flujo",
+  "usuaria": "ana",
+  "oferta": "camarera-bar-luna",
+  "guia_estilo": {
+    "registro": "cercano",
+    "persona": "primera",
+    "longitud_frase": "corta",
+    "vinetas": "empiezan con verbo en pasado, sin punto final",
+    "expresiones": [
+      {
+        "rasgo": "abre con «Hola equipo»",
+        "cita": "Hola equipo,"
+      }
+    ],
+    "evita": []
+  }
+}

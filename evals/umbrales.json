@@ -23,5 +23,8 @@
   },
   "red-teaming": {
     "campos": 0.9
+  },
+  "estilo": {
+    "campos": 0.9
   }
 }

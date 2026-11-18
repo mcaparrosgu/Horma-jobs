@@ -1,0 +1,14 @@
+{
+  "documentos": [
+    {
+      "tipo": "cv",
+      "texto": "## Experiencia\n- Montaje de landings con HTML y CSS, rápido y limpio\n- Arreglo de bugs sin dramas\n- Pruebas en móvil antes de entregar\n",
+      "escrito_por_ella": true
+    },
+    {
+      "tipo": "carta",
+      "texto": "Hola,\n\nBuen ritmo, código claro y cero postureo. Landings en un día, bugs sin dramas, pruebas en móvil antes de entregar.\n\nUn saludo,",
+      "escrito_por_ella": true
+    }
+  ]
+}

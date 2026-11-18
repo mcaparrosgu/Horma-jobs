@@ -8,20 +8,25 @@ from sqlalchemy.orm import Session
 
 from horma.schemas.fuente import CalificacionFuente, Fuente
 
-CAMPOS_FUENTE = "id, nombre, web, url, metodo, parametros, cabeceras, variable_clave, mapeo, activa"
+CAMPOS_FUENTE = ("id, nombre, web, url, metodo, parametros, cabeceras, variable_clave, mapeo, activa, "
+                 "auth_basica, detalle, cada_horas, atribucion")
 
 
 # --- fuentes -----------------------------------------------------------------------------------
 def _parametros_fuente(f: Fuente) -> dict:
     return {**f.model_dump(), "parametros": json.dumps(f.parametros),
-            "cabeceras": json.dumps(f.cabeceras), "mapeo": json.dumps(f.mapeo)}
+            "cabeceras": json.dumps(f.cabeceras), "mapeo": json.dumps(f.mapeo),
+            "auth_basica": json.dumps(f.auth_basica) if f.auth_basica else None,
+            "detalle": json.dumps(f.detalle.model_dump()) if f.detalle else None}
 
 
 def crear_fuente(s: Session, f: Fuente) -> int:
     return s.execute(text(
         "insert into fuentes (nombre, web, url, metodo, parametros, cabeceras, variable_clave, mapeo, "
-        "activa) values (:nombre, :web, :url, :metodo, cast(:parametros as jsonb), "
-        "cast(:cabeceras as jsonb), :variable_clave, cast(:mapeo as jsonb), :activa) returning id"),
+        "activa, auth_basica, detalle, cada_horas, atribucion) values (:nombre, :web, :url, :metodo, "
+        "cast(:parametros as jsonb), cast(:cabeceras as jsonb), :variable_clave, cast(:mapeo as jsonb), "
+        ":activa, cast(:auth_basica as jsonb), cast(:detalle as jsonb), :cada_horas, :atribucion) "
+        "returning id"),
         _parametros_fuente(f)).scalar_one()
 
 
@@ -29,7 +34,9 @@ def actualizar_fuente(s: Session, fuente_id: int, f: Fuente) -> bool:
     return s.execute(text(
         "update fuentes set nombre=:nombre, web=:web, url=:url, metodo=:metodo, "
         "parametros=cast(:parametros as jsonb), cabeceras=cast(:cabeceras as jsonb), "
-        "variable_clave=:variable_clave, mapeo=cast(:mapeo as jsonb), activa=:activa where id=:id"),
+        "variable_clave=:variable_clave, mapeo=cast(:mapeo as jsonb), activa=:activa, "
+        "auth_basica=cast(:auth_basica as jsonb), detalle=cast(:detalle as jsonb), "
+        "cada_horas=:cada_horas, atribucion=:atribucion where id=:id"),
         {**_parametros_fuente(f), "id": fuente_id}).rowcount == 1
 
 
@@ -132,6 +139,13 @@ def ultima_ejecucion(s: Session, fuente_id: int) -> dict | None:
     fila = s.execute(text(f"select {COLUMNAS_EJECUCION} from ejecuciones_ingesta where fuente_id=:f "
                           "order by id desc limit 1"), {"f": fuente_id}).mappings().first()
     return dict(fila) if fila else None
+
+
+def ejecucion_reciente(s: Session, fuente_id: int, horas: int) -> bool:
+    """¿Hubo una ejecución (que no acabara en error) en las últimas `horas`?"""
+    return s.execute(text(
+        "select exists(select 1 from ejecuciones_ingesta where fuente_id=:f and estado <> 'error' "
+        "and creada_en > now() - make_interval(hours => :h))"), {"f": fuente_id, "h": horas}).scalar_one()
 
 
 def ejecuciones_con_error(s: Session, n: int = 10) -> list[dict]:

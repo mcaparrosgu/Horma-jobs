@@ -3,20 +3,26 @@
 Tipos de tarea (la carga es siempre un id, nunca texto):
 - `procesar_oferta` / `extraer_oferta` (catálogo, modo sistema) y `calificar_fuente` (fase 1).
 - `perfilar` (id de una versión nueva y pendiente del perfil), `clasificar_perfil` (id de una versión
-  copiada y pendiente), `generar_cv_base` y `recomendar` (id de la versión del perfil con la que se
+  copiada y pendiente), `generar_cv_base`, `recomendar` (id de la versión del perfil con la que se
   trabaja). Las de una usuaria se ejecutan con su sesión (RLS); las demás, en modo sistema.
+- `regenerar_cv_base` (fase 5; id del CV base): lo vuelve a generar con el perfil vigente.
+- `puntuar_propias` (fase 5; id de la usuaria): puntúa las ofertas que ella añadió.
 - `candidatura` (fase 3; id de la candidatura): CV y carta para una oferta.
+- `leer_url` (fase 5; id de la importación): lee la página con el proveedor y crea la oferta propia.
+- `analizar_estilo` (fase 5; id de la usuaria): guía de estilo con sus CV y cartas.
 El tope de coste vale para cualquier tarea: se corta en la puerta única (`metricas.capturar(tope=…)`) y
 una tarea que lo supera queda en `error` sin reintento y sin guardar su resultado.
 """
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from sqlalchemy import Engine
 
 from horma.config import ajustes
 from horma.flows import (
+    analizar_estilo,
     calificar_fuente,
     clasificar_perfil,
     generar_cv_base,
@@ -27,21 +33,29 @@ from horma.flows import (
 from horma.llm import metricas
 from horma.llm.proveedor import Proveedor
 from horma.logs import configurar_logs, motivo_seguro
+from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.fuente import CalificacionFuente
 from horma.schemas.oferta import Oferta
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.tools import descargar, dominio
 from horma.tools.buscar_ofertas import buscar_ofertas
+from horma.tools.leer_pagina import MENSAJE as MOTIVO_LECTURA
+from horma.tools.leer_pagina import leer_pagina
+from horma.tools.validar_url import validar_url
 from horma.web import alertas, checkpointer
 from horma.web.db import motor, sesion_de, sesion_sistema
 from horma.web.queue import cola
 from horma.web.repositories import candidaturas as repo_candidaturas
+from horma.web.repositories import estilo as repo_estilo
+from horma.web.repositories import importaciones as repo_importaciones
 from horma.web.repositories import ingesta as repo_ingesta
 from horma.web.repositories import matches as repo_matches
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles as repo_perfiles
 from horma.web.repositories import tareas as repo_tareas
+from horma.web.services import estilo as servicio_estilo
+from horma.web.services import ofertas as servicio_ofertas
 
 log = logging.getLogger("horma.worker")
 
@@ -53,6 +67,7 @@ class Dependencias:
     descargador: descargar.Descargador
     engine: Engine | None = None
     entidad_id: int | None = None
+    lector: Callable[[str], str] = leer_pagina
 
 
 class _ProcesarOferta:
@@ -65,9 +80,20 @@ class _ProcesarOferta:
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_ofertas.guardar(s, tarea["entidad_id"], Oferta.model_validate(estado["oferta"]),
                              [tuple(o) for o in estado["origenes"]])
+        if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
+            _encolar_puntuar_propias(s, usuaria)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_ofertas.marcar_error(s, tarea["entidad_id"], motivo)
+
+
+def _encolar_puntuar_propias(s, usuaria_id: int) -> None:
+    """Una sola tarea pendiente por usuaria: recoge todas las propias sin nota para su perfil vigente
+    (RF-5.3d). La carga es el id de la usuaria porque el worker, en modo sistema, no ve su perfil."""
+    if not repo_tareas.pendiente(s, "puntuar_propias", usuaria_id):
+        a = ajustes()
+        repo_tareas.encolar(s, usuaria_id, "puntuar_propias", usuaria_id, a.tope_coste_puntuar_propias,
+                            a.tope_reintentos_tarea)
 
 
 class _CalificarFuente:
@@ -114,6 +140,9 @@ class _Perfilar:
                                      estado["cv_maestro"])
         repo_perfiles.aplicar_preferencias_del_cv(
             s, tarea["usuaria_id"], Preferencias.model_validate(estado["preferencias"]))
+        if repo_ofertas.hay_propias(s):  # las añadidas antes de tener perfil se puntúan solas
+            _encolar_puntuar_propias(s, tarea["usuaria_id"])
+        servicio_estilo.encolar_si_no_hay_guia(s, tarea["usuaria_id"])  # la primera vez (RF-5.6d)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_perfiles.marcar_error_perfil(s, tarea["entidad_id"], motivo)
@@ -132,6 +161,8 @@ class _ClasificarPerfil:
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         perfil = Perfil.model_validate({**estado["perfil"], "taxonomia": estado["taxonomia"]})
         repo_perfiles.guardar_perfil(s, tarea["usuaria_id"], tarea["entidad_id"], perfil)
+        if repo_ofertas.hay_propias(s):  # perfil nuevo: las propias se puntúan con su versión
+            _encolar_puntuar_propias(s, tarea["usuaria_id"])
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_perfiles.marcar_error_perfil(s, tarea["entidad_id"], motivo)
@@ -155,6 +186,37 @@ class _GenerarCvBase:
         fila = repo_perfiles.perfil_fila(s, tarea["entidad_id"])
         if fila:
             repo_perfiles.marcar_error_cv_base(s, tarea["usuaria_id"], fila["version"], motivo)
+
+
+class _RegenerarCvBase:
+    """Vuelve a generar un CV base concreto (id del CV base) con el perfil vigente. Solo a petición."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        datos = repo_perfiles.datos_para_regenerar(s, tarea["entidad_id"])
+        if datos is None:
+            raise ValueError("el CV base ya no existe")
+        fila = repo_perfiles.vigente(s)
+        if fila is None:
+            raise ValueError("el perfil no está listo")
+        return {"perfil": repo_perfiles.perfil_modelo(fila).model_dump(mode="json"),
+                "cv_maestro": fila["cv_maestro"],
+                "preferencias": repo_perfiles.preferencias(s).model_dump(mode="json"),
+                "destinos": [{"sector": datos["sector"], "familia": datos["familia"]}],
+                "visibilidad": datos["visibilidad"] or {}, "_version": fila["version"]}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        salida = generar_cv_base.crear(proveedor=d.proveedor).run(estado)
+        if not salida["cv_base"]["guardados"]:  # no pasó la verificación: no se toca el CV
+            rechazo = salida["cv_base"]["rechazados"][0]
+            raise ValueError(f"la regeneración no pasó la verificación: {rechazo['motivo']}")
+        return salida
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_perfiles.regenerar_cv_base(s, tarea["entidad_id"], estado["_version"],
+                                        estado["cv_base"]["guardados"][0])
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        repo_perfiles.marcar_error_regeneracion(s, tarea["entidad_id"], motivo)
 
 
 class _Recomendar:
@@ -184,6 +246,35 @@ class _Recomendar:
         """Sin fila propia: el motivo queda en la tarea."""
 
 
+class _PuntuarPropias(_Recomendar):
+    """Puntúa TODAS las ofertas propias de la usuaria sin nota para su perfil vigente, sin filtros ni
+    rango (RF-5.3d, RF-5.3e). Por tandas de 30 con el mismo flujo que `recomendar`. Entidad = id de la
+    usuaria. Sin perfil o sin ofertas pendientes no hace nada (y no llama al modelo)."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        fila = repo_perfiles.vigente(s)
+        if fila is None:
+            return {"candidatas": []}
+        perfil = repo_perfiles.perfil_modelo(fila)
+        prefs = repo_perfiles.preferencias(s).model_copy(update={"rango_min": 0, "rango_max": 100})
+        ids = repo_ofertas.propias_sin_nota(s, tarea["usuaria_id"], fila["version"],
+                                            recomendar.MAX_TANDAS * recomendar.TANDA)
+        ofertas = repo_ofertas.completas(s, ids)
+        return {"perfil": perfil.model_dump(mode="json"), "preferencias": prefs.model_dump(mode="json"),
+                "candidatas": [{"oferta_id": i, "oferta": ofertas[i].model_dump(mode="json")}
+                               for i in ids if i in ofertas],
+                "ya_puntuadas": [], "_version": fila["version"]}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        if not estado["candidatas"]:
+            return {**estado, "recomendaciones": []}
+        return super().ejecutar(estado, d)
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        if estado["recomendaciones"]:
+            super().guardar(s, tarea, estado)
+
+
 class _Candidatura:
     """Prepara CV y carta para una oferta (entidad = id de la candidatura): carga el perfil vigente, el
     CV maestro y todos los CV base de la usuaria; el flujo elige uno."""
@@ -198,9 +289,11 @@ class _Candidatura:
         oferta = repo_ofertas.completas(s, [c["oferta_id"]]).get(c["oferta_id"])
         if oferta is None:
             raise ValueError(f"la oferta {c['oferta_id']} no está procesada")
+        guia = repo_estilo.guia(s)
         return {"usuaria_id": tarea["usuaria_id"], "perfil_version": perfil["version"],
                 "oferta": oferta.model_dump(mode="json"), "cv_maestro": perfil["cv_maestro"],
-                "cvs_base": repo_candidaturas.cv_base_para_flujo(s)}
+                "cvs_base": repo_candidaturas.cv_base_para_flujo(s),
+                "guia_estilo": guia["guia"] if guia else None}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         """Corre hasta la pausa (antes de `entregar`). Con `langgraph` el estado queda en el hilo de la
@@ -215,15 +308,64 @@ class _Candidatura:
         repo_candidaturas.marcar_error(s, tarea["entidad_id"], motivo)
 
 
+class _LeerUrl:
+    """Lee la URL de una importación y entrega el texto a `recibir`, como una oferta pegada: privada de la
+    usuaria y con su URL guardada (RF-5.3f). Entidad = id de la importación. Cualquier fallo deja un motivo
+    fijo (la web pide pegar el texto) y no se reintenta: cada lectura cuesta."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        fila = repo_importaciones.fila(s, tarea["entidad_id"])
+        if fila is None:
+            raise ValueError(f"no existe la importación {tarea['entidad_id']} de esta usuaria")
+        if (motivo := validar_url(fila["url"])) is not None:  # otra vez: pasó tiempo desde que se pidió
+            raise ValueError(motivo)
+        return {"url": fila["url"], "usuaria_id": tarea["usuaria_id"]}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        texto = d.lector(estado["url"])
+        r = servicio_ofertas.recibir(d.engine, texto, url=estado["url"], usuaria_id=estado["usuaria_id"])
+        return {"oferta_id": r["id"]}
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_importaciones.marcar_leida(s, tarea["entidad_id"], estado["oferta_id"])
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        repo_importaciones.marcar_error(s, tarea["entidad_id"], MOTIVO_LECTURA)  # fijo: sin detalles
+
+
+class _AnalizarEstilo:
+    """Analiza cómo escribe la usuaria (entidad = id de la usuaria). Una llamada al modelo; solo se encola
+    la primera vez o con el botón «Volver a analizar mi estilo» (RF-5.6d)."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        documentos = repo_estilo.documentos(s)
+        if not documentos:
+            raise ValueError("la usuaria no tiene documentos para analizar su estilo")
+        return {"documentos": documentos}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        return analizar_estilo.crear(proveedor=d.proveedor).run(estado)
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        repo_estilo.guardar(s, tarea["usuaria_id"], GuiaEstilo.model_validate(estado["guia"]), "modelo")
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        """Sin fila propia: el motivo queda en la tarea."""
+
+
 MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
-               "recomendar": _Recomendar(), "candidatura": _Candidatura()}
+               "regenerar_cv_base": _RegenerarCvBase(),
+               "recomendar": _Recomendar(), "puntuar_propias": _PuntuarPropias(),
+               "candidatura": _Candidatura(), "leer_url": _LeerUrl(),
+               "analizar_estilo": _AnalizarEstilo()}
 
 
 def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
                  resolver: dominio.Resolvedor | None = dominio.resuelve,
-                 descargador: descargar.Descargador = descargar.descargar_http) -> str | None:
+                 descargador: descargar.Descargador = descargar.descargar_http,
+                 lector: Callable[[str], str] = leer_pagina) -> str | None:
     """Procesa una tarea. Devuelve el estado final de la tarea o None si no había ninguna."""
     tarea = cola.reclamar(engine)
     if tarea is None:
@@ -243,7 +385,7 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
                 raise ValueError(f"tipo de tarea desconocido: {tarea['tipo']}")
             with sesion() as s:
                 entrada = manejador.cargar(s, tarea)
-            deps = Dependencias(proveedor, resolver, descargador, engine, tarea["entidad_id"])
+            deps = Dependencias(proveedor, resolver, descargador, engine, tarea["entidad_id"], lector)
             estado = manejador.ejecutar(entrada, deps)
         except Exception as e:  # noqa: BLE001 - cualquier fallo cuenta como intento fallido
             error = e
@@ -289,6 +431,8 @@ def main() -> None:
     configurar_logs()
     engine = motor()
     log.info("worker en marcha")
+    if (n := cola.reencolar_interrumpidas(engine)):
+        log.warning("%s tarea(s) interrumpidas por una parada anterior vuelven a la cola", n)
     if not alertas.correo_configurado(ajustes()):
         log.warning("SMTP_HOST o ALERTAS_CORREO sin configurar: las alertas solo salen en pantalla y log")
     ultima: float | None = None

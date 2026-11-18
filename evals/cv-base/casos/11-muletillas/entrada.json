@@ -1,0 +1,71 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Lucía Ferrer",
+    "taxonomia": {
+      "sector": "hosteleria_turismo",
+      "familia": "hosteleria_restauracion",
+      "nivel": "junior",
+      "stack": []
+    },
+    "experiencias": [
+      {
+        "puesto": "Camarera",
+        "empresa": "Bar Sol",
+        "inicio": "2021",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Camarera · Bar Sol · 2021-2024"
+        }
+      },
+      {
+        "puesto": "Ayudante de cocina",
+        "empresa": "Restaurante La Barca",
+        "inicio": "2019",
+        "fin": "2021",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Ayudante de cocina · Restaurante La Barca · 2019-2021"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Técnico en Servicios de Restauración",
+        "centro": "IES Ausiàs March",
+        "inicio": "2017",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico en Servicios de Restauración · IES Ausiàs March · 2017-2019"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Inglés B1"
+        }
+      },
+      {
+        "idioma": "ca",
+        "nivel": "nativo",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Valenciano nativo"
+        }
+      }
+    ]
+  },
+  "cv_maestro": "# Lucía Ferrer\n## Experiencia\nCamarera · Bar Sol · 2021-2024\n- Atención de mesas y barra en un bar de 40 plazas\n- Gestión de la caja al cierre\nAyudante de cocina · Restaurante La Barca · 2019-2021\n- Preparación de entrantes y mise en place\n## Formación\nTécnico en Servicios de Restauración · IES Ausiàs March · 2017-2019\n## Idiomas\nInglés B1\nValenciano nativo\n\n## Habilidades\n- Organización del trabajo diario por prioridades, con listas de tareas y revisión al final de cada jornada\n- Atención a personas por teléfono, por correo y en persona, con respuesta clara y en el plazo acordado\n- Registro ordenado de datos en hojas de cálculo y formularios, con comprobación de cifras antes de entregarlos\n- Redacción de mensajes y avisos breves para compañeros, clientes y proveedores\n- Trabajo en equipo en turnos rotativos, con traspaso escrito de incidencias entre turnos\n- Cumplimiento de normas de seguridad, higiene y protección de datos en el puesto\n- Resolución de imprevistos sencillos: avisar a quien corresponda, anotar lo ocurrido y seguir el procedimiento\n- Manejo del correo electrónico, del calendario compartido y de aplicaciones de mensajería del trabajo\n- Archivo físico y digital de documentos, con nombres claros y carpetas por fecha\n- Aprendizaje rápido de herramientas nuevas con ayuda de manuales, vídeos cortos y compañeros del equipo\n- Puntualidad y constancia en horarios de mañana, tarde y fines de semana\n- Cuidado del material y de las instalaciones, con aviso inmediato de cualquier avería\n- Control de existencias con recuentos periódicos y aviso cuando algo se acaba\n- Atención cuidadosa a las peticiones de clientes y usuarios, con paciencia y buen trato\n- Apasionada por la atención al cliente y por el trabajo bien hecho\n",
+  "preferencias": {}
+}

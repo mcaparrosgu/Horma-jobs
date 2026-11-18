@@ -48,6 +48,14 @@ def _en_borrador(c: dict) -> None:
         raise ErrorCandidatura(409, "Solo se puede hacer mientras la candidatura está en borrador.")
 
 
+def _borrador_desfasado(s, c: dict) -> bool:
+    """Un borrador ya preparado con una versión del perfil anterior a la vigente (RF-5.1f)."""
+    vigente = perfiles.vigente(s)
+    return (c["estado"] == "borrador" and c["preparacion"] in ("lista", "pendiente_de_ti")
+            and bool(c["perfil_version"]) and vigente is not None
+            and c["perfil_version"] < vigente["version"])
+
+
 def _preparada(c: dict) -> None:
     if c["preparacion"] not in ("lista", "pendiente_de_ti"):
         raise ErrorCandidatura(409, "La candidatura aún no está preparada.")
@@ -113,7 +121,7 @@ def detalle(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
         eventos = repo.eventos(s, candidatura_id)
     union = ("oferta_titulo", "oferta_empresa", "cv_base_nombre", "cv_base_desfasado", "cv_pdf",
              "carta_pdf")
-    return {**{k: v for k, v in f.items() if k not in union},
+    return {**{k: v for k, v in f.items() if k not in union}, "desfasada": bool(f["desfasada"]),
             "oferta": {"id": f["oferta_id"], "titulo": f["oferta_titulo"], "empresa": f["oferta_empresa"]},
             "cv_base": ({"id": f["cv_base_id"], "nombre": f["cv_base_nombre"],
                          "desfasado": bool(f["cv_base_desfasado"])} if f["cv_base_id"] else None),
@@ -198,12 +206,15 @@ def _entregar(engine: Engine, usuaria_id: int, c: dict, oferta) -> None:
 
 
 def reintentar(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
-    """Vuelve a lanzar la preparación de esta misma candidatura, con el mismo tope de coste (RF-3.8e)."""
+    """Vuelve a lanzar la preparación de esta misma candidatura, con el mismo tope de coste (RF-3.8e).
+    Vale cuando la preparación ha fallado y, en un borrador, cuando se preparó con una versión anterior
+    del perfil (RF-5.1f): se rehace con la vigente y se pierde lo que ella hubiera editado."""
     a = ajustes()
     with sesion_de(engine, usuaria_id) as s:
         c = _cargar(s, candidatura_id)
-        if c["preparacion"] != "error":
-            raise ErrorCandidatura(409, "Solo se puede reintentar cuando la preparación ha fallado.")
+        if c["preparacion"] != "error" and not _borrador_desfasado(s, c):
+            raise ErrorCandidatura(409, "Solo se puede volver a preparar cuando la preparación ha fallado "
+                                        "o el borrador es de una versión anterior de tu perfil.")
         if tareas.sin_terminar(s, "candidatura", candidatura_id):
             raise ErrorCandidatura(409, "Ya se está preparando.")
         repo.reiniciar_preparacion(s, candidatura_id)

@@ -5,6 +5,7 @@ import shutil
 import unicodedata
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from horma.cli import app
@@ -37,9 +38,9 @@ def _copiar(tmp_path, nombre, caso):
 
 
 # --- T11: fixtures de perfil -------------------------------------------------------------------
-def test_fixtures_de_perfil_son_12_validas_de_5_sectores_y_2_adversarias():
+def test_fixtures_de_perfil_son_14_validas_de_5_sectores_y_2_adversarias():
     casos = _casos("perfil")
-    assert len(casos) == 12
+    assert len(casos) == 14
     sectores, adversarias, con_pendientes = set(), 0, 0
     for c in casos:
         p = Perfil.model_validate_json((c / "esperado.json").read_text(encoding="utf-8"))
@@ -71,7 +72,7 @@ def test_el_esperado_de_perfil_no_lleva_rasgos_personales_pero_alguna_entrada_si
 
 def test_eval_perfil_simulado_pasa_al_100(tmp_path):
     r = correr_set("perfil", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 12 and r["adversarias"] == 1.0
+    assert r["aprobado"] and r["casos"] == 14 and r["adversarias"] == 1.0
     assert set(r["campos"]) >= {"cargos", "empresas", "fechas", "titulaciones", "idiomas",
                                 "sector", "familia", "pendientes", "sin_sensibles"}
     assert all(v == 1.0 for v in r["campos"].values()), r["campos"]
@@ -130,9 +131,10 @@ def test_comparador_de_perfil_detecta_rasgos_personales():
 
 
 # --- T11: cv-base ------------------------------------------------------------------------------
-def test_fixtures_de_cv_base_son_5_de_5_sectores():
+@pytest.mark.usefixtures("limites_reales")
+def test_fixtures_de_cv_base_son_5_de_5_sectores_y_dos_de_visibilidad():
     casos = _casos("cv-base")
-    assert len(casos) == 5
+    assert len(casos) == 9  # 5 sectores, oculta y condensada (T08) y 2 rechazados (T23)
     sectores = set()
     for c in casos:
         e = _json(c / "entrada.json")
@@ -140,12 +142,13 @@ def test_fixtures_de_cv_base_son_5_de_5_sectores():
         Preferencias.model_validate(e.get("preferencias") or {})
         assert e["cv_maestro"].strip() and _json(c / "esperado.json")["destinos"] >= 1
         assert not errores_ats(e["cv_maestro"]), c.name
-    assert len(sectores) == 5
+    assert len(sectores) == 5  # los de visibilidad repiten el sector de hostelería
 
 
+@pytest.mark.usefixtures("limites_reales")
 def test_eval_cv_base_simulado_pasa_al_100():
     r = correr_set("cv-base", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 5
+    assert r["aprobado"] and r["casos"] == 9
     assert r["campos"] == {"verificacion": 1.0, "ats": 1.0}
 
 
@@ -261,13 +264,15 @@ def test_el_eval_se_detiene_al_superar_el_tope_y_deja_constancia(tmp_path):
     assert guardado["detenido_por_coste"] is True and guardado["casos_ejecutados"] == r["casos_ejecutados"]
 
 
+@pytest.mark.usefixtures("limites_reales")
 def test_con_tope_holgado_corre_todo_y_anota_el_coste():
     r = correr_set("cv-base", raiz=RAIZ, simulado=True, tope_coste=1.0)
-    assert r["detenido_por_coste"] is False and r["casos_ejecutados"] == r["casos"] == 5
+    assert r["detenido_por_coste"] is False and r["casos_ejecutados"] == r["casos"] == 9
     assert 0 < r["coste"] < 1.0 and r["tope_coste"] == 1.0
 
 
 # --- T12: consola ------------------------------------------------------------------------------
+@pytest.mark.usefixtures("limites_reales")
 def test_consola_corre_los_tres_sets_nuevos_en_simulado():
     for nombre in ("perfil", "cv-base", "recomendacion"):
         r = CliRunner().invoke(app, ["eval", "correr", nombre, "--simulado"])

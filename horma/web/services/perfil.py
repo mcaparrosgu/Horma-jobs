@@ -9,10 +9,11 @@ from sqlalchemy import Engine
 
 from horma.config import ajustes
 from horma.schemas.perfil import Perfil
+from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.web.db import sesion_de
 from horma.web.repositories import perfiles, tareas
 
-LISTAS = ("experiencias", "formacion", "idiomas", "habilidades")
+LISTAS = ("experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones", "otros")
 UNICOS = ("titular", "resumen")
 
 
@@ -48,7 +49,7 @@ def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], Non
                 f"{'.'.join(map(str, x['loc']))}: {x['msg']}" for x in e.errors()[:3])) from e
         perfil_id, version = perfiles.nueva_version(s, usuaria_id)
         perfiles.guardar_perfil(s, usuaria_id, perfil_id, perfil.model_copy(update={"version": version}),
-                                fila["cv_maestro"])
+                                componer_cv_maestro(perfil))
         tareas.encolar(s, usuaria_id, "clasificar_perfil", perfil_id, a.tope_coste_perfilar,
                        a.tope_reintentos_tarea)
     return {"id": perfil_id, "version": version}
@@ -101,6 +102,9 @@ def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
     """Cambia o quita un dato del perfil (en una lista, el que está en `indice`)."""
     def cambio(p: dict) -> None:
         if campo in LISTAS:
+            if indice is None and dato is not None:  # sin índice: dato nuevo al final de la lista
+                p[campo].append(_con_origen(dato))
+                return
             if indice is None or not 0 <= indice < len(p[campo]):
                 raise DatoNoValido("Ese dato no existe.")
             if dato is None:

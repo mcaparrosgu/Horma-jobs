@@ -27,19 +27,7 @@
       }
     }
   ],
-  "formacion": [
-    {
-      "titulo": "Curso de manipulador de alimentos",
-      "centro": null,
-      "inicio": null,
-      "fin": null,
-      "origen": {
-        "fuente": "cv",
-        "cv_id": 1,
-        "fragmento": "Curso de manipulador de alimentos"
-      }
-    }
-  ],
+  "formacion": [],
   "idiomas": [
     {
       "idioma": "en",
@@ -72,5 +60,15 @@
       "opciones": []
     }
   ],
-  "instrucciones_embebidas": []
+  "instrucciones_embebidas": [],
+  "certificaciones": [
+    {
+      "nombre": "Curso de manipulador de alimentos",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Curso de manipulador de alimentos"
+      }
+    }
+  ]
 }

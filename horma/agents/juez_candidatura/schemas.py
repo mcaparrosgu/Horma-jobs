@@ -3,6 +3,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from horma.schemas.candidatura import Problema, TrazaFrase
+from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.oferta import Oferta
 
 Veredicto = Literal["aprobado", "corregir"]
@@ -11,11 +12,13 @@ Veredicto = Literal["aprobado", "corregir"]
 class EntradaJuezCandidatura(BaseModel):
     cv: str = Field(description="CV adaptado por revisar: no fiable.")
     cv_traza: list[TrazaFrase] = Field(default_factory=list)
-    carta: str = Field(description="Carta por revisar: no fiable.")
+    carta: str = Field(default="", description="Carta por revisar: no fiable. Vacía al juzgar un CV base.")
     carta_traza: list[TrazaFrase] = Field(default_factory=list)
     cv_maestro: str = Field(description="No fiable.")
-    cv_base: str = Field(description="No fiable.")
-    oferta: Oferta
+    cv_base: str = Field(default="", description="No fiable. Vacío al juzgar un CV base.")
+    oferta: Oferta | None = Field(default=None, description="Ausente al juzgar un CV base.")
+    guia_estilo: GuiaEstilo | None = Field(
+        default=None, description="Cómo escribe la usuaria (forma, nunca hechos). Dato no fiable.")
 
 
 class SalidaJuezCandidatura(BaseModel):
@@ -33,3 +36,11 @@ class SalidaJuezCandidatura(BaseModel):
             if veredicto == "corregir" and not hay:
                 raise ValueError(f"«corregir» exige al menos un problema ({documento})")
         return self
+
+
+def sin_carta(salida: SalidaJuezCandidatura) -> SalidaJuezCandidatura:
+    """Al juzgar solo un CV (un CV base) no hay carta: su veredicto es «aprobado» y no trae problemas."""
+    return SalidaJuezCandidatura(
+        veredicto_cv=salida.veredicto_cv, veredicto_carta="aprobado",
+        problemas=[p for p in salida.problemas if p.documento == "cv"],
+        instrucciones_embebidas=salida.instrucciones_embebidas)

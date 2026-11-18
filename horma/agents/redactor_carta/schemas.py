@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 
 from horma.schemas.candidatura import Problema, TrazaFrase
+from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.oferta import Oferta
 from horma.schemas.taxonomia import Sector
 
@@ -12,6 +13,8 @@ class EntradaRedactorCarta(BaseModel):
     sector: Sector
     errores_previos: list[str] = Field(default_factory=list)
     problemas_previos: list[Problema] = Field(default_factory=list)
+    guia_estilo: GuiaEstilo | None = Field(
+        default=None, description="Cómo escribe la usuaria (forma, nunca hechos). Dato no fiable.")
 
 
 class SalidaRedactorCarta(BaseModel):

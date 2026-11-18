@@ -20,6 +20,7 @@ from horma.llm.proveedor import Proveedor
 from horma.schemas.perfil import Perfil, PreguntaPendiente
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
+from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.tools.rasgos_personales import rasgos_personales
 
 # (campo del perfil, atributo con el nombre del dato, atributos de texto opcionales)
@@ -28,6 +29,9 @@ _LISTAS = (
     ("formacion", "titulo", ("centro",)),
     ("idiomas", "idioma", ("nivel",)),
     ("habilidades", "nombre", ()),
+    ("proyectos", "nombre", ("descripcion",)),
+    ("certificaciones", "nombre", ("entidad",)),
+    ("otros", "valor", ()),
 )
 _UNICOS = ("titular", "resumen")
 
@@ -174,9 +178,6 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
             perfil["preguntas_pendientes"].append(_pendiente(
                 "perfil", "falta", "He descartado algún dato de tus CV que no se puede usar. "
                                    "Si falta algo de tu experiencia, escríbelo tú."))
-        cv = e["extraccion"]["cv_maestro"]
-        e["extraccion"]["cv_maestro"] = "\n".join(
-            linea for linea in cv.splitlines() if not rasgos_personales(linea))
         return e
 
     def clasificar(e: dict) -> dict:
@@ -199,8 +200,8 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
     def componer(e: dict) -> dict:
         perfil = Perfil.model_validate({**e["extraccion"]["perfil"], "taxonomia": e["taxonomia"]})
         e["perfil"] = perfil.model_dump(mode="json")
-        e["cv_maestro"] = e["extraccion"]["cv_maestro"]
-        SalidaExtractorPerfil.model_validate({"perfil": e["perfil"], "cv_maestro": e["cv_maestro"]})
+        e["cv_maestro"] = componer_cv_maestro(perfil)  # siempre por código (RF-5.1)
+        SalidaExtractorPerfil.model_validate({"perfil": e["perfil"]})
         return e
 
     pasos = {"extraer": extraer, "verificar_origen": verificar_origen,

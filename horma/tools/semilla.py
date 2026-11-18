@@ -12,4 +12,9 @@ def fuentes_semilla(ruta: Path = RUTA) -> list[Fuente]:
     if not ruta.exists():
         return []
     datos = json.loads(ruta.read_text(encoding="utf-8"))
-    return [Fuente.model_validate(f) for f in datos["fuentes"]]
+    fuentes = [Fuente.model_validate(f) for f in datos["fuentes"]]
+    if ruta == RUTA:  # las empresas de Greenhouse (config/greenhouse.json) entran como fuentes inactivas
+        from horma.tools.greenhouse import fuentes_de
+
+        fuentes += fuentes_de()
+    return fuentes

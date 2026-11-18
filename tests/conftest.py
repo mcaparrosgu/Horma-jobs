@@ -86,3 +86,60 @@ def bd_limpia(motor_migrador):
                        "cv_base_versiones, alertas, checkpoints, checkpoint_blobs, checkpoint_writes "
                        "RESTART IDENTITY CASCADE"))
         sembrar_fuentes(c)
+
+
+@pytest.fixture
+def estilo_real():
+    """Marca de los tests de la fase 5 (T24-T26) que comprueban el análisis de estilo automático."""
+
+
+@pytest.fixture(autouse=True)
+def _sin_analisis_de_estilo_salvo_que_se_pida(request, monkeypatch):
+    """Perfilar o subir una carta encola `analizar_estilo` (fase 5, RF-5.6d); los tests antiguos cuentan
+    las tareas y no lo esperan. Los que sí lo comprueban piden `estilo_real`."""
+    if "estilo_real" in request.fixturenames:
+        return
+    from horma.web.services import estilo as servicio
+
+    monkeypatch.setattr(servicio, "encolar_si_no_hay_guia", lambda s, usuaria_id: None)
+
+
+@pytest.fixture
+def limites_reales():
+    """Marca de los tests de la fase 5 (T20-T23) que comprueban de verdad el mínimo y el máximo."""
+
+
+@pytest.fixture(autouse=True)
+def _sin_limite_de_palabras_salvo_que_se_pida(request, monkeypatch):
+    """Los CV de los tests antiguos son de una o dos líneas: `validar_cv` (fase 5, RF-5.4) no les cuenta las
+    palabras. Los tests que sí las cuentan piden `limites_reales`."""
+    if "limites_reales" in request.fixturenames:
+        return
+    from horma.tools import validar_cv as modulo
+
+    monkeypatch.setattr(modulo, "CV_PALABRAS_MIN", 0)
+    monkeypatch.setattr(modulo, "CV_PALABRAS_MAX", 10**9)
+
+
+@pytest.fixture
+def juez_automatico(monkeypatch):
+    """Los tests de la fase 2 y 5 del CV base no cuentan con la llamada al juez que suma RF-5.4d: la
+    aprueba sola cuando la cola de respuestas simuladas está vacía o la siguiente es del generador, y no
+    la apunta en `llamadas`. Si la cola trae una respuesta del juez, se usa esa."""
+    from horma.llm.simulado import ProveedorSimulado
+
+    original = ProveedorSimulado.generar
+    aprobado = {"veredicto_cv": "aprobado", "veredicto_carta": "aprobado", "problemas": []}
+
+    def generar(self, *, modelo, sistema, usuario, esquema, timeout):
+        siguiente = self._respuestas[0] if self._respuestas else None
+        auto = "revisor de candidaturas" in sistema and (
+            siguiente is None or (isinstance(siguiente, dict) and "contenido" in siguiente))
+        if auto:
+            self._respuestas.insert(0, aprobado)
+        r = original(self, modelo=modelo, sistema=sistema, usuario=usuario, esquema=esquema, timeout=timeout)
+        if auto:
+            self.llamadas.pop()
+        return r
+
+    monkeypatch.setattr(ProveedorSimulado, "generar", generar)

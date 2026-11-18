@@ -17,7 +17,7 @@ COLUMNAS_LISTA = (
     "o.instrucciones_embebidas, o.fantasma, o.motivos_fantasma, o.fraude, o.senales_fraude, "
     "o.dominio_empresa, o.empresa_validada, o.salario_publicado, o.salario_rango, "
     "o.frase_pedir_salario, o.sector, o.familia, o.nivel, o.stack, o.recomendable, o.creada_en, "
-    "f.nombre as fuente")
+    "o.usuaria_id is not null as propia, f.nombre as fuente")
 
 
 def _existente(s: Session, fuente_id, clave_id, id_externo) -> dict | None:
@@ -32,28 +32,41 @@ def _existente(s: Session, fuente_id, clave_id, id_externo) -> dict | None:
 
 
 def crear(s: Session, texto: str, *, fuente_id: int | None = None, clave_id: int | None = None,
-          id_externo: str | None = None, url: str | None = None) -> tuple[int, str, bool]:
+          id_externo: str | None = None, url: str | None = None,
+          usuaria_id: int | None = None, caduca_en=None,
+          atribucion: str | None = None) -> tuple[int, str, bool]:
     """Guarda la oferta cruda. Devuelve (id, estado, nueva); idempotente por origen + id_externo."""
     if (previa := _existente(s, fuente_id, clave_id, id_externo)):
         return previa["id"], previa["estado"], False
     try:
         with s.begin_nested():
             oid = s.execute(text(
-                "insert into ofertas (texto_crudo, fuente_id, clave_id, id_externo, url, huella) "
-                "values (:t, :f, :c, :e, :u, :h) returning id"),
+                "insert into ofertas (texto_crudo, fuente_id, clave_id, id_externo, url, huella, usuaria_id, "
+                "caduca_en, atribucion) values (:t, :f, :c, :e, :u, :h, :d, :x, :a) returning id"),
                 {"t": texto, "f": fuente_id, "c": clave_id, "e": id_externo, "u": url,
-                 "h": huella(texto)}).scalar_one()
+                 "h": huella(texto), "d": usuaria_id, "x": caduca_en, "a": atribucion}).scalar_one()
     except IntegrityError:  # otra petición la insertó a la vez
         previa = _existente(s, fuente_id, clave_id, id_externo)
         return previa["id"], previa["estado"], False
     return oid, "pendiente", True
 
 
+def borrar_caducadas(s: Session) -> int:
+    """Borra del catálogo las ofertas cuya fuente las da por caducadas (RF-5.5d, Himalayas), con sus
+    notas. Se conservan las que ya tienen una candidatura: son trabajo de una usuaria."""
+    ids = ("(select id from ofertas o where usuaria_id is null and caduca_en < now() and not exists "
+           "(select 1 from candidaturas c where c.oferta_id = o.id))")
+    s.execute(text(f"delete from matches where oferta_id in {ids}"))
+    return s.execute(text(f"delete from ofertas where id in {ids}")).rowcount
+
+
 def para_procesar(s: Session, oferta_id: int) -> dict:
-    """Lo que necesita el flujo: texto, fuente, url y si el mismo texto ya entró antes."""
+    """Lo que necesita el flujo: texto, fuente, url y si el mismo texto ya entró antes. Solo cuenta
+    dentro de la misma dueña (o dentro del catálogo común): la oferta de otra usuaria no la hace repetida."""
     fila = s.execute(text(
         "select o.texto_crudo, o.url, f.nombre as fuente, exists(select 1 from ofertas p "
-        "where p.huella = o.huella and p.id < o.id) as repetida "
+        "where p.huella = o.huella and p.id < o.id "
+        "and p.usuaria_id is not distinct from o.usuaria_id) as repetida "
         "from ofertas o left join fuentes f on f.id = o.fuente_id where o.id=:i"),
         {"i": oferta_id}).mappings().one()
     return {"texto": fila["texto_crudo"], "url": fila["url"], "fuente": fila["fuente"],
@@ -159,6 +172,26 @@ def completas(s: Session, ids: list[int]) -> dict[int, Oferta]:
     return salida
 
 
+def dueña(s: Session, oferta_id: int) -> int | None:
+    """La usuaria que añadió la oferta, o None si es del catálogo común."""
+    return s.execute(text("select usuaria_id from ofertas where id=:i"),
+                     {"i": oferta_id}).scalar_one_or_none()
+
+
+def hay_propias(s: Session) -> bool:
+    """¿La usuaria de la sesión tiene ofertas propias ya procesadas? (la RLS deja ver solo las suyas)"""
+    return s.execute(text("select 1 from ofertas where usuaria_id is not null and estado = 'procesada' "
+                          "limit 1")).first() is not None
+
+
+def propias_sin_nota(s: Session, usuaria_id: int, perfil_version: int, limite: int) -> list[int]:
+    """Las propias procesadas que aún no tienen nota para esa versión del perfil."""
+    return list(s.execute(text(
+        "select o.id from ofertas o where o.usuaria_id = :u and o.estado = 'procesada' "
+        "and not exists (select 1 from matches m where m.oferta_id = o.id and m.perfil_version = :v) "
+        "order by o.id limit :l"), {"u": usuaria_id, "v": perfil_version, "l": limite}).scalars())
+
+
 def marcar_error(s: Session, oferta_id: int, motivo: str) -> None:
     s.execute(text("update ofertas set estado='error', motivo_error=:m where id=:i"),
               {"i": oferta_id, "m": motivo[:500]})
@@ -180,6 +213,6 @@ def por_estado(s: Session) -> dict[str, int]:
 def errores_recientes(s: Session, n: int = 10) -> list[dict]:
     filas = s.execute(text(
         "select o.id, o.titulo, o.motivo_error, f.nombre as fuente, o.creada_en from ofertas o "
-        "left join fuentes f on f.id = o.fuente_id where o.estado='error' "
+        "left join fuentes f on f.id = o.fuente_id where o.estado='error' and o.usuaria_id is null "
         "order by o.id desc limit :n"), {"n": n}).mappings().all()
     return [dict(f) for f in filas]

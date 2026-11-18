@@ -27,13 +27,26 @@
         <label>Tipo
           <select id="clase-cv">
             <option value="fuente">Para construir mi perfil</option>
+            <option value="carta">Carta de presentación mía (solo para mi estilo)</option>
             <option value="estetico">Estético (se guarda sin procesar)</option>
           </select>
         </label>
+        <label class="casilla"><input id="escrito-por-ella" type="checkbox"> Lo escribí yo</label>
         <button type="submit">Subir CV</button>
       </form>
       <ul id="cvs" class="lista"></ul>
       <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún CV.</p>
+    </section>
+
+    <section id="estilo" aria-labelledby="t-estilo" hidden>
+      <h2 id="t-estilo">Tu estilo de redacción</h2>
+      <p class="suave">Horma escribe tus CV y cartas como escribes tú. Esta guía sale de tus CV y cartas (pesan más los que marcas «Lo escribí yo»); solo se calcula una vez. Lo que edites aquí manda.</p>
+      <p id="estilo-estado" class="suave"></p>
+      <div id="estilo-guia"></div>
+      <div class="fila">
+        <button id="estilo-editar" class="secundario" type="button" hidden>Editar guía</button>
+        <button id="estilo-reanalizar" class="secundario" type="button">Volver a analizar mi estilo</button>
+      </div>
     </section>
 
     <section id="estado-perfil"></section>
@@ -46,6 +59,7 @@
 
     <section id="datos" hidden>
       <h2>Tu perfil <span id="version" class="estado"></span></h2>
+      <p id="aviso-edicion" class="suave"><strong>Lo que edites aquí manda sobre tus CV subidos y se usa para redactar todos tus CV y cartas.</strong> Tus CV subidos nunca se modifican.</p>
       <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y los CV base y recomendaciones anteriores quedan «desfasados».</p>
       <div id="perfil"></div>
     </section>

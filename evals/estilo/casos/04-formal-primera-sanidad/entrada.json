@@ -1,0 +1,14 @@
+{
+  "documentos": [
+    {
+      "tipo": "carta",
+      "texto": "Muy señores míos:\n\nHe trabajado cuatro años como auxiliar de enfermería en planta de medicina interna. He colaborado en la administración de medicación bajo supervisión y he acompañado a los pacientes y a sus familias con el debido respeto. Les agradecería la oportunidad de mantener una entrevista.\n\nReciban un cordial saludo,",
+      "escrito_por_ella": true
+    },
+    {
+      "tipo": "cv",
+      "texto": "Auxiliar de enfermería, Hospital Comarcal, 2020-2024\n",
+      "escrito_por_ella": false
+    }
+  ]
+}

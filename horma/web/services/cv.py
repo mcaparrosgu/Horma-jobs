@@ -11,11 +11,12 @@ from horma.tools.convertir_cv import ArchivoNoValido, convertir_cv
 from horma.web.db import sesion_de
 from horma.web.repositories import cv as repo
 from horma.web.repositories import perfiles, tareas
+from horma.web.services import estilo as servicio_estilo
 
 EXTENSIONES = {"pdf": "pdf", "docx": "docx", "md": "md", "markdown": "md"}
 MEDIA = {"pdf": "application/pdf", "md": "text/markdown; charset=utf-8",
          "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
-CLASES = ("fuente", "estetico")
+CLASES = ("fuente", "estetico", "carta")
 
 
 class ArchivoRechazado(Exception):
@@ -48,16 +49,16 @@ def _firma_estetico(contenido: bytes, tipo: str) -> None:
 
 
 def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original: str,
-          nombre: str | None, clase: str) -> dict:
+          nombre: str | None, clase: str, escrito_por_ella: bool = False) -> dict:
     a = ajustes()
     if clase not in CLASES:
-        raise ArchivoRechazado(422, "La clase debe ser «fuente» o «estetico».")
+        raise ArchivoRechazado(422, "La clase debe ser «fuente», «carta» o «estetico».")
     tipo = _tipo(nombre_original)
     if len(contenido) > a.max_cv_bytes:
         raise ArchivoRechazado(413, f"El archivo supera el máximo de {a.max_cv_bytes // (1024 * 1024)} MB.")
     texto = None
     try:
-        if clase == "fuente":
+        if clase in ("fuente", "carta"):
             texto = convertir_cv(contenido, tipo)
         elif not contenido:
             raise ArchivoNoValido("el archivo está vacío")
@@ -78,12 +79,15 @@ def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original:
             destino.write_bytes(contenido)
             escrito = True
             cv_id = repo.crear(s, usuaria_id, nombre=nombre, nombre_original=nombre_original[:200],
-                               ruta=ruta, tipo=tipo, clase=clase, tamano=len(contenido), texto=texto)
+                               ruta=ruta, tipo=tipo, clase=clase, tamano=len(contenido), texto=texto,
+                               escrito_por_ella=escrito_por_ella)
             perfil_id = None
             if clase == "fuente":
                 perfil_id, _ = perfiles.nueva_version(s, usuaria_id)
                 tareas.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
                                a.tope_reintentos_tarea)
+            elif clase == "carta":  # solo si aún no hay guía: después, solo con el botón (RF-5.6d)
+                servicio_estilo.encolar_si_no_hay_guia(s, usuaria_id)
     except IntegrityError as e:
         _borrar(destino, escrito)
         raise NombreRepetido(nombre) from e

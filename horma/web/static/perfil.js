@@ -5,6 +5,9 @@ const CAMPOS = {
   formacion: [["titulo", "Título"], ["centro", "Centro"], ["inicio", "Inicio"], ["fin", "Fin"]],
   idiomas: [["nivel", "Nivel (B2, nativo…)"]],
   habilidades: [["nombre", "Habilidad"]],
+  proyectos: [["nombre", "Proyecto"], ["descripcion", "Descripción"], ["fecha", "Fecha"]],
+  certificaciones: [["nombre", "Certificación"], ["entidad", "Entidad"], ["fecha", "Fecha"]],
+  otros: [["valor", "Dato"]],
   titular: [["valor", "Titular"]],
   resumen: [["valor", "Resumen"]],
   nombre: [["valor", "Nombre"]],
@@ -12,7 +15,14 @@ const CAMPOS = {
 // Si la pregunta es sobre un detalle («experiencias.Hotel Marina.fechas»), solo se piden esos campos.
 const DETALLES = { fechas: ["inicio", "fin"], nivel: ["nivel"] };
 const SECCIONES = [["titular", "Titular"], ["resumen", "Resumen"], ["experiencias", "Experiencia"],
-                   ["formacion", "Formación"], ["idiomas", "Idiomas"], ["habilidades", "Habilidades"]];
+                   ["formacion", "Formación"], ["idiomas", "Idiomas"], ["habilidades", "Habilidades"],
+                   ["proyectos", "Proyectos"], ["certificaciones", "Certificaciones"], ["otros", "Otros"]];
+// Secciones que siempre se muestran (aunque estén vacías) con su ayuda y un botón para añadir (RF-5.1c).
+const AYUDA = {
+  proyectos: "Trabajos o iniciativas con nombre propio. Por ejemplo: «Web de reservas para el restaurante familiar (2024)», «TFG: app de turnos».",
+  certificaciones: "Acreditaciones, certificados y cursos cortos. Por ejemplo: «Manipulador de alimentos», «Carné de carretillero», «Cambridge B2 First».",
+  otros: "Lo útil que no cabe en otra sección. Por ejemplo: «Voluntariado en el banco de alimentos», «Carné de conducir B», «Disponibilidad para viajar».",
+};
 const MOTIVOS = { falta: "Falta", ambiguo: "Ambiguo", contradiccion: "Contradicción entre CV" };
 let idiomasValidos = [];
 let perfilActual = null;
@@ -26,6 +36,8 @@ function resumenDe(campoNombre, d) {
   if (campoNombre === "formacion") return [d.titulo, d.centro, [d.inicio, d.fin].filter(Boolean).join(" – ")].filter(Boolean).join(" · ");
   if (campoNombre === "idiomas") return [etiqueta(d.idioma), d.nivel].filter((x) => x && x !== "—").join(" · ");
   if (campoNombre === "habilidades") return d.nombre;
+  if (campoNombre === "proyectos") return [d.nombre, d.fecha].filter(Boolean).join(" · ") + (d.descripcion ? ` — ${d.descripcion}` : "");
+  if (campoNombre === "certificaciones") return [d.nombre, d.entidad, d.fecha].filter(Boolean).join(" · ");
   return d.valor;
 }
 
@@ -171,12 +183,29 @@ function dato(campoNombre, d, indice) {
   return li;
 }
 
-function seccion(titulo, hijos) {
+function botonAnadir(clave, ul) {
+  const fila = nodo("div", null, "fila");
+  const abrir = nodo("button", "Añadir", "secundario");
+  abrir.type = "button";
+  abrir.addEventListener("click", () => {
+    abrir.hidden = true;
+    const f = formularioDato(clave, {}, (nuevo) => cambiarPerfil("/api/perfil/datos", "PATCH",
+                             { campo: clave, indice: null, dato: nuevo }),
+                             () => { f.remove(); abrir.hidden = false; }, "Añadir");
+    fila.append(f);
+  });
+  fila.append(abrir);
+  return fila;
+}
+
+function seccion(titulo, hijos, clave) {
   const s = nodo("section");
   s.append(nodo("h3", titulo, "subtitulo"));
+  if (AYUDA[clave]) s.append(nodo("p", AYUDA[clave], "suave"));
   const ul = nodo("ul", null, "lista");
   ul.append(...hijos);
   s.append(ul);
+  if (AYUDA[clave]) s.append(botonAnadir(clave, ul));
   return s;
 }
 
@@ -227,9 +256,9 @@ async function cargarPerfil() {
   for (const [clave, titulo] of SECCIONES) {
     const valor = perfil[clave];
     const elementos = Array.isArray(valor) ? valor : valor ? [valor] : [];
-    if (!elementos.length) continue;
+    if (!elementos.length && !AYUDA[clave]) continue;
     const esLista = Array.isArray(valor);
-    cont.append(seccion(titulo, elementos.map((d, i) => dato(clave, d, esLista ? i : null))));
+    cont.append(seccion(titulo, elementos.map((d, i) => dato(clave, d, esLista ? i : null)), clave));
   }
   if (perfil.instrucciones_embebidas && perfil.instrucciones_embebidas.length) {
     cont.append(nodo("p", `Tu CV contenía ${perfil.instrucciones_embebidas.length} instrucción(es) dirigidas a una IA. Se han registrado y no se han ejecutado.`, "alerta"));
@@ -239,10 +268,21 @@ async function cargarPerfil() {
 // --- CV subidos -----------------------------------------------------------------------------
 function tarjetaCv(c) {
   const li = nodo("li", null, "tarjeta");
-  li.append(nodo("span", c.clase === "estetico" ? "estético" : "fuente", "estado apagado"));
+  li.append(nodo("span", { estetico: "estético", carta: "carta" }[c.clase] || "fuente", "estado apagado"));
   const titulo = nodo("h3", c.nombre);
   li.append(titulo);
   li.append(nodo("p", `${c.nombre_original} · ${c.tipo.toUpperCase()} · ${Math.max(1, Math.round(c.tamano / 1024))} KB · ${fecha(c.creado_en)}`, "suave"));
+  const marca = nodo("label", null, "casilla");
+  const casilla = nodo("input");
+  casilla.type = "checkbox";
+  casilla.checked = !!c.escrito_por_ella;
+  casilla.addEventListener("change", async () => {
+    const r = await api(`/api/cv/${c.id}/escrito-por-ella`, { metodo: "PUT", cuerpo: { escrito_por_ella: casilla.checked } });
+    if (!r.ok) { casilla.checked = !casilla.checked; return avisar(r.motivo, true); }
+    avisar(casilla.checked ? "Marcado como escrito por ti." : "Marca quitada.");
+  });
+  marca.append(casilla, " Lo escribí yo");
+  li.append(marca);
   const fila = nodo("div", null, "fila");
   const descargar = nodo("a", "Descargar", "boton secundario");
   descargar.href = `/api/cv/${c.id}/archivo`;
@@ -332,20 +372,132 @@ $("subir").addEventListener("submit", async (e) => {
   const datos = new FormData();
   datos.append("archivo", archivo);
   datos.append("clase", $("clase-cv").value);
+  datos.append("escrito_por_ella", $("escrito-por-ella").checked ? "true" : "false");
   if ($("nombre-cv").value.trim()) datos.append("nombre", $("nombre-cv").value.trim());
+  const clase = $("clase-cv").value;
   boton.disabled = true;
   avisar("Subiendo…");
   const r = await api("/api/cv", { metodo: "POST", formulario: datos });
   boton.disabled = false;
   if (!r.ok) return avisar(r.motivo, true);
   e.target.reset();
-  avisar($("clase-cv").value === "fuente" ? "CV subido; se está construyendo tu perfil." : "CV guardado.");
+  avisar({ fuente: "CV subido; se está construyendo tu perfil.", carta: "Carta guardada; solo sirve de muestra de estilo." }[clase] || "CV guardado.");
   await cargarCvs();
   await cargarPerfil();
+  await cargarEstilo();
+});
+
+// --- Guía de estilo ---------------------------------------------------------------------------
+let estiloVisto = null;
+let esperaEstilo = null;
+
+function rasgos(titulo, lista) {
+  const cont = nodo("div");
+  cont.append(nodo("h3", titulo));
+  if (!lista.length) { cont.append(nodo("p", "—", "suave")); return cont; }
+  const ul = nodo("ul", null, "lista");
+  for (const r of lista) {
+    const li = nodo("li", r.rasgo);
+    if (r.cita) li.append(nodo("p", `«${r.cita}»`, "suave"));
+    ul.append(li);
+  }
+  cont.append(ul);
+  return cont;
+}
+
+function pintarGuia(g) {
+  const cont = $("estilo-guia");
+  const filas = [["Registro", g.registro], ["Persona", g.persona === "primera" ? "primera persona" : "impersonal"],
+                 ["Frases", g.longitud_frase], ["Viñetas", g.vinetas || "—"]];
+  cont.replaceChildren(...filas.map(([k, v]) => nodo("p", `${k}: ${v}`)),
+                       rasgos("Expresiones que usas", g.expresiones), rasgos("Lo que evitas", g.evita));
+}
+
+function editorGuia(g) {
+  const f = nodo("form", null, "editor");
+  const sel = (id, etiqueta, valores, actual) => {
+    const l = nodo("label", etiqueta);
+    const s = nodo("select");
+    s.id = id;
+    for (const v of valores) { const o = nodo("option", v); o.value = v; o.selected = v === actual; s.append(o); }
+    l.append(s);
+    return l;
+  };
+  const lista = (id, etiqueta, rs) => {
+    const l = nodo("label", `${etiqueta} (una por línea)`);
+    const t = nodo("textarea");
+    t.id = id;
+    t.rows = 4;
+    t.value = rs.map((r) => r.rasgo).join("\n");
+    l.append(t);
+    return l;
+  };
+  const vin = nodo("label", "Forma de tus viñetas");
+  const vi = nodo("input");
+  vi.id = "e-vinetas";
+  vi.maxLength = 200;
+  vi.value = g.vinetas;
+  vin.append(vi);
+  const guardar = nodo("button", "Guardar guía");
+  const cancelar = nodo("button", "Cancelar", "secundario");
+  cancelar.type = "button";
+  cancelar.addEventListener("click", () => { f.remove(); $("estilo-editar").hidden = false; });
+  f.append(sel("e-registro", "Registro", ["formal", "cercano", "neutro"], g.registro),
+           sel("e-persona", "Persona", ["primera", "impersonal"], g.persona),
+           sel("e-longitud", "Longitud de frase", ["corta", "media", "larga"], g.longitud_frase), vin,
+           lista("e-expresiones", "Expresiones que usas", g.expresiones), lista("e-evita", "Lo que evitas", g.evita),
+           nodo("div", null, "fila"));
+  f.lastChild.append(guardar, cancelar);
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    // las citas de origen se conservan para los rasgos que no cambian; las nuevas quedan sin cita
+    const citas = new Map([...g.expresiones, ...g.evita].map((r) => [r.rasgo, r.cita]));
+    const leer = (id) => $(id).value.split("\n").map((x) => x.trim()).filter(Boolean)
+      .map((rasgo) => ({ rasgo, cita: citas.get(rasgo) || "" }));
+    const cuerpo = { registro: $("e-registro").value, persona: $("e-persona").value,
+                     longitud_frase: $("e-longitud").value, vinetas: $("e-vinetas").value.trim(),
+                     expresiones: leer("e-expresiones"), evita: leer("e-evita") };
+    const r = await api("/api/estilo", { metodo: "PUT", cuerpo });
+    if (!r.ok) return avisar(r.motivo, true);
+    avisar("Guía guardada.");
+    f.remove();
+    await cargarEstilo();
+  });
+  return f;
+}
+
+async function cargarEstilo() {
+  const r = await api("/api/estilo");
+  if (!r.ok) return;
+  const e = r.datos;
+  estiloVisto = e;
+  $("estilo").hidden = !(e.guia || e.hay_documentos || e.analizando);
+  $("estilo-reanalizar").disabled = e.analizando || !e.hay_documentos;
+  $("estilo-editar").hidden = !e.guia;
+  if (e.analizando) $("estilo-estado").textContent = "Analizando tu estilo…";
+  else if (e.guia) $("estilo-estado").textContent = e.origen === "usuaria" ? "Guía editada por ti." : "Guía calculada por Horma; puedes editarla.";
+  else $("estilo-estado").textContent = "Todavía no hay guía.";
+  if (e.guia) pintarGuia(e.guia); else $("estilo-guia").replaceChildren();
+  clearTimeout(esperaEstilo);
+  if (e.analizando) esperaEstilo = setTimeout(cargarEstilo, 3000);
+}
+
+$("estilo-editar").addEventListener("click", () => {
+  if (!estiloVisto || !estiloVisto.guia) return;
+  $("estilo-editar").hidden = true;
+  $("estilo-guia").after(editorGuia(estiloVisto.guia));
+});
+
+$("estilo-reanalizar").addEventListener("click", async () => {
+  const r = await api("/api/estilo/analizar", { metodo: "POST", cuerpo: {} });
+  if (!r.ok) return avisar(r.motivo, true);
+  avisar("Analizando tu estilo; tarda un momento.");
+  await cargarEstilo();
 });
 
 (async () => {
   if (!(await arrancar("/perfil"))) return;
+  await cargarEstilo();
   const op = await api("/api/preferencias/opciones");
   if (op.ok) idiomasValidos = op.datos.grupos.idiomas.map((x) => x.valor);
   await cargarCvs();
