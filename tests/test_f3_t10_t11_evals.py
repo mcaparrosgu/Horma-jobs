@@ -74,10 +74,10 @@ def test_las_ofertas_de_prueba_son_ofertas_validas():
 @pytest.mark.usefixtures("limites_reales")
 def test_14_casos_12_de_errores_y_2_de_seleccion_con_su_esperado_valido():
     casos = _casos("cv")
-    assert len(casos) == 21  # 14 de la fase 3 y 7 de la fase 5 (T23)
+    assert len(casos) == 23  # 14 de la fase 3, 7 de la T23 y 2 con guía de estilo (T28)
     tipos = [EsperadoCv.model_validate_json((c / "esperado.json").read_text(encoding="utf-8")).tipo
              for c in casos]
-    assert tipos.count("sembrado") == 12 and tipos.count("flujo") == 3 and tipos.count("seleccion") == 2
+    assert tipos.count("sembrado") == 13 and tipos.count("flujo") == 4 and tipos.count("seleccion") == 2
     assert tipos.count("formato") == 4
 
 
@@ -111,7 +111,7 @@ def test_los_sembrados_del_codigo_los_rechaza_el_verificador_y_los_del_juez_lo_p
 def test_los_flujos_incluyen_huecos_adversaria_y_varios_cv_base():
     flujos = [(c, _entrada(c), EsperadoCv.model_validate(_json(c / "esperado.json"))) for c in _casos("cv")
               if _json(c / "esperado.json")["tipo"] == "flujo"]
-    assert len(flujos) == 3
+    assert len(flujos) == 4
     assert any(len(e["cvs_base"]) >= 2 for _, e, _ in flujos)
     assert any(x.huecos for _, _, x in flujos)
     adversaria = [e for _, e, x in flujos if x.instrucciones_embebidas]
@@ -131,7 +131,7 @@ def test_los_casos_de_seleccion_tienen_su_cv_base_esperado_entre_2_o_3():
 def test_eval_cv_simulado_pasa_al_100_y_registra_la_cobertura_ats(tmp_path):
     raiz = _copiar(tmp_path, "cv", *(c.name for c in _casos("cv")))
     r = correr_set("cv", raiz=raiz, simulado=True)
-    assert r["aprobado"] and r["casos"] == 21 and r["adversarias"] == 1.0
+    assert r["aprobado"] and r["casos"] == 23 and r["adversarias"] == 1.0
     assert r["campos"] == {c: 1.0 for c in ("rechazados", "datos", "huecos", "adversaria", "seleccion",
                                            "llamadas")}
     assert 0 < r["cobertura_ats_media"] <= 1

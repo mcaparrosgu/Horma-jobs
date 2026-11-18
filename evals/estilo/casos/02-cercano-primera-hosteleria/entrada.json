@@ -1,0 +1,14 @@
+{
+  "documentos": [
+    {
+      "tipo": "carta",
+      "texto": "Hola equipo,\n\nMe encantaría trabajar con vosotros. He llevado una sala de 40 mesas y me gusta el trato directo con la gente. Si os cuadra, os cuento más en persona.\n\nUn abrazo,",
+      "escrito_por_ella": true
+    },
+    {
+      "tipo": "cv",
+      "texto": "Camarera en Bar Sol\n- Atendí la barra y las mesas\n- Cerré caja cada noche\n",
+      "escrito_por_ella": false
+    }
+  ]
+}

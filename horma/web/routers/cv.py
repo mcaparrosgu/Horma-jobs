@@ -21,6 +21,10 @@ class Nombre(BaseModel):
     nombre: str = Field(min_length=1, max_length=80)
 
 
+class EscritoPorElla(BaseModel):
+    escrito_por_ella: bool
+
+
 class EdicionCvBase(BaseModel):
     nombre: str | None = Field(default=None, min_length=1, max_length=80)
     contenido: str | None = Field(default=None, min_length=1, max_length=20000)
@@ -36,11 +40,13 @@ def _nombre(valor: str) -> str:
 
 @router.post("/api/cv", status_code=201, dependencies=[Depends(exigir_csrf), Depends(limite_subida_cv)])
 def subir(request: Request, archivo: Annotated[UploadFile, File()], nombre: str | None = Form(default=None),
-          clase: str = Form(default="fuente"), usuaria_id: int = Depends(usuaria_actual)):
+          clase: str = Form(default="fuente"), escrito_por_ella: bool = Form(default=False),
+          usuaria_id: int = Depends(usuaria_actual)):
     contenido = archivo.file.read(ajustes().max_cv_bytes + 1)
     try:
         return servicio.subir(request.app.state.engine, usuaria_id, contenido=contenido,
-                              nombre_original=archivo.filename or "cv", nombre=nombre, clase=clase)
+                              nombre_original=archivo.filename or "cv", nombre=nombre, clase=clase,
+                              escrito_por_ella=escrito_por_ella)
     except servicio.ArchivoRechazado as e:
         raise HTTPException(status_code=e.estado, detail=e.motivo) from e
     except servicio.NombreRepetido as e:
@@ -63,6 +69,16 @@ def renombrar(cv_id: int, datos: Nombre, request: Request, usuaria_id: int = Dep
             raise HTTPException(status_code=409, detail="Ya tienes un CV con ese nombre.")
         repo.renombrar(s, cv_id, nombre)
     return {"id": cv_id, "nombre": nombre}
+
+
+@router.put("/api/cv/{cv_id}/escrito-por-ella", dependencies=[Depends(exigir_csrf)])
+def marcar_escrito_por_ella(cv_id: int, datos: EscritoPorElla, request: Request,
+                            usuaria_id: int = Depends(usuaria_actual)):
+    """«Lo escribí yo»: los documentos así marcados pesan más en la guía de estilo (RF-5.6b)."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        if not repo.marcar_escrito_por_ella(s, cv_id, datos.escrito_por_ella):
+            raise HTTPException(status_code=404, detail="No existe ese CV")
+    return {"id": cv_id, "escrito_por_ella": datos.escrito_por_ella}
 
 
 @router.delete("/api/cv/{cv_id}", dependencies=[Depends(exigir_csrf)])

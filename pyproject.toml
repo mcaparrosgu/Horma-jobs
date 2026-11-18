@@ -83,6 +83,7 @@ modules = [
   "horma.agents.redactor_carta",
   "horma.agents.juez_candidatura",
   "horma.agents.clasificador_respuesta",
+  "horma.agents.analizador_estilo",
 ]
 
 [[tool.importlinter.contracts]]

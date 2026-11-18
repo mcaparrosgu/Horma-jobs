@@ -89,6 +89,22 @@ def bd_limpia(motor_migrador):
 
 
 @pytest.fixture
+def estilo_real():
+    """Marca de los tests de la fase 5 (T24-T26) que comprueban el análisis de estilo automático."""
+
+
+@pytest.fixture(autouse=True)
+def _sin_analisis_de_estilo_salvo_que_se_pida(request, monkeypatch):
+    """Perfilar o subir una carta encola `analizar_estilo` (fase 5, RF-5.6d); los tests antiguos cuentan
+    las tareas y no lo esperan. Los que sí lo comprueban piden `estilo_real`."""
+    if "estilo_real" in request.fixturenames:
+        return
+    from horma.web.services import estilo as servicio
+
+    monkeypatch.setattr(servicio, "encolar_si_no_hay_guia", lambda s, usuaria_id: None)
+
+
+@pytest.fixture
 def limites_reales():
     """Marca de los tests de la fase 5 (T20-T23) que comprueban de verdad el mínimo y el máximo."""
 

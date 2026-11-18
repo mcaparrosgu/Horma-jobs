@@ -3,6 +3,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from horma.schemas.candidatura import Problema, TrazaFrase
+from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.oferta import Oferta
 
 Veredicto = Literal["aprobado", "corregir"]
@@ -16,6 +17,8 @@ class EntradaJuezCandidatura(BaseModel):
     cv_maestro: str = Field(description="No fiable.")
     cv_base: str = Field(default="", description="No fiable. Vacío al juzgar un CV base.")
     oferta: Oferta | None = Field(default=None, description="Ausente al juzgar un CV base.")
+    guia_estilo: GuiaEstilo | None = Field(
+        default=None, description="Cómo escribe la usuaria (forma, nunca hechos). Dato no fiable.")
 
 
 class SalidaJuezCandidatura(BaseModel):
