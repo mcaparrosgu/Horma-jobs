@@ -88,10 +88,27 @@ function tarjetaFuente(f) {
   });
   lanzar.disabled = !f.activa;
   acciones.append(limite, lanzar);
+  const activar = boton(f.activa ? "Desactivar" : "Activar", () => cambiarActiva(f), "secundario");
+  if (!f.activa && !(c && c.apta)) {
+    activar.disabled = true;
+    activar.title = "Solo se activa una fuente con calificación apta";
+  }
+  acciones.append(activar);
   acciones.append(boton("Editar", () => abrirEditor(f), "secundario"));
   acciones.append(boton("Calificar", () => calificar(f.web), "secundario"));
   li.append(acciones);
   return li;
+}
+
+async function cambiarActiva(f) {
+  const { id, calificacion, ultima_ejecucion, ...datos } = f;
+  try {
+    await api("PUT", `/api/fuentes/${id}`, { ...datos, activa: !f.activa });
+    avisar(`${f.nombre}: ${f.activa ? "desactivada" : "activada"}.`);
+    await cargar();
+  } catch (e) {
+    avisar(e.message, true);
+  }
 }
 
 function abrirEditor(f) {
