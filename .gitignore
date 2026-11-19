@@ -65,3 +65,8 @@ docs/mejoras-futuras.md
 
 # Comparativas con otros programas y portales (documento de trabajo, NUNCA se publica)
 docs/comparativas.md
+
+# En docs/ solo entra documentación técnica (ver AGENTS.md): lo demás se ignora por defecto
+docs/*
+!docs/init-prompt.md
+!docs/revision-lineas-rojas.md

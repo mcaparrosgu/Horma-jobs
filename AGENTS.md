@@ -41,6 +41,17 @@ Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementació
 - Nunca añadas a Claude ni a ninguna IA como coautor o colaborador. Sin líneas `Co-Authored-By`.
   Los commits los firma la persona.
 
+## Qué se sube al repo
+- Solo documentación técnica: specs, plan, tareas, requisitos, arquitectura, decisiones de diseño y
+  guías de uso. Nada de briefs, ideas de mejora, comparativas, planes de pruebas manuales, bitácora,
+  diagramas de trabajo ni material de diseño: son documentos de trabajo y van fuera (`.gitignore`, o
+  el Cuaderno de Mar). `docs/*` está ignorado salvo lo que se añada a mano con una excepción.
+- Formato profesional: concisa y bien estructurada. Un tema por documento, títulos claros, listas y
+  tablas cortas, sin repetir lo que ya dice otro documento (enlázalo), sin relleno ni narración de la
+  conversación, y con el estado real (qué está hecho y qué no).
+- Ante la duda de si un documento es técnico, no lo subas y pregunta.
+- Al cambiar el estado de algo, actualiza en el mismo cambio spec, README e `index.md`.
+
 ## Estructura
 - `specs/`                 artefactos SDD (OKF)
 - `horma/`                 paquete de la aplicación (schemas, llm, agents, tools, flows, cli, web)
