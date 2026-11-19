@@ -87,9 +87,10 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
   tiene perfil, ENTONCES DEBERÁ puntuarse en cuanto lo tenga, sin que ella haga nada.
 - **RF-5.3e** **TODAS** las ofertas que la usuaria añade, por texto o por URL, DEBERÁN aparecer en
   Recomendadas con su evaluación hecha y la marca «Añadida por ti · analizada el <fecha>», sin
-  excepción (P17): aunque no pasen los filtros de Preferencias ni el rango de nota, aunque estén
-  repetidas y aunque el auditor las marque como fantasma o con señales de fraude (en ese caso, con el
-  aviso del auditor visible). Desde ahí DEBERÁ poder prepararse la candidatura como con cualquier otra.
+  excepción (P17): aunque no pasen los filtros de Preferencias ni el rango de nota y aunque el auditor
+  las marque como fantasma o con señales de fraude (en ese caso, con el aviso del auditor visible).
+  SI la usuaria pega otra vez un texto igual (misma huella) a una oferta suya que no falló, ENTONCES
+  el sistema NO DEBERÁ crear otra ni volver a procesarla ni puntuarla: devuelve la que ya tiene (P18). Desde ahí DEBERÁ poder prepararse la candidatura como con cualquier otra.
   Solo queda fuera una URL que no se pudo leer, porque no hay oferta: se pide pegar el texto.
 - **RF-5.3f** CUANDO la usuaria dé una URL, el sistema DEBERÁ leer la página con el proveedor elegido
   (Apify, actor *RAG Web Browser*, P7) y procesar el texto obtenido. La URL DEBERÁ guardarse con la

@@ -74,11 +74,14 @@ solo usa el worker, inyectable como `descargar.Descargador` para los tests.
   1. la oferta pegada no tiene nota hasta pulsar «Recomendar» y puede no pasar los filtros;
   2. `para_procesar` marca `repetida` si otra oferta tiene la misma huella → el auditor la da por
      fantasma y queda no recomendable. Pegar dos veces la misma oferta (o una que ya está en el
-     catálogo) la deja fuera.
+     catálogo) la deja fuera. *(Desde el 19-nov, P18: pegar dos veces la misma no crea otra; ver abajo.)*
 - **Dueña (RF-5.3c):** `ofertas.usuaria_id` nullable (null = catálogo común). Política de lectura:
   `app_sistema() OR (usuaria_id IS NULL AND app_usuaria() IS NOT NULL) OR usuaria_id = app_usuaria()`.
   El alta sigue en modo sistema; `services/ofertas.recibir` recibe `usuaria_id` desde la web.
   `repetida` solo compara con ofertas de la misma dueña (o del catálogo común entre sí).
+  **Sin duplicados (P18):** `repositories/ofertas.crear`, si hay `usuaria_id`, busca antes una oferta
+  suya con la misma huella y `estado <> 'error'`; si existe devuelve esa (`nueva = false`, HTTP 200) y no
+  encola nada. La marca `repetida` queda solo para el catálogo común.
 - **Puntuar al momento (RF-5.3d):** tarea `puntuar_propias` (usuaria = dueña, entidad = perfil
   vigente). Carga todas sus ofertas propias procesadas **sin nota para esa versión** y corre el flujo
   `recomendar` con ellas como candidatas (una llamada al `matcher` por cada 30). Se encola:

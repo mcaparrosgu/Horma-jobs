@@ -88,6 +88,9 @@ Comprobado en el código (17-nov):
 - P17: (aclaración de Mar, 17-nov) → **TODAS** las ofertas pegadas o por URL pasan a Recomendadas con
   la evaluación hecha, sin excepción: también las repetidas y las que el auditor marque como fantasma
   o fraude (con su aviso). Sin perfil, se puntúan en cuanto lo haya.
+- P18: (prueba manual 3.4, 19-nov) Pegar la misma oferta otra vez la duplicaba y la puntuaba distinto
+  → R: **no se duplica**: misma usuaria + misma huella de texto (y la previa no falló) devuelve la
+  existente, sin reprocesar ni repuntuar. Matiza P17: «también las repetidas» deja de aplicar.
 
 ### CI
 - P16: (petición de Mar, 17-nov) ¿Aparcar `evals-reales`? → R: **sí, hasta lanzar al público**. Solo

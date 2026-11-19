@@ -31,6 +31,14 @@ def _existente(s: Session, fuente_id, clave_id, id_externo) -> dict | None:
     return dict(fila) if fila else None
 
 
+def _propia_igual(s: Session, usuaria_id: int, texto: str) -> dict | None:
+    """Oferta propia de esa usuaria con el mismo texto (por huella). Una que falló no cuenta: se reintenta."""
+    fila = s.execute(text("select id, estado from ofertas where usuaria_id=:u and huella=:h "
+                          "and estado <> 'error' order by id limit 1"),
+                     {"u": usuaria_id, "h": huella(texto)}).mappings().first()
+    return dict(fila) if fila else None
+
+
 def crear(s: Session, texto: str, *, fuente_id: int | None = None, clave_id: int | None = None,
           id_externo: str | None = None, url: str | None = None,
           usuaria_id: int | None = None, caduca_en=None,
@@ -38,6 +46,8 @@ def crear(s: Session, texto: str, *, fuente_id: int | None = None, clave_id: int
     """Guarda la oferta cruda. Devuelve (id, estado, nueva); idempotente por origen + id_externo."""
     if (previa := _existente(s, fuente_id, clave_id, id_externo)):
         return previa["id"], previa["estado"], False
+    if usuaria_id is not None and (previa := _propia_igual(s, usuaria_id, texto)):
+        return previa["id"], previa["estado"], False  # la misma oferta pegada otra vez: no se duplica
     try:
         with s.begin_nested():
             oid = s.execute(text(
