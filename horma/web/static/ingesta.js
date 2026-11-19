@@ -65,6 +65,7 @@ function tarjetaFuente(f) {
   } else {
     li.append(nodo("p", "Sin calificar: no se puede activar.", "suave"));
   }
+  li.append(nodo("p", f.cada_horas ? `Intervalo: cada ${f.cada_horas} h` : "Intervalo: sin límite", "suave"));
   const ejecucion = f.ultima_ejecucion;
   li.append(nodo("p", textoEjecucion(ejecucion), ejecucion && ejecucion.estado === "error" ? "alerta" : null));
   if (ejecucion && ejecucion.motivo_error) li.append(nodo("p", ejecucion.motivo_error, "alerta"));
@@ -115,13 +116,14 @@ function abrirEditor(f) {
   const form = $("form-fuente");
   editando = f ? f.id : null;
   // Campos de la fase 5 que el formulario no edita (se editan en config/endpoints.json): se conservan.
-  conservados = f ? { auth_basica: f.auth_basica, detalle: f.detalle, cada_horas: f.cada_horas, atribucion: f.atribucion } : {};
+  conservados = f ? { auth_basica: f.auth_basica, detalle: f.detalle, atribucion: f.atribucion } : {};
   form.nombre.value = f ? f.nombre : "";
   form.metodo.value = f ? f.metodo : "GET";
   form.web.value = f ? f.web : "";
   form.url.value = f ? f.url : "";
   form.variable_clave.value = f && f.variable_clave ? f.variable_clave : "";
   form.activa.checked = f ? f.activa : false;
+  form.cada_horas.value = f && f.cada_horas ? f.cada_horas : "";
   form.parametros.value = JSON.stringify(f ? f.parametros : {}, null, 2);
   form.cabeceras.value = JSON.stringify(f ? f.cabeceras : {}, null, 2);
   form.mapeo.value = JSON.stringify(f ? f.mapeo : { lista: "", id: "", titulo: "", descripcion: "" }, null, 2);
@@ -146,6 +148,7 @@ $("form-fuente").addEventListener("submit", async (e) => {
       metodo: form.metodo.value,
       variable_clave: form.variable_clave.value.trim() || null,
       activa: form.activa.checked,
+      cada_horas: Number(form.cada_horas.value) || null,
       parametros: JSON.parse(form.parametros.value || "{}"),
       cabeceras: JSON.parse(form.cabeceras.value || "{}"),
       mapeo: JSON.parse(form.mapeo.value || "{}"),
