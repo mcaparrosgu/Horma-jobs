@@ -164,9 +164,9 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
   (100 %). Los sets `cv` (CV y carta) DEBERÁN incluir casos con guía de estilo.
 
 ### Que no suene a IA (RF-5.7)
-- **RF-5.7** El sistema DEBERÁ buscar con código, en cada CV y carta generados, una lista versionada
+- **RF-5.7** El sistema DEBERÁ buscar con código, en cada CV y carta generados o editados por la usuaria, una lista versionada
   de muletillas y frases genéricas típicas de texto de IA (p. ej. «en el dinámico mundo de»,
-  «apasionada por», «sinergias», «no solo… sino también») y señalarlas como error (P13).
+  «apasionada por», «sinergias», «no solo… sino también») y señalarlas como error (P13). Al editar un borrador, la misma comprobación y la de RF-5.4 se repiten con código y salen como avisos en llano (los avisos no bloquean Aprobar).
 - **RF-5.7b** El `juez_candidatura` DEBERÁ señalar con un tipo nuevo, `suena_a_ia`, las frases
   genéricas o artificiales que la lista no recoja y, si hay guía de estilo (RF-5.6), las que no la
   siguen. Igual que ahora, señala y no reescribe; no añade llamadas al modelo.

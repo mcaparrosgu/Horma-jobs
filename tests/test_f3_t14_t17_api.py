@@ -229,6 +229,21 @@ def test_editar_en_borrador_no_llama_al_modelo_y_recalcula_los_avisos(app, motor
         assert s.execute(text("select count(*) from tareas")).scalar_one() == 0
 
 
+def test_editar_avisa_de_muletillas_de_ia_y_de_la_estructura_del_cv(app, motor_app):
+    c, h, u, cb, oferta, cid = _escenario(app, motor_app)
+    ruta = f"/api/candidaturas/{cid}"
+    r = c.patch(ruta, headers=h, json={"cv_contenido": CV + "\nSoy una persona apasionada por los datos"})
+    assert r.status_code == 200, r.text
+    assert any(a["documento"] == "cv" and a["frase"] == "Soy una persona apasionada por los datos"
+               and a["mensaje"].startswith("Suena a texto genérico de IA") for a in r.json()["avisos"])
+    r = c.patch(ruta, headers=h, json={"carta_contenido": CARTA + "\nEn la era digital, aporto valor."})
+    assert any(a["documento"] == "carta" and a["mensaje"].startswith("Suena a texto genérico de IA")
+               for a in r.json()["avisos"])
+    r = c.patch(ruta, headers=h, json={"cv_contenido": "Solo una línea"})
+    assert any(a["documento"] == "cv" and "Estructura" in a["mensaje"] or "sección" in a["mensaje"].lower()
+               for a in r.json()["avisos"])
+
+
 def test_editar_conserva_los_avisos_del_juez_cuya_frase_sigue(app, motor_app):
     carta_con_frase = CARTA + "\nSoy la mejor candidata posible"
     problemas = [_problema("cv", "Manejo de TPV"), _problema("carta", "Soy la mejor candidata posible")]
