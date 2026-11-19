@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado: fases 0 a 4 construidas y fase 5 (correcciones del profesor) construida, pendiente de la prueba manual: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas; Remotive, Adzuna e InfoJobs inactivas). Resumen de la fase 1 (ofertas): catálogo común de ofertas, agentes `auditor-oferta`, `clasificador-oferta` y `auditor-fuentes`, flujos `procesar_oferta` y `calificar_fuente` sobre la interfaz `Flow`, ingestor por API, claves de API y dashboard `/ingesta`. Evals medidas con el modelo real el 14-nov-2026 (ambos sets aprobados); el CI las corre con el modelo real (`ANTHROPIC_API_KEY` es secreto del repositorio desde esa fecha).
+> Estado (19-nov-2026): fases 0 a 5 construidas y fusionadas en `main`. Falta la prueba manual de la fase 5 (la hace Mar), T19 (despliegue; local por ahora, Vercel después) y, antes de abrir a usuarias reales, el plan del `matcher`. Fase 5: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas, sin duplicados), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas; Remotive, Adzuna, Greenhouse e InfoJobs inactivas).
 
 ## Cómo trabajamos (SDD)
 
@@ -28,7 +28,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 2. **Perfil y recomendación** (`002-perfil-recomendacion`)
 3. **Candidatura y seguimiento** (`003-candidatura`)
 4. **LangGraph, calidad y salida** (`004-langgraph-salida`)
-5. **Correcciones del profesor** (`005-correcciones-profesor`, construida; falta la prueba manual de Mar)
+5. **Correcciones del profesor** (`005-correcciones-profesor`, construida y fusionada; falta la prueba manual de Mar)
 
 Cada fase se cierra con sus evals en verde.
 
@@ -151,18 +151,18 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
   Anthropic**; `--tope-coste` (1 USD por defecto) detiene el eval al superarlo y lo deja anotado.
   Los umbrales viven en `evals/umbrales.json` (no se rebajan desde la consola; `cv` exige además
   cobertura ATS media ≥ 0,75). `--flujo plain|langgraph` elige la implementación de `candidatura`.
-- CI: `calidad` corre tests, estilo y todos los evals en simulado en cada push; `evals-reales` mide el
-  modelo (langgraph, 1 USD por set; `recomendacion` queda fuera hasta mejorar el `matcher`) en cada PR a
-  `main` que toque `horma/`, `evals/`, `config/`, las dependencias o `ci.yml`, y a mano (un PR de solo docs o
-  tests pasa sin gastar); falla si falta `ANTHROPIC_API_KEY`. Un push nuevo cancela la ejecución anterior. `main` está protegida: solo se cambia con PR y
-  con `secretos`, `calidad` y `evals-reales` en verde.
+- CI: `secretos` y `calidad` (tests, estilo y todos los evals en simulado) corren en cada push y PR, y no
+  gastan. `evals-reales` mide el modelo (langgraph, 1 USD por set; `recomendacion` queda fuera hasta mejorar
+  el `matcher`) **solo a mano**: Actions → CI → Run workflow con la casilla `con_modelo_real` (~2 USD).
+  Reactivarlo antes de abrir a usuarias reales. Un push nuevo cancela la ejecución anterior. `main` está
+  protegida: solo se cambia con PR y con `secretos` y `calidad` en verde.
 - `uv run horma eval importar-correccion --archivo caso.json`: enseña una corrección de la usuaria
   (se exporta desde la pantalla de recomendadas) y, solo si confirmas, la copia a
   `evals/recomendacion/casos/`. Nada entra en los evals sin pasar por aquí.
 
 ## Git
 
-Sin commits automáticos y sin coautoría de IA.
+Sin commits salvo que Mar los pida y sin coautoría de IA (ver `AGENTS.md`).
 
 ## Reglas de agentes
 
