@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado (19-nov-2026): fases 0 a 5 construidas y fusionadas en `main`. Falta la prueba manual de la fase 5 (la hace Mar). El despliegue es local por ahora y Vercel, más adelante (T19, cerrada). Las fuentes nuevas esperan las indicaciones del profesor. Antes de abrir a usuarias reales, el plan del `matcher`. Fase 5: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas, sin duplicados), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas; Remotive, Adzuna, Greenhouse e InfoJobs inactivas).
+> Estado (19-nov-2026): fases 0 a 5 construidas y fusionadas en `main`. Falta la prueba manual de la fase 5 (la hace Mar). El despliegue es local por ahora y Vercel, más adelante (T19, cerrada). Jobicy y Himalayas están activadas en local (19-nov) y falta lanzar su primera ingesta; el resto de fuentes nuevas espera las indicaciones del profesor. Antes de abrir a usuarias reales, el plan del `matcher`. Fase 5: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas, sin duplicados), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas y activas; Remotive, Adzuna, Greenhouse e InfoJobs inactivas). En `/ingesta` cada fuente tiene Activar/Desactivar y un intervalo mínimo entre ejecuciones (`cada_horas`) que se ve y se edita desde la web.
 
 ## Cómo trabajamos (SDD)
 
