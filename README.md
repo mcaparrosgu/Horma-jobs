@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado (19-nov-2026): fases 0 a 5 construidas y fusionadas en `main`. La prueba manual de la fase 5 está hecha (19-nov); solo falta enviar el correo a Greenhouse (20-nov). El despliegue es local por ahora y Vercel, más adelante (T19, cerrada). Jobicy y Himalayas están activadas en local y probadas (19-nov); el resto de fuentes nuevas espera las indicaciones del profesor. Antes de abrir a usuarias reales, el plan del `matcher`. Fase 5: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas, sin duplicados), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas y activas; Remotive, Adzuna, Greenhouse e InfoJobs inactivas). En `/ingesta` cada fuente tiene Activar/Desactivar y un intervalo mínimo entre ejecuciones (`cada_horas`) que se ve y se edita desde la web.
+> Estado (19-nov-2026): fases 0 a 5 construidas y fusionadas en `main`. Fase 6 (rediseño visual de todas las pantallas): spec firmada, construcción pendiente. La prueba manual de la fase 5 está hecha (19-nov); solo falta enviar el correo a Greenhouse (20-nov). El despliegue es local por ahora y Vercel, más adelante (T19, cerrada). Jobicy y Himalayas están activadas en local y probadas (19-nov); el resto de fuentes nuevas espera las indicaciones del profesor. Antes de abrir a usuarias reales, el plan del `matcher`. Fase 5: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas, sin duplicados), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas y activas; Remotive, Adzuna, Greenhouse e InfoJobs inactivas). En `/ingesta` cada fuente tiene Activar/Desactivar y un intervalo mínimo entre ejecuciones (`cada_horas`) que se ve y se edita desde la web.
 
 ## Cómo trabajamos (SDD)
 
@@ -29,6 +29,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 3. **Candidatura y seguimiento** (`003-candidatura`)
 4. **LangGraph, calidad y salida** (`004-langgraph-salida`)
 5. **Correcciones del profesor** (`005-correcciones-profesor`, construida, fusionada y probada por Mar el 19-nov)
+6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, spec firmada el 19-nov; construcción pendiente)
 
 Cada fase se cierra con sus evals en verde.
 
