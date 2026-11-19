@@ -19,7 +19,9 @@ from horma.schemas.candidatura import (
 from horma.tools.avisos_vigentes import avisos_vigentes
 from horma.tools.generar_pdf import generar_pdf
 from horma.tools.medir_ats import errores_ats
+from horma.tools.muletillas_ia import errores_muletillas
 from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.validar_cv import validar_cv
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_trazabilidad
 from horma.web import checkpointer
 from horma.web.db import sesion_de
@@ -131,6 +133,7 @@ def detalle(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
 # --- edición -----------------------------------------------------------------------------------
 def _avisos(s, c: dict, cv: str, carta: str) -> list[dict]:
     """Recalcula los avisos como el flujo y sin llamar al modelo: los errores de las herramientas de código
+    (trazabilidad, rasgos personales, muletillas de IA, estructura del CV y ATS)
     y los problemas del juez cuya frase sigue en el texto (también los del documento que no se editó).
     Lo que ella escribe no tiene traza y sale como aviso para que lo revise (RF-3.8)."""
     perfil = perfiles.por_version(s, c["perfil_version"]) if c["perfil_version"] else None
@@ -142,9 +145,12 @@ def _avisos(s, c: dict, cv: str, carta: str) -> list[dict]:
     errores_cv = [f"Formato del CV para ATS: {x}" for x in errores_ats(cv)]
     errores_cv += verificar_trazabilidad(cv, c["cv_traza"], fuentes_cv or [""])
     errores_cv += [f"Rasgo personal en el CV: {x}" for x in rasgos_personales(cv)]
+    errores_cv += errores_muletillas("cv", cv)
+    errores_cv += [f"Estructura del CV: {x}" for x in validar_cv(cv, maestro or None)]
     errores_carta = verificar_trazabilidad(
         carta, c["carta_traza"], fuentes_carta or [""], formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)
     errores_carta += [f"Rasgo personal en la carta: {x}" for x in rasgos_personales(carta)]
+    errores_carta += errores_muletillas("carta", carta)
     de_la_oferta = aviso_de_oferta(oferta) if oferta else None
     avisos = [*([de_la_oferta] if de_la_oferta else []),
               *(aviso_de_error("cv", x, cv) for x in errores_cv),
