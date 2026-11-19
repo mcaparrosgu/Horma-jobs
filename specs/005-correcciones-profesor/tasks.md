@@ -109,7 +109,8 @@ real (RF-5.8).
   - **Qué se hace:** migración 0013: `ofertas.usuaria_id` y la política de lectura nueva; `recibir`
     con `usuaria_id` desde la web; `repetida` solo dentro de la misma dueña.
   - **Test (RLS):** una oferta de Ana no la ve Berta ni en `/ofertas` ni en Recomendadas ni por id;
-    las del catálogo las ven las dos; pegar dos veces la misma no la deja fantasma.
+    las del catálogo las ven las dos; pegar dos veces la misma no crea otra (P18; antes la marcaba
+    `repetida`).
   - **Cubre:** RF-5.3c.
 - [x] T12 — Puntuar al momento. *(hecha el 17-nov; entidad de la tarea = id de la usuaria, porque el worker en modo sistema no ve su perfil; tope `TOPE_COSTE_PUNTUAR_PROPIAS`, 1,00 USD)*
   - **Qué se hace:** tarea `puntuar_propias` (todas las propias sin nota para la versión vigente, por
@@ -119,14 +120,14 @@ real (RF-5.8).
     añadida sin perfil se puntúa sola al construirse el perfil; tras editar el perfil, las propias se
     re-puntúan con la versión nueva.
   - **Cubre:** RF-5.3d.
-- [x] T13 — Recomendadas: TODAS las propias, con marca. *(hecha el 17-nov; T10 pasa)*
+- [x] T13 — Recomendadas: TODAS las propias, con marca. *(hecha el 17-nov; T10 pasa. 19-nov, P18: la «repetida» ya no se crea; T10, T11 y T13 adaptados, ver abajo)*
   - **Qué se hace:** `buscar_ofertas` deja pasar todas las propias procesadas (sin filtros, rango,
     repetición, fantasma ni fraude); `listado` devuelve `propia`, `analizada_en` y el motivo del
     auditor; marca «Añadida por ti · analizada el <fecha>» y aviso del auditor en `recomendadas.js`; se
     quita la columna «Condiciones» y su ayuda.
-  - **Test:** una propia que no pasa los filtros, una repetida y una marcada como fraude salen las
-    tres con su evaluación y su marca (la de fraude, con su aviso) y permiten preparar la candidatura;
-    la columna ya no está. T10 pasa.
+  - **Test:** una propia que no pasa los filtros y una marcada como fraude salen con su evaluación y su
+    marca (la de fraude, con su aviso) y permiten preparar la candidatura; pegar la misma dos veces
+    devuelve la misma (P18, sin duplicado); la columna ya no está. T10 pasa.
   - **Cubre:** RF-5.2, RF-5.3e.
 - [x] T14 — Pestaña «Añadir oferta». *(hecha el 17-nov solo con texto; el campo de URL llega con T18; falta que Mar la compruebe en la web)*
   - **Qué se hace:** `anadir-oferta.html/js` (texto o URL, estado de lo último añadido) y enlace en la
