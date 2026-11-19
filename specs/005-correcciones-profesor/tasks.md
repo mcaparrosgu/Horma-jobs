@@ -230,7 +230,7 @@ real (RF-5.8).
   - **Test:** con respuestas grabadas (inventadas), un array en la raíz, una fuente con detalle y una
     con `cada_horas` que no se pide antes de tiempo.
   - **Cubre:** RF-5.5, RF-5.5b, RF-5.5d.
-- [~] T30 — Himalayas, Jobicy, Remotive y Adzuna. *(18-nov: las cuatro configuradas e inactivas en `config/endpoints.json` (forma de cada API comprobada con una petición real); la oferta guarda copia de la atribución (`ofertas.atribucion`) y se ve en Recomendadas; `caduca_en` + borrado de caducadas al cerrar cada ejecución (se conservan las que tienen candidatura). Calificación real en local (OK de Mar, 18-nov, céntimos): **Jobicy y Himalayas APTAS; Remotive NO APTA** (condiciones prohíben copiar ofertas y crear bases de datos; queda inactiva, decisión de Mar pendiente de confirmar); **Adzuna: 403 al leer su web**, hay que darle a mano la URL de condiciones (`--condiciones`) o mirar su API. **Cierre (18-nov):** calificaciones de Jobicy y Himalayas (APTAS) guardadas por la API con el worker; **activar las dos desde el dashboard es cosa de Mar** (no hay ruta de activación por consola). Remotive sigue inactiva (NO APTA). **Adzuna: NO APTA** con las condiciones de su API (`developer.adzuna.com/docs/terms_of_service`): exige clave, no se pudo leer su `robots.txt` (403) y un producto con ingresos necesita licencia comercial; queda inactiva)*
+- [~] T30 — Himalayas, Jobicy, Remotive y Adzuna. *(18-nov: las cuatro en `config/endpoints.json`, inactivas; `ofertas.atribucion` visible en Recomendadas; `caduca_en` y borrado de caducadas. Calificación real: **Jobicy y Himalayas APTAS** (activarlas desde el dashboard es cosa de Mar); **Remotive NO APTA** (sus condiciones prohíben copiar ofertas); **Adzuna NO APTA** (exige clave y licencia comercial para un producto con ingresos). Las dos NO APTAS quedan inactivas)*
   - **Qué se hace:** entradas en `config/endpoints.json`, calificación con `calificar_fuente` y
     activación; atribución visible en la oferta; borrado de caducadas de Himalayas.
   - **Test:** con respuestas grabadas, cada fuente da ofertas normalizadas con enlace y atribución; la
@@ -241,14 +241,14 @@ real (RF-5.8).
     sus condiciones (lo envía ella).
   - **Test:** la ingesta no la llama mientras esté inactiva.
   - **Cubre:** RF-5.5b.
-- [~] T32 — Greenhouse y Lever por empresa. *(**Cambio de alcance, Mar 18-nov:** no una lista corta, sino TODAS las empresas de Greenhouse (Horma es un metabuscador). Investigación a cargo de Claude: Greenhouse no publica un directorio global, cada empresa tiene su «board token»; hay que averiguar cómo descubrirlos (sitemaps, buscadores, listados públicos), comprobar que cada token responde y respetar condiciones y límites. Se hace en la prueba manual; Lever (misma idea) se decide después)*
-  - **Investigación (18-nov, Claude):** el API de lectura es pública (`boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true`, sin clave; comprobado con `anthropic`, `stripe` y `airbnb`: 200; token inexistente: 404). Cada oferta trae `absolute_url` (enlace al original). Sin límites de petición, atribución ni cláusula de agregadores en la documentación; el contrato de Greenhouse (MSA §4d, «uso justo») obliga al cliente, no a terceros, y no es público el límite numérico. `robots.txt` de `boards` y `job-boards` no prohíbe `/v1/`. **No existe directorio oficial ni sitemap de tokens** (404). Vías de descubrimiento: (a) sacar el token de las webs de empleo de las empresas (`boards.greenhouse.io/<token>`, `job-boards.greenhouse.io/<token>`); (b) directorios de terceros (4.000-12.000 tokens, de pago o de licencia dudosa: no se usan sin revisar sus condiciones); (c) lista propia que crece: cada token se valida con una petición y se guarda. **Propuesta:** una sola fuente `greenhouse` con una lista de tokens validada (no una fuente por empresa), ingesta con `cada_horas` ≥ 12, una petición por empresa y pausa entre peticiones, `User-Agent` identificable; semilla de unas decenas de empresas con presencia en España/remoto, que Mar revisa antes de activar. **Decisión de Mar (18-nov):** ambas vías (semilla que crece y, además, buscar un directorio grande); sobre el silencio de Greenhouse con los agregadores, «no sé» → se queda **inactiva** hasta escribirles o decidir. **Construido (18-nov):** `horma fuente greenhouse <tokens…>` valida cada token (una petición por empresa, pausa de 1 s) y los guarda en `config/greenhouse.json` (24 empresas validadas de 37 probadas); cada una es una fuente `gh-<token>` inactiva (`cada_horas` 12, atribución), sembrada por la migración 0017; el mapeo admite texto fijo `=Nombre` (la lista no trae la empresa) y el HTML escapado se desescapa. Test: `test_f5_t32_greenhouse.py`. **Calificación (18-nov, `--local`, con el MSA como condiciones; `/legal` da 404): NO APTA** (el contrato es para empleadores, no regula la lectura por terceros; no permite expresamente el acceso automatizado). Se queda inactiva: no se activa sin su permiso por escrito. **Falta:** escribir a Greenhouse; directorio grande; Lever.
+- [~] T32 — Greenhouse y Lever por empresa. *(Cambio de alcance, Mar 18-nov: todas las empresas de Greenhouse, no una lista corta. Construido: `horma fuente greenhouse <tokens…>` valida cada «board token» (una petición, pausa de 1 s) y los guarda en `config/greenhouse.json` (24 de 37 probados); cada uno es una fuente `gh-<token>` inactiva (`cada_horas` 12, atribución), sembrada por la migración 0017; test `test_f5_t32_greenhouse.py`. Calificada **NO APTA** (el contrato es para empleadores y no permite expresamente el acceso automatizado de terceros): inactiva hasta tener permiso por escrito. Falta: escribir a Greenhouse, buscar un directorio grande de tokens y decidir Lever)*
+  - **Investigación (18-nov):** el API de lectura es pública (`boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true`, sin clave; cada oferta trae `absolute_url`). No hay directorio oficial de tokens: se sacan de las webs de empleo de las empresas y se validan; los directorios de terceros no se usan sin revisar su licencia. Una sola fuente por empresa, `cada_horas` ≥ 12 y `User-Agent` identificable.
   - **Qué se hace:** una entrada por empresa de la lista de Mar (pendiente de que la dé).
   - **Test:** con respuestas grabadas, cada empresa da sus ofertas con enlace al original.
   - **Cubre:** RF-5.5c.
 
 ### Bloque H · Cierre
-- [x] T33 — Coherencia documental. *(18-nov: `specs/index.md`, README y `docs/mejoras-futuras.md` (puntos 7-9) al día; ningún RT cambia; `system.md` sin tocar, con su tabla de fases en la 4: Mar decide si se añade la 5)*
+- [x] T33 — Coherencia documental. *(18-nov: `specs/index.md`, README y `docs/mejoras-futuras.md` (puntos 7-9) al día; ningún RT cambia; `system.md` ya incluye la fase 5 en su tabla)*
   - **Qué se hace:** `specs/index.md`, `specs/system.md` (si cambia algún RT), README y
     `docs/mejoras-futuras.md` al día.
   - **Test:** Mar lo revisa.
@@ -257,17 +257,14 @@ real (RF-5.8).
     perfil y secciones, CV base y visibilidad, borrador desfasado, añadir oferta por texto y por URL,
     privacidad con dos cuentas, estilo y muletillas.
   - **Test:** Mar lo recorre y anota lo que falle.
-- [x] T35 — Medición real al cerrar la fase (opcional, con OK de Mar). *(18-nov, OK de Mar, ≈2,55 USD: `cv` 23/23, `cv-base` 9/9 y `estilo` 8/8 APROBADOS; **`perfil` NO APROBADO** (14 casos; fechas y titulaciones 0,86, umbral 0,9; fallan los casos 02, 06 y 07). Primera medición real con las secciones nuevas: puede ser regresión del extractor o expectativas del eval. **Causa (18-nov):** casos 02 y 06, `esperado` anterior a `certificaciones`/`otros` (eval); caso 07, el extractor omitía el puesto de fechas vagas («varios años») (extractor: el prompt ahora lo obliga a incluirlo y preguntar). Corregidos; 02, 06 y 07 aprobados con el modelo real (≈0,10 USD). **Pasada completa con el modelo real (18-nov, 0,435 USD): `perfil` APROBADO**, 14 casos, `familia` 0,93 ≥ 0,9)*
+- [x] T35 — Medición real al cerrar la fase (opcional, con OK de Mar). *(18-nov, ≈2,55 USD más una pasada de `perfil` de 0,44 USD: `cv` 23/23, `cv-base` 9/9, `estilo` 8/8 y `perfil` 14 casos, todos APROBADOS. `perfil` falló primero (0,86 frente a 0,9): los casos 02 y 06 tenían un `esperado` anterior a `certificaciones`/`otros` y en el 07 el extractor omitía el puesto de fechas vagas; corregidos eval y prompt)*
   - **Qué se hace:** si Mar lo pide, lanzar `evals-reales` a mano una vez (~1,8 USD) para medir los
     agentes que cambiaron (`perfil`, `cv`, `cv-base`, `estilo`).
   - **Test:** sets en umbral con el modelo real; si no se lanza, queda anotado como pendiente para
     antes del lanzamiento.
 
-## Cierre de la fase 5: pasos pendientes, por orden
-Bloques A-H construidos (rama `fase5-bloque-h`). Para cerrar la fase, en este orden:
-1. **Eval `perfil` (T35):** **hecho el 18-nov**: causa corregida y `perfil` APROBADO con el modelo real (ver T35).
-2. **T32:** todas las empresas de Greenhouse. Claude investiga cómo descubrir los «board tokens», comprueba que responden, respeta condiciones y límites; Mar revisa la propuesta antes de activar. Lever, después.
-3. **T30/T31:** **hecho** salvo lo de Mar: activar Jobicy y Himalayas desde el dashboard y enviar el correo a InfoJobs. Remotive y Adzuna, inactivas (NO APTAS).
-4. **Prueba manual de Mar** con `docs/plan-pruebas-fase5.md`: cubre T05, T14, T18 y T19 (parte Recomendadas) y anota lo que falle.
-5. **PR a `main`** de las ramas de la fase 5, solo cuando Mar lo pida.
-Antes de usuarias reales: plan del `matcher` y reactivar `evals-reales` (`docs/mejoras-futuras.md`, punto 6).
+## Cierre de la fase 5: pasos pendientes
+Bloques A-H construidos y fusionados en `main` (PR #11). Queda:
+1. **Prueba manual de Mar** con `docs/plan-pruebas-fase5.md` (T05, T09, T14, T18 y T19 parte Recomendadas); anota lo que falle. El 3.4 falló y dio lugar a P18 (19-nov, PR #12).
+2. **Fuentes (Mar):** activar Jobicy y Himalayas desde el dashboard y enviar el correo a InfoJobs. Greenhouse espera permiso por escrito; Lever, sin decidir.
+3. Antes de usuarias reales: plan del `matcher` y reactivar `evals-reales` (`docs/mejoras-futuras.md`, punto 6).
