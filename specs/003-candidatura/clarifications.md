@@ -4,7 +4,7 @@ title: candidatura — Aclaraciones
 description: Preguntas abiertas de la fase 3 resueltas con la persona antes de escribir la spec, más los supuestos. Incluye el cambio del 16-nov-2026 (bloque H, simplificar la candidatura).
 tags: [clarify, candidatura, seguimiento]
 status: active
-sources: [../system.md, ../002-perfil-recomendacion/clarifications.md, ../../docs/Horma v2_ requerimientos por fases.pdf, ../../docs/mejora-simplificar-candidatura.md]
+sources: [../system.md, ../002-perfil-recomendacion/clarifications.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
 generated: { by: claude-code, at: 2026-11-16 }
 verified: { by: human, at: 2026-11-16 }
 stale_after: null
@@ -29,7 +29,7 @@ stale_after: null
 ## Cambio del 16-nov-2026: simplificar la candidatura (bloque H)
 Tras la prueba manual, Mar decidió simplificar la candidatura **antes** de la fase 4, para que
 LangGraph migre el flujo ya simplificado. Los 11 puntos de
-[`docs/mejora-simplificar-candidatura.md`](../../docs/mejora-simplificar-candidatura.md) quedan
+de la mejora que escribió Mar (documento de trabajo, fuera del repo) quedan
 decididos. El cambio es de la fase 3 (spec regenerada), no de la 4: el PDF dice que en la fase 4 no
 entra ningún agente nuevo, y el juez único lo es.
 

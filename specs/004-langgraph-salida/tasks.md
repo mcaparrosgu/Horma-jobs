@@ -213,10 +213,9 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Verificación de Mar:** en local, `https://localhost` abre Horma (con el aviso de la CA interna)
     y el login funciona.
   - **Cubre:** RF-4.6b, RF-4.6c, RF-4.6e.
-- [ ] T19 — **Despliegue real: el profesor contestó el 17-nov-2026 (P6): de momento en local con Docker
-  Compose y PostgreSQL (ya cubierto por T17 y T18); más adelante, en Vercel.** Falta que Mar confirme dar
-  esta tarea por cerrada con el despliegue local. Al llegar a Vercel se regenera con el destino (coste,
-  dominio, secretos, copia de la BD) y se revisa la arquitectura.
+- [x] T19 — **Despliegue real. *(Cerrada el 19-nov-2026 por Mar: el profesor dijo (P6, 17-nov) local con Docker
+  Compose y PostgreSQL ahora, y Vercel más adelante.)*** Local ya cubierto por T17 y T18. Al llegar a Vercel se
+  abre una tarea nueva con el destino (coste, dominio, secretos, copia de la BD) y se revisa la arquitectura.
   - **Cubre:** RF-4.6e.
 
 ### Bloque F · Observabilidad (RF-4.7)

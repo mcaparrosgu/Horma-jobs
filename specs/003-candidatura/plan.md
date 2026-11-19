@@ -4,7 +4,7 @@ title: candidatura — Plan técnico
 description: Arquitectura, contratos y modelo de datos que cubren cada requisito de la fase 3. Regenerado el 16-nov-2026 con el cambio «simplificar la candidatura» (bloque H).
 tags: [plan, candidatura, seguimiento]
 status: active
-sources: [./spec.md, ./clarifications.md, ../system.md, ../002-perfil-recomendacion/plan.md, ../../docs/mejora-simplificar-candidatura.md]
+sources: [./spec.md, ./clarifications.md, ../system.md, ../002-perfil-recomendacion/plan.md]
 generated: { by: claude-code, at: 2026-11-16 }
 verified: { by: human, at: 2026-11-16 }
 stale_after: null

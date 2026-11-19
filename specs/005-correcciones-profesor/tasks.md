@@ -266,5 +266,5 @@ real (RF-5.8).
 ## Cierre de la fase 5: pasos pendientes
 Bloques A-H construidos y fusionados en `main` (PR #11). Queda:
 1. **Prueba manual de Mar** con `docs/plan-pruebas-fase5.md` (T05, T09, T14, T18 y T19 parte Recomendadas); anota lo que falle. El 3.4 falló y dio lugar a P18 (19-nov, PR #12).
-2. **Fuentes (Mar):** activar Jobicy y Himalayas desde el dashboard y enviar el correo a InfoJobs. Greenhouse espera permiso por escrito; Lever, sin decidir.
+2. **Fuentes (en espera, 19-nov):** el profesor dará indicaciones más adelante, así que no se activa nada. Pendiente entonces: activar Jobicy y Himalayas desde el dashboard, el correo a InfoJobs, el permiso por escrito de Greenhouse (borrador de correo preparado) y decidir Lever.
 3. Antes de usuarias reales: plan del `matcher` y reactivar `evals-reales` (`docs/mejoras-futuras.md`, punto 6).
