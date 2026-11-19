@@ -103,10 +103,10 @@ def test_dos_usuarias_con_la_misma_oferta_tienen_cada_una_la_suya_y_ninguna_es_f
         assert repo.para_procesar(s, de_berta)["repetida"] is False
 
 
-def test_pegar_dos_veces_la_misma_marca_repetida_solo_dentro_de_la_misma_dueña(app, motor_app):
+def test_pegar_dos_veces_la_misma_no_la_duplica_ni_la_vuelve_a_procesar(app, motor_app):
     ana, ha = _entrar(app, "google-A")
     primera = _pegar(ana, ha, motor_app)
     segunda = _pegar(ana, ha, motor_app)
+    assert segunda == primera
     with sesion_sistema(motor_app) as s:
-        assert repo.para_procesar(s, primera)["repetida"] is False
-        assert repo.para_procesar(s, segunda)["repetida"] is True
+        assert s.execute(text("select count(*) from ofertas where usuaria_id is not null")).scalar_one() == 1
