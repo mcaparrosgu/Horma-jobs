@@ -25,7 +25,10 @@ def _desde_la_raiz(monkeypatch):
     config.ajustes.cache_clear()
 
 
-def test_por_defecto_es_plain_y_el_valor_viene_de_la_configuracion(monkeypatch):
+def test_por_defecto_es_plain_y_el_valor_viene_de_la_configuracion(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)  # sin .env: el valor por defecto del código, no el de la máquina
+    monkeypatch.delenv("HORMA_FLOW_IMPL", raising=False)
+    config.ajustes.cache_clear()
     assert config.ajustes().horma_flow_impl == "plain"
     assert IMPLEMENTACIONES == ("plain", "langgraph")
     assert isinstance(crear_flujo("candidatura", proveedor=ProveedorSimulado([])), PlainFlow)

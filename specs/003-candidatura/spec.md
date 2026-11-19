@@ -4,7 +4,7 @@ title: candidatura — Spec funcional
 description: Requisitos funcionales de la fase 3 (CV y carta adaptados con verificador y un juez, aprobación, envío por cuenta propia y seguimiento en un tablero), en notación EARS. Regenerada el 16-nov-2026 con el cambio «simplificar la candidatura» (bloque H).
 tags: [spec, candidatura, seguimiento]
 status: active
-sources: [./clarifications.md, ../system.md, ../002-perfil-recomendacion/spec.md, ../../docs/Horma v2_ requerimientos por fases.pdf, ../../docs/mejora-simplificar-candidatura.md]
+sources: [./clarifications.md, ../system.md, ../002-perfil-recomendacion/spec.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
 generated: { by: claude-code, at: 2026-11-16 }
 verified: { by: human, at: 2026-11-16 }
 stale_after: null

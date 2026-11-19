@@ -72,7 +72,9 @@ def test_reintentar_borra_el_hilo_y_empieza_de_cero(motor_app, motor_migrador, b
     assert _n_checkpoints(motor_migrador, cid) == primera  # no arrastra la vuelta anterior
 
 
-def test_con_plain_todo_sigue_como_antes_y_no_hay_hilo(motor_app, motor_migrador, bd_limpia):
+def test_con_plain_todo_sigue_como_antes_y_no_hay_hilo(motor_app, motor_migrador, bd_limpia, monkeypatch):
+    monkeypatch.setenv("HORMA_FLOW_IMPL", "plain")  # el .env local puede traer langgraph
+    config.ajustes.cache_clear()
     assert config.ajustes().horma_flow_impl == "plain"
     a, cid = _preparar(motor_app)
     assert worker.procesar_una(motor_app, ProveedorSimulado(FELIZ)) == "hecha"
