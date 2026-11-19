@@ -3,7 +3,7 @@
 Una oferta que la usuaria pega en la web debe llegar a Recomendadas YA puntuada, sin pulsar
 «Recomendar». Hoy no pasa por tres causas, una por caso:
 - sin nota: nada encola el matcher al terminar `procesar_oferta` (caso base);
-- repetida: `para_procesar` la marca `repetida` por huella → fantasma → no recomendable;
+- repetida: antes `para_procesar` la marcaba `repetida` → fantasma; ahora la segunda no se crea;
 - sin fecha: el flujo marca `sin_fecha` → fantasma → no recomendable.
 Los tres casos fallaron hasta T12 (puntuar solo) y T13 (RF-5.3e, P17: todas las propias salen)."""
 import pytest
@@ -67,6 +67,9 @@ def _pegar(c, h, textos):
     ids = []
     for texto in textos:
         r = c.post("/ofertas", headers=h, json={"texto": texto})
+        if r.json()["id"] in ids:  # la misma oferta otra vez: no se duplica (200, el mismo id)
+            assert r.status_code == 200
+            continue
         assert r.status_code == 201
         ids.append(r.json()["id"])
     return ids
@@ -101,6 +104,7 @@ def test_una_oferta_pegada_llega_a_recomendadas_puntuada_sin_pulsar_recomendar(
     c, h = _entrar(app)
     _con_perfil(motor_app, motor_migrador)
     ids = _pegar(c, h, [TEXTO] * (2 if repetir else 1))
+    assert len(ids) == 1  # pegarla dos veces deja una sola
     _correr_el_worker(motor_app, ids, extraccion)  # nadie llama a /api/recomendar
     salida = _recomendadas(c)
     for oferta_id in ids:
