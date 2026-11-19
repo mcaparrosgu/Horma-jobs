@@ -154,7 +154,7 @@ solo usa el worker, inyectable como `descargar.Descargador` para los tests.
   - `lista: "$"` para respuestas que son un array en la raíz (Lever, RemoteOK si se añadiera);
   - `metodo: "GET"` con Basic auth desde variables (InfoJobs) y `detalle` opcional: URL de detalle por
     oferta para traer la descripción.
-- **Por fuente:** `cada_horas` (Remotive: 6) para respetar sus límites; `atribucion` (texto y enlace)
+- **Por fuente:** `cada_horas` (Remotive: 6; editable desde `/ingesta`, vacío = sin límite) para respetar sus límites; `atribucion` (texto y enlace)
   que se muestra en la oferta; borrado de caducadas para Himalayas.
 - **InfoJobs:** configurada con `activa: false` hasta tener sus condiciones por escrito.
 - **Greenhouse/Lever:** una entrada por empresa (`boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true`,
