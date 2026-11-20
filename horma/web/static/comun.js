@@ -102,6 +102,7 @@ async function arrancar(activa) {
     a.href = ruta;
     if (activaAhora) a.setAttribute("aria-current", "page");
     nav.append(a);
+    if (activaAhora) requestAnimationFrame(() => a.scrollIntoView({ inline: "center", block: "nearest" }));
   }
   const derecha = $("derecha");
   const persona = nodo("span", null, "persona");

@@ -306,11 +306,12 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   .cabecera{ position: sticky; top: 0; z-index: 30; background: var(--bg); flex-wrap: wrap; row-gap: 0; }
   .cabecera .derecha{ order: 2; }
   #pestanas{
-    order: 3; flex: 1 1 100%; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
-    margin: 8px calc(-1 * var(--pad-page-m)) 0; border-top: var(--bw) solid var(--line);
+    order: 3; flex: 1 1 100%; display: flex; flex-wrap: nowrap; gap: 0; overflow-x: auto; scrollbar-width: none;
+    margin: 8px calc(-1 * var(--pad-page-m)) 0; padding: 0 var(--pad-page-m); border-top: var(--bw) solid var(--line);
   }
-  .pestana{ justify-content: center; text-align: center; min-height: 48px; padding: 0 2px; font-size: 12px; }
-  .persona .nombre{ display: none; }
+  #pestanas::-webkit-scrollbar{ display: none; }
+  .pestana{ flex: none; justify-content: center; white-space: nowrap; min-height: 48px; padding: 0 14px; font-size: 14px; }
+  .persona{ display: none; }
   h1, .titulo-pantalla{ font-size: var(--fs-h1-m); margin-top: 24px; }
   .panel{ padding: 16px; }
   form.panel.fila, fieldset.grupo.panel{ grid-template-columns: 1fr; }
