@@ -25,9 +25,14 @@
       <div id="grupos" class="grupos"></div>
       <fieldset class="grupo panel">
         <legend class="etiqueta-mono">Condiciones</legend>
-        <label class="casilla"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
-        <p class="suave ayuda">Solo ofertas 100 % en remoto. Si piden ir a la oficina alguna vez, no salen.</p>
-        <label class="casilla"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
+        <div class="casilla-con-ayuda">
+          <label class="casilla"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
+          <p class="suave ayuda">Solo ofertas 100 % en remoto. Si piden ir a la oficina alguna vez, no salen.</p>
+        </div>
+        <div class="casilla-con-ayuda">
+          <label class="casilla"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
+          <p class="suave ayuda">Solo ofertas que dicen cuánto pagan.</p>
+        </div>
         <label>Sueldo mínimo (euros brutos al año)
           <input id="sueldo-minimo" class="corto" type="number" min="0" step="500" inputmode="numeric">
         </label>

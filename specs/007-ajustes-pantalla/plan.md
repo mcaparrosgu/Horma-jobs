@@ -84,7 +84,9 @@ guías ya guardadas sigan validando al editarlas.
 
 - **Bug del botón (P9):** el botón solo se deshabilita con `analizando || !hay_documentos` (`perfil.js`), y en
   la base no se daba ninguna de las dos. La guía constaba con `origen = modelo`, así que el `PUT` no guardó.
-  Hipótesis por comprobar: `422` de `motivos_de_rechazo` sin aviso visible, o `api()` con `PUT`.
+  Causa (20-nov): no se reproduce con el servidor; el `PUT` y el botón van bien. Una edición hecha mientras el
+  worker analizaba la pisaba al terminar (guardaba con `origen = modelo`). Ahora el `PUT` da 409 mientras hay un
+  análisis sin terminar y la pantalla oculta «Editar guía» hasta que acaba.
 - **Totales:** errores = Σ(tasa × llamadas) / Σ llamadas; latencia = Σ(latencia × llamadas) / Σ llamadas.
 
 ## Tests

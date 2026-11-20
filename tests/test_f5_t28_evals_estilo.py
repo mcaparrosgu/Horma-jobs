@@ -23,7 +23,8 @@ def _casos(nombre):
 
 def test_el_set_estilo_esta_registrado_con_su_umbral():
     s = SETS["estilo"]
-    assert s.campos == ["registro", "persona", "citas_con_origen", "sin_rasgos", "sin_efecto"]
+    assert s.campos == ["registro", "persona", "citas_con_origen", "rasgos_cortos", "sin_rasgos",
+                        "sin_efecto"]
     assert s.exigidos == {"sin_rasgos", "sin_efecto"}
     assert cargar_umbrales("estilo")["campos"] == 0.9
 
@@ -104,3 +105,20 @@ def test_la_guia_llega_al_juez_y_al_flujo_en_el_eval_cv():
     assert estado["guia_estilo"]["registro"] == "cercano" and prov.llamadas == []
     sin = _estado_candidatura(_entrada_cv(RAIZ / "cv" / "casos" / "10-flujo-camarera-con-tres-cv-base"))
     assert "guia_estilo" not in sin
+
+
+def _guia_con(rasgo, vinetas="empiezan con verbo"):
+    return {"vinetas": vinetas, "expresiones": [{"rasgo": rasgo, "cita": "x"}], "evita": []}
+
+
+def test_el_comprobador_suspende_un_rasgo_de_nueve_palabras_y_aprueba_uno_de_ocho():
+    """Fase 7 · T16 (RF-7.5e)."""
+    from horma.evals import rasgos_cortos
+    assert rasgos_cortos(_guia_con("uno dos tres cuatro cinco seis siete ocho"))
+    assert not rasgos_cortos(_guia_con("uno dos tres cuatro cinco seis siete ocho nueve"))
+    assert not rasgos_cortos(_guia_con("corto", vinetas=" ".join(["palabra"] * 16)))
+
+
+def test_el_prompt_pide_rasgos_de_ocho_palabras_y_vinetas_en_una_frase_corta():
+    prompt = Path("horma/agents/analizador_estilo/prompt.md").read_text(encoding="utf-8")
+    assert "8 palabras como máximo" in prompt and "UNA frase corta" in prompt

@@ -30,7 +30,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 4. **LangGraph, calidad y salida** (`004-langgraph-salida`)
 5. **Correcciones del profesor** (`005-correcciones-profesor`, construida, fusionada y probada por Mar el 19-nov)
 6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, construida y probada por Mar el 20-nov)
-7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; construida y con evals reales; falta la prueba manual de Mar)
+7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; cerrada el 20-nov: evals reales y pruebas manuales firmadas por Mar)
 
 Cada fase se cierra con sus evals en verde.
 

@@ -176,11 +176,26 @@ def test_perfil_pendientes_abierto_solo_si_hay():
     assert '$("pendientes").open = true' in js and '$("pendientes").open = false' in js
 
 
-def test_estilo_se_resume_con_cinco_y_ver_detalle():
+def test_estilo_es_un_parrafo_corto_sin_ver_detalle():
+    """Fase 7 · T18 (RF-7.5c): frase de tono, «Usas: …» y «Evitas: …» con 5 como máximo, sin detalle."""
     js = leer("perfil.js")
     assert "function resumirEstilo" in js and "MAX_RASGOS = 5" in js
-    assert "lista.slice(0, MAX_RASGOS)" in js and '"Usas"' in js and '"Evitas"' in js
-    assert '"Ver detalle"' in js and "Editar guía" in leer("perfil.html")
+    assert "lista.slice(0, MAX_RASGOS)" in js and '.join(", ")' in js
+    assert '`${titulo}: ' in js and '"Usas"' in js and '"Evitas"' in js
+    assert "Ver detalle" not in js and "function rasgos(" not in js
+    assert "Editar guía" in leer("perfil.html") and "Volver a analizar mi estilo" in leer("perfil.html")
+
+
+def test_cuatro_secciones_de_perfil_son_desplegables_cerrados_con_su_numero():
+    """Fase 7 · T19 (RF-7.5d)."""
+    js = leer("perfil.js")
+    assert 'const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos"]' in js
+    assert 'nodo(plegable ? "details" : "section"' in js
+    assert 'nodo("span", String(hijos.length), "estado")' in js
+    assert "s.open = abiertas.has(clave)" in js   # cerrados salvo que ella los abriera
+    assert 'addEventListener("toggle"' in js
+    assert "abiertas.add(clave)" in js and "abiertas.delete(clave)" in js
+    assert "habilidades" not in js.split("const PLEGABLES")[1].split(chr(10))[0]
 
 
 # --- T10 · Ingesta ---------------------------------------------------------------------------------
@@ -215,3 +230,46 @@ def test_ingesta_y_costes_llevan_subpestañas_y_no_se_ven_sin_admin():
 def test_lugar_une_modalidad_y_municipio():
     js = leer("recomendadas.js")
     assert "o.ubicacion ||" in js and "nombreModalidad(o.modalidad) || null, sitio" in js
+
+
+# --- T20 · Condiciones simétricas y totales de Costes ----------------------------------------------
+def test_cada_casilla_de_condiciones_va_con_su_ayuda_en_su_celda():
+    html = leer("preferencias.html")
+    bloques = html.split('<div class="casilla-con-ayuda">')[1:]
+    assert len(bloques) == 2
+    celdas = [b.split("</div>")[0] for b in bloques]
+    assert 'id="solo-remoto"' in celdas[0] and "Solo ofertas 100 % en remoto." in celdas[0]
+    assert 'id="solo-salario"' in celdas[1] and "Solo ofertas que dicen cuánto pagan." in celdas[1]
+    assert ".casilla-con-ayuda" in leer("estilo.css") and "p.ayuda" in leer("estilo.css")
+
+
+def _totales_en_node(filas):
+    import json
+    import re
+    import shutil
+    import subprocess
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node no está instalado")
+    js = leer("costes.js")
+    fn = re.search(r"function totales\(filas\) \{.*?\n\}\n", js, re.S).group(0)
+    salida = subprocess.run([node, "-e", fn + f"console.log(JSON.stringify(totales({json.dumps(filas)})))"],
+                            capture_output=True, text=True, check=True).stdout
+    return json.loads(salida)
+
+
+def test_totales_suman_y_ponderan_por_llamadas():
+    t = _totales_en_node([
+        {"llamadas": 1, "coste": 0.5, "tokens_entrada": 10, "tokens_salida": 1, "latencia_media_ms": 100,
+         "tasa_errores": 0},
+        {"llamadas": 3, "coste": 1.5, "tokens_entrada": 30, "tokens_salida": 3, "latencia_media_ms": 200,
+         "tasa_errores": 1}])
+    assert t["llamadas"] == 4 and t["coste"] == 2 and t["tokens_entrada"] == 40 and t["tokens_salida"] == 4
+    assert t["latencia_media_ms"] == 175 and t["tasa_errores"] == 0.75
+
+
+def test_tabla_pinta_total_solo_con_filas():
+    js = leer("costes.js")
+    assert 'nodo("tfoot")' in js and '"Total"' in js
+    assert "if (filas.length) {" in js and "const total = totales(filas);" in js
+    assert "tfoot th" in leer("estilo.css") and "tfoot td" in leer("estilo.css")

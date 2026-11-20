@@ -199,9 +199,21 @@ function botonAnadir(clave, ul) {
   return fila;
 }
 
+// Estas cuatro se pliegan, cerradas, con su número en el título (RF-7.5d). Lo abierto sobrevive a guardar.
+const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos"];
+const abiertas = new Set();
+
 function seccion(titulo, hijos, clave) {
-  const s = nodo("section");
-  s.append(nodo("h3", titulo, "subtitulo"));
+  const plegable = PLEGABLES.includes(clave);
+  const s = nodo(plegable ? "details" : "section", null, plegable ? "leer seccion-plegable" : null);
+  if (plegable) {
+    const resumen = nodo("summary", titulo);
+    resumen.append(nodo("span", String(hijos.length), "estado"));
+    s.append(resumen);
+    s.dataset.seccion = clave;
+    s.open = abiertas.has(clave);
+    s.addEventListener("toggle", () => { if (s.open) abiertas.add(clave); else abiertas.delete(clave); });
+  } else s.append(nodo("h3", titulo, "subtitulo"));
   if (AYUDA[clave]) s.append(nodo("p", AYUDA[clave], "suave"));
   const ul = nodo("ul", null, "lista");
   ul.append(...hijos);
@@ -401,40 +413,19 @@ $("subir").addEventListener("submit", async (e) => {
 let estiloVisto = null;
 let esperaEstilo = null;
 
-function rasgos(titulo, lista) {
-  const cont = nodo("div");
-  cont.append(nodo("h3", titulo));
-  if (!lista.length) { cont.append(nodo("p", "—", "suave")); return cont; }
-  const ul = nodo("ul", null, "lista");
-  for (const r of lista) {
-    const li = nodo("li", r.rasgo);
-    if (r.cita) li.append(nodo("p", `«${r.cita}»`, "suave"));
-    ul.append(li);
-  }
-  cont.append(ul);
-  return cont;
-}
-
 const MAX_RASGOS = 5;
 const PERSONAS = { primera: "primera persona", impersonal: "impersonal" };
 
-// Resumen de la guía (RF-7.5c): una frase, «Usas» y «Evitas» con 5 como máximo y «Ver detalle» con todo.
+// Resumen de la guía (RF-7.5c): una frase de tono y dos líneas, «Usas» y «Evitas», con 5 rasgos como máximo.
 function resumirEstilo(g) {
   const cont = nodo("div", null, "estilo-resumen");
-  const vinetas = g.vinetas ? `; viñetas: ${g.vinetas}` : "";
+  const vinetas = g.vinetas ? `; viñetas: ${g.vinetas.replace(/[.\s]+$/, "")}` : "";
   cont.append(nodo("p", `Escribes en registro ${g.registro}, en ${PERSONAS[g.persona] || g.persona}, con frases ${g.longitud_frase}s${vinetas}.`));
   const corto = (titulo, lista) => {
-    const bloque = nodo("div");
-    bloque.append(nodo("h3", titulo));
-    const ul = nodo("ul", null, "lista");
-    for (const r of lista.slice(0, MAX_RASGOS)) ul.append(nodo("li", r.rasgo));
-    bloque.append(lista.length ? ul : nodo("p", "—", "suave"));
-    return bloque;
+    const rasgos = lista.slice(0, MAX_RASGOS).map((r) => r.rasgo).join(", ");
+    return nodo("p", `${titulo}: ${rasgos || "—"}.`);
   };
   cont.append(corto("Usas", g.expresiones), corto("Evitas", g.evita));
-  const detalle = nodo("details", null, "leer");
-  detalle.append(nodo("summary", "Ver detalle"), rasgos("Expresiones que usas", g.expresiones), rasgos("Lo que evitas", g.evita));
-  cont.append(detalle);
   return cont;
 }
 
@@ -502,7 +493,8 @@ async function cargarEstilo() {
   estiloVisto = e;
   $("estilo").hidden = !(e.guia || e.hay_documentos || e.analizando);
   $("estilo-reanalizar").disabled = e.analizando || !e.hay_documentos;
-  $("estilo-editar").hidden = !e.guia;
+  $("estilo-editar").hidden = !e.guia || e.analizando;   // lo editado durante el análisis se perdería
+  if (e.analizando) document.querySelector("#estilo form.editor")?.remove();
   if (e.analizando) $("estilo-estado").textContent = "Analizando tu estilo…";
   else if (e.guia) $("estilo-estado").textContent = e.origen === "usuaria" ? "Guía editada por ti." : "Guía calculada por Horma; puedes editarla.";
   else $("estilo-estado").textContent = "Todavía no hay guía.";

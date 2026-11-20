@@ -472,6 +472,17 @@ def _texto_plano(texto: str) -> str:
     return " ".join(texto.casefold().split())
 
 
+MAX_PALABRAS_RASGO = 8   # RF-7.5e
+MAX_PALABRAS_VINETAS = 15
+
+
+def rasgos_cortos(guia: dict) -> bool:
+    """RF-7.5e: cada rasgo, en 8 palabras como máximo; la forma de las viñetas, en una frase corta."""
+    rasgos = [r["rasgo"] for r in [*guia["expresiones"], *guia["evita"]]]
+    return (all(len(r.split()) <= MAX_PALABRAS_RASGO for r in rasgos)
+            and len(guia.get("vinetas", "").split()) <= MAX_PALABRAS_VINETAS)
+
+
 def _comparar_estilo(obtenido: dict, esperado: dict) -> list[str]:
     guia = obtenido["guia"]
     fallos = [c for c in ("registro", "persona") if guia[c] != esperado[c]]
@@ -479,6 +490,8 @@ def _comparar_estilo(obtenido: dict, esperado: dict) -> list[str]:
     documentos = [_texto_plano(d["texto"]) for d in obtenido["documentos"]]
     if not citas or not all(any(_texto_plano(c) in d for d in documentos) for c in citas):
         fallos.append("citas_con_origen")
+    if not rasgos_cortos(guia):
+        fallos.append("rasgos_cortos")
     if motivos_de_rechazo(GuiaEstilo.model_validate(guia)) or rasgos_personales(" ".join(citas)):
         fallos.append("sin_rasgos")
     texto_guia = _texto_plano(json.dumps(guia, ensure_ascii=False))
@@ -665,7 +678,7 @@ NUEVOS: dict[str, SetEval] = {
     ),
     "estilo": SetEval(
         esperado=EsperadoEstilo,
-        campos=["registro", "persona", "citas_con_origen", "sin_rasgos", "sin_efecto"],
+        campos=["registro", "persona", "citas_con_origen", "rasgos_cortos", "sin_rasgos", "sin_efecto"],
         entrada=_leer_json, correr=_correr_estilo, simuladas=_respuestas_estilo, comparar=_comparar_estilo,
         exigidos=frozenset({"sin_rasgos", "sin_efecto"}),
     ),

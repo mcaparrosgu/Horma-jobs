@@ -41,5 +41,8 @@ def editar(guia: GuiaEstilo, request: Request, usuaria_id: int = Depends(usuaria
     if motivos := motivos_de_rechazo(guia):
         raise HTTPException(status_code=422, detail=f"Esa guía no se puede guardar: {'; '.join(motivos)}.")
     with sesion_de(request.app.state.engine, usuaria_id) as s:
+        if tareas.sin_terminar(s, servicio.TAREA, usuaria_id):   # el worker la pisaría al terminar
+            raise HTTPException(status_code=409,
+                                detail="Se está analizando tu estilo. Cuando termine, podrás editar la guía.")
         repo.guardar(s, usuaria_id, guia, "usuaria")
     return {"guia": guia.model_dump(mode="json"), "origen": "usuaria"}
