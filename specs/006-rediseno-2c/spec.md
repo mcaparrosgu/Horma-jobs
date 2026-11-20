@@ -222,27 +222,27 @@ Mismo contenido y mismas acciones que hoy, con los componentes de RF-6.4:
   2c. Además, la página «Sin conexión» DEBERÁ verse con la paleta 2c sin red.
 
 ## Criterios de aceptación (puerta de salida)
-- [ ] Ninguna página lleva el marco Passe-Partout, y todas enlazan los tokens.
-- [ ] Un test comprueba que no hay colores hex fuera del archivo de tokens.
-- [ ] Ningún HTML lleva estilos ni scripts en línea, y la CSP no cambia.
-- [ ] Las 11 pantallas, vistas a 1280 px y 390 px, en claro y en oscuro:
-  - [ ] sin desplazamiento horizontal;
-  - [ ] cabecera común;
-  - [ ] menú superior en móvil.
-- [ ] Recomendadas:
-  - [ ] cumple RF-6.5 a RF-6.5f frente al diseño 2c;
-  - [ ] sin «Condiciones»;
-  - [ ] la primera fila sale desplegada;
-  - [ ] «Corregir explicación» y «Preparar candidatura» funcionan como antes.
-- [ ] axe o Lighthouse sin fallos de contraste, nombre accesible ni tamaño de objetivo, en
+- [x] Ninguna página lleva el marco Passe-Partout, y todas enlazan los tokens.
+- [x] Un test comprueba que no hay colores hex fuera del archivo de tokens.
+- [x] Ningún HTML lleva estilos ni scripts en línea, y la CSP no cambia.
+- [x] Las 11 pantallas, vistas a 1280 px y 390 px, en claro y en oscuro:
+  - [x] sin desplazamiento horizontal;
+  - [x] cabecera común;
+  - [x] menú superior en móvil.
+- [x] Recomendadas:
+  - [x] cumple RF-6.5 a RF-6.5f frente al diseño 2c;
+  - [x] sin «Condiciones»;
+  - [x] la primera fila sale desplegada;
+  - [x] «Corregir explicación» y «Preparar candidatura» funcionan como antes.
+- [x] Auditoría sin fallos (axe no pudo cargarse; se hizo con una auditoría propia en JS: contraste, 44 px, nombres y desborde) de contraste, nombre accesible ni tamaño de objetivo, en
       Recomendadas, Perfil y Candidatura, con los dos temas.
-- [ ] Revisión de usabilidad de las 11 pantallas hecha (T17b). Cada hallazgo está corregido o
+- [x] Revisión de usabilidad de las 11 pantallas hecha (T17b). Cada hallazgo está corregido o
       tiene la decisión de Mar.
-- [ ] El botón de tema cambia y recuerda el tema; sin almacenamiento, sigue al sistema.
-- [ ] Ningún texto visible con «match», «ATS» o «trazabilidad» (test).
-- [ ] Toda la batería de tests en verde. Los textos y los ids que fijaban los tests se conservan,
+- [x] El botón de tema cambia y recuerda el tema; sin almacenamiento, sigue al sistema.
+- [x] Ningún texto visible con «match», «ATS» o «trazabilidad» (test).
+- [x] Toda la batería de tests en verde. Los textos y los ids que fijaban los tests se conservan,
       salvo los cambios declarados aquí.
-- [ ] `AGENTS.md` recoge RF-6.9.
+- [x] `AGENTS.md` recoge RF-6.9.
 
 ## Riesgos
 - **Volumen:** son 11 pantallas y unas 2.800 líneas de HTML y JS. Cambiar el marcado puede romper

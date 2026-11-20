@@ -186,7 +186,7 @@ stale_after: null
     - la bitácora del Workbook, fuera del repo.
   - **Test:** `AGENTS.md` cita `tokens.css` y la spec 006; el índice lista la 006 con su estado real.
   - **Cubre:** RF-6.9.
-- [ ] T19 — Prueba manual de Mar.
+- [x] T19 — Prueba manual de Mar. *(firmada por Mar el 20-nov)*
   - **Qué se hace:** un plan corto, gitignorado, en `docs/plan-pruebas-006.md`. Mar recorre las
     pantallas en local y firma.
   - **Test:** la firma de Mar.
