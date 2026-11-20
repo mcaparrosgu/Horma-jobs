@@ -194,6 +194,13 @@ function detalle(o) {
   return cont;
 }
 
+// «ES» → «España»: el código de país sin traducir no lo entiende todo el mundo (revisión de usabilidad, hallazgo 6).
+const NOMBRES_PAIS = new Intl.DisplayNames(["es"], { type: "region" });
+function nombrePais(codigo) {
+  if (!/^[A-Za-z]{2}$/.test(codigo || "")) return codigo;
+  try { return NOMBRES_PAIS.of(codigo.toUpperCase()) || codigo; } catch (e) { return codigo; }
+}
+
 function filaOferta(o) {
   const id = `detalle-${o.id}`;
   const tr = nodo("tr", null, "fila-oferta");
@@ -234,7 +241,7 @@ function filaOferta(o) {
   tr.append(comp);
 
   tr.append(celda("Salario", "c-salario", nodo("span", o.salario || "No publicado", o.salario ? "" : "suave")));
-  const lugar = [o.remoto ? "Remoto" : null, String(o.pais || "").toLowerCase() === "remoto" ? null : o.pais].filter(Boolean).join(" · ") || o.ubicacion || "—";
+  const lugar = [o.remoto ? "Remoto" : null, String(o.pais || "").toLowerCase() === "remoto" ? null : nombrePais(o.pais)].filter(Boolean).join(" · ") || o.ubicacion || "—";
   tr.append(celda("Lugar", "c-lugar", nodo("span", lugar)));
   tr.append(celda("Publicado", "c-publicado suave", nodo("span", fecha(o.fecha_publicacion || o.creada_en))));
 

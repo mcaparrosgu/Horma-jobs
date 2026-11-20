@@ -282,3 +282,8 @@ def test_objetivos_tactiles_de_44_px():                                         
     cerradas = re.search(r"\.columna-cerrada > summary\{[^}]*min-height: var\(--tap\)", css)
     assert cerradas, "«Cerradas» debe medir al menos var(--tap) de alto"
     assert re.search(r"a\.bloque\{[^}]*min-height: var\(--tap\)", css)
+
+
+def test_pais_en_texto_en_recomendadas():                                                # T17b · hallazgo 6
+    js = leer("recomendadas.js")
+    assert "Intl.DisplayNames" in js and "nombrePais(o.pais)" in js
