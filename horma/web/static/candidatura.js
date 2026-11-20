@@ -220,7 +220,7 @@ function historial() {
 
 // --- borrador de una versión anterior del perfil (RF-5.1f) ---------------------------------------
 function avisoDesfasada() {
-  const d = nodo("div", null, "tarjeta");
+  const d = nodo("div", null, "panel");
   d.append(nodo("p", "Preparada con una versión anterior de tu perfil", "alerta"));
   d.append(nodo("p", "Puedes aprobarla igualmente. Si prefieres que use tu perfil actual, vuelve a prepararla.", "suave"));
   const fila = nodo("div", null, "fila");

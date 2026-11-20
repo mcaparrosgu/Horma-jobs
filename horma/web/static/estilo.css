@@ -276,8 +276,12 @@ details.porque > summary{ color: var(--accent-text); font-size: 0.9rem; }
 .linea-quitada{ border-left: 3px solid var(--line); color: var(--muted); text-decoration: line-through; }
 
 /* ── Tablero de candidaturas ── */
+.columna-cerrada{ background: transparent; border: 0; padding: 0; margin: 0; }
+.columna-cerrada > summary{ min-height: 0; line-height: 1.15; padding-bottom: 6px; margin-bottom: 0.5rem; border-bottom: var(--bw) solid var(--line-strong); }
 .columna-cerrada > summary{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--muted); }
 .panel .lista > li:last-child, .panel .lista-editorial > li:last-child{ border-bottom: 0; }
+.panel > .subtitulo:first-child{ margin-top: 0; }
+.panel .lista > li:first-child, .panel .lista-editorial > li:first-child{ padding-top: 0; }
 .lista-editorial > li.tarjeta{ margin: 0; }
 .tablero{ display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; align-items: start; }
 .columna{ min-width: 0; }
