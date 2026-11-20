@@ -25,6 +25,14 @@ están en `specs/system.md`.
 - La composición de agentes vive solo en `horma/flows/`, detrás de la interfaz `Flow` (RT-12).
 - Solo la API y el worker leen y escriben en Postgres.
 
+## Frontend: simetría y alineación (prioridad alta, RF-6.4b)
+- Cada pantalla se construye con `tokens.css` y `estilo.css` (spec 006): sin colores ni medidas sueltas.
+- Etiquetas, controles y botones de una misma fila comparten alto (`--tap`), separación y línea base.
+  Los formularios van en rejilla, nunca con elementos de alturas distintas.
+- Incluye los controles nativos (`input[type=file]`, `select`, casillas): se estilan para que encajen.
+- Una tarea de frontend no está hecha hasta comprobarla en el navegador a 1280 y 390 px, en claro y
+  en oscuro, mirando expresamente alineación y simetría. Si no se ha podido comprobar, se dice.
+
 ## Flujo de trabajo
 Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementación (TDD) → Validación → Cambio
 
