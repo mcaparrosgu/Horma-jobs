@@ -163,7 +163,7 @@ stale_after: null
     se recorren las 11 pantallas sin desplazamiento horizontal.
   - **Test:** el informe, sin fallos de contraste, nombre ni tamaño de objetivo.
   - **Cubre:** RF-6.7-6.7g.
-- [ ] T17b — Revisión de usabilidad (añadida a petición de Mar el 19-nov). *(20-nov: informe hecho; hallazgo 6 corregido, 4 ya cumplido, 3 y 5 bloqueados por RF-5.3e y RF-5.5d a la espera de Mar)*
+- [x] T17b — Revisión de usabilidad (añadida a petición de Mar el 19-nov). *(20-nov: todos los hallazgos corregidos o decididos por Mar; 3 con enmienda de RF-5.3e (P19), 5 se queda)*
   - **Qué se hace:** Claude recorre las 11 pantallas ya rediseñadas, en móvil y en escritorio, con
     los criterios estándar de usabilidad:
     - claridad de lo que se puede hacer;
