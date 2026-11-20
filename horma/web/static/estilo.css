@@ -305,14 +305,15 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   .cabecera{ padding: 8px var(--pad-page-m) 0; min-height: 56px; }
   .cabecera{ position: sticky; top: 0; z-index: 30; background: var(--bg); flex-wrap: wrap; row-gap: 0; }
   .cabecera .derecha{ order: 2; }
-  #pestanas{
+  #pestanas, .cabecera-admin nav{
     order: 3; flex: 1 1 100%; display: flex; flex-wrap: nowrap; gap: 0; overflow-x: auto; scrollbar-width: none;
     margin: 8px calc(-1 * var(--pad-page-m)) 0; padding: 0 var(--pad-page-m); border-top: var(--bw) solid var(--line);
   }
-  #pestanas::-webkit-scrollbar{ display: none; }
+  #pestanas::-webkit-scrollbar, .cabecera-admin nav::-webkit-scrollbar{ display: none; }
+  .cabecera-admin nav{ flex: 1 1 100%; }
   .pestana{ flex: none; justify-content: center; white-space: nowrap; min-height: 48px; padding: 0 14px; font-size: 14px; }
   .persona{ display: none; }
-  h1, .titulo-pantalla{ font-size: var(--fs-h1-m); margin-top: 24px; }
+  h1, .titulo-pantalla{ font-size: clamp(30px, 9.5vw, var(--fs-h1-m)); margin-top: 24px; overflow-wrap: anywhere; }
   .panel{ padding: 16px; }
   form.panel.fila, fieldset.grupo.panel{ grid-template-columns: 1fr; }
   input:not([type="checkbox"]), select, textarea{ font-size: 16px; }
@@ -326,25 +327,27 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   .tabla-ofertas, .tabla-ofertas tbody, .tabla-ofertas tr, .tabla-ofertas td{ display: block; width: 100%; }
   .tabla-ofertas thead{ display: none; }
   .tabla-ofertas tr.fila-oferta{
-    display: grid; grid-template-columns: 1fr auto; grid-template-areas: "oferta chevron" "puesto publicado" "compat compat" "salario salario" "lugar lugar";
+    display: grid; grid-template-columns: 1fr auto; grid-template-areas: "oferta chevron" "puesto puesto" "compat compat" "salario salario" "lugar lugar" "publicado publicado";
     border-bottom: var(--bw) solid var(--line); padding: 16px 0; gap: 8px 0;
   }
   .tabla-ofertas tr.fila-oferta:has([aria-expanded="true"]){ border-bottom: 0; padding-bottom: 8px; }
   .tabla-ofertas td{ padding: 0; border: 0 !important; }
+  .tabla-ofertas tr.fila-oferta > td{ width: auto; min-width: 0; }
   .tabla-ofertas td.c-oferta{ grid-area: oferta; } .tabla-ofertas td.c-chevron{ grid-area: chevron; padding: 0; }
   .tabla-ofertas td.c-puesto{ grid-area: puesto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .tabla-ofertas td.c-publicado{ grid-area: publicado; color: var(--muted); font-size: 13px; align-self: center; }
+  .tabla-ofertas td.c-publicado{ grid-area: publicado; color: var(--muted); font-size: 13px; }
   .tabla-ofertas td.c-publicado::before{ content: "Publicado "; }
   .tabla-ofertas td.c-compat{ grid-area: compat; }
   .tabla-ofertas td.c-salario{ grid-area: salario; } .tabla-ofertas td.c-lugar{ grid-area: lugar; color: var(--muted); }
   .tabla-ofertas td.c-compat::before, .tabla-ofertas td.c-salario::before{
     content: attr(data-etiqueta); display: block; color: var(--muted); font-size: 12px;
   }
-  .tabla-ofertas td.c-compat{ display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
-  .tabla-ofertas td.c-compat::before{ font-size: 13px; }
+  .tabla-ofertas td.c-compat{ display: block; }
   .tabla-ofertas tr.fila-detalle td{ padding: 8px 0 22px; border-top: 0; border-bottom: var(--bw) solid var(--line); }
   .detalle{ flex-direction: column; gap: 16px; }
   .detalle .acciones{ min-width: 0; }
+  .detalle .porque-cuerpo{ flex: 0 0 auto; }
+  input[type="file"]::file-selector-button{ padding: 0 12px; margin-right: 8px; font-size: 14px; }
   .detalle .acciones button, .detalle .acciones .boton{ min-height: 48px; width: 100%; }
   .detalle .acciones .primario-mov{ order: -1; }
   .barra-contador .derecha{ margin-left: 0; width: 100%; }

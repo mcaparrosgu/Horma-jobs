@@ -234,7 +234,7 @@ function filaOferta(o) {
   tr.append(comp);
 
   tr.append(celda("Salario", "c-salario", nodo("span", o.salario || "No publicado", o.salario ? "" : "suave")));
-  const lugar = [o.remoto ? "Remoto" : null, o.pais].filter(Boolean).join(" · ") || o.ubicacion || "—";
+  const lugar = [o.remoto ? "Remoto" : null, String(o.pais || "").toLowerCase() === "remoto" ? null : o.pais].filter(Boolean).join(" · ") || o.ubicacion || "—";
   tr.append(celda("Lugar", "c-lugar", nodo("span", lugar)));
   tr.append(celda("Publicado", "c-publicado suave", nodo("span", fecha(o.fecha_publicacion || o.creada_en))));
 
