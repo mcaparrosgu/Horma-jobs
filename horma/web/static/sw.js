@@ -1,6 +1,10 @@
 // Service worker de Horma (RF-4.6): guarda solo archivos estáticos; nunca respuestas de la API.
-const VERSION = "horma-v1";
-const BASICOS = ["/static/offline.html", "/static/estilo.css", "/static/iconos/icono-192.png"];
+const VERSION = "horma-v2";
+const BASICOS = [
+  "/static/offline.html", "/static/tokens.css", "/static/estilo.css", "/static/tema.js",
+  "/static/fuentes/familjen-grotesk-latin-wght.woff2", "/static/fuentes/dm-mono-latin-400.woff2",
+  "/static/fuentes/dm-mono-latin-500.woff2", "/static/iconos/icono-192.png",
+];
 
 self.addEventListener("install", (evento) => {
   evento.waitUntil(caches.open(VERSION).then((c) => c.addAll(BASICOS)).then(() => self.skipWaiting()));

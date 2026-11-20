@@ -33,7 +33,7 @@ stale_after: null
   - **Cubre:** todo.
 
 ### Bloque B · Base común (RF-6.1-6.4, RF-6.10)
-- [ ] T02 — Tokens y fuentes.
+- [x] T02 — Tokens y fuentes.
   - **Qué se hace:**
     - `tokens.css` con la paleta clara y la oscura (por `@media` y por `[data-theme]`);
     - la escala tipográfica y `@font-face`;
@@ -41,7 +41,7 @@ stale_after: null
   - **Test:** `tokens.css` declara las dos familias, y los archivos existen y se sirven. El
     oscuro define los mismos tokens que el claro.
   - **Cubre:** RF-6.1-6.1c, RF-6.2-6.2c.
-- [ ] T03 — `estilo.css` reescrito con los componentes.
+- [x] T03 — `estilo.css` reescrito con los componentes.
   - **Qué se hace:**
     - los componentes de RF-6.4 con las clases del plan;
     - foco visible, cortes a 900 px y `prefers-reduced-motion`;
@@ -49,7 +49,7 @@ stale_after: null
   - **Test:** sin hex, `rgb(` ni familias fuera de `tokens.css`; sin `border-radius` distinto de 0;
     `:focus-visible` con `var(--focus)`.
   - **Cubre:** RF-6.4, RF-6.7c, RF-6.7f.
-- [ ] T04 — Cabecera común y tema.
+- [x] T04 — Cabecera común y tema.
   - **Qué se hace:**
     - `arrancar()` pinta la marca, las 6 pestañas (`aria-label="Principal"`), el nombre con su
       inicial (de `/api/perfil`), el botón de tema y «Salir»;
@@ -63,7 +63,7 @@ stale_after: null
     - `index.html` admite `tema.js`.
     Se actualizan los tests de las fases 2 y 3 que pedían `pp`.
   - **Cubre:** RF-6.1d, RF-6.3-6.3d.
-- [ ] T05 — PWA.
+- [x] T05 — PWA.
   - **Qué se hace:**
     - en el manifiesto, `theme_color` y `background_color` 2c;
     - dos `<meta theme-color>` en cada HTML;
@@ -71,7 +71,7 @@ stale_after: null
     - `offline.html` con el estilo 2c.
   - **Test:** el test de la PWA, con los valores nuevos; «Sin conexión» se mantiene.
   - **Cubre:** RF-6.10.
-- [ ] T06 — Guardas de textos.
+- [x] T06 — Guardas de textos.
   - **Qué se hace:** un test que busca «match», «ATS» y «trazabilidad» en los textos visibles de los
     HTML y JS, y corrige lo que encuentre.
   - **Test:** el propio test, que tiene que pasar en verde.

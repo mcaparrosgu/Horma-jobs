@@ -74,6 +74,11 @@ function pintar(r) {
 async function cargar() {
   const sesion = await fetch("/api/yo");
   if (sesion.status === 401) { location.href = "/"; return; }
+  const csrf = (await sesion.json()).csrf;
+  $("salir").addEventListener("click", async () => {
+    await fetch("/auth/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });
+    location.href = "/";
+  });
   const r = await fetch("/api/costes");
   if (!r.ok) {
     $("aviso").className = "error";

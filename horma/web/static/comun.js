@@ -85,7 +85,8 @@ function avisar(texto, esError) {
   if (esError && texto) a.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
-// Pestañas, botón «Salir» y sesión. Sin sesión, a la portada.
+// Cabecera común (RF-6.3): pestañas, nombre con su inicial, botón de tema y «Salir». Sin sesión, a la portada.
+// Nunca se pinta una foto. Sin nombre en el perfil, no se pinta ni el nombre ni la inicial.
 async function arrancar(activa) {
   const r = await fetch("/api/yo");
   if (!r.ok) {
@@ -96,16 +97,43 @@ async function arrancar(activa) {
   csrf = yo.csrf;
   const nav = $("pestanas");
   for (const [etiqueta, ruta] of PESTANAS) {
-    const a = nodo("a", etiqueta, ruta === activa ? "pestana activa" : "pestana");
+    const activaAhora = ruta === activa;
+    const a = nodo("a", etiqueta, activaAhora ? "pestana activa" : "pestana");
     a.href = ruta;
-    if (ruta === activa) a.setAttribute("aria-current", "page");
+    if (activaAhora) a.setAttribute("aria-current", "page");
     nav.append(a);
   }
-  $("salir").addEventListener("click", async () => {
+  const derecha = $("derecha");
+  const persona = nodo("span", null, "persona");
+  derecha.append(persona);
+  const tema = nodo("button", "Tema oscuro", "secundario");
+  tema.type = "button";
+  tema.id = "tema";
+  if (window.vincularTema) window.vincularTema(tema);
+  const salir = nodo("button", "Salir", "secundario");
+  salir.type = "button";
+  salir.id = "salir";
+  salir.addEventListener("click", async () => {
     await fetch("/auth/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });
     location.href = "/";
   });
+  derecha.append(tema, salir);
+  pintarPersona(persona);
   return yo;
+}
+
+// El nombre sale del perfil (GET /api/perfil); si falla o no hay nombre, la cabecera queda sin persona.
+async function pintarPersona(persona) {
+  try {
+    const r = await fetch("/api/perfil");
+    if (!r.ok) return;
+    const nombre = ((await r.json()).perfil || {}).nombre;
+    if (!nombre || !nombre.trim()) return;
+    persona.append(nodo("span", nombre.trim().charAt(0).toUpperCase(), "avatar"), nodo("span", nombre.trim(), "nombre"));
+    persona.firstChild.setAttribute("aria-hidden", "true");
+  } catch (e) {
+    /* sin nombre: la cabecera sigue funcionando */
+  }
 }
 
 // Dibuja el Markdown del CV como un documento (sin HTML pegado: todo va con textContent).
