@@ -1,0 +1,31 @@
+{
+  "titulo": "Gestor/a de proyectos",
+  "empresa": "Obras Levante SL",
+  "ubicacion": null,
+  "remoto": null,
+  "modalidad": null,
+  "contrato": null,
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-13",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "construccion",
+    "familia": "direccion_gestion",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
+}

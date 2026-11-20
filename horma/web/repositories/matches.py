@@ -22,7 +22,8 @@ def listado(s: Session, ids: list[int]) -> list[dict]:
     if not ids:
         return []
     filas = s.execute(text(
-        "select o.id, o.titulo, o.empresa, o.ubicacion, o.pais, o.remoto, o.sector, o.familia, o.nivel, "
+        "select o.id, o.titulo, o.empresa, o.ubicacion, o.pais, o.remoto, o.modalidad, o.sector, o.familia, "
+        "o.nivel, "
         "o.salario_publicado, o.salario_rango, o.salario_minimo, o.salario_maximo, o.salario_moneda, "
         "o.fecha_publicacion, o.url, o.atribucion, o.creada_en, o.usuaria_id is not null as propia, "
         "o.procesada_en as analizada_en, o.fantasma, o.motivos_fantasma, o.fraude, o.senales_fraude, "

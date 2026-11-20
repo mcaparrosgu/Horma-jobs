@@ -12,7 +12,7 @@ from horma.tools.normalizar import huella
 from horma.tools.normalizar_oferta import normalizar_oferta
 
 COLUMNAS_LISTA = (
-    "o.id, o.estado, o.motivo_error, o.titulo, o.empresa, o.ubicacion, o.remoto, o.contrato, "
+    "o.id, o.estado, o.motivo_error, o.titulo, o.empresa, o.ubicacion, o.remoto, o.modalidad, o.contrato, "
     "o.salario_minimo, o.salario_maximo, o.salario_moneda, o.idiomas, o.fecha_publicacion, o.url, "
     "o.instrucciones_embebidas, o.fantasma, o.motivos_fantasma, o.fraude, o.senales_fraude, "
     "o.dominio_empresa, o.empresa_validada, o.salario_publicado, o.salario_rango, "
@@ -74,13 +74,14 @@ def para_procesar(s: Session, oferta_id: int) -> dict:
     """Lo que necesita el flujo: texto, fuente, url y si el mismo texto ya entró antes. Solo cuenta
     dentro de la misma dueña (o dentro del catálogo común): la oferta de otra usuaria no la hace repetida."""
     fila = s.execute(text(
-        "select o.texto_crudo, o.url, f.nombre as fuente, exists(select 1 from ofertas p "
+        "select o.texto_crudo, o.url, f.nombre as fuente, o.usuaria_id is not null as propia, "
+        "exists(select 1 from ofertas p "
         "where p.huella = o.huella and p.id < o.id "
         "and p.usuaria_id is not distinct from o.usuaria_id) as repetida "
         "from ofertas o left join fuentes f on f.id = o.fuente_id where o.id=:i"),
         {"i": oferta_id}).mappings().one()
     return {"texto": fila["texto_crudo"], "url": fila["url"], "fuente": fila["fuente"],
-            "repetida": fila["repetida"]}
+            "repetida": fila["repetida"], "propia": fila["propia"]}
 
 
 def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str]]) -> None:
@@ -90,7 +91,7 @@ def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str
     n = normalizar_oferta(o, texto)  # país, contrato, idiomas y sueldo anual para filtrar (P16)
     s.execute(text(
         "update ofertas set estado='procesada', motivo_error=null, procesada_en=now(), "
-        "titulo=:titulo, empresa=:empresa, ubicacion=:ubicacion, remoto=:remoto, "
+        "titulo=:titulo, empresa=:empresa, ubicacion=:ubicacion, remoto=:remoto, modalidad=:modalidad, "
         "contrato=:contrato, salario_minimo=:smin, salario_maximo=:smax, salario_moneda=:smon, "
         "idiomas=cast(:idiomas as jsonb), requisitos=cast(:req as jsonb), fecha_publicacion=:fecha, "
         "url=coalesce(:url, url), instrucciones_embebidas=cast(:instr as jsonb), "
@@ -102,7 +103,8 @@ def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str
         "idiomas_norm=cast(:idiomas_norm as text[]), salario_anual_eur_min=:anual_min, "
         "salario_anual_eur_max=:anual_max where id=:id"),
         {"id": oferta_id, "titulo": o.titulo, "empresa": o.empresa, "ubicacion": o.ubicacion,
-         "remoto": o.remoto, "contrato": o.contrato, "smin": sal.minimo if sal else None,
+         "remoto": o.remoto, "modalidad": o.modalidad,
+         "contrato": o.contrato, "smin": sal.minimo if sal else None,
          "smax": sal.maximo if sal else None, "smon": sal.moneda if sal else None,
          "idiomas": j(o.idiomas), "req": j(o.requisitos), "fecha": o.fecha_publicacion,
          "url": str(o.url) if o.url else None, "instr": j(o.instrucciones_embebidas),
@@ -152,7 +154,7 @@ def completas(s: Session, ids: list[int]) -> dict[int, Oferta]:
     if not ids:
         return {}
     filas = s.execute(text(
-        "select id, titulo, empresa, ubicacion, remoto, contrato, salario_minimo, salario_maximo, "
+        "select id, titulo, empresa, ubicacion, remoto, modalidad, contrato, salario_minimo, salario_maximo, "
         "salario_moneda, idiomas, requisitos, fecha_publicacion, url, instrucciones_embebidas, "
         "fantasma, motivos_fantasma, fraude, senales_fraude, dominio_empresa, empresa_validada, "
         "salario_publicado, salario_rango, frase_pedir_salario, sector, familia, nivel, stack "
@@ -168,7 +170,8 @@ def completas(s: Session, ids: list[int]) -> dict[int, Oferta]:
                 moneda=f["salario_moneda"])
         salida[f["id"]] = Oferta(
             titulo=f["titulo"] or "sin título", empresa=f["empresa"], ubicacion=f["ubicacion"],
-            remoto=f["remoto"], contrato=f["contrato"], salario=salario, idiomas=f["idiomas"],
+            remoto=f["remoto"], modalidad=f["modalidad"], contrato=f["contrato"], salario=salario,
+            idiomas=f["idiomas"],
             requisitos=f["requisitos"], fecha_publicacion=f["fecha_publicacion"],
             url=_url_valida(f["url"]), instrucciones_embebidas=f["instrucciones_embebidas"],
             auditoria=Auditoria(

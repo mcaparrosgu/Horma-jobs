@@ -15,9 +15,8 @@
   <header class="cabecera cabecera-admin">
     <a class="marca" href="/">Horma</a>
     <nav aria-label="Administración">
-      <a class="pestana" href="/ingesta">Ingesta</a>
-      <a class="pestana activa" href="/costes" aria-current="page">Costes</a>
-      <a class="pestana" href="/">Ofertas</a>
+      <a class="pestana activa" href="/ingesta" aria-current="page">Admin</a>
+      <a class="pestana" href="/recomendadas">Volver a Horma</a>
     </nav>
     <div class="derecha">
       <button id="tema" class="secundario" type="button">Tema oscuro</button>
@@ -25,6 +24,10 @@
     </div>
   </header>
   <main class="ancho">
+    <nav class="subpestanas" aria-label="Admin">
+      <a class="pestana" href="/ingesta">Ingesta</a>
+      <a class="pestana activa" href="/costes" aria-current="page">Costes</a>
+    </nav>
     <h1 class="titulo-pantalla">Costes y errores</h1>
     <p id="aviso" role="status"></p>
 

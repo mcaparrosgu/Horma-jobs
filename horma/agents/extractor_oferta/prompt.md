@@ -19,5 +19,9 @@ Reglas:
 - `contrato`: solo el tipo de contrato en una o dos palabras (p. ej. «indefinido», «temporal»,
   «prácticas», «autónomo»); sin jornada ni otros datos. Vacío si el texto no lo dice.
 - `idiomas`: los idiomas que se piden, en español y en minúsculas.
-- `remoto`: verdadero solo si el texto dice que se puede trabajar en remoto; falso si exige
-  presencialidad; vacío si no lo dice.
+- `modalidad`: `remoto` si el texto dice que se trabaja en remoto y no exige ninguna presencialidad;
+  `hibrido` si exige ir alguna vez a una oficina o sede, aunque sea ocasional (p. ej. «un día al mes en la
+  oficina», o viajes obligatorios a una sede); `presencial` si exige trabajar en el lugar; vacío si el
+  texto no lo dice. Vivir en un país o región concretos («remoto, residencia en España») NO es
+  presencialidad: sigue siendo `remoto`. Los viajes ocasionales a clientes no hacen `hibrido` salvo que
+  sean obligatorios y a una sede. No rellenes `remoto`: se deduce de `modalidad`.

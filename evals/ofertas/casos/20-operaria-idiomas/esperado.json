@@ -3,6 +3,7 @@
   "empresa": "Envases Ribera",
   "ubicacion": "Logroño",
   "remoto": false,
+  "modalidad": "presencial",
   "contrato": null,
   "salario": null,
   "idiomas": [

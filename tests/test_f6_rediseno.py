@@ -286,4 +286,4 @@ def test_objetivos_tactiles_de_44_px():  # T17 · RF-6.7b
 
 def test_pais_en_texto_en_recomendadas():  # T17b · hallazgo 6
     js = leer("recomendadas.js")
-    assert "Intl.DisplayNames" in js and "nombrePais(o.pais)" in js
+    assert "nombrePais(o.pais)" in js and "Intl.DisplayNames" in leer("comun.js")

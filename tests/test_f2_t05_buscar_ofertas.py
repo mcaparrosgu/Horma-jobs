@@ -28,13 +28,14 @@ def test_solo_se_pasan_los_parametros_de_los_filtros_activos():
 # --- comportamiento en Postgres ----------------------------------------------------------------
 TABLA = """
 CREATE TEMP TABLE ofertas (
-    id int PRIMARY KEY, estado text, recomendable boolean, remoto boolean, sector text, familia text,
-    nivel text, pais text, tipo_contrato text, idiomas_norm text[], salario_publicado boolean,
+    id int PRIMARY KEY, estado text, recomendable boolean, remoto boolean, modalidad text, sector text,
+    familia text, nivel text, pais text, tipo_contrato text, idiomas_norm text[], salario_publicado boolean,
     salario_anual_eur_min numeric, salario_anual_eur_max numeric, creada_en timestamptz,
     usuaria_id int
 ) ON COMMIT DROP
 """
-_DEFECTO = dict(estado="procesada", recomendable=True, remoto=None, sector="hosteleria_turismo",
+_DEFECTO = dict(estado="procesada", recomendable=True, remoto=None, modalidad=None,
+                sector="hosteleria_turismo",
                 familia="hosteleria_restauracion", nivel="junior", pais="ES", tipo_contrato="indefinido",
                 idiomas_norm=["es"], salario_publicado=True, salario_anual_eur_min=None,
                 salario_anual_eur_max=None, creada_en="2026-11-01", usuaria_id=None)
@@ -127,10 +128,13 @@ def test_sueldo_minimo_y_ofertas_no_comparables(conexion):
 
 @pytest.mark.bd
 def test_solo_remoto_y_solo_salario(conexion):
-    _insertar(conexion, 1, remoto=True)
-    _insertar(conexion, 2, remoto=False)
-    _insertar(conexion, 3, remoto=None)
-    assert sorted(_ids(conexion, Preferencias(solo_remoto=True))) == [1, 3]
+    _insertar(conexion, 1, modalidad="remoto")
+    _insertar(conexion, 2, modalidad="hibrido")
+    _insertar(conexion, 3, modalidad=None)
+    _insertar(conexion, 5, modalidad="presencial")
+    _insertar(conexion, 6, modalidad=None, usuaria_id=1)  # propia sin dato: tampoco pasa (RF-7.1c)
+    _insertar(conexion, 7, modalidad="remoto", usuaria_id=1)  # propia remota: pasa
+    assert sorted(_ids(conexion, Preferencias(solo_remoto=True))) == [1, 7]  # RF-7.1c, estricto
     _insertar(conexion, 4, salario_publicado=False)
     assert 4 not in _ids(conexion, Preferencias(solo_salario=True))
 
@@ -160,12 +164,13 @@ def test_excluir_ids_y_limite(conexion):
     assert _ids(conexion, limite=2) == [5, 4]
 
 
-def test_las_propias_pasan_siempre_aunque_no_cumplan_nada(conexion):
-    """Fase 5 (RF-5.3e, P17): una oferta propia sale aunque sea fantasma/fraude o no pase los filtros."""
+def test_las_propias_se_filtran_igual_pero_no_se_les_exige_recomendable(conexion):
+    """RF-7.1f (modifica RF-5.3e): las propias se filtran igual; solo `recomendable` se les perdona."""
     _insertar(conexion, 1)  # del catálogo y recomendable
     _insertar(conexion, 2, recomendable=False)  # del catálogo y fantasma: fuera
     _insertar(conexion, 3, usuaria_id=7, recomendable=False, pais="FR", familia="otros",
-              salario_publicado=False)  # propia, fantasma y fuera de los filtros: dentro
+              salario_publicado=False)  # propia fuera de los filtros: fuera, como cualquiera
+    _insertar(conexion, 5, usuaria_id=7, recomendable=False)  # propia, fantasma, dentro de filtros: dentro
     _insertar(conexion, 4, usuaria_id=7, estado="pendiente")  # propia aún sin procesar: fuera
     prefs = Preferencias(paises=["ES"], familias=["hosteleria_restauracion"], solo_salario=True)
-    assert sorted(f[0] for f in _buscar(conexion, prefs)) == [1, 3]
+    assert sorted(f[0] for f in _buscar(conexion, prefs)) == [1, 5]

@@ -12,7 +12,8 @@ Reglas:
   - 80-100: muy alto; cumple todo lo esencial. De 90 a 100 solo si además encaja en nivel y sector.
 - `condiciones`: pon siempre «medio». No lo valores: lo calcula el código.
 - `explicacion`: 2 o 3 frases que citen datos concretos del perfil y de la oferta. No uses
-  generalidades.
+  generalidades. Háblale a la persona en segunda persona («tienes experiencia en…», «te falta…»):
+  nunca uses su nombre ni la tercera persona («Lucía tiene…», «la candidata…»).
 - `cita_perfil` y `cita_oferta`: un fragmento literal del perfil y otro de la oferta en los que se
   apoya la explicación.
 - No menciones ni uses para puntuar edad, sexo, nacionalidad, estado civil, hijos, salud ni

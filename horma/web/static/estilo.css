@@ -40,6 +40,10 @@ main.muy-ancho{ max-width: 1280px; }
   font-size: 14px; font-weight: 600;
 }
 .cabecera-admin nav{ flex: 0 1 auto; }
+.subpestanas{ display: flex; gap: 2px; margin: 0 0 1.25rem; border-bottom: var(--bw) solid var(--line-strong); }
+.filtro-fuentes{ display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: end; margin: 0 0 1rem; }
+.filtro-fuentes > label{ margin: 0; min-width: 0; }
+@media (max-width: 600px){ .filtro-fuentes{ grid-template-columns: minmax(0, 1fr); } }
 
 /* ── Títulos y textos ── */
 h1, .titulo-pantalla{

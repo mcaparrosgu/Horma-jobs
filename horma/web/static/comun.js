@@ -104,6 +104,11 @@ async function arrancar(activa) {
     nav.append(a);
     if (activaAhora) requestAnimationFrame(() => a.scrollIntoView({ inline: "center", block: "nearest" }));
   }
+  if (yo.admin) {   // RF-7.7: «Admin» solo para administradoras, la última pestaña
+    const a = nodo("a", "Admin", "pestana");
+    a.href = "/ingesta";
+    nav.append(a);
+  }
   const derecha = $("derecha");
   const persona = nodo("span", null, "persona");
   derecha.append(persona);
@@ -205,6 +210,29 @@ function etiqueta(valor) {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
 
+// Nombres enteros en español (RF-7.4): «ES» → «España», «en» → «Inglés». Sin nombre conocido, el código tal cual.
+const NOMBRES_PAIS = new Intl.DisplayNames(["es"], { type: "region" });
+const NOMBRES_IDIOMA = new Intl.DisplayNames(["es"], { type: "language" });
+function nombrePais(codigo) {
+  if (String(codigo || "").toUpperCase() === "REMOTO") return "Remoto (cualquier país)";
+  if (!/^[A-Za-z]{2}$/.test(codigo || "")) return codigo;
+  try { return NOMBRES_PAIS.of(codigo.toUpperCase()) || codigo; } catch (e) { return codigo; }
+}
+function nombreIdioma(codigo) {
+  if (!/^[A-Za-z]{2,3}$/.test(codigo || "")) return etiqueta(codigo);
+  try {
+    const n = NOMBRES_IDIOMA.of(String(codigo).toLowerCase());
+    return !n || n.toLowerCase() === String(codigo).toLowerCase() ? codigo : n.charAt(0).toUpperCase() + n.slice(1);
+  } catch (e) { return codigo; }
+}
+const MODALIDADES = { remoto: "Remoto", hibrido: "Híbrido", presencial: "Presencial" };
+function nombreModalidad(valor) { return MODALIDADES[valor] || ""; }
+function nombreOpcion(clave, valor) {
+  if (clave === "paises") return nombrePais(valor);
+  if (clave === "idiomas") return nombreIdioma(valor);
+  return etiqueta(valor);
+}
+
 // --- Casillas por grupo (Preferencias y barra de filtros de Recomendadas) ------------------------
 const GRUPOS = [
   ["familias", "Puestos"], ["sectores", "Sector"], ["contratos", "Tipo de contrato"],
@@ -243,7 +271,7 @@ function grupoCasillas(clave, titulo, opciones, marcados, { plegable = false, or
     i.value = o.valor;
     i.checked = marcados.includes(o.valor);
     if (alCambiar) i.addEventListener("change", alCambiar);
-    l.append(i, nodo("span", `${etiqueta(o.valor)} (${o.n})`));
+    l.append(i, nodo("span", `${nombreOpcion(clave, o.valor)} (${o.n})`));
     caja.append(l);
   }
   cont.append(caja);

@@ -3,6 +3,7 @@
   "empresa": "Moda Lola",
   "ubicacion": "Sevilla",
   "remoto": false,
+  "modalidad": "presencial",
   "contrato": "media jornada",
   "salario": null,
   "idiomas": [],

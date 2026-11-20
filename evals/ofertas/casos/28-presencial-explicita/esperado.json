@@ -1,0 +1,31 @@
+{
+  "titulo": "Cocinero/a",
+  "empresa": "Restaurante El Puerto",
+  "ubicacion": "Cádiz",
+  "remoto": false,
+  "modalidad": "presencial",
+  "contrato": null,
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-12",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
+}

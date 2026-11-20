@@ -80,7 +80,7 @@ def crear(proveedor: Proveedor | None = None,
         instr, o_instr = origen_oferta.literales(texto, modelo.instrucciones_embebidas,
                                                  "instrucciones_embebidas")
         stack, o_stack = origen_oferta.literales(texto, tax.stack, "stack")
-        motivos = [m for m, si in (("sin_fecha", not extraida.fecha_publicacion),
+        motivos = [m for m, si in (("sin_fecha", not extraida.fecha_publicacion and not e.get("propia")),
                                    ("repetida", bool(e.get("repetida"))),
                                    ("generica", modelo.generica)) if si]
         publicado = _rango(extraida) is not None

@@ -60,11 +60,15 @@ def con_origen(texto: str, o: OfertaExtraida) -> tuple[OfertaExtraida, Origenes]
         datos["url"] = o.url
         origenes.append(("url", linea))
 
-    if o.remoto is not None:
-        marca = re.search(r"remot|teletrabajo|presencial|híbrid|hibrid", texto, re.I)
+    if o.modalidad is not None or o.remoto is not None:
+        marca = re.search(r"remot|teletrabajo|presencial|híbrid|hibrid|oficina|desde casa|home ?office",
+                          texto, re.I)
         if marca and (linea := linea_con(texto, marca.group(0))):
-            datos["remoto"] = o.remoto
-            origenes.append(("remoto", linea))
+            if o.modalidad is not None:
+                datos["modalidad"] = o.modalidad
+            else:
+                datos["remoto"] = o.remoto
+            origenes.append(("modalidad" if o.modalidad is not None else "remoto", linea))
 
     if o.salario:
         s = o.salario

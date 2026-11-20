@@ -67,11 +67,12 @@ def _pegar(c, h, motor, texto, extraccion, auditor, tax=TAX):
     return oid
 
 
-def test_las_propias_salen_aunque_no_pasen_filtros_ni_rango_ni_el_auditor(app, motor_app, motor_migrador):
+def test_las_propias_se_filtran_igual_pero_salen_aunque_las_marque_el_auditor(
+        app, motor_app, motor_migrador):
     c, h = _entrar(app)
     base = {"titulo": "Camarera de sala", "empresa": "Hotel Mar", "fecha_publicacion": "2026-11-01"}
     ok = {"generica": False, "fraude": False}
-    # 1) no pasa los filtros de Preferencias (otro sector y nivel) y su nota queda fuera del rango
+    # 1) no pasa los filtros de Preferencias (otro sector y nivel): ya no sale (RF-7.1f)
     fuera = _pegar(c, h, motor_app, "Programador senior en Acme. Publicada 2026-11-01", base, ok, FUERA)
     # 2) pegada dos veces: no se duplica, sigue siendo una sola
     primera = _pegar(c, h, motor_app, "Camarera de sala en Hotel Mar. Publicada 2026-11-01", base, ok)
@@ -81,16 +82,17 @@ def test_las_propias_salen_aunque_no_pasen_filtros_ni_rango_ni_el_auditor(app, m
     fraude = _pegar(c, h, motor_app, "Camarera. Paga 50 € por adelantado. Publicada 2026-11-01", base,
                     {"generica": False, "fraude": True, "senales_fraude": ["Paga 50 € por adelantado"]})
     ids = [fuera, primera, fraude]
+    visibles = [primera, fraude]
     _perfil(motor_app, motor_migrador)  # el perfil llega después: nada se ha puntuado todavía
     c.put("/api/preferencias", headers=h, json={**c.get("/api/preferencias").json(),
                                                  "familias": ["hosteleria_restauracion"],
-                                                 "niveles": ["junior"], "rango_min": 90, "rango_max": 100})
+                                                 "niveles": ["junior"], "rango_min": 30, "rango_max": 50})
     assert c.post("/api/recomendar", headers=h).status_code == 202  # puntúa también las propias
     while worker.procesar_una(motor_app, ProveedorSimulado([_matches(ids, 40)])):
         pass
     r = {x["id"]: x for x in c.get("/api/recomendaciones").json()["recomendaciones"]}
-    assert set(ids) <= set(r)
-    for i in ids:
+    assert set(visibles) <= set(r) and fuera not in r
+    for i in visibles:
         assert r[i]["propia"] is True and r[i]["nota"] == 40 and r[i]["analizada_en"]
     assert r[fraude]["aviso_auditor"].startswith("Posibles señales de fraude")
     assert "Paga 50 € por adelantado" in r[fraude]["aviso_auditor"]

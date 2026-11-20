@@ -19,7 +19,7 @@ composición, en `horma/flows/`).
 | Requisito | Dónde |
 |---|---|
 | RF-7.1 modalidad | migración `0019_fase7_modalidad.py`; `schemas/oferta.py`; `agents/extractor_oferta/prompt.md`; `tools/origen_oferta.py`; `repositories/ofertas.py` y `matches.py`; `evals.py` y `evals/ofertas/casos/` |
-| RF-7.1c filtro | `tools/buscar_ofertas.py`; `tools/evaluar_condiciones.py` |
+| RF-7.1c filtro | `tools/buscar_ofertas.py`; `tools/evaluar_condiciones.py`; `routers/recomendaciones.py` (rango de nota) |
 | RF-7.1d-e pantalla | `preferencias.html`, `recomendadas.js`, `comun.js` |
 | RF-7.2 propias | `queue/worker.py` (pasa `propia`); `flows/procesar_oferta.py` (`componer`); `recomendadas.js`, `anadir-oferta.js` |
 | RF-7.3 segunda persona | `agents/matcher/prompt.md`; comprobación en `evals.py` |
@@ -42,8 +42,8 @@ composición, en `horma/flows/`).
   mes, remota con residencia obligatoria, presencial y sin dato.
 
 ## Filtro estricto (RF-7.1c)
-- `buscar_ofertas`: con `solo_remoto`, la condición pasa a `modalidad = 'remoto'`. Las propias siguen
-  entrando por la rama `usuaria_id IS NOT NULL`. El docstring documenta la excepción a «falta el dato → pasa».
+- `buscar_ofertas`: con `solo_remoto`, la condición pasa a `modalidad = 'remoto'`. Se aplica también a las
+  propias, igual que todos los filtros y el rango de nota (RF-7.1f): `recomendable` es lo único que no se les exige.
 - `evaluar_condiciones`: `solo_remoto` se evalúa con `modalidad`; sin dato → «no cumple».
 
 ## Ofertas propias (RF-7.2)

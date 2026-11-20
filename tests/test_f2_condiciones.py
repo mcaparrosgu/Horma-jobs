@@ -9,6 +9,7 @@ from horma.tools.evaluar_condiciones import evaluar_condiciones
 
 def oferta(**campos) -> Oferta:
     base = {"titulo": "Camarera", "contrato": "indefinido", "ubicacion": "Valencia", "remoto": False,
+            "modalidad": "presencial",
             "salario": {"minimo": 17000, "maximo": 19000, "moneda": "EUR"}, "idiomas": [],
             "auditoria": Auditoria(fantasma=False, fraude=False, salario_publicado=True),
             "taxonomia": Taxonomia(sector="hosteleria_turismo", familia="hosteleria_restauracion",
@@ -45,3 +46,10 @@ def test_un_dato_que_la_oferta_no_dice_no_cuenta_en_contra_pero_baja_a_medio_si_
 def test_incumplir_una_gana_a_no_tener_dato_de_otra():
     p = Preferencias(contratos=["temporal"], sueldo_minimo=16000)
     assert evaluar_condiciones(oferta(salario=None), p) == "bajo"
+
+
+def test_solo_remoto_es_estricto_con_la_modalidad():  # RF-7.1c
+    p = Preferencias(solo_remoto=True)
+    assert evaluar_condiciones(oferta(modalidad="remoto"), p) == "alto"
+    assert evaluar_condiciones(oferta(modalidad="hibrido"), p) == "bajo"
+    assert evaluar_condiciones(oferta(modalidad=None, remoto=None), p) == "bajo"

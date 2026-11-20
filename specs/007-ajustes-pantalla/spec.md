@@ -27,7 +27,11 @@ Las respuestas del Clarify están en [clarifications.md](./clarifications.md) y 
 - **RF-7.1b** Las ofertas ya guardadas NO DEBERÁN volver a procesarse: quedan sin modalidad (P1).
 - **RF-7.1c** CUANDO «Solo remoto» esté marcado (en Preferencias o en el filtro de Recomendadas), SOLO
   DEBERÁN pasar las ofertas con modalidad `remoto`. Las que no tienen el dato NO DEBERÁN pasar (P7).
-  Las ofertas propias de la usuaria siguen pasando siempre (RF-5.3e).
+  Las ofertas propias de la usuaria se filtran igual que las de Horma (ver RF-7.1f).
+- **RF-7.1f** Los filtros de Preferencias y de Recomendadas (puestos, sector, contrato, nivel, país, idiomas,
+  «Solo remoto», «Solo con salario», sueldo mínimo) y el rango de nota DEBERÁN aplicarse por igual a las
+  ofertas propias y a las del catálogo (cambio pedido por Mar el 20-nov en la prueba manual; modifica RF-5.3e).
+  Se mantiene que a las propias no se les exige «recomendable», y que se ven con su aviso del auditor.
 - **RF-7.1d** La casilla DEBERÁ explicar en una línea: «Solo ofertas 100 % en remoto. Si piden ir a la
   oficina alguna vez, no salen.»
 - **RF-7.1e** Donde hoy se enseña «Remoto», DEBERÁ enseñarse la modalidad: «Remoto», «Híbrido» o

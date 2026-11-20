@@ -5,10 +5,13 @@ repositorio los ejecuta (frontera «solo la API y el worker leen Postgres»).
 
 Reglas:
 - Solo ofertas procesadas y recomendables (ni fantasma ni fraude), SALVO las propias de la usuaria
-  (`usuaria_id` con valor; la RLS deja ver solo las suyas): esas pasan siempre, sin filtros ni
-  recomendable, y la usuaria decide qué hacer con ellas (RF-5.3e, P17).
+  (`usuaria_id` con valor; la RLS deja ver solo las suyas): a esas no se les exige `recomendable`, y
+  la usuaria decide qué hacer con ellas (RF-5.3e, P17). Los filtros de Preferencias valen igual para
+  las propias y para las del catálogo (RF-7.1f).
 - Solo se descarta una oferta si el dato EXISTE y no coincide con el filtro. Si falta (o no es
   comparable), pasa (P2, P17). Un grupo de preferencias vacío no filtra.
+  EXCEPCIÓN (RF-7.1c): con «solo remoto», solo pasan las de `modalidad = 'remoto'`;
+  sin dato, no pasan.
 - Una oferta remota o sin país fijo pasa el filtro de país; si la usuaria marca «REMOTO», también
   pasan las ofertas con `remoto = true` de cualquier país.
 - El sueldo mínimo es en euros brutos al año y se compara con el máximo (o el mínimo si no hay
@@ -29,7 +32,7 @@ class Consulta:
 
 def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
                    excluir_ids: list[int] | tuple[int, ...] = (), limite: int | None = None) -> Consulta:
-    condiciones = ["recomendable"]
+    condiciones: list[str] = []
     p: dict = {}
 
     def lista(nombre: str, valores: list) -> str:
@@ -53,16 +56,17 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
     if prefs.idiomas:
         condiciones.append("(idiomas_norm IS NULL OR cardinality(idiomas_norm) = 0 OR "
                            f"idiomas_norm && {lista('idiomas', prefs.idiomas)})")
-    if prefs.solo_remoto:
-        condiciones.append("(remoto IS NULL OR remoto OR pais = 'REMOTO')")
     if prefs.solo_salario:
         condiciones.append("salario_publicado IS NOT FALSE")
     if prefs.sueldo_minimo is not None:
         p["sueldo_minimo"] = prefs.sueldo_minimo
         condiciones.append("((salario_anual_eur_min IS NULL AND salario_anual_eur_max IS NULL) OR "
                            "coalesce(salario_anual_eur_max, salario_anual_eur_min) >= :sueldo_minimo)")
-    catalogo = " AND ".join(condiciones)
-    donde = ["estado = 'procesada'", f"(usuaria_id IS NOT NULL OR ({catalogo}))"]
+    if prefs.solo_remoto:
+        condiciones.append("modalidad = 'remoto'")
+    # Los filtros valen igual para las propias y las del catálogo (RF-7.1f). Solo «recomendable» (ni fantasma
+    # ni fraude) se les perdona: la usuaria ve sus ofertas con el aviso del auditor (RF-5.3e).
+    donde = ["estado = 'procesada'", "(usuaria_id IS NOT NULL OR recomendable)", *condiciones]
     if excluir_ids:
         p["excluir_ids"] = list(excluir_ids)
         donde.append("NOT (id = ANY(CAST(:excluir_ids AS int[])))")

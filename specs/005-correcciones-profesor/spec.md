@@ -87,9 +87,8 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
   tiene perfil, ENTONCES DEBERÁ puntuarse en cuanto lo tenga, sin que ella haga nada.
 - **RF-5.3e** **TODAS** las ofertas que la usuaria añade, por texto o por URL, DEBERÁN aparecer en
   Recomendadas con su evaluación hecha y la marca «Añadida por ti · analizada el <fecha>», sin
-  excepción (P17): aunque no pasen los filtros de Preferencias ni el rango de nota y aunque el auditor
-  las marque como fantasma o con señales de fraude. Con señales de fraude, DEBERÁ verse el aviso del
-  auditor; con «fantasma», NO DEBERÁ avisarse, porque la ha pegado ella (P19).
+  excepción (P17), aunque el auditor las marque como fantasma o con señales de fraude. Con señales de fraude, DEBERÁ verse el aviso del
+  auditor; con «fantasma», NO DEBERÁ avisarse, porque la ha pegado ella (P19). **Cambio de la fase 7 (RF-7.1f, 20-nov):** los filtros de Preferencias y el rango de nota SÍ se aplican también a las propias.
   SI la usuaria pega otra vez un texto igual (misma huella) a una oferta suya que no falló, ENTONCES
   el sistema NO DEBERÁ crear otra ni volver a procesarla ni puntuarla: devuelve la que ya tiene (P18). Desde ahí DEBERÁ poder prepararse la candidatura como con cualquier otra.
   Solo queda fuera una URL que no se pudo leer, porque no hay oferta: se pide pegar el texto.

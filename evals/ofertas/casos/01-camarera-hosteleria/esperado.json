@@ -3,6 +3,7 @@
   "empresa": "Bar La Marina",
   "ubicacion": "Valencia",
   "remoto": false,
+  "modalidad": "presencial",
   "contrato": "indefinido",
   "salario": {
     "minimo": 16000.0,

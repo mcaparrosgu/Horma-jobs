@@ -21,8 +21,8 @@
     <h1 class="titulo-pantalla">Perfil</h1>
     <p id="aviso" role="status"></p>
 
-    <section>
-      <h2 class="etiqueta-mono">Tus CV</h2>
+    <section class="panel" aria-labelledby="t-cv">
+      <h2 id="t-cv" class="etiqueta-mono">Tus CV</h2>
       <p class="entradilla">Sube tu CV (PDF, DOCX o Markdown) y Horma construye tu perfil. Un CV «estético» se guarda tal cual, sin procesarlo.</p>
       <form id="subir" class="fila panel">
         <label class="archivo">Archivo
@@ -47,8 +47,24 @@
       <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún CV.</p>
     </section>
 
-    <section id="estilo" aria-labelledby="t-estilo" hidden>
-      <h2 id="t-estilo" class="etiqueta-mono">Tu estilo de redacción</h2>
+    <section id="mi-perfil" class="panel" aria-labelledby="t-perfil">
+      <h2 id="t-perfil" class="etiqueta-mono">Mi perfil <span id="version" class="estado"></span></h2>
+      <div id="estado-perfil"></div>
+      <div id="datos" hidden>
+        <p id="aviso-edicion"><strong>Horma escribe tus CV y cartas con lo que ves aquí.</strong> Si corriges algo, Horma usará tu corrección aunque tu CV original diga otra cosa. Tu CV original no se toca: se queda tal como lo subiste.</p>
+        <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y los CV base y recomendaciones anteriores quedan «desfasados».</p>
+        <div id="perfil"></div>
+      </div>
+    </section>
+
+    <details id="pendientes" class="panel-desplegado" hidden>
+      <summary>Preguntas pendientes <span id="n-pendientes" class="estado"></span></summary>
+      <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti.</p>
+      <ul id="lista-pendientes" class="lista-editorial"></ul>
+    </details>
+
+    <details id="estilo" class="panel-desplegado" hidden>
+      <summary>Tu estilo de redacción</summary>
       <p class="suave">Horma escribe tus CV y cartas como escribes tú. Esta guía sale de tus CV y cartas (pesan más los que marcas «Lo escribí yo»); solo se calcula una vez. Lo que edites aquí manda.</p>
       <p id="estilo-estado" class="suave"></p>
       <div id="estilo-guia"></div>
@@ -56,22 +72,7 @@
         <button id="estilo-editar" class="secundario" type="button" hidden>Editar guía</button>
         <button id="estilo-reanalizar" class="secundario" type="button">Volver a analizar mi estilo</button>
       </div>
-    </section>
-
-    <section id="estado-perfil"></section>
-
-    <section id="pendientes" hidden>
-      <h2 class="etiqueta-mono">Preguntas pendientes</h2>
-      <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti.</p>
-      <ul id="lista-pendientes" class="lista-editorial"></ul>
-    </section>
-
-    <section id="datos" hidden>
-      <h2 class="etiqueta-mono">Tu perfil <span id="version" class="estado"></span></h2>
-      <p id="aviso-edicion" class="suave"><strong>Lo que edites aquí manda sobre tus CV subidos y se usa para redactar todos tus CV y cartas.</strong> Tus CV subidos nunca se modifican.</p>
-      <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y los CV base y recomendaciones anteriores quedan «desfasados».</p>
-      <div id="perfil"></div>
-    </section>
+    </details>
   </main>
   <dialog id="visor" class="visor" aria-label="Vista del CV">
     <header class="fila"><h3 id="visor-titulo" class="titulo-oferta"></h3><button id="visor-cerrar" class="secundario" type="button">Cerrar</button></header>

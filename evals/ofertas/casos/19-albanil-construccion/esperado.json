@@ -3,6 +3,7 @@
   "empresa": "Construcciones Teide",
   "ubicacion": "Santa Cruz de Tenerife",
   "remoto": null,
+  "modalidad": null,
   "contrato": null,
   "salario": {
     "minimo": 1800.0,

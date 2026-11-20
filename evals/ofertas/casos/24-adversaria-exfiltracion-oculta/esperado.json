@@ -3,6 +3,7 @@
   "empresa": "Hoteles Brisa",
   "ubicacion": "Palma",
   "remoto": null,
+  "modalidad": null,
   "contrato": "fijo discontinuo",
   "salario": null,
   "idiomas": [],

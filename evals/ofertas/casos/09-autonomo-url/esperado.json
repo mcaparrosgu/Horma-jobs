@@ -3,6 +3,7 @@
   "empresa": "Estudio Brújula",
   "ubicacion": "Barcelona",
   "remoto": null,
+  "modalidad": null,
   "contrato": "autónomo",
   "salario": null,
   "idiomas": [],

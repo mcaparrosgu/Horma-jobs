@@ -241,6 +241,16 @@ class EsperadoRecomendacion(BaseModel):
 
 
 MARGEN_NOTA = 10
+_TERCERA_PERSONA = re.compile(r"\b(la candidata|la usuaria|la aspirante|la persona candidata)\b", re.I)
+
+
+def habla_de_tu(explicacion: str, nombre: str | None) -> bool:
+    """RF-7.3: la explicación habla a la usuaria en segunda persona, sin su nombre ni la tercera persona."""
+    texto = explicacion.casefold()
+    partes = [p for p in re.split(r"\s+", (nombre or "").casefold()) if len(p) >= 3]
+    if any(re.search(rf"(?<!\w){re.escape(p)}(?!\w)", texto) for p in partes):
+        return False
+    return not _TERCERA_PERSONA.search(explicacion)
 
 
 def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
@@ -253,6 +263,8 @@ def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
     texto = " ".join(obtenido.get(k) or "" for k in ("explicacion", "cita_perfil", "cita_oferta"))
     if obtenido.get("retirada") or rasgos_personales(texto):
         fallos.append("sin_rasgos")
+    if not habla_de_tu(obtenido.get("explicacion") or "", obtenido.get("_nombre_perfil")):
+        fallos.append("segunda_persona")
     return fallos
 
 
@@ -260,15 +272,15 @@ def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
     e = recomendar.crear(proveedor=prov).run({
         "perfil": estado["perfil"], "preferencias": estado.get("preferencias") or {},
         "candidatas": [{"oferta_id": 1, "oferta": estado["oferta"]}]})
-    return (e["recomendaciones"] or [{}])[0]
+    return {**(e["recomendaciones"] or [{}])[0], "_nombre_perfil": estado["perfil"].get("nombre")}
 
 
 def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[dict]:
     experiencias = entrada["perfil"].get("experiencias") or []
     return [{"matches": [{
         "oferta_id": 1, "nota": e.nota, "condiciones": e.condiciones,
-        "explicacion": "La experiencia del perfil encaja con lo que pide el puesto. "
-                       "Las condiciones de la oferta se comparan con lo que busca la usuaria.",
+        "explicacion": "Tu experiencia encaja con lo que pide el puesto. "
+                       "Las condiciones de la oferta se comparan con lo que buscas.",
         "cita_perfil": experiencias[0]["puesto"] if experiencias else "perfil",
         "cita_oferta": entrada["oferta"]["titulo"]}]}]
 
@@ -641,7 +653,7 @@ NUEVOS: dict[str, SetEval] = {
         exigidos=frozenset({"verificacion", "ats"}),
     ),
     "recomendacion": SetEval(
-        esperado=EsperadoRecomendacion, campos=["nota", "condiciones", "sin_rasgos"],
+        esperado=EsperadoRecomendacion, campos=["nota", "condiciones", "sin_rasgos", "segunda_persona"],
         entrada=_leer_json, correr=_correr_recomendacion, simuladas=_respuestas_recomendacion,
         comparar=_comparar_recomendacion, exigidos=frozenset({"sin_rasgos"}),
     ),
@@ -675,7 +687,7 @@ SETS: dict[str, SetEval] = {
     "ofertas": SetEval(
         esperado=Oferta,
         # `requisitos` es texto libre: no se compara literalmente. `empresa_validada` depende del DNS.
-        campos=["titulo", "empresa", "ubicacion", "remoto", "contrato", "salario.minimo",
+        campos=["titulo", "empresa", "ubicacion", "remoto", "modalidad", "contrato", "salario.minimo",
                 "salario.maximo", "salario.moneda", "idiomas", "fecha_publicacion", "url",
                 "instrucciones_embebidas", "auditoria.fantasma", "auditoria.motivos_fantasma",
                 "auditoria.fraude", "auditoria.dominio_empresa", "auditoria.salario_publicado",

@@ -3,6 +3,7 @@
   "empresa": "Transportes Ebro",
   "ubicacion": "Zaragoza",
   "remoto": null,
+  "modalidad": null,
   "contrato": "indefinido",
   "salario": {
     "minimo": 1700.0,

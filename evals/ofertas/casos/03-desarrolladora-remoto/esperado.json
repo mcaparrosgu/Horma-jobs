@@ -3,6 +3,7 @@
   "empresa": "Tecnosur SL",
   "ubicacion": "España",
   "remoto": true,
+  "modalidad": "remoto",
   "contrato": null,
   "salario": {
     "minimo": 38000.0,
