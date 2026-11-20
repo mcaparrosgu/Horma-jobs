@@ -275,3 +275,10 @@ def test_resto_de_pantallas_usan_los_componentes_2c():                          
     assert '"Revisa esto"' in js and '"panel"' in js
     assert js.count('"boton secundario"') >= 1                                           # las descargas no compiten
     assert ".columna-cerrada > summary" in leer("estilo.css")
+
+
+def test_objetivos_tactiles_de_44_px():                                                  # T17 · RF-6.7b
+    css = sin_comentarios(leer("estilo.css"))
+    cerradas = re.search(r"\.columna-cerrada > summary\{[^}]*min-height: var\(--tap\)", css)
+    assert cerradas, "«Cerradas» debe medir al menos var(--tap) de alto"
+    assert re.search(r"a\.bloque\{[^}]*min-height: var\(--tap\)", css)

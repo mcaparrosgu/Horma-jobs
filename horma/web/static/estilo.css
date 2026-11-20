@@ -58,6 +58,7 @@ h3{ font-family: var(--f-head); font-size: var(--fs-title); font-weight: var(--f
 .dato{ margin: 0; font-weight: 600; }
 .origen{ font-style: italic; }
 .bloque{ display: block; }
+a.bloque{ display: flex; align-items: center; min-height: var(--tap); }
 p{ margin: 0.4rem 0; }
 
 /* ── Botones, campos y casillas ── */
@@ -277,7 +278,8 @@ details.porque > summary{ color: var(--accent-text); font-size: 0.9rem; }
 
 /* ── Tablero de candidaturas ── */
 .columna-cerrada{ background: transparent; border: 0; padding: 0; margin: 0; }
-.columna-cerrada > summary{ min-height: 0; line-height: 1.15; padding-bottom: 6px; margin-bottom: 0.5rem; border-bottom: var(--bw) solid var(--line-strong); }
+/* Objetivo de 44 px (RF-6.7b): la zona de clic crece hacia arriba y el texto y la línea no se mueven. */
+.columna-cerrada > summary{ min-height: var(--tap); box-sizing: border-box; line-height: 1.15; padding-top: calc(var(--tap) - 1.15em - 6px - var(--bw)); padding-bottom: 6px; margin-top: calc(var(--tap) * -1 + 1.15em + 6px + var(--bw)); margin-bottom: 0.5rem; align-items: flex-end; border-bottom: var(--bw) solid var(--line-strong); }
 .columna-cerrada > summary{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--muted); }
 .panel .lista > li:last-child, .panel .lista-editorial > li:last-child{ border-bottom: 0; }
 .panel > .subtitulo:first-child{ margin-top: 0; }

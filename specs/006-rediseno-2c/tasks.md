@@ -157,7 +157,7 @@ stale_after: null
   - **Cubre:** RF-6.3d, RF-6.6.
 
 ### Bloque F · Cierre
-- [ ] T17 — Accesibilidad.
+- [x] T17 — Accesibilidad. *(20-nov: 11 pantallas en claro y oscuro con auditoría propia en JS, porque axe no pudo cargarse; corregidos «Cerradas» y «Verla en Recomendadas»; 390 px pendiente de la vista de Mar en F12)*
   - **Qué se hace:** axe o Lighthouse en Recomendadas, Perfil y Candidatura, con los dos temas, a 390
     y 1280 px; se corrige lo que salga, como el contraste de los tonos de puesto o los 44 px. También
     se recorren las 11 pantallas sin desplazamiento horizontal.
@@ -178,7 +178,7 @@ stale_after: null
   - **Test:** el informe existe, cada hallazgo está corregido o tiene la decisión de Mar, y los tests
     siguen en verde.
   - **Cubre:** criterios de aceptación (apoyo a T19).
-- [ ] T18 — Documentación.
+- [x] T18 — Documentación. *(20-nov; falta solo la bitácora del Workbook, fuera del repo)*
   - **Qué se hace:**
     - la regla RF-6.9 en `AGENTS.md`;
     - en las specs 002 (RF-2.15, RF-2.15b) y 003 (P5), la nota «aspecto sustituido por 006»;
