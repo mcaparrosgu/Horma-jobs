@@ -59,9 +59,9 @@ def test_flujo_que_falla_da_el_paso_y_sale_con_1(tmp_path):
 
 
 # --- T08: evals --------------------------------------------------------------------------------
-def test_fixtures_de_ofertas_son_25_validas_y_5_adversarias():
+def test_fixtures_de_ofertas_son_29_validas_y_5_adversarias():
     casos = sorted(p for p in (RAIZ / "evals" / "ofertas" / "casos").iterdir() if p.is_dir())
-    assert len(casos) == 25
+    assert len(casos) == 29
     adversarias = 0
     for c in casos:
         o = Oferta.model_validate_json((c / "esperado.json").read_text(encoding="utf-8"))
@@ -87,7 +87,7 @@ def test_eval_simulado_de_ofertas_aprueba_y_deja_ejecucion(tmp_path):
     shutil.copytree(RAIZ / "evals" / "ofertas", tmp_path / "ofertas")
     res = correr_set("ofertas", raiz=tmp_path, simulado=True)
     assert res["aprobado"], res["detalle"]
-    assert res["casos"] == 25 and res["adversarias"] == 1.0
+    assert res["casos"] == 29 and res["adversarias"] == 1.0
     assert "taxonomia.sector" in res["campos"] and "auditoria.fraude" in res["campos"]
     assert list((tmp_path / "resultados").glob("*-ofertas.json"))
 

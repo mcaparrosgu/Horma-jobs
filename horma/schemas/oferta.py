@@ -17,6 +17,9 @@ class Salario(BaseModel):
         return self
 
 
+Modalidad = Literal["remoto", "hibrido", "presencial"]
+
+
 class OfertaExtraida(BaseModel):
     """Oferta sin auditoría ni taxonomía. Lo que no aparece en el texto queda vacío."""
 
@@ -24,6 +27,7 @@ class OfertaExtraida(BaseModel):
     empresa: str | None = None
     ubicacion: str | None = None
     remoto: bool | None = None
+    modalidad: Modalidad | None = None
     contrato: str | None = None
     salario: Salario | None = None
     idiomas: list[str] = Field(default_factory=list)
@@ -31,6 +35,13 @@ class OfertaExtraida(BaseModel):
     fecha_publicacion: str | None = None
     url: HttpUrl | None = None
     instrucciones_embebidas: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _remoto_deriva_de_modalidad(self):
+        """`remoto` se conserva por compatibilidad; con modalidad, lo decide el código (RF-7.1)."""
+        if self.modalidad is not None:
+            self.remoto = self.modalidad == "remoto"
+        return self
 
 
 MotivoFantasma = Literal["sin_fecha", "repetida", "generica"]

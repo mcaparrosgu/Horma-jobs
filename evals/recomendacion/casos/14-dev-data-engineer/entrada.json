@@ -113,6 +113,7 @@
     "empresa": "Datalab",
     "ubicacion": "España",
     "remoto": true,
+    "modalidad": "remoto",
     "contrato": "indefinido",
     "salario": {
       "minimo": 42000,

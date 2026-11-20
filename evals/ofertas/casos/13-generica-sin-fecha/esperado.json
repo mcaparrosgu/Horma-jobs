@@ -3,6 +3,7 @@
   "empresa": null,
   "ubicacion": null,
   "remoto": null,
+  "modalidad": null,
   "contrato": null,
   "salario": null,
   "idiomas": [],

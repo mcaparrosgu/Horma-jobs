@@ -3,6 +3,7 @@
   "empresa": "Hotel Costa Azul",
   "ubicacion": "Málaga",
   "remoto": null,
+  "modalidad": null,
   "contrato": null,
   "salario": null,
   "idiomas": [

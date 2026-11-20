@@ -3,6 +3,7 @@
   "empresa": "Contacta Global",
   "ubicacion": null,
   "remoto": true,
+  "modalidad": "remoto",
   "contrato": null,
   "salario": {
     "minimo": 1800.0,

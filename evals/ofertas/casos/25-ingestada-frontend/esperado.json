@@ -3,6 +3,7 @@
   "empresa": "Nube Azul Software",
   "ubicacion": "Madrid",
   "remoto": true,
+  "modalidad": "remoto",
   "contrato": "indefinido",
   "salario": {
     "minimo": 40000.0,

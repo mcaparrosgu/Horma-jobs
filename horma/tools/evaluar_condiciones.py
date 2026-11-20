@@ -27,7 +27,7 @@ def evaluar_condiciones(oferta: Oferta, prefs: Preferencias) -> Nivel:
     if prefs.idiomas:
         resultados.append(None if not n.idiomas else bool(set(n.idiomas) & set(prefs.idiomas)))
     if prefs.solo_remoto:
-        resultados.append(oferta.remoto)
+        resultados.append(False if oferta.modalidad is None else oferta.modalidad == "remoto")
     if prefs.sueldo_minimo is not None:
         resultados.append(None if n.salario_anual_eur_max is None
                           else n.salario_anual_eur_max >= prefs.sueldo_minimo)

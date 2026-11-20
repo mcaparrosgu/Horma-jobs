@@ -105,8 +105,8 @@ def listar(request: Request, usuaria_id: int = Depends(usuaria_actual),
         filas = repo.listado(s, ids)
     salida = []
     for f in filas:
-        if not f["propia"] and f["nota"] is not None and not minimo <= f["nota"] <= maximo:
-            continue  # el rango no esconde las ofertas propias (RF-5.3e)
+        if f["nota"] is not None and not minimo <= f["nota"] <= maximo:
+            continue  # el rango vale igual para las propias y las del catálogo (RF-7.1f)
         salida.append({**f, "salario": _salario(f), "sin_puntuar": f["nota"] is None,
                        "aviso_auditor": _aviso_auditor(f) if f["propia"] else None})
     if prefs.orden == "compatibles":  # lo puntuado primero, de más a menos nota; el resto, al final

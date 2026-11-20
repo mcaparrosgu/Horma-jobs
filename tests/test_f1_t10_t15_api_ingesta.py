@@ -321,7 +321,7 @@ def test_el_catalogo_muestra_auditoria_y_taxonomia(cliente, motor_app):
         resolver=None)
     o = cliente.get("/ofertas").json()[0]
     assert o["fraude"] is True and o["recomendable"] is False and o["familia"] == "desarrollo_software"
-    assert o["motivos_fantasma"] == ["sin_fecha"] and o["frase_pedir_salario"]
+    assert o["motivos_fantasma"] == [] and o["frase_pedir_salario"]  # RF-7.2
 
 
 # --- T15: consola `fuente calificar` -----------------------------------------------------------

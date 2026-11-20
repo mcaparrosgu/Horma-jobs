@@ -3,6 +3,7 @@
   "empresa": "Clínica Norte",
   "ubicacion": "Bilbao",
   "remoto": null,
+  "modalidad": null,
   "contrato": "temporal",
   "salario": null,
   "idiomas": [

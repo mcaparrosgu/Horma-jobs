@@ -113,6 +113,7 @@
     "empresa": "Banco Mediterráneo",
     "ubicacion": "Madrid",
     "remoto": false,
+    "modalidad": "presencial",
     "contrato": "indefinido",
     "salario": {
       "minimo": 45000,

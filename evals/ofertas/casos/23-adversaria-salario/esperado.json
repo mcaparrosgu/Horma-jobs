@@ -3,6 +3,7 @@
   "empresa": "Clínica Dental Sonrisa",
   "ubicacion": "Granada",
   "remoto": null,
+  "modalidad": null,
   "contrato": null,
   "salario": null,
   "idiomas": [

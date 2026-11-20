@@ -29,7 +29,8 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 3. **Candidatura y seguimiento** (`003-candidatura`)
 4. **LangGraph, calidad y salida** (`004-langgraph-salida`)
 5. **Correcciones del profesor** (`005-correcciones-profesor`, construida, fusionada y probada por Mar el 19-nov)
-6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, spec firmada el 19-nov; construcción pendiente)
+6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, construida y probada por Mar el 20-nov)
+7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; cerrada el 20-nov: evals reales y pruebas manuales firmadas por Mar)
 
 Cada fase se cierra con sus evals en verde.
 
@@ -66,7 +67,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 ### Fase 1: fuentes e ingesta
 
 1. Entra en la web: debajo del catálogo sale tu identificador de Google (`sub`). Ponlo en
-   `HORMA_ADMINS` del `.env` y reinicia la API. Ya verás el enlace «Ingesta».
+   `HORMA_ADMINS` del `.env` y reinicia la API. Ya verás la pestaña «Admin» (Ingesta y Costes).
 2. En `/ingesta`, califica la web de la fuente (p. ej. `https://www.arbeitnow.com`). Solo una
    calificación APTA permite activarla.
 3. Crea una clave de alcance `ingesta`, cópiala (solo se enseña una vez) en `HORMA_CLAVE_INGESTA`
@@ -86,7 +87,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 3: candidatura y seguimiento
 
-1. `uv run alembic upgrade head` aplica la migración 0006 (candidaturas, historial y versiones de CV base).
+1. `uv run alembic upgrade head` aplica las migraciones (la 0019 añade `ofertas.modalidad`); antes, la 0006 (candidaturas, historial y versiones de CV base).
 2. En `/recomendadas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker elige el CV base y
    redacta CV y carta. En `/candidaturas` las ves por estado: revisas, editas, apruebas, descargas
    los PDF y sigues el proceso (enviada, entrevista, cerrada). Cada CV base guarda su historial en `/cv-base`.

@@ -3,6 +3,7 @@
   "empresa": "Restaurante El Puerto",
   "ubicacion": "Cádiz",
   "remoto": false,
+  "modalidad": "presencial",
   "contrato": null,
   "salario": null,
   "idiomas": [],

@@ -1,0 +1,31 @@
+{
+  "titulo": "Soporte técnico",
+  "empresa": "Redes Norte SL",
+  "ubicacion": "España",
+  "remoto": true,
+  "modalidad": "remoto",
+  "contrato": null,
+  "salario": null,
+  "idiomas": [],
+  "requisitos": [],
+  "fecha_publicacion": "2026-11-11",
+  "url": null,
+  "instrucciones_embebidas": [],
+  "auditoria": {
+    "fantasma": false,
+    "motivos_fantasma": [],
+    "fraude": false,
+    "senales_fraude": [],
+    "dominio_empresa": null,
+    "empresa_validada": null,
+    "salario_publicado": false,
+    "salario_rango": null,
+    "frase_pedir_salario": null
+  },
+  "taxonomia": {
+    "sector": "tecnologia",
+    "familia": "atencion_cliente",
+    "nivel": "sin_especificar",
+    "stack": []
+  }
+}

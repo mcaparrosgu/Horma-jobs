@@ -37,7 +37,7 @@ function tarjeta(o) {
   if (o.salario_publicado === false && o.frase_pedir_salario) {
     li.append(nodo("p", `Sin salario publicado. Para pedirlo: «${o.frase_pedir_salario}»`, "suave"));
   }
-  if (o.remoto !== null && o.remoto !== undefined) li.append(nodo("p", o.remoto ? "Remoto" : "Presencial"));
+  if (nombreModalidad(o.modalidad)) li.append(nodo("p", nombreModalidad(o.modalidad)));
   if (o.idiomas && o.idiomas.length) li.append(nodo("p", `Idiomas: ${o.idiomas.join(", ")}`));
   if (o.sector) {
     const tax = [o.sector, o.familia, o.nivel].filter(Boolean).join(" · ");

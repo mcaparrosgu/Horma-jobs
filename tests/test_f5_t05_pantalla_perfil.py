@@ -8,9 +8,9 @@ ESTATICOS = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
 
 def test_la_pantalla_dice_que_lo_editado_manda_sobre_los_cv_subidos():
     html = (ESTATICOS / "perfil.html").read_text(encoding="utf-8")
-    assert ("Lo que edites aquí manda sobre tus CV subidos y se usa para redactar todos tus CV "
-            "y cartas") in html
-    assert "nunca se modifican" in html
+    # Texto de P4 (spec 007, RF-7.5b), que sustituye al de la fase 5.
+    assert "Horma usará tu corrección aunque tu CV original diga otra cosa" in html
+    assert "Tu CV original no se toca" in html
 
 
 def test_las_tres_secciones_tienen_ayuda_con_los_ejemplos_de_la_spec_y_boton_de_anadir():

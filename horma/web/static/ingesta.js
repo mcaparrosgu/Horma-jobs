@@ -251,13 +251,34 @@ $("form-clave").addEventListener("submit", async (e) => {
   }
 });
 
+// Buscador y filtro (RF-7.6): se filtra en el navegador sobre la lista ya cargada, sin tildes ni mayúsculas.
+let fuentesCargadas = [];
+const sinTildes = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const FILTROS_FUENTE = {
+  todas: () => true,
+  activas: (f) => f.activa,
+  inactivas: (f) => !f.activa,
+  "no-aptas": (f) => Boolean(f.calificacion) && !f.calificacion.apta,
+  "sin-calificar": (f) => !f.calificacion,
+};
+function pintarFuentes() {
+  const q = sinTildes($("buscar-fuente").value.trim());
+  const pasa = FILTROS_FUENTE[$("filtro-fuente").value] || FILTROS_FUENTE.todas;
+  const vistas = fuentesCargadas.filter((f) => pasa(f) && sinTildes(f.nombre).includes(q));
+  $("fuentes").replaceChildren(...vistas.map(tarjetaFuente));
+  $("sin-fuentes").hidden = vistas.length > 0;
+}
+$("buscar-fuente").addEventListener("input", pintarFuentes);
+$("filtro-fuente").addEventListener("change", pintarFuentes);
+
 async function cargar() {
   const r = await api("GET", "/api/ingesta/resumen");
   const estados = Object.entries(r.ofertas_por_estado);
   $("estados").replaceChildren(
     ...(estados.length ? estados.map(([e, n]) => nodo("li", `${e}: ${n}`, "chip")) : [nodo("li", "Sin ofertas todavía.", "chip")]),
   );
-  $("fuentes").replaceChildren(...r.fuentes.map(tarjetaFuente));
+  fuentesCargadas = r.fuentes;
+  pintarFuentes();
   const errores = [
     ...r.errores.map((o) => [`Oferta ${o.id}${o.fuente ? ` (${o.fuente})` : ""}: ${o.titulo || "sin título"}`, o.motivo_error]),
     ...r.ejecuciones_con_error.map((c) => [`Ejecución ${c.id} de ${c.fuente}`, c.motivo_error]),

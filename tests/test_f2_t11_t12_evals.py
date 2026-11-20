@@ -212,7 +212,8 @@ def test_fixtures_de_recomendacion_son_21_validas_con_adversarias_y_trampas():
 def test_eval_recomendacion_simulado_pasa_al_100():
     r = correr_set("recomendacion", raiz=RAIZ, simulado=True)
     assert r["aprobado"] and r["casos"] == 21 and r["adversarias"] == 1.0
-    assert r["campos"] == {"nota": 1.0, "condiciones": 1.0, "sin_rasgos": 1.0}
+    assert r["campos"] == {"nota": 1.0, "condiciones": 1.0, "sin_rasgos": 1.0,
+                         "segunda_persona": 1.0}
 
 
 def _match(esperado, **cambios):

@@ -3,6 +3,7 @@
   "empresa": "Colegio San Marcos",
   "ubicacion": "Toledo",
   "remoto": false,
+  "modalidad": "presencial",
   "contrato": "temporal",
   "salario": null,
   "idiomas": [],

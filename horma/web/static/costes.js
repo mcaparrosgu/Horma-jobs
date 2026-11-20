@@ -12,6 +12,16 @@ const usd = (n) => `${Number(n).toFixed(4)} USD`;
 const porcentaje = (n) => `${(Number(n) * 100).toFixed(1)} %`;
 const entero = (n) => Number(n).toLocaleString("es-ES");
 
+// Fila «Total» (RF-7.8): sumas, y latencia y errores medios ponderados por las llamadas.
+function totales(filas) {
+  const suma = (k) => filas.reduce((a, f) => a + Number(f[k]), 0);
+  const llamadas = suma("llamadas");
+  const ponderada = (k) => (llamadas ? filas.reduce((a, f) => a + Number(f[k]) * Number(f.llamadas), 0) / llamadas : 0);
+  return { llamadas, coste: suma("coste"), tokens_entrada: suma("tokens_entrada"),
+           tokens_salida: suma("tokens_salida"), latencia_media_ms: Math.round(ponderada("latencia_media_ms")),
+           tasa_errores: ponderada("tasa_errores") };
+}
+
 function tabla(id, columnas, filas) {
   const t = $(id);
   t.replaceChildren();
@@ -34,6 +44,14 @@ function tabla(id, columnas, filas) {
     cuerpo.append(tr);
   }
   t.append(cuerpo);
+  if (filas.length) {
+    const total = totales(filas);
+    const tr = nodo("tr");
+    columnas.forEach((c, i) => tr.append(nodo(i === 0 ? "th" : "td", i === 0 ? "Total" : c.formato(total[c.clave]))));
+    const pie = nodo("tfoot");
+    pie.append(tr);
+    t.append(pie);
+  }
 }
 
 const CIFRAS = [

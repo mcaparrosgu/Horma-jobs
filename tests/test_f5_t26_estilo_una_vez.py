@@ -133,3 +133,23 @@ def test_la_pantalla_muestra_la_guia_y_el_boton():
     assert 'id="estilo"' in html and "Volver a analizar mi estilo" in html
     assert "/api/estilo" in js and "textContent" in js
 
+
+
+def test_no_se_puede_editar_mientras_se_analiza(app, motor_app):  # noqa: F811
+    """Fase 7 · T15 (RF-7.5f): lo guardado durante un análisis lo pisaría el worker; se dice por qué."""
+    c, h, _ = entrar(app)
+    _carta(c, h, nombre="Carta")
+    _procesar_estilo(motor_app)
+    assert c.post("/api/estilo/analizar", headers=h).status_code == 202
+    r = c.put("/api/estilo", headers=h, json={**GUIA, "registro": "formal"})
+    assert r.status_code == 409 and "analizando" in r.json()["detail"]
+    assert _guia_en_bd()["guia"]["registro"] == "cercano"
+    _procesar_estilo(motor_app, {**GUIA, "registro": "neutro"})
+    assert c.put("/api/estilo", headers=h, json={**GUIA, "registro": "formal"}).status_code == 200
+    ver = c.get("/api/estilo").json()
+    assert ver["origen"] == "usuaria" and not ver["analizando"] and ver["hay_documentos"]
+
+
+def test_la_pantalla_oculta_editar_mientras_se_analiza():
+    js = Path("horma/web/static/perfil.js").read_text(encoding="utf-8")
+    assert '$("estilo-editar").hidden = !e.guia || e.analizando' in js

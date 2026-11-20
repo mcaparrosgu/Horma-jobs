@@ -3,6 +3,7 @@
   "empresa": "Industrias Metálicas Duero",
   "ubicacion": "Valladolid",
   "remoto": null,
+  "modalidad": null,
   "contrato": "indefinido",
   "salario": {
     "minimo": 65000.0,

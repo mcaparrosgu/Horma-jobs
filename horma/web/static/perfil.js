@@ -26,6 +26,7 @@ const AYUDA = {
 const MOTIVOS = { falta: "Falta", ambiguo: "Ambiguo", contradiccion: "Contradicción entre CV" };
 let idiomasValidos = [];
 let perfilActual = null;
+let pendientesPrevias = 0;
 let temporizador = null;
 
 function resumenDe(campoNombre, d) {
@@ -34,7 +35,7 @@ function resumenDe(campoNombre, d) {
     return [d.puesto, d.empresa, fechas].filter(Boolean).join(" · ");
   }
   if (campoNombre === "formacion") return [d.titulo, d.centro, [d.inicio, d.fin].filter(Boolean).join(" – ")].filter(Boolean).join(" · ");
-  if (campoNombre === "idiomas") return [etiqueta(d.idioma), d.nivel].filter((x) => x && x !== "—").join(" · ");
+  if (campoNombre === "idiomas") return [nombreIdioma(d.idioma), d.nivel].filter((x) => x && x !== "—").join(" · ");
   if (campoNombre === "habilidades") return d.nombre;
   if (campoNombre === "proyectos") return [d.nombre, d.fecha].filter(Boolean).join(" · ") + (d.descripcion ? ` — ${d.descripcion}` : "");
   if (campoNombre === "certificaciones") return [d.nombre, d.entidad, d.fecha].filter(Boolean).join(" · ");
@@ -55,7 +56,7 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, 
   if (campoNombre === "idiomas" && !extra.idiomaFijo) {
     idioma = nodo("select");
     for (const v of idiomasValidos) {
-      const o = nodo("option", etiqueta(v));
+      const o = nodo("option", nombreIdioma(v));
       o.value = v;
       idioma.append(o);
     }
@@ -198,9 +199,21 @@ function botonAnadir(clave, ul) {
   return fila;
 }
 
+// Estas cuatro se pliegan, cerradas, con su número en el título (RF-7.5d). Lo abierto sobrevive a guardar.
+const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos"];
+const abiertas = new Set();
+
 function seccion(titulo, hijos, clave) {
-  const s = nodo("section");
-  s.append(nodo("h3", titulo, "subtitulo"));
+  const plegable = PLEGABLES.includes(clave);
+  const s = nodo(plegable ? "details" : "section", null, plegable ? "leer seccion-plegable" : null);
+  if (plegable) {
+    const resumen = nodo("summary", titulo);
+    resumen.append(nodo("span", String(hijos.length), "estado"));
+    s.append(resumen);
+    s.dataset.seccion = clave;
+    s.open = abiertas.has(clave);
+    s.addEventListener("toggle", () => { if (s.open) abiertas.add(clave); else abiertas.delete(clave); });
+  } else s.append(nodo("h3", titulo, "subtitulo"));
   if (AYUDA[clave]) s.append(nodo("p", AYUDA[clave], "suave"));
   const ul = nodo("ul", null, "lista");
   ul.append(...hijos);
@@ -230,7 +243,11 @@ async function cargarPerfil() {
 
   perfilActual = perfil;
   const pend = perfil.preguntas_pendientes || [];
-  $("pendientes").hidden = pend.length === 0;
+  $("pendientes").hidden = false;
+  $("n-pendientes").textContent = String(pend.length);
+  if (pend.length && !pendientesPrevias) $("pendientes").open = true;   // se abre al aparecer alguna (RF-7.5)
+  if (!pend.length) $("pendientes").open = false;
+  pendientesPrevias = pend.length;
   $("lista-pendientes").replaceChildren(...pend.map(pregunta));
 
   $("datos").hidden = false;
@@ -396,26 +413,24 @@ $("subir").addEventListener("submit", async (e) => {
 let estiloVisto = null;
 let esperaEstilo = null;
 
-function rasgos(titulo, lista) {
-  const cont = nodo("div");
-  cont.append(nodo("h3", titulo));
-  if (!lista.length) { cont.append(nodo("p", "—", "suave")); return cont; }
-  const ul = nodo("ul", null, "lista");
-  for (const r of lista) {
-    const li = nodo("li", r.rasgo);
-    if (r.cita) li.append(nodo("p", `«${r.cita}»`, "suave"));
-    ul.append(li);
-  }
-  cont.append(ul);
+const MAX_RASGOS = 5;
+const PERSONAS = { primera: "primera persona", impersonal: "impersonal" };
+
+// Resumen de la guía (RF-7.5c): una frase de tono y dos líneas, «Usas» y «Evitas», con 5 rasgos como máximo.
+function resumirEstilo(g) {
+  const cont = nodo("div", null, "estilo-resumen");
+  const vinetas = g.vinetas ? `; viñetas: ${g.vinetas.replace(/[.\s]+$/, "")}` : "";
+  cont.append(nodo("p", `Escribes en registro ${g.registro}, en ${PERSONAS[g.persona] || g.persona}, con frases ${g.longitud_frase}s${vinetas}.`));
+  const corto = (titulo, lista) => {
+    const rasgos = lista.slice(0, MAX_RASGOS).map((r) => r.rasgo).join(", ");
+    return nodo("p", `${titulo}: ${rasgos || "—"}.`);
+  };
+  cont.append(corto("Usas", g.expresiones), corto("Evitas", g.evita));
   return cont;
 }
 
 function pintarGuia(g) {
-  const cont = $("estilo-guia");
-  const filas = [["Registro", g.registro], ["Persona", g.persona === "primera" ? "primera persona" : "impersonal"],
-                 ["Frases", g.longitud_frase], ["Viñetas", g.vinetas || "—"]];
-  cont.replaceChildren(...filas.map(([k, v]) => nodo("p", `${k}: ${v}`)),
-                       rasgos("Expresiones que usas", g.expresiones), rasgos("Lo que evitas", g.evita));
+  $("estilo-guia").replaceChildren(resumirEstilo(g));
 }
 
 function editorGuia(g) {
@@ -478,7 +493,8 @@ async function cargarEstilo() {
   estiloVisto = e;
   $("estilo").hidden = !(e.guia || e.hay_documentos || e.analizando);
   $("estilo-reanalizar").disabled = e.analizando || !e.hay_documentos;
-  $("estilo-editar").hidden = !e.guia;
+  $("estilo-editar").hidden = !e.guia || e.analizando;   // lo editado durante el análisis se perdería
+  if (e.analizando) document.querySelector("#estilo form.editor")?.remove();
   if (e.analizando) $("estilo-estado").textContent = "Analizando tu estilo…";
   else if (e.guia) $("estilo-estado").textContent = e.origen === "usuaria" ? "Guía editada por ti." : "Guía calculada por Horma; puedes editarla.";
   else $("estilo-estado").textContent = "Todavía no hay guía.";

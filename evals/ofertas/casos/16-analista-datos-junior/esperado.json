@@ -3,6 +3,7 @@
   "empresa": "DataMar Analytics",
   "ubicacion": "Valencia",
   "remoto": false,
+  "modalidad": "presencial",
   "contrato": null,
   "salario": {
     "minimo": 24000.0,

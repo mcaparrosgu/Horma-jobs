@@ -113,6 +113,7 @@
     "empresa": "Restaurante El Faro",
     "ubicacion": "Cádiz",
     "remoto": false,
+    "modalidad": "presencial",
     "contrato": "temporal",
     "salario": {
       "minimo": 15000,
