@@ -25,7 +25,13 @@
       <h2 class="etiqueta-mono">Tus CV</h2>
       <p class="entradilla">Sube tu CV (PDF, DOCX o Markdown) y Horma construye tu perfil. Un CV «estético» se guarda tal cual, sin procesarlo.</p>
       <form id="subir" class="fila panel">
-        <label class="archivo">Archivo<input id="archivo" type="file" accept=".pdf,.docx,.md,.markdown" required></label>
+        <label class="archivo">Archivo
+          <span class="selector-archivo">
+            <span class="boton secundario" aria-hidden="true">Elegir archivo</span>
+            <span id="archivo-nombre" class="suave">Ningún archivo seleccionado</span>
+          </span>
+          <input id="archivo" class="solo-lector" type="file" accept=".pdf,.docx,.md,.markdown" required>
+        </label>
         <label>Nombre (opcional)<input id="nombre-cv" type="text" maxlength="80"></label>
         <label>Tipo
           <select id="clase-cv">

@@ -76,8 +76,9 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
         visor = request.method == "GET" and request.url.path.startswith("/api/cv/") \
             and request.url.path.endswith("/ver")
         r.headers["Content-Security-Policy"] = CSP_VISOR if visor else CSP
-        if request.url.path.startswith("/static/"):
-            # Revalidar siempre (ETag → 304): así un JS nuevo nunca convive con otro viejo en caché.
+        if request.url.path.startswith("/static/") or r.headers.get("content-type", "").startswith("text/html"):
+            # Revalidar siempre (ETag → 304): así un JS nuevo nunca convive con otro viejo en caché,
+            # y las páginas (/perfil, /recomendadas…) no se sirven desfasadas al pulsar el menú en el móvil.
             r.headers["Cache-Control"] = "no-cache"
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["Referrer-Policy"] = "no-referrer"

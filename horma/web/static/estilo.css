@@ -92,6 +92,13 @@ input[type="file"]::file-selector-button{
   height: calc(var(--tap) - 2 * var(--bw)); margin: 0 12px 0 0; padding: 0 16px; vertical-align: top; cursor: pointer;
   font: inherit; font-weight: 600; background: var(--surface-2); color: var(--ink); border: 0; border-right: var(--bw) solid var(--line-strong); border-radius: var(--radius);
 }
+/* Selector de archivo propio: el input nativo queda en el DOM (teclado y lectores) pero invisible. */
+label.archivo{ position: relative; }
+.selector-archivo{ display: flex; align-items: center; gap: 12px; min-height: var(--tap); margin-top: 6px; min-width: 0; cursor: pointer; }
+.selector-archivo .boton{ flex: none; }
+.selector-archivo .suave{ min-width: 0; overflow-wrap: anywhere; font-weight: 400; text-transform: none; letter-spacing: normal; }
+label.archivo input.solo-lector{ position: absolute; left: 0; bottom: 0; width: 1px; height: 1px; margin: 0; padding: 0; min-height: 0; opacity: 0; border: 0; }
+label.archivo:focus-within .boton{ outline: var(--focus); outline-offset: 2px; }
 label:not(.casilla){ display: block; margin-bottom: 0.4rem; }
 label input:not([type="checkbox"]), label select{ display: block; width: 100%; margin-top: 6px; }
 label.casilla{ display: flex; align-items: center; gap: 10px; min-height: var(--tap); font-weight: 400; margin: 0; }
