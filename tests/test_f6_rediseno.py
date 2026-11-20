@@ -73,7 +73,7 @@ def test_el_oscuro_define_los_mismos_tokens_de_color_que_el_claro():
 
 def test_tokens_trae_la_escala_y_las_medidas_de_la_spec():
     css = leer("tokens.css")
-    for token in ("--f-head", "--f-body", "--f-mono", "--fs:", "--fs-title", "--fs-h1:", "--fs-h1-m", "--fs-num",
+    for token in ("--f-head", "--f-body", "--f-mono", "--fs:", "--fs-title", "--fs-h1:", "--fs-h1-m", "--fs-num",  # noqa: E501
                   "--fs-label", "--ls-head", "--ls-label", "--fw-head", "--fw-num", "--radius: 0", "--bw",
                   "--pad-page", "--pad-page-m", "--row-py", "--col-gap", "--bar-h", "--tap: 44px", "--focus"):
         assert token in css, token
@@ -107,8 +107,8 @@ def test_el_foco_siempre_se_ve_y_se_respeta_reducir_movimiento():
 
 def test_estilo_trae_los_componentes_de_la_guia():
     css = leer("estilo.css")
-    for clase in (".titulo-pantalla", ".entradilla", ".etiqueta-mono", ".secundario", ".boton-texto", ".panel",
-                  ".panel-desplegado", ".lista-editorial", ".fila-desplegable", ".chevron", ".etiqueta-puesto",
+    for clase in (".titulo-pantalla", ".entradilla", ".etiqueta-mono", ".secundario", ".boton-texto", ".panel",  # noqa: E501
+                  ".panel-desplegado", ".lista-editorial", ".fila-desplegable", ".chevron", ".etiqueta-puesto",  # noqa: E501
                   ".tono-0", ".tono-5", ".barra-compat", ".ayuda-globo", ".aviso", ".tabla-datos", ".cv-hoja",
                   ".cabecera", ".marca", ".linea-anadida", ".linea-quitada", ".tablero", ".tabla-costes"):
         assert clase in css, clase
@@ -126,7 +126,7 @@ def test_toda_pagina_enlaza_tokens_antes_que_estilo_y_carga_tema_sin_marco(nombr
     assert 'class="pp"' not in html
     assert html.index("/static/tokens.css") < html.index("/static/estilo.css")
     assert re.search(r'<script src="/static/tema\.js"></script>', html[:html.index("</head>")])
-    assert "tema.js" not in html[html.index("</head>"):]                 # en <head>, sin defer, para no parpadear
+    assert "tema.js" not in html[html.index("</head>"):]  # en <head>, sin defer, para no parpadear
 
 
 @pytest.mark.parametrize("nombre", PAGINAS_USUARIA)
@@ -165,8 +165,8 @@ def test_el_manifiesto_y_los_theme_color_son_los_de_2c(cliente):
     assert m["theme_color"] == "#f6f6f2" and m["background_color"] == "#f6f6f2"
     for nombre in TODAS:
         html = leer(f"{nombre}.html")
-        assert '<meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">' in html, nombre
-        assert '<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">' in html, nombre
+        assert '<meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">' in html, nombre  # noqa: E501
+        assert '<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">' in html, nombre  # noqa: E501
         assert "#6b3f2a" not in html
 
 
@@ -199,7 +199,7 @@ def textos_visibles_html(html: str) -> list[str]:
 
 def textos_de_js(js: str) -> list[str]:
     js = re.sub(r"(?m)^\s*//.*$|\s//\s.*$", "", js)                  # comentarios
-    js = js.replace("[*_`]", "")                                         # clase de regex con comilla invertida
+    js = js.replace("[*_`]", "")  # clase de regex con comilla invertida
     cadenas = re.compile(r'"((?:[^"\\\n]|\\.)*)"|`((?:[^`\\]|\\.)*)`')
     return [a or b for a, b in cadenas.findall(js)]
 
@@ -219,7 +219,7 @@ def test_ningun_js_dice_match_ats_ni_trazabilidad_en_sus_textos(js):
 
 
 # --- Bloque C · Recomendadas (T07-T10) ----------------------------------------------------------
-def test_recomendadas_estructura_h1_entradilla_filtros_contador_y_guia():            # T07
+def test_recomendadas_estructura_h1_entradilla_filtros_contador_y_guia():  # T07
     html = leer("recomendadas.html")
     assert 'class="titulo-pantalla">Recomendadas' in html and "sin fraudes ni ofertas fantasma" in html
     assert re.search(r'<form id="filtros"[^>]*role="search"', html)
@@ -232,28 +232,28 @@ def test_recomendadas_estructura_h1_entradilla_filtros_contador_y_guia():       
     assert "Condiciones" not in html
 
 
-def test_recomendadas_tabla_con_columnas_barra_meter_y_sin_progress():              # T08
+def test_recomendadas_tabla_con_columnas_barra_meter_y_sin_progress():  # T08
     js = leer("recomendadas.js")
     for columna in ("Oferta", "Puesto", "Compatibilidad", "Salario", "Lugar", "Publicado"):
         assert f'["{columna}",' in js, columna
-    assert '"Candidatura"' not in js.split("const MAX_PUNTUANDO")[0]                    # ya no es columna
+    assert '"Candidatura"' not in js.split("const MAX_PUNTUANDO")[0]  # ya no es columna
     assert '"meter"' in js and "aria-valuenow" in js and "aria-valuemin" in js and "aria-valuemax" in js
     assert "barra-compat" in js and "progress" not in js
     assert "Sin puntuar" in js and "No publicado" in js
     assert "Condiciones" not in js and "cond-" not in js and "celdaCandidatura" not in js
 
 
-def test_recomendadas_fila_desplegable_con_acciones():                                 # T09
+def test_recomendadas_fila_desplegable_con_acciones():  # T09
     js = leer("recomendadas.js")
     for pieza in ("aria-expanded", "aria-controls", "Por qué te la recomendamos", "Corregir explicación",
                   "/correccion", "Preparar candidatura", "Preparar otra igualmente", "Generar CV base",
                   "fila-detalle", "stopPropagation", "accionesCandidatura"):
         assert pieza in js, pieza
     assert '"Modificar' not in js and "details.porque" not in js
-    assert re.search(r"abiertas?\b", js)                                                # la primera sale abierta
+    assert re.search(r"abiertas?\b", js)  # la primera sale abierta
 
 
-def test_recomendadas_movil_mas_filtros_y_ayuda_como_globo():                          # T10
+def test_recomendadas_movil_mas_filtros_y_ayuda_como_globo():  # T10
     css, js, html = leer("estilo.css"), leer("recomendadas.js"), leer("recomendadas.html")
     assert re.search(r"@media \(max-width: 900px\)\s*\{[^@]*\.tabla-ofertas[^@]*attr\(data-", css, re.S)
     assert 'id="mas-filtros"' in html and 'aria-expanded="false"' in html and "Más filtros" in html
@@ -262,28 +262,28 @@ def test_recomendadas_movil_mas_filtros_y_ayuda_como_globo():                   
     assert ".title" not in js and 'title="' not in html
 
 
-def test_resto_de_pantallas_usan_los_componentes_2c():                                 # T11-T15
+def test_resto_de_pantallas_usan_los_componentes_2c():  # T11-T15
     for pagina in ("perfil", "preferencias", "anadir-oferta", "cv-base", "candidaturas", "candidatura"):
         html = leer(f"{pagina}.html")
         assert 'class="titulo-pantalla"' in html and 'class="pp"' not in html, pagina
     assert "lista-editorial" in leer("index.html") and "lista-editorial" in leer("perfil.html")
-    assert 'class="fila panel"' in leer("perfil.html")                                   # subida en un panel
+    assert 'class="fila panel"' in leer("perfil.html")  # subida en un panel
     assert 'class="grupo panel"' in leer("preferencias.html")
     assert leer("anadir-oferta.html").count('class="panel"') == 2
     assert "cond-" not in leer("candidaturas.js")
     js = leer("candidatura.js")
     assert '"Revisa esto"' in js and '"panel"' in js
-    assert js.count('"boton secundario"') >= 1                                           # las descargas no compiten
+    assert js.count('"boton secundario"') >= 1  # las descargas no compiten
     assert ".columna-cerrada > summary" in leer("estilo.css")
 
 
-def test_objetivos_tactiles_de_44_px():                                                  # T17 · RF-6.7b
+def test_objetivos_tactiles_de_44_px():  # T17 · RF-6.7b
     css = sin_comentarios(leer("estilo.css"))
     cerradas = re.search(r"\.columna-cerrada > summary\{[^}]*min-height: var\(--tap\)", css)
     assert cerradas, "«Cerradas» debe medir al menos var(--tap) de alto"
     assert re.search(r"a\.bloque\{[^}]*min-height: var\(--tap\)", css)
 
 
-def test_pais_en_texto_en_recomendadas():                                                # T17b · hallazgo 6
+def test_pais_en_texto_en_recomendadas():  # T17b · hallazgo 6
     js = leer("recomendadas.js")
     assert "Intl.DisplayNames" in js and "nombrePais(o.pais)" in js

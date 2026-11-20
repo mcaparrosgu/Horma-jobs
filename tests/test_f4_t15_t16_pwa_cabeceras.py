@@ -59,7 +59,7 @@ def test_existe_la_pagina_sin_conexion_y_el_sw_la_precarga(cliente):
     assert cliente.get("/static/offline.html").status_code == 200
     assert "Sin conexión" in (ESTATICOS / "offline.html").read_text(encoding="utf-8")
     sw = (ESTATICOS / "sw.js").read_text(encoding="utf-8")
-    assert "/static/offline.html" in sw and "/static/tokens.css" in sw      # fase 6: el estilo 2c también sin red
+    assert "/static/offline.html" in sw and "/static/tokens.css" in sw  # fase 6: el estilo 2c también sin red
 
 
 def test_la_csp_permite_manifest_y_worker_propios(cliente):

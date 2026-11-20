@@ -121,7 +121,7 @@ def test_el_js_pinta_siempre_con_textcontent():
     assert "innerHTML" not in js and "insertAdjacentHTML" not in js and "eval(" not in js
     assert "textContent" in js
     html = (static / "index.html").read_text(encoding="utf-8")
-    for permitido in ('<script src="/static/tema.js"', '<script src="/static/app.js"', '<script src="/static/pwa.js"'):  # solo externos
+    for permitido in ('<script src="/static/tema.js"', '<script src="/static/app.js"', '<script src="/static/pwa.js"'):  # solo externos  # noqa: E501
         html = html.replace(permitido, "")
     assert "<script" not in html
 

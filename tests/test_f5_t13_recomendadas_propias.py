@@ -113,8 +113,8 @@ def test_las_del_catalogo_siguen_sin_marca_y_con_sus_filtros(app, motor_app, mot
     assert c.get("/api/recomendaciones").json()["recomendaciones"] == []
 
 
-def test_el_aviso_de_fantasma_no_sale_en_las_propias_pero_el_de_fraude_si():          # P19, 20-nov
+def test_el_aviso_de_fantasma_no_sale_en_las_propias_pero_el_de_fraude_si():  # P19, 20-nov
     from horma.web.routers.recomendaciones import _aviso_auditor
     base = {"fraude": False, "senales_fraude": [], "fantasma": True, "motivos_fantasma": ["sin_fecha"]}
     assert _aviso_auditor(base) is None
-    assert _aviso_auditor({**base, "fraude": True, "senales_fraude": ["Paga 50 €"]}) == "Posibles señales de fraude: Paga 50 €"
+    assert _aviso_auditor({**base, "fraude": True, "senales_fraude": ["Paga 50 €"]}) == "Posibles señales de fraude: Paga 50 €"  # noqa: E501
