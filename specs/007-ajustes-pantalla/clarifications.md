@@ -54,3 +54,19 @@ Comprobado en el código (20-nov):
   pasa»). Motivo de Mar: en otras webs «solo remoto» le cuela híbridas.
 - P8: Resto de la fase → R: aceptado tal cual: idiomas y países con su nombre entero, buscador y filtro en
   Ingesta, pestaña «Admin» solo para administradoras.
+
+## Correcciones de la prueba manual (20-nov)
+Mar las pidió al recorrer `T14`. Las pequeñas cierran esta fase; las grandes van a la fase 8.
+
+- P9: «Volver a analizar mi estilo» se queda deshabilitado tras editar la guía → R: es un fallo; se
+  corrige. Comprobado en la base: no había análisis en marcha, había documentos y la guía constaba como
+  calculada por Horma, así que la edición no llegó a guardarse.
+- P10: ¿Cómo se condensa más el estilo? → R: **párrafo corto**: una frase de tono, «Usas: …» y «Evitas: …»,
+  sin «Ver detalle». Para que quepa, el agente escribe rasgos de 8 palabras como máximo; las citas se siguen
+  guardando. Hay que volver a analizar (coste de céntimos). Sustituye a P5.
+- P11: En Mi perfil, Experiencia, Formación, Idiomas y Proyectos → R: desplegables.
+- P12: Condiciones (Preferencias) → R: simétricas; cada casilla con su ayuda debajo.
+- P13: Costes → R: cada tabla termina con una fila «Total».
+- P14: Unir Recomendadas con Candidaturas (estado y descartar), seguir trabajando al cambiar de página y
+  barra de progreso con % → R: **fase 8**. El trabajo ya sigue en el servidor al cambiar de página o de app;
+  lo que falta es que la pantalla lo retome y enseñe el avance.

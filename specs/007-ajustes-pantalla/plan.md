@@ -69,6 +69,24 @@ composición, en `horma/flows/`).
 - **Admin (RF-7.7):** `arrancar()` añade la pestaña «Admin» → `/ingesta` si `yo.admin`. Ingesta y Costes
   llevan una fila de subpestañas «Ingesta · Costes». En la portada, `ir-ingesta` pasa a «Admin».
 
+## Correcciones de la prueba manual (RF-7.1d, RF-7.5c-f, RF-7.8)
+Sin rutas, tablas ni migraciones nuevas. El esquema `GuiaEstilo` no cambia (`max_length=200`), para que las
+guías ya guardadas sigan validando al editarlas.
+
+| Requisito | Dónde |
+|---|---|
+| RF-7.5f botón y guardado | reproducir en el navegador; según la causa, `perfil.js` (`cargarEstilo`, `editorGuia`) o `routers/estilo.py` |
+| RF-7.5e rasgos cortos | `agents/analizador_estilo/prompt.md`; criterio de longitud en `evals.py`, set `estilo` |
+| RF-7.5c párrafo | `perfil.js`: `resumirEstilo()` en tres `<p>`; se borra `rasgos()` si nada más lo usa |
+| RF-7.5d desplegables | `perfil.js`: `seccion()` envuelve esas cuatro en `details.grupo` con `summary > .estado`; `cargarPerfil()` guarda y restaura las abiertas |
+| RF-7.1d Condiciones | `preferencias.html`: cada casilla y su ayuda en `.casilla-con-ayuda`; `estilo.css`: esa clase y `p.ayuda` |
+| RF-7.8 totales | `costes.js`: `tabla()` añade `<tfoot>` «Total»; `estilo.css`: `tfoot` con tokens |
+
+- **Bug del botón (P9):** el botón solo se deshabilita con `analizando || !hay_documentos` (`perfil.js`), y en
+  la base no se daba ninguna de las dos. La guía constaba con `origen = modelo`, así que el `PUT` no guardó.
+  Hipótesis por comprobar: `422` de `motivos_de_rechazo` sin aviso visible, o `api()` con `PUT`.
+- **Totales:** errores = Σ(tasa × llamadas) / Σ llamadas; latencia = Σ(latencia × llamadas) / Σ llamadas.
+
 ## Tests
 - Migración: la columna existe con su `CHECK`.
 - `buscar_ofertas`: con `solo_remoto`, el SQL exige `modalidad = 'remoto'`, y una propia sin modalidad pasa.
@@ -85,4 +103,6 @@ composición, en `horma/flows/`).
 ## Coste
 - Evals reales de `ofertas` (extractor, 29 casos) y de `recomendacion` (`matcher`, 21 casos): una pasada
   de cada una. El coste se mide antes y se pide el OK de Mar (T12).
+- Correcciones: una pasada real de `estilo` (8 casos) y un «Volver a analizar» de Mar; céntimos. Se mide
+  antes y se pide el OK de Mar (T17).
 - Nada más llama al modelo.
