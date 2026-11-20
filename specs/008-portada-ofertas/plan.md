@@ -23,7 +23,7 @@ que hoy le inyecta el `proveedor`. Solo la API y el worker leen y escriben en Po
 | RF-8.1e pestañas | `static/comun.js` (`PESTANAS`, marca → `/recomendadas`), `estilo.css` (rejilla móvil) |
 | RF-8.2 catálogo | `static/catalogo.html` y `catalogo.js` nuevos (lo de `app.js`), ruta `/catalogo` con `exigir_admin`; `routers/ofertas.py` (`GET /ofertas` y `/ofertas/total` con `exigir_admin`; `GET /api/ofertas/propias` nuevo); `ingesta.html`, `costes.html` (subpestañas); `anadir-oferta.js` |
 | RF-8.3 original | `routers/ofertas.py` (`GET /api/ofertas/{id}/original`), `repositories/ofertas.py`; `comun.js` (`verOriginal`); `recomendadas.js`, `candidatura.js`, `catalogo.js`; guía (spec 006, RF-6.4) y `estilo.css` |
-| RF-8.4 «Qué buscas» | `recomendadas.html` / `.js` (panel con el formulario de `preferencias.*`, que se borran); `routers/paginas.py` (`/preferencias` → `/recomendadas#que-buscas`) |
+| RF-8.4 «Qué buscas» | `recomendadas.html` / `.js` (panel con el formulario de `preferencias.*`, que se borran); `/preferencias` ya no existe (P20) |
 | RF-8.4c-d vista | `recomendadas.js` (filtra y ordena en el navegador, `localStorage`); `routers/recomendaciones.py` (deja de aplicar rango y orden); `queue/worker.py` (rango 40-100 y orden «compatibles» fijos) |
 | RF-8.5 sin botón y topes | `routers/recomendaciones.py` (`POST /api/recomendar` decide), `repositories/tareas.py`, `config.py`, `queue/worker.py` (`_PuntuarUna`) |
 | RF-8.6 candidatura y descartes | migración `0020`; `repositories/descartes.py` nuevo; `routers/recomendaciones.py` (`PUT`/`DELETE /api/descartes/{oferta_id}`); `repositories/matches.py` (`listado` con candidatura y descarte) |

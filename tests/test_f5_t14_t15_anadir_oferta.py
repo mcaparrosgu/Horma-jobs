@@ -59,7 +59,8 @@ def test_ofertas_marca_como_propia_solo_a_su_duena(motor_app, bd_limpia, monkeyp
     berta.get("/auth/google/callback?code=google-B")
     servicio.recibir(motor_app, "Oferta del catálogo")
     h = {"X-CSRF-Token": ana.get("/api/yo").json()["csrf"]}
-    assert ana.post("/ofertas", headers=h, json={"texto": "Camarera. 2026-11-01"}).status_code == 201
+    texto = "Camarera de sala. Publicada 2026-11-01. Turnos."
+    assert ana.post("/ofertas", headers=h, json={"texto": texto}).status_code == 201
     prov = ProveedorSimulado([{"titulo": "Del catálogo"}, {"generica": False, "fraude": False}, TAX])
     while worker.procesar_una(motor_app, prov, resolver=None):
         pass

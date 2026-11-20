@@ -46,6 +46,8 @@ def crear(datos: NuevaOferta, request: Request, response: Response):
         r = servicio.recibir(engine, datos.texto, fuente=datos.fuente, clave_id=clave_id,
                              id_externo=datos.id_externo, url=datos.url,
                              usuaria_id=usuaria_id, caduca_en=datos.caduca_en)
+    except servicio.NoPareceOferta as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
     except servicio.FuenteNoValida as e:
         raise HTTPException(status_code=409, detail=f"Fuente no válida o inactiva: {e}") from e
     if not r["nueva"]:
@@ -94,7 +96,9 @@ def total(request: Request, usuaria_id: int = Depends(usuaria_actual)):
 def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """El catálogo común con su auditoría y su taxonomía (RF-8.2c: solo administradoras)."""
     with sesion_de(request.app.state.engine, usuaria_id) as s:
-        return repo.listar(s)
+        filas = repo.listar(s)
+    with sesion_sistema(request.app.state.engine) as s:
+        return repo.marcar_fuente_desconocida(filas, s)
 
 
 @router.get("/api/ofertas/propias")
@@ -103,7 +107,8 @@ def propias(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     engine = request.app.state.engine
     with sesion_de(engine, usuaria_id) as s:
         filas = repo.propias(s, usuaria_id)
-    with sesion_sistema(engine) as s:  # `procesar_oferta` es tarea del sistema; solo se leen los ids de ella
+    with sesion_sistema(engine) as s:  # `procesar_oferta` y `fuentes` son del sistema
+        repo.marcar_fuente_desconocida(filas, s)
         avance = repo.progreso_de_analisis(s, [f["id"] for f in filas])
     return [{**f, "progreso": avance.get(f["id"])} for f in filas]
 

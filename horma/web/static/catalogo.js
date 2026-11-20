@@ -15,10 +15,29 @@ function etiquetas(o) {
   return fila;
 }
 
+// «Calificar fuente»: pide a Horma que revise las condiciones de uso y el robots.txt del sitio de esta oferta
+// para decidir si puede entrar en el banco de fuentes. El resultado sale en Admin › Ingesta (RF-8.3g).
+function botonCalificar(url) {
+  const b = nodo("button", "Calificar fuente", "secundario");
+  b.type = "button";
+  b.addEventListener("click", async () => {
+    b.disabled = true;
+    const r = await api("/api/fuentes/calificaciones", { metodo: "POST", cuerpo: { url: new URL(url).origin } });
+    if (!r.ok) {
+      b.disabled = false;
+      return avisar(r.motivo, true);
+    }
+    b.textContent = "Calificación pedida";
+    avisar("Calificación pedida. El resultado aparece en Admin › Ingesta.");
+  });
+  return b;
+}
+
 function tarjeta(o) {
   const li = nodo("li", null, "tarjeta");
   li.append(etiquetas(o));
   if (o.propia) li.append(nodo("span", "Añadida por una usuaria", "estado bien"));
+  if (o.fuente_desconocida) li.append(nodo("span", textoFuenteDesconocida(o), "estado apagado"));
   li.append(nodo("h3", o.titulo || "Oferta sin procesar todavía"));
   const detalle = [o.empresa, o.ubicacion, o.contrato].filter(Boolean).join(" · ");
   if (detalle) li.append(nodo("p", detalle));
@@ -47,6 +66,7 @@ function tarjeta(o) {
     li.append(nodo("p", `Instrucciones detectadas y no ejecutadas: ${o.instrucciones_embebidas.length}`, "alerta"));
   }
   if (o.estado === "error" && o.motivo_error) li.append(nodo("p", o.motivo_error, "alerta"));
+  if (o.propia && o.fuente_desconocida && o.url) li.append(botonCalificar(o.url));
   const original = nodo("button", "Ver oferta original", "secundario");
   original.type = "button";
   original.addEventListener("click", () => verOriginal(o.id));

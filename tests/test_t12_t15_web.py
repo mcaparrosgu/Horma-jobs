@@ -148,7 +148,7 @@ def test_camino_completo_oferta_pegada_worker_y_lista(cliente, motor_app):
 
 def test_una_oferta_con_script_se_guarda_como_texto_y_no_rompe_nada(cliente, motor_app):
     csrf = entrar(cliente)
-    cliente.post("/ofertas", json={"texto": "<script>alert(1)</script> Cajero en Tienda X"},
+    cliente.post("/ofertas", json={"texto": "<script>alert(1)</script> Cajero en Tienda X, turno de tarde"},
                  headers={"X-CSRF-Token": csrf})
     worker.procesar_una(motor_app, ProveedorSimulado(
         [{"titulo": "<script>alert(1)</script>"}, AUDITOR, TAX]), resolver=None)

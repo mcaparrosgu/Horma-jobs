@@ -59,10 +59,13 @@ def _perfil_hecho(motor, u):
                                 "# Ana\nCamarera en Bar Sol, 2020-2023")
 
 
+RELLENO = " Se busca persona con experiencia en atención al cliente, turnos rotativos y contrato indefinido."
+
+
 def _pegar(c, h, motor, n=1):
     ids = []
     for i in range(n):
-        ids.append(c.post("/ofertas", headers=h, json={"texto": f"Camarera de sala {i}. 2026-11-01"}
+        ids.append(c.post("/ofertas", headers=h, json={"texto": f"Camarera de sala {i}. 2026-11-01.{RELLENO}"}
                           ).json()["id"])
     return ids
 

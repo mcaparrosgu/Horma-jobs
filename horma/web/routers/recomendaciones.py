@@ -122,6 +122,8 @@ def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
         ids = repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia))
         filas = repo.listado(s, ids)
         sueltas = tareas.sueltas_hoy(s, usuaria_id)
+    with sesion_sistema(request.app.state.engine) as s:
+        repo_ofertas.marcar_fuente_desconocida(filas, s)
     salida = [{**f, "salario": _salario(f), "sin_puntuar": f["nota"] is None,
                "aviso_auditor": _aviso_auditor(f) if f["propia"] else None} for f in filas]
     return {"total": len(salida), "sin_puntuar": sum(1 for f in salida if f["sin_puntuar"]),

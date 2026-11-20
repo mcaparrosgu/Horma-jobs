@@ -184,7 +184,8 @@ def test_sin_sesion_401_y_sin_ser_admin_403(cliente):
 
 def test_resumen_muestra_fuentes_sembradas_ofertas_por_estado_y_errores(cliente):
     h = entrar(cliente)
-    cliente.post("/ofertas", json={"texto": "Oferta pegada"}, headers=h)
+    texto = "Oferta pegada: camarera de sala en Bar Sol, turnos rotativos."
+    cliente.post("/ofertas", json={"texto": texto}, headers=h)
     r = cliente.get("/api/ingesta/resumen").json()
     nombres = {f["nombre"]: f for f in r["fuentes"]}
     assert {"arbeitnow", "adzuna"} <= set(nombres) and nombres["arbeitnow"]["activa"] is False
@@ -314,7 +315,7 @@ def test_el_js_del_dashboard_pinta_con_textcontent():
 
 def test_el_catalogo_muestra_auditoria_y_taxonomia(cliente, motor_app):
     h = entrar(cliente, ADMIN)  # el catálogo común es solo de Admin (RF-8.2c)
-    cliente.post("/ofertas", json={"texto": "Dev en Acme. Paga 30 euros de alta."}, headers=h)
+    cliente.post("/ofertas", json={"texto": "Dev en Acme. Paga 30 euros de alta. Python y SQL."}, headers=h)
     worker.procesar_una(motor_app, ProveedorSimulado([
         {"titulo": "Dev", "empresa": "Acme"},
         {"generica": False, "fraude": True, "senales_fraude": ["Paga 30 euros de alta."]}, TAX]),

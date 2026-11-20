@@ -272,7 +272,10 @@ dialog.ventana.alta{ height: 88vh; }
 dialog.ventana[open]{ display: flex; flex-direction: column; gap: 0.75rem; }
 dialog.ventana > header{ justify-content: space-between; align-items: center; display: flex; gap: 1rem; padding: 0; border: 0; }
 .ventana-cuerpo{ flex: 1; min-height: 0; overflow: auto; display: grid; gap: 0.75rem; align-content: start; }
-.ventana-cuerpo .texto-original{ white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; font-family: var(--f-body); line-height: 1.55; }
+.ventana-cuerpo .texto-original{ overflow-wrap: anywhere; margin: 0; font-family: var(--f-body); line-height: 1.6; display: grid; gap: 0.75rem; max-width: 70ch; }
+.texto-original p{ margin: 0; }
+.texto-original .apartado-original{ margin: 0.5rem 0 0; font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--ink); border-bottom: var(--bw) solid var(--line-strong); padding-bottom: 0.25rem; }
+.texto-original .lista-original{ margin: 0; padding-left: 1.25rem; display: grid; gap: 0.35rem; }
 .visor-marco{ width: 100%; height: 100%; border: 0; background: var(--surface); }
 
 /* ── Barra de avance (RF-6.4, RF-8.7): trabajo en marcha, con el porcentaje en texto ── */
@@ -280,6 +283,10 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); }
 .barra-avance .relleno{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
 .barra-avance .texto{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); }
+.barra-avance.indeterminada .relleno{ width: 35%; }
+@media (prefers-reduced-motion: no-preference){ .barra-avance.indeterminada .relleno{ animation: horma-espera 1.2s ease-in-out infinite alternate; } }
+@keyframes horma-espera{ from{ left: 0; } to{ left: 65%; } }
+.barra-avance.indeterminada .relleno{ inset: 0 auto 0 0; }
 @media (prefers-reduced-motion: no-preference){ .barra-avance .relleno{ transition: width 0.4s ease; } }
 
 /* ── Documento (CV y carta) ── */

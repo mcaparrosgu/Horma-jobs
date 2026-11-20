@@ -375,6 +375,7 @@ function filaOferta(o) {
   if (o.atribucion) celdaOferta.append(nodo("span", o.atribucion, "suave bloque"));  // cita de la fuente (RF-5.5d)
   if (o.propia) {  // las que añade la usuaria salen siempre, con su marca y lo que vio el auditor (RF-5.3e)
     celdaOferta.append(nodo("span", `Añadida por ti · analizada el ${fecha(o.analizada_en)}`, "estado bien bloque"));
+    if (o.fuente_desconocida) celdaOferta.append(nodo("span", textoFuenteDesconocida(o), "estado apagado bloque"));
     if (o.aviso_auditor) celdaOferta.append(nodo("span", o.aviso_auditor, "estado error bloque"));
   }
   if (o.candidatura) {  // el estado, siempre con texto (RF-6.7e)
@@ -531,9 +532,14 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   $("guardar-busca").disabled = false;
   if (!r.ok) return avisar(r.estado === 422 ? "Revisa el sueldo mínimo: debe ser un número positivo." : r.motivo, true);
   guardadas = r.datos;
-  avisar("Guardado. Buscando y puntuando ofertas…");
-  await cargarLista();
-  await lanzarPuntuacion("buscar");   // sin esperar a la hora (RF-8.5)
+  avisar("Guardado.");
+  const espera = barraAvance($("avance"), "Buscando y puntuando ofertas", true);   // para que no parezca bloqueada
+  try {
+    await cargarLista();
+    await lanzarPuntuacion("buscar");   // sin esperar a la hora (RF-8.5)
+  } finally {
+    espera.quitar();
+  }
 });
 
 // La vista cambia en el navegador: ninguna petición (RF-8.4c).

@@ -1,4 +1,5 @@
 """Servicio de ofertas: alta en el catálogo y encolado del flujo procesar_oferta (RF-1.3, RF-1.4)."""
+import re
 from datetime import datetime
 
 from sqlalchemy import Engine
@@ -16,6 +17,24 @@ class FuenteNoValida(Exception):
     """La fuente indicada no existe o no está activa."""
 
 
+class NoPareceOferta(ValueError):
+    """El texto pegado por una usuaria no tiene pinta de oferta de trabajo."""
+
+
+MIN_PALABRAS_OFERTA = 5
+MIN_LETRAS_OFERTA = 25
+MOTIVO_NO_OFERTA = ("Ese texto no parece una oferta de trabajo. Pega la oferta completa: puesto, empresa y "
+                    "lo que piden u ofrecen.")
+
+
+def parece_oferta(texto: str) -> bool:
+    """Filtro barato y sin modelo (RF-5.3g): sin etiquetas ni enlaces, ¿quedan 5 palabras y 25 letras?
+    No decide si es buena oferta; solo deja fuera lo que claramente no es texto de una oferta."""
+    limpio = re.sub(r"<[^>]*>|https?://\S+", " ", texto or "")
+    palabras = re.findall(r"[^\W\d_]{2,}", limpio)
+    return len(palabras) >= MIN_PALABRAS_OFERTA and sum(len(p) for p in palabras) >= MIN_LETRAS_OFERTA
+
+
 def recibir(engine: Engine, texto: str, *, fuente: str | None = None, clave_id: int | None = None,
             id_externo: str | None = None, url: str | None = None,
             usuaria_id: int | None = None, caduca_en: datetime | None = None,
@@ -24,6 +43,8 @@ def recibir(engine: Engine, texto: str, *, fuente: str | None = None, clave_id: 
     """Guarda la oferta cruda y, si es nueva, encola su procesado. La carga de la cola es el id.
     Con `usuaria_id` la oferta es privada de esa usuaria (RF-5.3c)."""
     a = ajustes()
+    if usuaria_id is not None and not parece_oferta(texto):
+        raise NoPareceOferta(MOTIVO_NO_OFERTA)
     with sesion_sistema(engine) as s:
         fuente_id = atribucion = None
         if fuente:

@@ -27,7 +27,7 @@ function tarjeta(o, nota) {
   if (linea) li.append(nodo("p", linea));
   if (detalle) li.append(nodo("p", detalle, "alerta"));
   if (o.estado === "procesada") {
-    if (o.fantasma) li.append(nodo("p", "Aviso: podría ser una oferta fantasma.", "suave"));
+    if (o.fuente_desconocida) li.append(nodo("p", textoFuenteDesconocida(o), "estado apagado"));
     if (o.fraude) li.append(nodo("p", "Aviso: el auditor ha visto señales de fraude.", "alerta"));
     const a = nodo("a", "Verla en Recomendadas", "bloque");
     a.href = "/recomendadas";
@@ -63,7 +63,8 @@ $("formulario").addEventListener("submit", async (e) => {
   const r = await api("/ofertas", { metodo: "POST", cuerpo: { texto } });
   $("enviar").disabled = false;
   if (!r.ok) {
-    return avisar(r.estado === 422 ? "El texto está vacío o es demasiado largo (máximo 20 000 caracteres)." : r.motivo, true);
+    return avisar(r.estado === 422 && /^Revisa los datos/.test(r.motivo || "")
+      ? "El texto está vacío o es demasiado largo (máximo 20 000 caracteres)." : r.motivo, true);
   }
   $("texto").value = "";
   avisar("Oferta añadida. Se está analizando y puntuando; se actualizará sola.");

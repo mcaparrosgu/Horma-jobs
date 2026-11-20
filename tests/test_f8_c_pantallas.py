@@ -143,10 +143,9 @@ def test_pestanas_son_cinco_y_la_marca_lleva_a_recomendadas():
 
 
 @pytest.mark.bd
-def test_preferencias_redirige_a_que_buscas(app):
-    r = entrar(app).get("/preferencias")
-    assert r.status_code == 302 and r.headers["location"] == "/recomendadas#que-buscas"
-    assert TestClient(app, follow_redirects=False).get("/preferencias").status_code == 302
+def test_preferencias_ya_no_existe(app):
+    assert entrar(app).get("/preferencias").status_code == 404   # ya no existe (P20)
+    assert TestClient(app, follow_redirects=False).get("/preferencias").status_code == 404
 
 
 def test_ninguna_pantalla_enlaza_a_preferencias():
@@ -226,12 +225,13 @@ def test_la_ventana_de_la_oferta_original_pinta_con_textcontent():
     js = leer("comun.js")
     bloque = js[js.index("function ventanaOriginal"):js.index("// Dibuja el Markdown del CV")]
     assert "innerHTML" not in bloque and "insertAdjacentHTML" not in bloque
-    assert 'nodo("pre", o.texto, "texto-original")' in bloque and "showModal()" in bloque
+    assert "textoBonito(o.texto)" in bloque and "showModal()" in bloque
     assert "Abrir en la web de origen" in bloque and "if (urlSegura(o.url))" in bloque
     assert 'a.rel = "noopener noreferrer"' in bloque and 'a.target = "_blank"' in bloque
     assert "disparador.focus()" in bloque  # el foco vuelve al botón al cerrar (Esc cierra el diálogo nativo)
     assert "No consta fecha de publicación" in bloque and "Añadida por ti" in bloque
-    assert re.search(r"\.texto-original\{[^}]*white-space: pre-wrap", leer("estilo.css"))
+    assert "innerHTML" not in js[js.index("function textoBonito"):js.index("async function verOriginal")]
+    assert re.search(r"\.apartado-original\{[^}]*font-weight: 600", leer("estilo.css"))
 
 
 def test_ver_oferta_original_esta_en_recomendadas_candidatura_catalogo_y_anadir_oferta():

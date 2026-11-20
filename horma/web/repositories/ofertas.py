@@ -1,5 +1,6 @@
 """Único lugar donde se escribe SQL sobre ofertas y su origen. El catálogo se escribe en modo sistema."""
 import json
+import re
 
 from pydantic import HttpUrl, TypeAdapter, ValidationError
 from sqlalchemy import text
@@ -18,6 +19,22 @@ COLUMNAS_LISTA = (
     "o.dominio_empresa, o.empresa_validada, o.salario_publicado, o.salario_rango, "
     "o.frase_pedir_salario, o.sector, o.familia, o.nivel, o.stack, o.recomendable, o.creada_en, "
     "o.usuaria_id is not null as propia, f.nombre as fuente")
+
+
+def _dominio(url: str | None) -> str | None:
+    m = re.match(r"https?://([^/:?#]+)", url or "", re.I)
+    return re.sub(r"^www\.", "", m.group(1).lower()) if m else None
+
+
+def marcar_fuente_desconocida(filas: list[dict], s_sistema: Session) -> list[dict]:
+    """RF-8.3f: una oferta propia es de «fuente no reconocida» si su dirección no es de ninguna fuente del
+    banco de Horma (dominio o subdominio) o si no tiene dirección. `fuentes` solo la lee el sistema."""
+    dominios = {d for (w,) in s_sistema.execute(text("select web from fuentes")).all() if (d := _dominio(w))}
+    for f in filas:
+        d = _dominio(f.get("url"))
+        f["fuente_desconocida"] = bool(f.get("propia")) and not (
+            d and any(d == x or d.endswith("." + x) for x in dominios))
+    return filas
 
 
 def _existente(s: Session, fuente_id, clave_id, id_externo) -> dict | None:

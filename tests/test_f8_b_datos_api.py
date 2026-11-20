@@ -259,3 +259,34 @@ def test_recomendaciones_ya_no_aplica_rango_ni_orden(app, motor_migrador):
                            "values (:u, :o, 1, :n, 'alto')"), {"u": u, "o": o, "n": n})
     r = ana.get("/api/recomendaciones?rango=50-100&orden=compatibles").json()
     assert {x["id"] for x in r["recomendaciones"]} == {o1, o2} and "rango" not in r
+
+
+def test_fuente_desconocida_en_ofertas_propias(app, motor_migrador):
+    """RF-8.3f: propia con dirección fuera del banco de fuentes (o sin ella) sale marcada."""
+    ana, _ = entrar(app, "google-A")
+    a = usuaria(motor_migrador, "google-A")
+    with motor_migrador.begin() as c:
+        c.execute(text("insert into fuentes (nombre, web, url, metodo, mapeo, activa) values "
+                       "('f-conocida', 'https://www.fuente-conocida.test', "
+                       "'https://api.fuente-conocida.test/x', "
+                       "'GET', '{}', false)"))
+    oferta(motor_migrador, "Conocida", duena=a, url="https://empleo.fuente-conocida.test/oferta/1")
+    oferta(motor_migrador, "Rara", duena=a, url="https://web-rara.test/oferta")
+    oferta(motor_migrador, "Sin enlace", duena=a)
+    por_titulo = {o["titulo"]: o["fuente_desconocida"] for o in ana.get("/api/ofertas/propias").json()}
+    with motor_migrador.begin() as c:   # la tabla es compartida: no dejar la fuente de prueba
+        c.execute(text("delete from fuentes where nombre = 'f-conocida'"))
+    assert por_titulo == {"Conocida": False, "Rara": True, "Sin enlace": True}
+
+
+def test_texto_que_no_es_una_oferta_se_rechaza(app):
+    """RF-5.3g: `<script>` y similares no entran; una oferta corta y real, sí."""
+    from horma.web.services.ofertas import parece_oferta
+    assert not parece_oferta("<script>")
+    assert not parece_oferta("<script>alert(1)</script> https://x.test/a/b/c")
+    assert not parece_oferta("hola")
+    assert parece_oferta("Analista de datos junior en Empresa Zeta, Madrid, híbrido. Python y SQL. Contrato "
+                         "indefinido.")
+    ana, csrf = entrar(app, "google-A")
+    r = ana.post("/ofertas", json={"texto": "<script>"}, headers=csrf)
+    assert r.status_code == 422 and "no parece una oferta" in r.json()["detail"]

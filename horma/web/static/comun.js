@@ -160,7 +160,7 @@ async function pintarPersona(persona) {
 }
 
 // Barra de avance (RF-8.7): frase con el porcentaje y pista con `role="progressbar"`. Devuelve `poner(%)` y `quitar()`.
-function barraAvance(contenedor, texto) {
+function barraAvance(contenedor, texto, indeterminada = false) {
   const caja = nodo("div", null, "barra-avance");
   const frase = nodo("span", null, "texto");
   const pista = nodo("div", null, "pista");
@@ -178,7 +178,14 @@ function barraAvance(contenedor, texto) {
     pista.setAttribute("aria-valuenow", String(v));
     relleno.style.width = `${v}%`;   // por CSSOM: la CSP no permite style= en el HTML
   };
-  poner(0);
+  if (indeterminada) {   // sin porcentaje: Horma trabaja y aún no sabe cuánto falta
+    caja.classList.add("indeterminada");
+    pista.removeAttribute("aria-valuenow");
+    pista.setAttribute("aria-busy", "true");
+    frase.textContent = `${texto}…`;
+  } else {
+    poner(0);
+  }
   return { poner, quitar: () => caja.remove() };
 }
 
@@ -228,6 +235,58 @@ function ventanaOriginal() {
   return v;
 }
 
+// Marca de las ofertas propias cuya dirección no es de ninguna fuente del banco de Horma (o que no tienen).
+function textoFuenteDesconocida(o) {
+  return o.url ? "Fuente no reconocida por Horma" : "Sin fuente indicada";
+}
+
+// Da formato legible al texto de una oferta sin tocar su contenido: apartados en negrita, listas y párrafos.
+// Todo con textContent (nunca HTML): un <script> o un enlace pegado solo se ve como texto.
+function esTituloDeApartado(l) {
+  if (l.length > 60 || /[.;,]$/.test(l)) return false;
+  if (/:$/.test(l)) return true;
+  const letras = l.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g, "");
+  return letras.length > 3 && letras === letras.toUpperCase();
+}
+
+function textoBonito(texto) {
+  const hoja = nodo("article", null, "texto-original");
+  let lista = null;
+  let parrafo = [];
+  const cerrarParrafo = () => {
+    if (parrafo.length >= 3 && parrafo.every((l) => l.length <= 160)) {   // varias líneas cortas seguidas: una lista
+      const ul = nodo("ul", null, "lista-original");
+      ul.append(...parrafo.map((l) => nodo("li", l)));
+      hoja.append(ul);
+    } else if (parrafo.length) {
+      hoja.append(nodo("p", parrafo.join(" ")));
+    }
+    parrafo = [];
+  };
+  const lineas = String(texto || "").split(/\r?\n/);
+  lineas.forEach((crudo, i) => {
+    const l = crudo.trim();
+    if (!l) { cerrarParrafo(); lista = null; return; }
+    const v = l.match(/^(?:[-*+•·–]|\d+[.)])\s+(.*)$/);
+    if (v) {
+      cerrarParrafo();
+      if (!lista) { lista = nodo("ul", null, "lista-original"); hoja.append(lista); }
+      lista.append(nodo("li", v[1]));
+      return;
+    }
+    lista = null;
+    const sola = (i === 0 || !(lineas[i - 1] || "").trim()) && !(lineas[i + 1] || "").trim();
+    if (esTituloDeApartado(l) || (sola && l.length <= 50 && !/[.!?]$/.test(l))) {
+      cerrarParrafo();
+      hoja.append(nodo("h4", l.replace(/:$/, ""), "apartado-original"));
+      return;
+    }
+    parrafo.push(l);
+  });
+  cerrarParrafo();
+  return hoja;
+}
+
 async function verOriginal(id) {
   const disparador = document.activeElement;
   const r = await api(`/api/ofertas/${id}/original`);
@@ -248,7 +307,7 @@ async function verOriginal(id) {
     a.rel = "noopener noreferrer";
     cuerpo.append(a);
   }
-  cuerpo.append(nodo("pre", o.texto, "texto-original"));
+  cuerpo.append(textoBonito(o.texto));
   v.addEventListener("close", () => { if (disparador && disparador.isConnected) disparador.focus(); }, { once: true });
   v.showModal();
 }

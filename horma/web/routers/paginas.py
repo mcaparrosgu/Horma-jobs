@@ -45,9 +45,3 @@ def _entrada(archivo: str):
 
 router.add_api_route("/", _entrada("index.html"), methods=["GET"], include_in_schema=False)
 router.add_api_route("/entrar", _entrada("entrar.html"), methods=["GET"], include_in_schema=False)
-
-
-@router.get("/preferencias", include_in_schema=False)
-def preferencias_ahora_en_recomendadas():
-    """Preferencias pasó a ser el panel «Qué buscas» de Recomendadas (RF-8.4b)."""
-    return RedirectResponse("/recomendadas#que-buscas", status_code=302)

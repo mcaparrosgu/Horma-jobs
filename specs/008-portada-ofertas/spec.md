@@ -70,6 +70,17 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
   Al cerrarla (botón «Cerrar» o tecla Esc), la pantalla DEBERÁ quedar donde estaba, con el foco en el botón.
 - **RF-8.3b** El texto DEBERÁ mostrarse como texto plano: sus enlaces e instrucciones no se activan (constitución:
   las ofertas son texto no fiable). Se conservan los saltos de línea.
+- **RF-8.3e** El texto DEBERÁ mostrarse con formato legible según el diseño de Horma (apartados en negrita, listas
+  y párrafos), sin tocar su contenido y sin interpretar HTML (P20).
+- **RF-8.3f** Una oferta propia cuya dirección no sea de ninguna fuente del banco de Horma, o que no tenga
+  dirección, DEBERÁ marcarse como «Fuente no reconocida por Horma» / «Sin fuente indicada» en Añadir oferta,
+  Recomendadas y Admin › Catálogo (P20). Ampliar el banco de fuentes es trabajo aparte (`config/endpoints.json`).
+- **RF-8.3g** En Admin › Catálogo, una oferta propia de fuente no reconocida con dirección DEBERÁ tener el botón
+  «Calificar fuente», que pide la calificación (RF-1.7) del sitio de esa dirección. El resultado sale en
+  Admin › Ingesta; si es apta, la administradora la da de alta y activa allí como cualquier fuente (P20).
+- **RF-5.3g** Un texto pegado o leído por una usuaria que, sin etiquetas ni enlaces, no tenga al menos 5 palabras
+  y 25 letras DEBERÁ rechazarse con «Ese texto no parece una oferta de trabajo…» (422), sin analizarlo ni
+  puntuarlo (P20). Es un filtro sin modelo: no juzga la calidad de la oferta.
 - **RF-8.3c** Una oferta propia SOLO DEBERÁ verla su dueña (RLS); si otra persona la pide, 404.
 - **RF-8.3d** La ventana es un componente nuevo («Ventana»): DEBERÁ añadirse antes a la guía (RF-6.4, RF-6.9).
 
@@ -77,8 +88,10 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
 - **RF-8.4** Recomendadas DEBERÁ tener arriba un panel plegable «Qué buscas» con: puestos, sector, contrato, nivel,
   país, idiomas, «Solo remoto», «Solo con salario» y sueldo mínimo (P2). Cerrado por defecto; abierto si aún no
   hay nada guardado. Su botón primario es «Guardar y buscar».
-- **RF-8.4b** La pestaña Preferencias DEBERÁ desaparecer; `/preferencias` DEBERÁ llevar a Recomendadas con «Qué
-  buscas» abierto. Se mantiene que el CV rellena lo que la usuaria no ha tocado.
+- **RF-8.4b** La pestaña Preferencias DEBERÁ desaparecer y `/preferencias` NO DEBERÁ existir (enmienda P20, 20-nov:
+  nunca fue una pantalla de la usuaria). Se mantiene que el CV rellena lo que la usuaria no ha tocado.
+- **RF-8.4e** Al pulsar «Guardar y buscar», MIENTRAS Horma busca y arranca la puntuación, la pantalla DEBERÁ
+  mostrar una barra de espera con el texto «Buscando y puntuando ofertas…», para que no parezca bloqueada (P20).
 - **RF-8.4c** Los filtros de vista DEBERÁN ser: nota mínima y máxima, orden (recientes / más compatibles) y estado
   (RF-8.6c). NO DEBERÁN guardarse en el servidor ni llamar al modelo; este navegador los recuerda (P2).
 - **RF-8.4d** Lo que se puntúa NO DEBERÁ depender de la vista: Horma puntúa en orden de más a menos parecido al
