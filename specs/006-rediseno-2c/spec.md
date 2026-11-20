@@ -120,6 +120,12 @@ mientras uno de estos sirva (RF-6.9).
 | **Tabla de datos** (admin) | cabeceras mono, filas con línea inferior, desplazamiento horizontal dentro de su caja en móvil |
 | **Documento** (CV y carta) | hoja de superficie con borde de 1 px en línea, tipografía del cuerpo y anchura de lectura |
 
+- **RF-6.4b** Simetría (prioridad alta de Mar): los elementos de una misma fila o rejilla DEBERÁN
+  tener la misma altura, la misma separación y estar alineados por abajo. Una etiqueta o un contador
+  NO DEBERÁN descolocar a sus vecinos. Los contadores y las marcas dentro de un control ocupan un
+  tamaño fijo y se colocan siempre en el mismo sitio. Se comprueba a 1280 y 390 px antes de dar una
+  pantalla por buena.
+
 ### Recomendadas (RF-6.5) — la pantalla con diseño cerrado
 - **RF-6.5** Orden de la pantalla:
   1. h1 «Recomendadas» y entradilla: «Ofertas ya revisadas, sin fraudes ni ofertas fantasma, para

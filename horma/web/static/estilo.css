@@ -81,7 +81,7 @@ button:disabled{ opacity: 0.55; cursor: not-allowed; }
 button.ocupado:disabled{ cursor: wait; }
 
 input, select, textarea{
-  font: inherit; font-size: var(--fs); color: var(--ink); background: var(--surface);
+  font: inherit; font-family: var(--f-body); font-size: var(--fs); color: var(--ink); background: var(--surface);
   border: var(--bw) solid var(--line-strong); border-radius: var(--radius); text-transform: none; letter-spacing: normal;
 }
 input:not([type="checkbox"]):not([type="radio"]), select{ min-height: var(--tap); padding: 0 12px; }
@@ -111,6 +111,12 @@ label input.corto{ width: 7rem; }
   letter-spacing: var(--ls-label); font-weight: 600; padding: 2px 10px; border: var(--bw) solid var(--line-strong);
   margin: 0 0 0.4rem; color: var(--ink);
 }
+summary > .estado, legend > .estado{
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+  min-width: 26px; height: 22px; padding: 0 6px; margin: 0; line-height: 1; font-variant-numeric: tabular-nums;
+}
+summary > .estado{ margin-left: auto; }
+details > summary:has(> .estado)::after{ margin-left: 10px; }
 .estado.error{ color: var(--error); border-color: var(--error); }
 .estado.apagado{ color: var(--muted); border-color: var(--line); border-style: dashed; }
 .estado.bien{ color: var(--accent-text); border-color: var(--accent-text); }
@@ -183,6 +189,12 @@ button.ayuda:hover{ background: var(--surface-2); filter: none; color: var(--ink
 .filtros{ margin-bottom: 1rem; }
 .filtros-rejilla{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: end; }
 .grupos-barra{ display: contents; }
+/* Simetría (RF-6.4b): cada celda es etiqueta + control de 44 px, con la misma separación; el alineado es por abajo. */
+.filtros-rejilla > label, .filtros-rejilla > div{ margin: 0; min-width: 0; }
+.filtros-rejilla label input, .filtros-rejilla label select{ margin-top: 6px; }
+.filtros-rejilla > div[role="group"] > .etiqueta-mono{ display: block; margin-bottom: 6px; }
+.filtros-rejilla .rango{ display: flex; align-items: center; gap: 8px; }
+.filtros-rejilla .rango input.corto{ flex: 1 1 0; min-width: 0; width: auto; }
 .filtros .fila{ align-items: center; margin-top: 16px; }
 .filtros .fila .acciones{ margin-left: auto; }
 .grupos{ display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; margin-bottom: 1rem; }
