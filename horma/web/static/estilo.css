@@ -205,10 +205,11 @@ button.ayuda:hover{ background: var(--surface-2); filter: none; color: var(--ink
 .filtros-rejilla .rango input.corto{ flex: 1 1 0; min-width: 0; width: auto; }
 .filtros .fila{ align-items: center; margin-top: 16px; }
 .filtros .fila .acciones{ margin-left: auto; }
-.grupos{ display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.grupos{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }  /* 6 grupos = 2 filas de 3 */
 fieldset.grupo{ border: var(--bw) solid var(--panel-border); padding: 0.6rem 1rem 0.9rem; min-width: 0; margin: 0; }
-fieldset.grupo legend{ font-weight: 700; padding: 0 0.4rem; display: flex; gap: 0.5rem; align-items: center; }
+fieldset.grupo legend{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); padding: 0 0.4rem; display: flex; gap: 0.5rem; align-items: center; }
 .casillas{ display: grid; gap: 0; margin-top: 0.4rem; }
+fieldset.grupo > .casillas{ max-height: 18rem; overflow-y: auto; }  /* cajas del mismo alto aunque haya 30 países */
 .casillas label.casilla span{ overflow-wrap: anywhere; }
 details.grupo{ position: relative; }
 details.grupo > summary{ background: var(--surface); border: var(--bw) solid var(--line-strong); padding: 0 12px; min-height: var(--tap); text-transform: none; }
@@ -301,6 +302,7 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   form.panel.fila{ grid-template-columns: 1fr; }
   input:not([type="checkbox"]), select, textarea{ font-size: 16px; }
 
+  .grupos{ grid-template-columns: 1fr; }
   .filtros-rejilla{ grid-template-columns: 1fr; }
   .filtros.plegados .mas{ display: none; }
   #mas-filtros{ display: inline-flex; }
