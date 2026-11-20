@@ -39,7 +39,7 @@
       <button id="nueva-fuente" class="secundario" type="button">Añadir fuente</button>
     </section>
 
-    <section id="editor" class="tarjeta" hidden aria-labelledby="t-editor">
+    <section id="editor" class="panel" hidden aria-labelledby="t-editor">
       <h2 id="t-editor">Fuente</h2>
       <form id="form-fuente">
         <div class="rejilla">
@@ -53,9 +53,9 @@
           <label class="casilla"><input name="activa" type="checkbox"> Activa (exige calificación apta)</label>
           <label>Intervalo mínimo (horas) <input name="cada_horas" type="number" min="1" placeholder="sin intervalo"></label>
         </div>
-        <label>Parámetros (JSON) <textarea name="parametros" rows="3">{}</textarea></label>
-        <label>Cabeceras (JSON) <textarea name="cabeceras" rows="2">{}</textarea></label>
-        <label>Mapeo de campos (JSON) <textarea name="mapeo" rows="6">{}</textarea></label>
+        <label>Parámetros (JSON) <textarea class="json" name="parametros" rows="3">{}</textarea></label>
+        <label>Cabeceras (JSON) <textarea class="json" name="cabeceras" rows="2">{}</textarea></label>
+        <label>Mapeo de campos (JSON) <textarea class="json" name="mapeo" rows="6">{}</textarea></label>
         <div class="fila">
           <button type="submit">Guardar</button>
           <button id="cancelar" class="secundario" type="button">Cancelar</button>

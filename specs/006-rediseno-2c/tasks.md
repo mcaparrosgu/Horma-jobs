@@ -151,7 +151,7 @@ stale_after: null
   - **Cubre:** RF-6.6.
 
 ### Bloque E · Admin (RF-6.3d, RF-6.6)
-- [ ] T16 — Ingesta y Costes.
+- [x] T16 — Ingesta y Costes.
   - **Qué se hace:** la cabecera mínima, tablas de datos, el editor JSON en mono y estados con texto.
   - **Test:** los asserts actuales (`ingesta.js`, 3 `tabla-costes` con `overflow-x: auto` y `viewport`).
   - **Cubre:** RF-6.3d, RF-6.6.
