@@ -287,6 +287,10 @@ async function iniciar() {
     return;
   }
   csrf = (await r.json()).csrf;
+  $("salir").addEventListener("click", async () => {
+    await fetch("/auth/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });
+    location.href = "/";
+  });
   try {
     await cargar();
     await cargarClaves();

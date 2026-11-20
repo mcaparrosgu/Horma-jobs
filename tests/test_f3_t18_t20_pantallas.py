@@ -52,9 +52,9 @@ def test_las_paginas_solo_se_sirven_con_sesion(app, ruta):
 
 
 @pytest.mark.parametrize("nombre", PAGINAS.values())
-def test_cada_pagina_lleva_marco_pestanas_y_sus_scripts(nombre):
+def test_cada_pagina_lleva_tokens_pestanas_y_sus_scripts(nombre):
     html = leer(f"{nombre}.html")
-    assert 'class="pp"' in html and 'aria-hidden="true"' in html
+    assert "/static/tokens.css" in html  # fase 6: tokens 2c en vez del marco
     assert 'id="pestanas"' in html
     assert "/static/comun.js" in html and f"/static/{nombre}.js" in html
     assert not re.search(r"<script(?![^>]*\bsrc=)", html)                  # CSP: sin scripts inline

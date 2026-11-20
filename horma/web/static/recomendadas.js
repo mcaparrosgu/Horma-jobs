@@ -1,54 +1,85 @@
-// Pantalla de ofertas recomendadas (RF-2.8, 2.15b, 2.15c). Cambiar un filtro solo reordena y filtra
+// Pantalla de ofertas recomendadas (RF-2.8, 2.15b, 2.15c, 6.5). Cambiar un filtro solo reordena y filtra
 // lo ya puntuado: guarda las preferencias y vuelve a pedir la lista; nunca llama al modelo.
 const AYUDA = [
   ["Oferta", "El título de la oferta y la empresa que la publica. El enlace lleva a la oferta original."],
   ["Puesto", "El tipo de trabajo según la clasificación de Horma, sea cual sea el sector."],
-  ["Compatibilidad", "Nota de 0 a 100 de lo bien que encajan tu experiencia y formación con lo que pide la oferta. Orienta, no decide. «Por qué» explica la nota."],
+  ["Compatibilidad", "Nota de 0 a 100 de lo bien que encajan tu experiencia y formación con lo que pide la oferta. Orienta, no decide. Despliega la fila para ver por qué."],
   ["Salario", "Tal como lo dice la oferta, sin convertirlo. Si no lo publica, lo verás indicado."],
   ["Lugar", "El país donde está el puesto, o «Remoto»."],
   ["Publicado", "El día en que se publicó la oferta (o, si no lo dice, el día en que llegó a Horma)."],
-  ["Candidatura", "Horma elige tu CV base más adecuado y prepara el CV adaptado y la carta. Tú los revisas y los apruebas."],
 ];
 const MAX_PUNTUANDO = 30;  // sondeos de 3 s tras pulsar «Recomendar»
 let guardadas = null;
 let opciones = null;
-let esperaFiltro = null;
 let sondeos = 0;
 let sondeo = null;
+let abiertas = null;       // ids de las filas desplegadas; null hasta el primer pintado (entonces, solo la primera)
 
 function urlSegura(u) {
   return typeof u === "string" && /^https?:\/\//i.test(u);
 }
 
-function colorDe(texto) {
+// Mapeo fijo familia → tono (.tono-0…5, RF-6.4): la misma familia sale siempre del mismo color.
+function tonoDe(texto) {
   let h = 0;
   for (const c of String(texto || "")) h = (h * 31 + c.charCodeAt(0)) % 6;
-  return `color-${h}`;
+  return `tono-${h}`;
+}
+
+// --- Ayuda «?»: globo propio con clic o foco, Escape y clic fuera (RF-6.7b) -----------------------
+function cerrarAyudas(salvo = null) {
+  for (const b of document.querySelectorAll("button.ayuda[aria-expanded='true']")) {
+    if (b === salvo) continue;
+    b.setAttribute("aria-expanded", "false");
+    document.getElementById(b.getAttribute("aria-describedby")).hidden = true;
+  }
+}
+document.addEventListener("click", (e) => cerrarAyudas(e.target.closest("button.ayuda")));
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const abierta = document.querySelector("button.ayuda[aria-expanded='true']");
+  cerrarAyudas();
+  if (abierta) abierta.focus();
+});
+
+function ayuda(nombre, texto, i) {
+  const q = nodo("button", "?", "ayuda");
+  q.type = "button";
+  q.setAttribute("aria-label", `Qué significa «${nombre}»`);
+  q.setAttribute("aria-expanded", "false");
+  const globo = nodo("span", texto, "ayuda-globo");
+  globo.id = `ayuda-${i}`;
+  globo.hidden = true;
+  q.setAttribute("aria-describedby", globo.id);
+  q.addEventListener("click", () => {
+    const abrir = globo.hidden;
+    globo.hidden = !abrir;
+    q.setAttribute("aria-expanded", String(abrir));
+  });
+  q.addEventListener("focusout", (e) => {
+    if (!globo.contains(e.relatedTarget)) {
+      globo.hidden = true;
+      q.setAttribute("aria-expanded", "false");
+    }
+  });
+  return [q, globo];
 }
 
 function cabeceras() {
   const fila = $("cabeceras");
-  for (const [nombre, ayuda] of AYUDA) {
+  AYUDA.forEach(([nombre, texto], i) => {
     const th = nodo("th");
     th.scope = "col";
-    th.append(nodo("span", nombre));
-    const q = nodo("button", "?", "ayuda secundario");
-    q.type = "button";
-    q.setAttribute("aria-label", `Qué significa «${nombre}»`);
-    q.setAttribute("aria-expanded", "false");
-    const texto = nodo("span", ayuda, "ayuda-texto");
-    texto.hidden = true;
-    q.addEventListener("click", () => {
-      texto.hidden = !texto.hidden;
-      q.setAttribute("aria-expanded", String(!texto.hidden));
-    });
-    th.append(q, texto);
+    th.append(nodo("span", nombre), ...ayuda(nombre, texto, i));
     fila.append(th);
-  }
+  });
+  const ultima = nodo("th");
+  ultima.append(nodo("span", "Detalle", "solo-lector"));
+  fila.append(ultima);
 }
 
-function celda(rotulo, ...hijos) {
-  const td = nodo("td");
+function celda(rotulo, clase, ...hijos) {
+  const td = nodo("td", null, clase);
   td.dataset.etiqueta = rotulo;
   td.append(...hijos);
   return td;
@@ -70,7 +101,7 @@ function formularioCorreccion(o, alTerminar) {
   const enviar = nodo("button", "Enviar corrección");
   const cancelar = nodo("button", "Cancelar", "secundario");
   cancelar.type = "button";
-  cancelar.addEventListener("click", alTerminar);
+  cancelar.addEventListener("click", () => alTerminar(false));
   const fila = nodo("div", null, "fila");
   fila.append(enviar, cancelar);
   f.append(campo("Nota que te parece justa (opcional)", nota), campo("Motivo", motivo), fila);
@@ -86,46 +117,13 @@ function formularioCorreccion(o, alTerminar) {
   return f;
 }
 
-function porque(o) {
-  const d = nodo("details", null, "porque");
-  d.append(nodo("summary", "Por qué"));
-  const cuerpo = nodo("div", null, "porque-cuerpo");
-  const pintar = () => {
-    cuerpo.replaceChildren();
-    if (o.retirada) {
-      cuerpo.append(nodo("p", "Se ha retirado la explicación porque no cumplía las reglas de Horma. La nota sigue siendo válida.", "suave"));
-    } else {
-      cuerpo.append(nodo("p", o.explicacion));
-      if (o.cita_perfil) cuerpo.append(nodo("p", `De tu perfil: «${o.cita_perfil}»`, "suave"));
-      if (o.cita_oferta) cuerpo.append(nodo("p", `De la oferta: «${o.cita_oferta}»`, "suave"));
-    }
-    if (o.desfasado) cuerpo.append(nodo("p", "Esta nota se calculó con una versión anterior de tu perfil.", "suave"));
-    if (o.correccion) {
-      const c = o.correccion;
-      const nota = c.nota !== null && c.nota !== undefined ? ` (nota que propones: ${c.nota})` : "";
-      cuerpo.append(nodo("p", `Tu corrección${nota}: ${c.comentario}`, "origen"));
-    }
-    const boton = nodo("button", o.correccion ? "Modificar de nuevo" : "Modificar", "secundario");
-    boton.type = "button";
-    boton.addEventListener("click", () => {
-      boton.hidden = true;
-      const f = formularioCorreccion(o, (guardada) => (guardada ? pintar() : (f.remove(), (boton.hidden = false))));
-      cuerpo.append(f);
-    });
-    cuerpo.append(boton);
-  };
-  pintar();
-  d.append(cuerpo);
-  return d;
-}
-
 // «Preparar candidatura» (RF-3.7b): crea la candidatura y lleva a ella; el CV base lo elige Horma.
-function celdaCandidatura(o) {
-  const td = celda("Candidatura");
-  const b = nodo("button", "Preparar candidatura", "secundario");
+function accionesCandidatura(o, contenedor) {
+  const b = nodo("button", "Preparar candidatura", "primario-mov");
   b.type = "button";
   let repetir = false;
-  b.addEventListener("click", async () => {
+  b.addEventListener("click", async (e) => {
+    e.stopPropagation();
     b.disabled = true;
     const r = await api("/api/candidaturas", { metodo: "POST", cuerpo: { oferta_id: o.id, repetir } });
     if (r.ok) {
@@ -139,19 +137,72 @@ function celdaCandidatura(o) {
       b.textContent = "Preparar otra igualmente";
       const a = nodo("a", "Ver cerradas", "bloque");
       a.href = "/candidaturas";
-      td.append(a);
+      contenedor.append(a);
     }
-    if (r.estado === 409 && /CV base/i.test(r.motivo || "") && !td.querySelector("a")) {
+    if (r.estado === 409 && /CV base/i.test(r.motivo || "") && !contenedor.querySelector("a[href='/cv-base']")) {
       const a = nodo("a", "Generar CV base", "bloque");
       a.href = "/cv-base";
-      td.append(a);
+      contenedor.append(a);
     }
   });
-  td.append(b);
-  return td;
+  return b;
+}
+
+// Contenido de la fila desplegada (RF-6.5d): a la izquierda el porqué; a la derecha, las dos acciones.
+function detalle(o) {
+  const cont = nodo("div", null, "detalle");
+  const izq = nodo("div", null, "porque-cuerpo");
+  const dch = nodo("div", null, "acciones");
+  cont.append(izq);
+  const pintar = () => {
+    izq.replaceChildren(nodo("span", "Por qué te la recomendamos", "etiqueta-mono"));
+    if (o.sin_puntuar) {
+      izq.append(nodo("p", "Esta oferta todavía no tiene nota. Pulsa «Recomendar» para calcularla."));
+      return;
+    }
+    if (o.retirada) {
+      izq.append(nodo("p", "Se ha retirado la explicación porque no cumplía las reglas de Horma. La nota sigue siendo válida.", "suave"));
+    } else {
+      izq.append(nodo("p", o.explicacion));
+      if (o.cita_perfil) izq.append(nodo("p", `De tu perfil: «${o.cita_perfil}»`, "suave"));
+      if (o.cita_oferta) izq.append(nodo("p", `De la oferta: «${o.cita_oferta}»`, "suave"));
+    }
+    if (o.desfasado) izq.append(nodo("p", "Esta nota se calculó con una versión anterior de tu perfil.", "suave"));
+    if (o.correccion) {
+      const c = o.correccion;
+      const nota = c.nota !== null && c.nota !== undefined ? ` (nota que propones: ${c.nota})` : "";
+      izq.append(nodo("p", `Tu corrección${nota}: ${c.comentario}`, "origen"));
+    }
+  };
+  pintar();
+  if (o.sin_puntuar) return cont;
+
+  const corregir = nodo("button", "Corregir explicación", "secundario");
+  corregir.type = "button";
+  corregir.addEventListener("click", (e) => {
+    e.stopPropagation();
+    corregir.hidden = true;
+    const f = formularioCorreccion(o, (guardada) => {
+      if (guardada) pintar();
+      f.remove();
+      corregir.hidden = false;
+    });
+    izq.append(f);
+  });
+  dch.append(corregir, accionesCandidatura(o, dch), nodo("p", "Horma elige tu CV base más adecuado.", "suave"));
+  cont.append(dch);
+  return cont;
+}
+
+// «ES» → «España»: el código de país sin traducir no lo entiende todo el mundo (revisión de usabilidad, hallazgo 6).
+const NOMBRES_PAIS = new Intl.DisplayNames(["es"], { type: "region" });
+function nombrePais(codigo) {
+  if (!/^[A-Za-z]{2}$/.test(codigo || "")) return codigo;
+  try { return NOMBRES_PAIS.of(codigo.toUpperCase()) || codigo; } catch (e) { return codigo; }
 }
 
 function filaOferta(o) {
+  const id = `detalle-${o.id}`;
   const tr = nodo("tr", null, "fila-oferta");
   const titulo = urlSegura(o.url) ? nodo("a", o.titulo || "Sin título") : nodo("span", o.titulo || "Sin título");
   if (urlSegura(o.url)) {
@@ -160,43 +211,80 @@ function filaOferta(o) {
     titulo.rel = "noopener noreferrer";
   }
   titulo.classList.add("titulo-oferta");
-  const celdaOferta = celda("Oferta", titulo, nodo("span", o.empresa || "Empresa sin indicar", "suave bloque"));
+  const celdaOferta = celda("Oferta", "c-oferta", titulo, nodo("span", o.empresa || "Empresa sin indicar", "suave bloque"));
   if (o.atribucion) celdaOferta.append(nodo("span", o.atribucion, "suave bloque"));  // cita de la fuente (RF-5.5d)
   if (o.propia) {  // las que añade la usuaria salen siempre, con su marca y lo que vio el auditor (RF-5.3e)
     celdaOferta.append(nodo("span", `Añadida por ti · analizada el ${fecha(o.analizada_en)}`, "estado bien bloque"));
     if (o.aviso_auditor) celdaOferta.append(nodo("span", o.aviso_auditor, "estado error bloque"));
   }
   tr.append(celdaOferta);
-  tr.append(celda("Puesto", nodo("span", etiqueta(o.familia), `etiqueta-puesto ${colorDe(o.familia)}`),
-                  nodo("span", etiqueta(o.nivel), "suave bloque")));
+  tr.append(celda("Puesto", "c-puesto", nodo("span", etiqueta(o.familia), `etiqueta-puesto ${tonoDe(o.familia)}`),
+                  nodo("span", etiqueta(o.nivel), "suave")));
 
-  const comp = celda("Compatibilidad");
+  const comp = celda("Compatibilidad", "c-compat");
   if (o.sin_puntuar) {
-    comp.append(nodo("span", "sin puntuar", "estado apagado"));
+    comp.append(nodo("em", "Sin puntuar", "suave"));
   } else {
-    const barra = nodo("progress");
-    barra.max = 100;
-    barra.value = o.nota;
-    barra.setAttribute("aria-label", `Compatibilidad ${o.nota} de 100`);
+    const barra = nodo("div", null, "barra-compat");
+    barra.setAttribute("role", "meter");
+    barra.setAttribute("aria-valuenow", String(o.nota));
+    barra.setAttribute("aria-valuemin", "0");
+    barra.setAttribute("aria-valuemax", "100");
+    barra.setAttribute("aria-label", "Compatibilidad");
+    const relleno = nodo("span");
+    relleno.style.width = `${Math.max(0, Math.min(100, o.nota))}%`;   // por CSSOM: la CSP no permite style= en el HTML
+    barra.append(relleno);
     const fila = nodo("div", null, "nota");
-    fila.append(barra, nodo("strong", String(o.nota)));
-    comp.append(fila, porque(o));
+    fila.append(barra, nodo("span", String(o.nota), "numero"));
+    comp.append(fila);
   }
   tr.append(comp);
 
-  tr.append(celda("Salario", nodo("span", o.salario || "No publicado", o.salario ? "" : "suave")));
-  const lugar = [o.remoto ? "Remoto" : null, o.pais].filter(Boolean).join(" · ") || o.ubicacion || "—";
-  tr.append(celda("Lugar", nodo("span", lugar)));
-  tr.append(celda("Publicado", nodo("span", fecha(o.fecha_publicacion || o.creada_en))));
-  tr.append(celdaCandidatura(o));
-  return tr;
+  tr.append(celda("Salario", "c-salario", nodo("span", o.salario || "No publicado", o.salario ? "" : "suave")));
+  const lugar = [o.remoto ? "Remoto" : null, String(o.pais || "").toLowerCase() === "remoto" ? null : nombrePais(o.pais)].filter(Boolean).join(" · ") || o.ubicacion || "—";
+  tr.append(celda("Lugar", "c-lugar", nodo("span", lugar)));
+  tr.append(celda("Publicado", "c-publicado suave", nodo("span", fecha(o.fecha_publicacion || o.creada_en))));
+
+  const chevron = nodo("button", null, "chevron");
+  chevron.type = "button";
+  chevron.setAttribute("aria-controls", id);
+  chevron.setAttribute("aria-label", `Ver por qué: ${o.titulo || "oferta sin título"}`);
+  tr.append(celda("", "c-chevron", chevron));
+
+  const td = nodo("td");
+  td.colSpan = 7;
+  td.append(detalle(o));
+  const det = nodo("tr", null, "fila-detalle");
+  det.id = id;
+  det.append(td);
+
+  const alternar = (abrir) => {
+    det.hidden = !abrir;
+    chevron.setAttribute("aria-expanded", String(abrir));
+    if (abrir) abiertas.add(o.id);
+    else abiertas.delete(o.id);
+  };
+  chevron.addEventListener("click", (e) => {
+    e.stopPropagation();
+    alternar(det.hidden);
+  });
+  // Clic en la fila; los de dentro (enlaces, botones, campos) no la pliegan.
+  tr.addEventListener("click", (e) => {
+    if (e.target.closest("a, button, input, select, textarea, label")) return;
+    alternar(det.hidden);
+  });
+  alternar(abiertas.has(o.id));
+  return [tr, det];
 }
 
 // --- Filtros ------------------------------------------------------------------------------------
 function pintarFiltros() {
-  $("grupos").replaceChildren(...GRUPOS.map(([clave, titulo]) =>
-    grupoCasillas(clave, titulo, opciones.grupos[clave] || [], guardadas[clave] || [],
-                  { plegable: true })));
+  // En móvil solo se ve el primer grupo; el resto cuelga de «Más filtros» (clase .mas).
+  $("grupos").replaceChildren(...GRUPOS.map(([clave, titulo], i) => {
+    const g = grupoCasillas(clave, titulo, opciones.grupos[clave] || [], guardadas[clave] || [], { plegable: true });
+    if (i > 0) g.classList.add("mas");
+    return g;
+  }));
   $("solo-remoto").checked = guardadas.solo_remoto;
   $("solo-salario").checked = guardadas.solo_salario;
   $("sueldo-minimo").value = guardadas.sueldo_minimo === null ? "" : guardadas.sueldo_minimo;
@@ -234,7 +322,8 @@ async function cargarLista() {
   const r = await api("/api/recomendaciones");
   if (!r.ok) return avisar(r.motivo, true);
   const { total, sin_puntuar: pendientes, recomendaciones } = r.datos;
-  $("filas").replaceChildren(...recomendaciones.map(filaOferta));
+  if (abiertas === null) abiertas = new Set(recomendaciones.slice(0, 1).map((o) => o.id));   // la primera, abierta
+  $("filas").replaceChildren(...recomendaciones.flatMap(filaOferta));
   $("vacio").hidden = total > 0;
   $("tabla").hidden = total === 0;
   const n = total === 1 ? "1 oferta" : `${total} ofertas`;
@@ -268,6 +357,13 @@ $("recomendar").addEventListener("click", async () => {
   sondeo = setTimeout(sondear, 3000);
 });
 
+// «Más filtros» / «Menos filtros» (solo se ve en móvil).
+$("mas-filtros").addEventListener("click", () => {
+  const plegado = $("filtros").classList.toggle("plegados");
+  $("mas-filtros").setAttribute("aria-expanded", String(!plegado));
+  $("mas-filtros").textContent = plegado ? "Más filtros" : "Menos filtros";
+});
+
 // Los filtros solo se aplican al pulsar «Buscar» (o Intro en un campo).
 $("filtros").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -275,6 +371,13 @@ $("filtros").addEventListener("submit", async (e) => {
   await aplicarFiltros();
   $("buscar").disabled = false;
 });
+
+// Entradilla: si el perfil tiene titular, va detrás de dos puntos (RF-6.5).
+async function pintarTitular() {
+  const r = await api("/api/perfil");
+  const titular = r.ok && r.datos.perfil && r.datos.perfil.titular && r.datos.perfil.titular.valor;
+  if (titular) $("entradilla").textContent = `Ofertas ya revisadas, sin fraudes ni ofertas fantasma, para tu perfil: ${titular}`;
+}
 
 (async () => {
   if (!(await arrancar("/recomendadas"))) return;
@@ -285,4 +388,5 @@ $("filtros").addEventListener("submit", async (e) => {
   opciones = o.datos;
   pintarFiltros();
   await cargarLista();
+  pintarTitular();
 })();

@@ -54,9 +54,9 @@ def test_las_paginas_solo_se_sirven_con_sesion(app, ruta):
 
 
 @pytest.mark.parametrize("ruta,nombre", PAGINAS.items())
-def test_cada_pagina_lleva_marco_pestanas_y_sus_propios_scripts(ruta, nombre):
+def test_cada_pagina_lleva_tokens_pestanas_y_sus_propios_scripts(ruta, nombre):
     html = leer(f"{nombre}.html")
-    assert 'class="pp"' in html and 'aria-hidden="true"' in html            # marco Passe-Partout
+    assert "/static/tokens.css" in html  # fase 6: tokens 2c en vez del marco
     assert 'id="pestanas"' in html                                          # pestañas comunes
     assert "/static/comun.js" in html and f"/static/{nombre}.js" in html
     assert not re.search(r"<script(?![^>]*\bsrc=)", html)                  # CSP: sin scripts inline
@@ -111,7 +111,7 @@ def test_recomendadas_sigue_la_maqueta():
         assert f'"{columna}"' in js
     assert js.count('"?"') >= 1 and "AYUDA" in js                            # «?» que explica cada columna
     assert "/api/recomendaciones" in js and "/api/recomendar" in js
-    assert "Modificar" in js and "/correccion" in js and "explicacion" in js
+    assert "Corregir explicación" in js and "/correccion" in js and "explicacion" in js
     assert "sin_puntuar" in js and "o.salario" in js                          # salario: texto de la oferta
     assert 'value="recientes"' in html and 'value="compatibles"' in html     # ordenación
     assert "rango" in js

@@ -5,17 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Horma · Ingesta</title>
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6b3f2a">
+  <meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="/static/tokens.css">
   <link rel="stylesheet" href="/static/estilo.css">
+  <script src="/static/tema.js"></script>
 </head>
 <body>
-  <div class="pp" aria-hidden="true"></div>
+  <header class="cabecera cabecera-admin">
+    <a class="marca" href="/">Horma</a>
+    <nav aria-label="Administración">
+      <a class="pestana activa" href="/ingesta" aria-current="page">Ingesta</a>
+      <a class="pestana" href="/costes">Costes</a>
+      <a class="pestana" href="/">Ofertas</a>
+    </nav>
+    <div class="derecha">
+      <button id="tema" class="secundario" type="button">Tema oscuro</button>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </div>
+  </header>
   <main class="ancho">
-    <header class="cabecera">
-      <h1>Ingesta</h1>
-      <span class="fila"><a class="boton secundario" href="/costes">Costes</a>
-      <a class="boton secundario" href="/">Ofertas</a></span>
-    </header>
+    <h1 class="titulo-pantalla">Ingesta</h1>
     <p id="aviso" role="status"></p>
 
     <section aria-labelledby="t-estado">
@@ -29,7 +39,7 @@
       <button id="nueva-fuente" class="secundario" type="button">Añadir fuente</button>
     </section>
 
-    <section id="editor" class="tarjeta" hidden aria-labelledby="t-editor">
+    <section id="editor" class="panel" hidden aria-labelledby="t-editor">
       <h2 id="t-editor">Fuente</h2>
       <form id="form-fuente">
         <div class="rejilla">
@@ -43,9 +53,9 @@
           <label class="casilla"><input name="activa" type="checkbox"> Activa (exige calificación apta)</label>
           <label>Intervalo mínimo (horas) <input name="cada_horas" type="number" min="1" placeholder="sin intervalo"></label>
         </div>
-        <label>Parámetros (JSON) <textarea name="parametros" rows="3">{}</textarea></label>
-        <label>Cabeceras (JSON) <textarea name="cabeceras" rows="2">{}</textarea></label>
-        <label>Mapeo de campos (JSON) <textarea name="mapeo" rows="6">{}</textarea></label>
+        <label>Parámetros (JSON) <textarea class="json" name="parametros" rows="3">{}</textarea></label>
+        <label>Cabeceras (JSON) <textarea class="json" name="cabeceras" rows="2">{}</textarea></label>
+        <label>Mapeo de campos (JSON) <textarea class="json" name="mapeo" rows="6">{}</textarea></label>
         <div class="fila">
           <button type="submit">Guardar</button>
           <button id="cancelar" class="secundario" type="button">Cancelar</button>

@@ -5,29 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Añadir oferta · Horma</title>
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6b3f2a">
+  <meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="/static/tokens.css">
   <link rel="stylesheet" href="/static/estilo.css">
+  <script src="/static/tema.js"></script>
 </head>
 <body>
-  <div class="pp" aria-hidden="true"></div>
+  <header id="cabecera" class="cabecera">
+    <a class="marca" href="/">Horma</a>
+    <nav id="pestanas" class="pestanas" aria-label="Principal"></nav>
+    <div id="derecha" class="derecha"></div>
+  </header>
   <main class="ancho">
-    <header class="cabecera">
-      <a class="logo" href="/"><h1>Horma</h1></a>
-      <button id="salir" class="secundario" type="button">Salir</button>
-    </header>
-    <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
+    <h1 class="titulo-pantalla">Añadir oferta</h1>
 
-    <p class="suave">Pega el texto de una oferta o la dirección de su página. Es solo tuya: nadie más la ve. Horma la analiza y la puntúa con tu perfil, y aparece siempre en Recomendadas, pase o no tus filtros.</p>
-    <form id="formulario-url">
+    <p class="entradilla">Pega el texto de una oferta o la dirección de su página. Es solo tuya: nadie más la ve. Horma la analiza y la puntúa con tu perfil, y aparece siempre en Recomendadas, pase o no tus filtros.</p>
+    <form id="formulario-url" class="panel">
       <label for="url">Dirección de la oferta</label>
-      <input id="url" type="url" maxlength="2000" placeholder="https://…" autocomplete="off">
-      <div class="fila">
-        <button id="enviar-url" type="submit">Leer oferta</button>
-        <span id="aviso-url" role="status"></span>
+      <div class="fila fila-url">
+        <input id="url" type="url" maxlength="2000" placeholder="https://…" autocomplete="off">
+        <button id="enviar-url" class="secundario" type="submit">Leer oferta</button>
       </div>
+      <span id="aviso-url" role="status"></span>
       <p class="suave">Para leerla, la dirección se envía a Apify, un proveedor externo. LinkedIn, Indeed, Glassdoor e InfoJobs no se pueden leer: pega su texto.</p>
     </form>
-    <form id="formulario">
+    <form id="formulario" class="panel">
       <label for="texto">Texto de la oferta</label>
       <textarea id="texto" rows="10" maxlength="20000" required></textarea>
       <div class="fila">
@@ -36,8 +39,8 @@
       </div>
     </form>
 
-    <h2>Lo último que has añadido</h2>
-    <ul id="lista" class="lista"></ul>
+    <h2 class="etiqueta-mono">Lo último que has añadido</h2>
+    <ul id="lista" class="lista-editorial"></ul>
     <p id="vacio" class="suave" hidden>Todavía no has añadido ninguna oferta.</p>
   </main>
   <script src="/static/comun.js"></script>

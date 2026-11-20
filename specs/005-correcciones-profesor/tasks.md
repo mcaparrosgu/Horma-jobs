@@ -64,7 +64,7 @@ real (RF-5.8).
     cita); casos nuevos en `evals/perfil/`.
   - **Test:** `horma eval correr perfil --simulado` en umbral con los casos nuevos.
   - **Cubre:** RF-5.1c.
-- [ ] T05 — Pantalla del perfil. *(código hecho el 17-nov; falta que Mar lo compruebe en la web)*
+- [ ] T05 — Pantalla del perfil. *(código hecho el 17-nov; comprobada por Mar en la web el 19-nov)*
   - **Qué se hace:** las tres secciones en `perfil.html/js` con su texto de ayuda y los ejemplos de la
     spec; el aviso «Lo que edites aquí manda sobre tus CV subidos…».
   - **Test:** Mar lo comprueba en la web (paso del plan de pruebas): ve las secciones, la ayuda y el
@@ -92,7 +92,7 @@ real (RF-5.8).
   - **Test:** una «oculta» no aparece; una «condensada» ocupa una línea; al regenerar se respeta lo
     marcado; casos nuevos en `evals/cv-base/` en simulado.
   - **Cubre:** RF-5.1g.
-- [x] T09 — Borradores con una versión anterior del perfil. *(hecha el 17-nov; falta que Mar lo compruebe en la web)*
+- [x] T09 — Borradores con una versión anterior del perfil. *(hecha el 17-nov; comprobada por Mar en la web el 19-nov)*
   - **Qué se hace:** `desfasada` en el detalle de la candidatura; `reintentar` admite un borrador
     desfasado; aviso y botón «Volver a preparar» en `candidatura.html/js`.
   - **Test:** tras editar el perfil, el borrador muestra el aviso; rehacer lo prepara con la versión
@@ -129,7 +129,7 @@ real (RF-5.8).
     marca (la de fraude, con su aviso) y permiten preparar la candidatura; pegar la misma dos veces
     devuelve la misma (P18, sin duplicado); la columna ya no está. T10 pasa.
   - **Cubre:** RF-5.2, RF-5.3e.
-- [x] T14 — Pestaña «Añadir oferta». *(hecha el 17-nov solo con texto; el campo de URL llega con T18; falta que Mar la compruebe en la web)*
+- [x] T14 — Pestaña «Añadir oferta». *(hecha el 17-nov solo con texto; el campo de URL llega con T18; comprobada por Mar en la web el 19-nov)*
   - **Qué se hace:** `anadir-oferta.html/js` (texto o URL, estado de lo último añadido) y enlace en la
     navegación; se quita el formulario de `index.html`.
   - **Test:** Mar pega una oferta desde la pestaña y la ve puntuada en Recomendadas.
@@ -152,7 +152,7 @@ real (RF-5.8).
   - **Test:** se rechazan `http`, IP literal, `localhost`, un dominio que resuelve a IP privada, URL con
     credenciales y `es.linkedin.com`; pasa una URL pública de Greenhouse. Mensajes en llano.
   - **Cubre:** RF-5.3g, RF-5.3h.
-- [x] T18 — `leer_pagina` y tarea `leer_url`. *(hecha el 18-nov; migración 0014 `importaciones`; `POST /ofertas/url` (202) y `GET /ofertas/url/{id}`; límite `LIMITE_URL_HORA` por hora; sin reintentos porque cada lectura cuesta; campo de URL en «Añadir oferta»; falta que Mar lo compruebe en la web, con la prueba real de T19)*
+- [x] T18 — `leer_pagina` y tarea `leer_url`. *(hecha el 18-nov; migración 0014 `importaciones`; `POST /ofertas/url` (202) y `GET /ofertas/url/{id}`; límite `LIMITE_URL_HORA` por hora; sin reintentos porque cada lectura cuesta; campo de URL en «Añadir oferta»; comprobada por Mar en la web el 19-nov)*
   - **Qué se hace:** cliente del proveedor elegido en T16 (token en cabecera, sin proxies, tiempo y
     tamaño máximos); tabla `importaciones`; `POST /api/ofertas/url` con límite de ritmo; manejador del
     worker que pasa el texto a `recibir`. `.env.example` con las claves nuevas.
@@ -160,7 +160,7 @@ real (RF-5.8).
     importación en `error` con el motivo fijo y la web pide pegar el texto; pasarse del límite da 429;
     el token no sale en ningún log.
   - **Cubre:** RF-5.3f, RF-5.3j.
-- [ ] T19 — Prueba real de URL (con OK de Mar). *(lecturas hechas el 18-nov con OK de Mar, sin pasar por el perfil ni el modelo; falta decidir si se hace la parte de Recomendadas. Vetada: LinkedIn rechazada sin leer. Resultado de 5 URL: web de empresa (Metricool) 2.273 car., oferta completa; Greenhouse 1.075 car. pero era el listado de la empresa, no la oferta; Lever 256 car., página 404 (oferta cerrada) que se aceptó como texto; portal pequeño (Asaja) tiempo agotado a los 60 s; jobboardly 325 car., solo la cabecera de la página. Hallazgo, ya corregido el 18-nov: `leer_pagina` daba por buena una página de error corta; ahora exige 400 caracteres y rechaza las de menos de 1.500 con frases de error (404, not found, captcha…). Repetición con 3 ofertas vivas de Mar (18-nov): Greenhouse 11.849 car. (9,6 s), Lever 7.196 car. (30,5 s) y web de empresa (Spotify) 9.211 car. (21 s), las tres con el texto completo del puesto. En esta máquina hace falta el almacén de certificados de Windows para `httpx`)*
+- [x] T19 — Prueba real de URL (con OK de Mar). *(lecturas hechas el 18-nov con OK de Mar; parte de Recomendadas probada por Mar en la web el 19-nov. Vetada: LinkedIn rechazada sin leer. Resultado de 5 URL: web de empresa (Metricool) 2.273 car., oferta completa; Greenhouse 1.075 car. pero era el listado de la empresa, no la oferta; Lever 256 car., página 404 (oferta cerrada) que se aceptó como texto; portal pequeño (Asaja) tiempo agotado a los 60 s; jobboardly 325 car., solo la cabecera de la página. Hallazgo, ya corregido el 18-nov: `leer_pagina` daba por buena una página de error corta; ahora exige 400 caracteres y rechaza las de menos de 1.500 con frases de error (404, not found, captcha…). Repetición con 3 ofertas vivas de Mar (18-nov): Greenhouse 11.849 car. (9,6 s), Lever 7.196 car. (30,5 s) y web de empresa (Spotify) 9.211 car. (21 s), las tres con el texto completo del puesto. En esta máquina hace falta el almacén de certificados de Windows para `httpx`)*
   - **Qué se hace:** 5 URL reales de ofertas (Greenhouse, Lever, web de empresa, portal pequeño, una
     con JavaScript) y una vetada; se anota cuáles se leen.
   - **Test:** las legales llegan a Recomendadas; la vetada pide pegar el texto.
@@ -265,6 +265,6 @@ real (RF-5.8).
 
 ## Cierre de la fase 5: pasos pendientes
 Bloques A-H construidos y fusionados en `main` (PR #11). Queda:
-1. **Prueba manual de Mar** con `docs/plan-pruebas-fase5.md` (T05, T09, T14, T18 y T19 parte Recomendadas); anota lo que falle. El 3.4 falló y dio lugar a P18 (19-nov, PR #12).
-2. **Fuentes (19-nov):** Mar activó Jobicy y Himalayas en local durante la prueba manual (apartado 8.2); falta lanzar su primera ingesta y probar que `cada_horas` omite una segunda ejecución (8.5). Para ello `/ingesta` ganó el botón Activar/Desactivar junto a Editar (PR #16) y el intervalo `cada_horas` visible en la tarjeta y editable (PR #17). Siguen en espera del profesor: el correo a InfoJobs (borrador en Gmail, sin enviar), el permiso por escrito de Greenhouse (borrador en Gmail, sin enviar) y decidir Lever.
+1. **Prueba manual de Mar: hecha el 19-nov** con `docs/plan-pruebas-fase5.md` (todos los apartados). El 3.4 falló y dio lugar a P18 (PR #12).
+2. **Fuentes (19-nov):** Jobicy y Himalayas activadas y probadas en local (incluido `cada_horas`). `/ingesta` ganó Activar/Desactivar (PR #16) y `cada_horas` editable (PR #17). En espera del profesor: InfoJobs (borrador en Gmail, sin enviar), Greenhouse (Mar envía el correo a legal@greenhouse.io el 20-nov) y decidir Lever.
 3. Antes de usuarias reales: plan del `matcher` y reactivar `evals-reales` (`docs/mejoras-futuras.md`, punto 6).

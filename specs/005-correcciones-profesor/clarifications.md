@@ -92,6 +92,10 @@ Comprobado en el código (17-nov):
   → R: **no se duplica**: misma usuaria + misma huella de texto (y la previa no falló) devuelve la
   existente, sin reprocesar ni repuntuar. Matiza P17: «también las repetidas» deja de aplicar.
 
+- P19: (revisión de usabilidad de la fase 6, 20-nov) El aviso «Podría ser una oferta fantasma» en una
+  oferta que la usuaria pegó ella misma es ruido → R: **no se avisa de «fantasma» en las propias; el aviso de
+  fraude se mantiene**. Matiza P17 y RF-5.3e.
+
 ### CI
 - P16: (petición de Mar, 17-nov) ¿Aparcar `evals-reales`? → R: **sí, hasta lanzar al público**. Solo
   se lanzan a mano y con su OK; los evals en simulado siguen en cada push y siguen bloqueando. Deja en

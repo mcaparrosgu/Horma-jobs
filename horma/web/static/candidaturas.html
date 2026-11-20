@@ -5,19 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Candidaturas · Horma</title>
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6b3f2a">
+  <meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="/static/tokens.css">
   <link rel="stylesheet" href="/static/estilo.css">
+  <script src="/static/tema.js"></script>
 </head>
 <body>
-  <div class="pp" aria-hidden="true"></div>
+  <header id="cabecera" class="cabecera">
+    <a class="marca" href="/">Horma</a>
+    <nav id="pestanas" class="pestanas" aria-label="Principal"></nav>
+    <div id="derecha" class="derecha"></div>
+  </header>
   <main class="muy-ancho">
-    <header class="cabecera">
-      <a class="logo" href="/"><h1>Horma</h1></a>
-      <button id="salir" class="secundario" type="button">Salir</button>
-    </header>
-    <nav id="pestanas" class="pestanas" aria-label="Secciones"></nav>
+    <h1 class="titulo-pantalla">Candidaturas</h1>
 
-    <p class="suave">Tus candidaturas, por estado. Se crean desde <a href="/recomendadas">Recomendadas</a> con «Preparar candidatura». Horma prepara el CV y la carta; tú los revisas, los apruebas y los envías.</p>
+    <p class="entradilla">Tus candidaturas, por estado. Se crean desde <a href="/recomendadas">Recomendadas</a> con «Preparar candidatura». Horma prepara el CV y la carta; tú los revisas, los apruebas y los envías.</p>
     <span id="aviso" role="status"></span>
     <div id="tablero" class="tablero"></div>
     <p id="vacio" class="suave" hidden>Todavía no tienes candidaturas.</p>

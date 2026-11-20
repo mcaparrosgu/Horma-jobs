@@ -37,19 +37,14 @@ def _salario(f: dict) -> str | None:
     return " - ".join(dict.fromkeys(partes)) + (f" {f['salario_moneda']}" if f["salario_moneda"] else "")
 
 
-_MOTIVOS_FANTASMA = {"sin_fecha": "no trae fecha de publicación", "repetida": "ya la habías añadido",
-                     "generica": "el texto es demasiado genérico"}
-
 
 def _aviso_auditor(f: dict) -> str | None:
-    """Lo que el auditor vio en la oferta, para que la usuaria decida (RF-5.3e). Solo avisa; no oculta."""
+    """Señales de fraude que el auditor vio en una oferta propia (RF-5.3e). Solo avisa; no oculta."""
     avisos = []
     if f["fraude"]:
         senales = "; ".join(f["senales_fraude"] or [])
         avisos.append("Posibles señales de fraude" + (f": {senales}" if senales else ""))
-    if f["fantasma"]:
-        motivos = ", ".join(_MOTIVOS_FANTASMA.get(m, m) for m in f["motivos_fantasma"] or [])
-        avisos.append("Podría ser una oferta fantasma" + (f" ({motivos})" if motivos else ""))
+    # «Fantasma» no se avisa: la oferta la ha pegado ella misma (RF-5.3e, enmienda P19, 20-nov).
     return ". ".join(avisos) or None
 
 

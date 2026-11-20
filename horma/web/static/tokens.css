@@ -1,0 +1,118 @@
+/* Tokens de la dirección 2c «Editorial» (spec 006). ÚNICA fuente de valores de diseño:
+   fuera de este archivo no hay colores, familias ni radios escritos a mano (RF-6.1, RF-6.9).
+   El tema oscuro se escribe dos veces (por preferencia del sistema y por [data-theme]); no hay preprocesado. */
+
+@font-face {
+  font-family: "Familjen Grotesk";
+  src: url("/static/fuentes/familjen-grotesk-latin-wght.woff2") format("woff2");
+  font-weight: 400 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "DM Mono";
+  src: url("/static/fuentes/dm-mono-latin-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "DM Mono";
+  src: url("/static/fuentes/dm-mono-latin-500.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  /* Tipografía */
+  --f-head: "Familjen Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-body: "Familjen Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "DM Mono", ui-monospace, Consolas, monospace;
+  --fs: 16px;
+  --fs-title: 21px;
+  --fs-h1: 76px;
+  --fs-h1-m: 56px;
+  --fs-num: 28px;
+  --fs-label: 11.5px;
+  --ls-head: -0.035em;
+  --ls-label: 0.08em;
+  --fw-head: 600;
+  --fw-num: 500;
+
+  /* Forma: todo recto */
+  --radius: 0;
+  --radius-round: 50%;   /* solo el avatar y el círculo del «?» */
+  --bw: 1px;
+
+  /* Espaciado */
+  --pad-page: 40px;
+  --pad-page-m: 16px;
+  --row-py: 26px;
+  --col-gap: 12px;
+  --bar-h: 6px;
+  --tap: 44px;
+
+  /* Color · claro */
+  --bg: #f6f6f2;
+  --surface: #ffffff;
+  --surface-2: #ecece6;
+  --ink: #0a0a0a;
+  --muted: #55554f;
+  --line: #cfcfc8;
+  --line-strong: #0a0a0a;
+  --accent: #c8f031;
+  --on-accent: #0a0a0a;
+  --accent-text: #0a0a0a;
+  --btn-border: #0a0a0a;
+  --bar-track: #d9d9d2;
+  --bar-fill: #0a0a0a;
+  --tab-active-bg: #c8f031;
+  --tab-active-fg: #0a0a0a;
+  --panel-border: #0a0a0a;
+  --error: #a3201a;
+  --tag-l: 0.25;
+  --tag-c: 0.02;
+  --focus: 3px solid var(--accent-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0a0a0a;
+    --surface: #161616;
+    --surface-2: #1d1d1d;
+    --ink: #f6f6f2;
+    --muted: #a9a9a2;
+    --line: #2c2c2a;
+    --line-strong: #f6f6f2;
+    --accent: #c8f031;
+    --on-accent: #0a0a0a;
+    --accent-text: #c8f031;
+    --btn-border: #c8f031;
+    --bar-track: #2c2c2a;
+    --bar-fill: #c8f031;
+    --tab-active-bg: #c8f031;
+    --tab-active-fg: #0a0a0a;
+    --panel-border: #f6f6f2;
+    --error: #ff8f87;
+    --tag-l: 0.9;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --surface: #161616;
+  --surface-2: #1d1d1d;
+  --ink: #f6f6f2;
+  --muted: #a9a9a2;
+  --line: #2c2c2a;
+  --line-strong: #f6f6f2;
+  --accent: #c8f031;
+  --on-accent: #0a0a0a;
+  --accent-text: #c8f031;
+  --btn-border: #c8f031;
+  --bar-track: #2c2c2a;
+  --bar-fill: #c8f031;
+  --tab-active-bg: #c8f031;
+  --tab-active-fg: #0a0a0a;
+  --panel-border: #f6f6f2;
+  --error: #ff8f87;
+  --tag-l: 0.9;
+}

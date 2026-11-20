@@ -5,32 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Horma</title>
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6b3f2a">
+  <meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="/static/tokens.css">
   <link rel="stylesheet" href="/static/estilo.css">
+  <script src="/static/tema.js"></script>
 </head>
 <body>
-  <div class="pp" aria-hidden="true"></div>
+  <header class="cabecera cabecera-admin">
+    <a class="marca" href="/">Horma</a>
+    <nav id="accesos" aria-label="Accesos">
+      <a id="ir-perfil" class="pestana" href="/perfil" hidden>Mi perfil</a>
+      <a id="ir-anadir" class="pestana" href="/anadir-oferta" hidden>Añadir oferta</a>
+      <a id="ir-recomendadas" class="pestana" href="/recomendadas" hidden>Recomendadas</a>
+      <a id="ir-ingesta" class="pestana" href="/ingesta" hidden>Ingesta</a>
+    </nav>
+    <div class="derecha">
+      <button id="tema" class="secundario" type="button">Tema oscuro</button>
+      <button id="salir" class="secundario" type="button" hidden>Salir</button>
+    </div>
+  </header>
   <main>
-    <header class="cabecera">
-      <h1>Horma</h1>
-      <div class="fila">
-        <a id="ir-perfil" class="boton secundario" href="/perfil" hidden>Mi perfil</a>
-        <a id="ir-anadir" class="boton secundario" href="/anadir-oferta" hidden>Añadir oferta</a>
-        <a id="ir-recomendadas" class="boton secundario" href="/recomendadas" hidden>Recomendadas</a>
-        <a id="ir-ingesta" class="boton secundario" href="/ingesta" hidden>Ingesta</a>
-        <button id="salir" class="secundario" type="button" hidden>Salir</button>
-      </div>
-    </header>
 
     <section id="entrada" hidden>
-      <p>Para guardar y procesar ofertas, entra con tu cuenta de Google.</p>
+      <h1 class="titulo-pantalla">Ofertas de empleo, a tu medida</h1>
+      <p class="entradilla">Para guardar y procesar ofertas, entra con tu cuenta de Google.</p>
       <a class="boton" href="/auth/google/login">Entrar con Google</a>
     </section>
 
     <section id="aplicacion" hidden>
-      <h2>Catálogo de ofertas</h2>
-      <p id="contador" class="suave" role="status"></p>
-      <ul id="lista" class="lista"></ul>
+      <h1 class="titulo-pantalla">Ofertas</h1>
+      <p id="contador" class="etiqueta-mono" role="status"></p>
+      <ul id="lista" class="lista-editorial"></ul>
       <p id="vacio" hidden>Todavía no hay ofertas.</p>
       <p id="mi-sub" class="suave"></p>
     </section>

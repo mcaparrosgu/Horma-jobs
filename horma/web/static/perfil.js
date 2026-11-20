@@ -364,6 +364,11 @@ async function cargarCvs() {
   $("sin-cvs").hidden = r.datos.length > 0;
 }
 
+$("archivo").addEventListener("change", () => {
+  const f = $("archivo").files[0];
+  $("archivo-nombre").textContent = f ? f.name : "Ningún archivo seleccionado";
+});
+
 $("subir").addEventListener("submit", async (e) => {
   e.preventDefault();
   const archivo = $("archivo").files[0];
