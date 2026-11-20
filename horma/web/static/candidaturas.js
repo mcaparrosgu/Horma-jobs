@@ -14,7 +14,7 @@ function tarjetaCandidatura(c) {
   li.append(nodo("p", c.empresa || "Empresa sin indicar"));
   if (c.preparacion === "en_curso") li.append(nodo("span", "preparando…", "estado apagado"));
   else if (c.preparacion === "error") li.append(nodo("span", "no se pudo preparar", "estado error"));
-  else if (c.te_toca_revisar) li.append(nodo("span", "Te toca revisar", "estado cond-medio"));
+  else if (c.te_toca_revisar) li.append(nodo("span", "Te toca revisar", "estado bien"));
   if (c.estado === "cerrada" && c.motivo_cierre) li.append(nodo("span", MOTIVOS[c.motivo_cierre] || c.motivo_cierre, "estado apagado"));
   li.append(nodo("p", `Último cambio: ${fecha(c.actualizado_en)}`, "suave"));
   return li;
@@ -32,7 +32,7 @@ function columna(col) {
     return d;
   }
   const s = nodo("section", null, "columna");
-  s.append(nodo("h2", titulo, "subtitulo"), lista);
+  s.append(nodo("h2", titulo), lista);
   return s;
 }
 

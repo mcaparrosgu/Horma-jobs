@@ -38,7 +38,7 @@ function cabecera() {
 
 // --- «Revisa esto»: una sola lista con los huecos y los avisos -----------------------------------
 function revisaEsto() {
-  const s = nodo("section");
+  const s = nodo("section", null, "panel");
   const hayAlgo = c.huecos.length > 0 || c.avisos.length > 0;
   if (!hayAlgo && c.preparacion !== "pendiente_de_ti") return s;
   s.append(nodo("h3", "Revisa esto", "subtitulo"));
@@ -119,7 +119,7 @@ function detalles() {
 function descargas() {
   const s = nodo("div", null, "fila");
   for (const [texto, ruta] of [["Descargar CV (PDF)", "cv.pdf"], ["Descargar carta (PDF)", "carta.pdf"]]) {
-    const a = nodo("a", texto, "boton");
+    const a = nodo("a", texto, "boton secundario");
     a.href = `/api/candidaturas/${ID}/${ruta}`;
     a.setAttribute("download", ruta);
     s.append(a);
@@ -141,7 +141,7 @@ async function aprobarYDescargar() {
 }
 
 function aprobar() {
-  const s = nodo("section", null, "tarjeta");
+  const s = nodo("section", null, "panel");
   s.append(nodo("p", "Los avisos no te bloquean: al aprobar das por revisado lo que quede.", "suave"));
   const fila = nodo("div", null, "fila");
   fila.append(boton("Aprobar y descargar", aprobarYDescargar));

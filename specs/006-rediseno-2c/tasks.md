@@ -116,24 +116,24 @@ stale_after: null
   - **Cubre:** RF-6.5e, RF-6.7b.
 
 ### Bloque D · Resto de pantallas (RF-6.6)
-- [ ] T11 — Portada.
+- [x] T11 — Portada.
   - **Qué se hace:**
     - sin sesión: marca, h1 y «Entrar con Google» como primario;
     - con sesión: h1 «Ofertas», el catálogo como lista editorial y las etiquetas de auditoría con texto.
   - **Test:** los asserts actuales de la portada (sin `textarea`, solo scripts externos y «Añadida por ti»).
   - **Cubre:** RF-6.3e, RF-6.6.
-- [ ] T12 — Perfil.
+- [x] T12 — Perfil.
   - **Qué se hace:** CV subidos como lista editorial, la subida en un panel, guía y preguntas
     plegables, secciones con etiquetas mono y visor en un diálogo con borde.
   - **Test:** los asserts actuales de perfil (`visor`, `estilo`, `escrito-por-ella`, las frases de RF-5.1d).
   - **Cubre:** RF-6.6.
-- [ ] T13 — Preferencias y Añadir oferta.
+- [x] T13 — Preferencias y Añadir oferta.
   - **Qué se hace:**
     - en Preferencias, los grupos en paneles y «Guardar» como primario;
     - en Añadir oferta, URL o texto en un panel y la lista de las últimas añadidas.
   - **Test:** los asserts actuales (`sueldo-minimo`, `type="number"`, `url`, `formulario`, `textarea` y «Apify»).
   - **Cubre:** RF-6.6.
-- [ ] T14 — CV base.
+- [x] T14 — CV base.
   - **Qué se hace:**
     - el documento con la hoja 2c;
     - historial y diferencias, con lo añadido en tinta y lo quitado tachado;
@@ -141,7 +141,7 @@ stale_after: null
     - las acciones como secundarios.
   - **Test:** los asserts actuales de `cv-base.js` y `.linea-anadida`, `.linea-quitada` y `line-through`.
   - **Cubre:** RF-6.6, RF-6.7e.
-- [ ] T15 — Candidaturas y Candidatura.
+- [x] T15 — Candidaturas y Candidatura.
   - **Qué se hace:**
     - el tablero con cabeceras mono, que se apila en móvil, y «Cerradas» plegada;
     - en el detalle, «Revisa esto» en un panel, los documentos, «Detalles» plegado y «Aprobar y

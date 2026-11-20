@@ -260,3 +260,18 @@ def test_recomendadas_movil_mas_filtros_y_ayuda_como_globo():                   
     assert "Menos filtros" in js
     assert "Qué significa" in js and "aria-describedby" in js and "Escape" in js and "ayuda-globo" in js
     assert ".title" not in js and 'title="' not in html
+
+
+def test_resto_de_pantallas_usan_los_componentes_2c():                                 # T11-T15
+    for pagina in ("perfil", "preferencias", "anadir-oferta", "cv-base", "candidaturas", "candidatura"):
+        html = leer(f"{pagina}.html")
+        assert 'class="titulo-pantalla"' in html and 'class="pp"' not in html, pagina
+    assert "lista-editorial" in leer("index.html") and "lista-editorial" in leer("perfil.html")
+    assert 'class="fila panel"' in leer("perfil.html")                                   # subida en un panel
+    assert 'class="grupo panel"' in leer("preferencias.html")
+    assert leer("anadir-oferta.html").count('class="panel"') == 2
+    assert "cond-" not in leer("candidaturas.js")
+    js = leer("candidatura.js")
+    assert '"Revisa esto"' in js and '"panel"' in js
+    assert js.count('"boton secundario"') >= 1                                           # las descargas no compiten
+    assert ".columna-cerrada > summary" in leer("estilo.css")
