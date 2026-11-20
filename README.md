@@ -31,7 +31,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 5. **Correcciones del profesor** (`005-correcciones-profesor`, construida, fusionada y probada por Mar el 19-nov)
 6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, construida y probada por Mar el 20-nov)
 7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; cerrada el 20-nov: evals reales y pruebas manuales firmadas por Mar)
-8. **Portada y ofertas** (`008-portada-ofertas`, construida el 20-nov, T01-T20; falta la prueba manual de Mar, T21; RF-8.5 provisional)
+8. **Portada y ofertas** (`008-portada-ofertas`, construida el 20-nov, T01-T21; prueba manual firmada por Mar el 21-nov; RF-8.5 provisional)
 
 Cada fase se cierra con sus evals en verde.
 
