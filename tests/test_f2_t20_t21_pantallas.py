@@ -111,7 +111,7 @@ def test_recomendadas_sigue_la_maqueta():
         assert f'"{columna}"' in js
     assert js.count('"?"') >= 1 and "AYUDA" in js                            # «?» que explica cada columna
     assert "/api/recomendaciones" in js and "/api/recomendar" in js
-    assert "Modificar" in js and "/correccion" in js and "explicacion" in js
+    assert "Corregir explicación" in js and "/correccion" in js and "explicacion" in js
     assert "sin_puntuar" in js and "o.salario" in js                          # salario: texto de la oferta
     assert 'value="recientes"' in html and 'value="compatibles"' in html     # ordenación
     assert "rango" in js

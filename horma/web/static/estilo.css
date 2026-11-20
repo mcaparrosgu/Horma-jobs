@@ -285,14 +285,15 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   .tabla-ofertas, .tabla-ofertas tbody, .tabla-ofertas tr, .tabla-ofertas td{ display: block; width: 100%; }
   .tabla-ofertas thead{ display: none; }
   .tabla-ofertas tr.fila-oferta{
-    display: grid; grid-template-columns: 1fr auto; grid-template-areas: "oferta chevron" "puesto puesto" "compat compat" "salario salario" "lugar lugar";
+    display: grid; grid-template-columns: 1fr auto; grid-template-areas: "oferta chevron" "puesto publicado" "compat compat" "salario salario" "lugar lugar";
     border-bottom: var(--bw) solid var(--line); padding: 16px 0; gap: 8px 0;
   }
   .tabla-ofertas tr.fila-oferta:has([aria-expanded="true"]){ border-bottom: 0; padding-bottom: 8px; }
   .tabla-ofertas td{ padding: 0; border: 0 !important; }
   .tabla-ofertas td.c-oferta{ grid-area: oferta; } .tabla-ofertas td.c-chevron{ grid-area: chevron; padding: 0; }
   .tabla-ofertas td.c-puesto{ grid-area: puesto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .tabla-ofertas td.c-publicado{ color: var(--muted); font-size: 13px; }
+  .tabla-ofertas td.c-publicado{ grid-area: publicado; color: var(--muted); font-size: 13px; align-self: center; }
+  .tabla-ofertas td.c-publicado::before{ content: "Publicado "; }
   .tabla-ofertas td.c-compat{ grid-area: compat; }
   .tabla-ofertas td.c-salario{ grid-area: salario; } .tabla-ofertas td.c-lugar{ grid-area: lugar; color: var(--muted); }
   .tabla-ofertas td.c-compat::before, .tabla-ofertas td.c-salario::before{

@@ -19,28 +19,18 @@
   </header>
   <main class="muy-ancho">
     <h1 class="titulo-pantalla">Recomendadas</h1>
+    <p id="entradilla" class="entradilla">Ofertas ya revisadas, sin fraudes ni ofertas fantasma, para tu perfil</p>
 
-    <details class="leer">
-      <summary>Cómo leer las recomendaciones</summary>
-      <ul>
-        <li><strong>Compatibilidad</strong>: una nota de 0 a 100 de lo bien que encaja la oferta con tu perfil. Orienta, no decide.</li>
-        <li><strong>Sin puntuar</strong>: ofertas nuevas que aún no tienen nota. Pulsa «Recomendar» para puntuar solo lo que falta.</li>
-        <li><strong>Cambiar un filtro</strong> no gasta nada: solo reordena y filtra lo ya puntuado.</li>
-        <li><strong>Explicación</strong>: despliega la fila para ver por qué. Si no estás de acuerdo, pulsa «Modificar».</li>
-      </ul>
-    </details>
-
-    <form id="filtros" class="filtros" aria-label="Filtros">
-      <div id="grupos" class="grupos-barra"></div>
-      <div class="fila">
-        <label class="casilla"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
-        <label class="casilla"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
-        <label>Sueldo mínimo (€/año)<input id="sueldo-minimo" class="corto" type="number" min="0" step="500" inputmode="numeric"></label>
-        <label>Compatibilidad
-          <span class="rango"><input id="rango-min" class="corto" type="number" min="0" max="100" aria-label="Nota mínima"> –
+    <form id="filtros" class="filtros panel plegados" role="search" aria-label="Filtros">
+      <div class="filtros-rejilla">
+        <div id="grupos" class="grupos-barra"></div>
+        <label class="mas">Sueldo mínimo (€/año)<input id="sueldo-minimo" type="number" min="0" step="500" inputmode="numeric"></label>
+        <div class="mas" role="group" aria-labelledby="t-compat">
+          <span id="t-compat" class="etiqueta-mono">Compatibilidad</span>
+          <span class="rango"><input id="rango-min" class="corto" type="number" min="0" max="100" aria-label="Nota mínima"> a
           <input id="rango-max" class="corto" type="number" min="0" max="100" aria-label="Nota máxima"></span>
-        </label>
-        <label>Ordenar por
+        </div>
+        <label class="mas">Ordenar por
           <select id="orden">
             <option value="compatibles">Más compatibles</option>
             <option value="recientes">Más recientes</option>
@@ -48,15 +38,30 @@
         </label>
       </div>
       <div class="fila">
-        <button id="buscar" type="submit">Buscar</button>
+        <label class="casilla mas"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
+        <label class="casilla mas"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
+        <div class="acciones">
+          <button id="mas-filtros" class="secundario" type="button" aria-expanded="false" aria-controls="filtros">Más filtros</button>
+          <button id="buscar" type="submit">Buscar</button>
+        </div>
       </div>
     </form>
 
     <div class="fila barra-contador">
-      <p id="contador" class="contador" role="status"></p>
-      <button id="recomendar" type="button">Recomendar</button>
+      <p id="contador" class="contador" aria-live="polite"></p>
+      <button id="recomendar" class="secundario" type="button">Recomendar</button>
       <span id="aviso" role="status"></span>
     </div>
+
+    <details class="leer">
+      <summary>Cómo leer las recomendaciones</summary>
+      <ul>
+        <li><strong>Compatibilidad</strong>: una nota de 0 a 100 de lo bien que encaja la oferta con tu perfil. Orienta, no decide.</li>
+        <li><strong>Sin puntuar</strong>: ofertas nuevas que aún no tienen nota. Pulsa «Recomendar» para puntuar solo lo que falta.</li>
+        <li><strong>Cambiar un filtro</strong> no gasta nada: solo reordena y filtra lo ya puntuado.</li>
+        <li><strong>Explicación</strong>: despliega la fila para ver por qué. Si no estás de acuerdo, pulsa «Corregir explicación».</li>
+      </ul>
+    </details>
 
     <table id="tabla" class="tabla-ofertas">
       <thead><tr id="cabeceras"></tr></thead>

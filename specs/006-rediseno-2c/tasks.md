@@ -78,7 +78,7 @@ stale_after: null
   - **Cubre:** RF-6.8.
 
 ### Bloque C · Recomendadas (RF-6.5)
-- [ ] T07 — Estructura y filtros.
+- [x] T07 — Estructura y filtros.
   - **Qué se hace:**
     - h1 y entradilla;
     - panel `role="search"` con los mismos ids, en una rejilla de 4 columnas, y «Buscar» como primario;
@@ -87,7 +87,7 @@ stale_after: null
   - **Test:** los asserts actuales (`contador`, `filtros`, `details` y valores de `orden`), además
     de `role="search"` y `aria-live`.
   - **Cubre:** RF-6.5, RF-6.5f.
-- [ ] T08 — Tabla de escritorio.
+- [x] T08 — Tabla de escritorio.
   - **Qué se hace:**
     - las columnas Oferta · Puesto · Compatibilidad · Salario · Lugar · Publicado, más el chevrón;
     - las celdas de RF-6.5c, con la barra `role="meter"`;
@@ -95,7 +95,7 @@ stale_after: null
   - **Test:** las columnas y su `AYUDA`; `meter`, `aria-valuenow`; no aparece «Condiciones» ni
     `cond-`; no queda `<progress>`.
   - **Cubre:** RF-6.5b, RF-6.5c.
-- [ ] T09 — Fila desplegable con acciones.
+- [x] T09 — Fila desplegable con acciones.
   - **Qué se hace:**
     - la fila de detalle con «Por qué te la recomendamos», la explicación, las citas y los avisos;
     - «Corregir explicación» (el formulario actual) y «Preparar candidatura» (con los casos 409);
@@ -104,7 +104,7 @@ stale_after: null
   - **Test:** `aria-expanded`, `aria-controls`, «Corregir explicación», `/correccion`, «Preparar
     candidatura» y «Preparar otra igualmente». Se actualiza el assert de «Modificar».
   - **Cubre:** RF-6.5d.
-- [ ] T10 — Móvil y ayudas «?».
+- [x] T10 — Móvil y ayudas «?».
   - **Qué se hace:**
     - de 900 px para abajo, las tarjetas `<article>` visuales con el orden de RF-6.5e;
     - «Más filtros» / «Menos filtros»;

@@ -216,3 +216,47 @@ def test_ningun_js_dice_match_ats_ni_trazabilidad_en_sus_textos(js):
         if t.startswith(("/", "http")) or "${" in t and "/api/" in t:     # rutas de la API, no texto visible
             continue
         assert not PROHIBIDAS.search(t), f"{js}: {t[:80]}"
+
+
+# --- Bloque C · Recomendadas (T07-T10) ----------------------------------------------------------
+def test_recomendadas_estructura_h1_entradilla_filtros_contador_y_guia():            # T07
+    html = leer("recomendadas.html")
+    assert 'class="titulo-pantalla">Recomendadas' in html and "sin fraudes ni ofertas fantasma" in html
+    assert re.search(r'<form id="filtros"[^>]*role="search"', html)
+    for ident in ("grupos", "solo-remoto", "solo-salario", "sueldo-minimo", "rango-min", "rango-max", "orden",
+                  "buscar", "recomendar", "contador"):
+        assert f'id="{ident}"' in html, ident
+    assert re.search(r'id="contador"[^>]*aria-live="polite"|aria-live="polite"[^>]*id="contador"', html)
+    assert '<details class="leer' in html and "Cómo leer las recomendaciones" in html
+    assert "Corregir explicación" in html and "Modificar" not in html
+    assert "Condiciones" not in html
+
+
+def test_recomendadas_tabla_con_columnas_barra_meter_y_sin_progress():              # T08
+    js = leer("recomendadas.js")
+    for columna in ("Oferta", "Puesto", "Compatibilidad", "Salario", "Lugar", "Publicado"):
+        assert f'["{columna}",' in js, columna
+    assert '"Candidatura"' not in js.split("const MAX_PUNTUANDO")[0]                    # ya no es columna
+    assert '"meter"' in js and "aria-valuenow" in js and "aria-valuemin" in js and "aria-valuemax" in js
+    assert "barra-compat" in js and "progress" not in js
+    assert "Sin puntuar" in js and "No publicado" in js
+    assert "Condiciones" not in js and "cond-" not in js and "celdaCandidatura" not in js
+
+
+def test_recomendadas_fila_desplegable_con_acciones():                                 # T09
+    js = leer("recomendadas.js")
+    for pieza in ("aria-expanded", "aria-controls", "Por qué te la recomendamos", "Corregir explicación",
+                  "/correccion", "Preparar candidatura", "Preparar otra igualmente", "Generar CV base",
+                  "fila-detalle", "stopPropagation", "accionesCandidatura"):
+        assert pieza in js, pieza
+    assert '"Modificar' not in js and "details.porque" not in js
+    assert re.search(r"abiertas?\b", js)                                                # la primera sale abierta
+
+
+def test_recomendadas_movil_mas_filtros_y_ayuda_como_globo():                          # T10
+    css, js, html = leer("estilo.css"), leer("recomendadas.js"), leer("recomendadas.html")
+    assert re.search(r"@media \(max-width: 900px\)\s*\{[^@]*\.tabla-ofertas[^@]*attr\(data-", css, re.S)
+    assert 'id="mas-filtros"' in html and 'aria-expanded="false"' in html and "Más filtros" in html
+    assert "Menos filtros" in js
+    assert "Qué significa" in js and "aria-describedby" in js and "Escape" in js and "ayuda-globo" in js
+    assert ".title" not in js and 'title="' not in html
