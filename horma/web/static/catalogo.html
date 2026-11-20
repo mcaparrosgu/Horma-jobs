@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horma · Catálogo</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="/static/tokens.css">
+  <link rel="stylesheet" href="/static/estilo.css">
+  <script src="/static/tema.js"></script>
+</head>
+<body>
+  <header class="cabecera cabecera-admin">
+    <a class="marca" href="/">Horma</a>
+    <nav aria-label="Administración">
+      <a class="pestana activa" href="/ingesta" aria-current="page">Admin</a>
+      <a class="pestana" href="/recomendadas">Volver a Horma</a>
+    </nav>
+    <div class="derecha">
+      <button id="tema" class="secundario" type="button">Tema oscuro</button>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </div>
+  </header>
+  <main class="ancho">
+    <nav class="subpestanas" aria-label="Admin">
+      <a class="pestana" href="/ingesta">Ingesta</a>
+      <a class="pestana activa" href="/catalogo" aria-current="page">Catálogo</a>
+      <a class="pestana" href="/costes">Costes</a>
+    </nav>
+    <h1 class="titulo-pantalla">Catálogo</h1>
+    <p id="contador" class="etiqueta-mono" role="status"></p>
+    <p id="aviso" role="status"></p>
+    <ul id="lista" class="lista-editorial"></ul>
+    <p id="vacio" hidden>Todavía no hay ofertas.</p>
+  </main>
+  <script src="/static/comun.js"></script>
+  <script src="/static/catalogo.js"></script>
+  <script src="/static/pwa.js"></script>
+</body>
+</html>

@@ -1,14 +1,6 @@
-// Todo el texto que viene de ofertas se pinta con textContent: nunca como HTML.
-const $ = (id) => document.getElementById(id);
-let csrf = null;
+// Admin › Catálogo (RF-8.2): las ofertas comunes con su auditoría y su taxonomía. Todo el texto que viene de
+// ofertas se pinta con textContent: nunca como HTML.
 let temporizador = null;
-
-function nodo(etiqueta, texto, clase) {
-  const el = document.createElement(etiqueta);
-  if (texto !== undefined && texto !== null) el.textContent = texto;
-  if (clase) el.className = clase;
-  return el;
-}
 
 const MOTIVOS_FANTASMA = { sin_fecha: "sin fecha", repetida: "repetida", generica: "genérica" };
 
@@ -26,7 +18,7 @@ function etiquetas(o) {
 function tarjeta(o) {
   const li = nodo("li", null, "tarjeta");
   li.append(etiquetas(o));
-  if (o.propia) li.append(nodo("span", "Añadida por ti", "estado bien"));
+  if (o.propia) li.append(nodo("span", "Añadida por una usuaria", "estado bien"));
   li.append(nodo("h3", o.titulo || "Oferta sin procesar todavía"));
   const detalle = [o.empresa, o.ubicacion, o.contrato].filter(Boolean).join(" · ");
   if (detalle) li.append(nodo("p", detalle));
@@ -55,22 +47,26 @@ function tarjeta(o) {
     li.append(nodo("p", `Instrucciones detectadas y no ejecutadas: ${o.instrucciones_embebidas.length}`, "alerta"));
   }
   if (o.estado === "error" && o.motivo_error) li.append(nodo("p", o.motivo_error, "alerta"));
+  const original = nodo("button", "Ver oferta original", "secundario");
+  original.type = "button";
+  original.addEventListener("click", () => verOriginal(o.id));
+  li.append(original);
   return li;
 }
 
 async function cargarContador() {
-  const r = await fetch("/ofertas/total");
+  const r = await api("/ofertas/total");
   if (!r.ok) return;
-  const { total, por_estado } = await r.json();
+  const { total, por_estado } = r.datos;
   const desglose = Object.entries(por_estado).map(([e, n]) => `${n} ${e}`).join(" · ");
   $("contador").textContent = `Ofertas en total: ${total}` + (desglose ? ` (${desglose})` : "");
 }
 
 async function cargarLista() {
   cargarContador();
-  const r = await fetch("/ofertas");
-  if (!r.ok) return;
-  const ofertas = await r.json();
+  const r = await api("/ofertas");
+  if (!r.ok) return avisar(r.motivo, true);
+  const ofertas = r.datos;
   const lista = $("lista");
   lista.replaceChildren(...ofertas.map(tarjeta));
   $("vacio").hidden = ofertas.length > 0;
@@ -79,26 +75,9 @@ async function cargarLista() {
 }
 
 async function iniciar() {
-  const r = await fetch("/api/yo");
-  if (!r.ok) {
-    $("entrada").hidden = false;
-    return;
-  }
-  const yo = await r.json();
-  csrf = yo.csrf;
-  $("aplicacion").hidden = false;
-  $("salir").hidden = false;
-  $("ir-ingesta").hidden = !yo.admin;
-  $("ir-perfil").hidden = false;
-  $("ir-anadir").hidden = false;
-  $("ir-recomendadas").hidden = false;
-  if (yo.sub) $("mi-sub").textContent = `Tu identificador de Google (para HORMA_ADMINS): ${yo.sub}`;
+  const yo = await arrancarAdmin();
+  if (!yo) return;
   await cargarLista();
 }
-
-$("salir").addEventListener("click", async () => {
-  await fetch("/auth/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });
-  location.reload();
-});
 
 iniciar();

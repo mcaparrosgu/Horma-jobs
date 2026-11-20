@@ -1,10 +1,13 @@
 """PlainFlow: recorre PASOS siguiendo ARISTAS en Python plano."""
+from collections.abc import Callable
+
 from horma.flows.base import Decision, ErrorDePaso, Paso
 
 
 class PlainFlow:
     def __init__(self, nombre: str, *, pasos: dict[str, Paso], aristas: dict[str, str | Decision],
-                 inicio: str, finales: set[str], pausas: set[str] | None = None):
+                 inicio: str, finales: set[str], pausas: set[str] | None = None,
+                 al_paso: Callable[[str], None] | None = None):
         for origen, destino in aristas.items():
             if origen not in pasos or (isinstance(destino, str) and destino not in pasos):
                 raise ValueError(f"arista inválida en {nombre}: {origen} → {destino}")
@@ -19,17 +22,21 @@ class PlainFlow:
         self.pausas = pausas
         self._pasos = pasos
         self._aristas = aristas
+        self.al_paso = al_paso  # se llama con el nombre de cada paso al terminarlo (avance, RF-8.7)
 
     def pasos(self) -> list[str]:
         return list(self._pasos)
 
     def run_step(self, paso: str, estado: dict) -> dict:
         try:
-            return self._pasos[paso](estado)
+            nuevo = self._pasos[paso](estado)
         except ErrorDePaso:
             raise
         except Exception as e:  # noqa: BLE001 - cualquier fallo se atribuye a su paso
             raise ErrorDePaso(paso, e) from e
+        if self.al_paso is not None:
+            self.al_paso(paso)
+        return nuevo
 
     def siguiente(self, paso: str, estado: dict) -> str | None:
         if paso in self.finales or paso not in self._aristas:

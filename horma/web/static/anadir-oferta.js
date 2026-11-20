@@ -3,6 +3,7 @@
 const ULTIMAS = 10;
 const SONDEO_MS = 3000;
 let sondeo = null;
+let lecturaBarra = null;   // barra mientras se lee la URL (RF-8.7: «Analizando la oferta»)
 
 // Una oferta tiene tres momentos: analizándose, puntuándose y lista (o con error).
 function estadoDe(o, nota) {
@@ -16,6 +17,11 @@ function tarjeta(o, nota) {
   const li = nodo("li", null, "tarjeta");
   const [texto, clase, detalle] = estadoDe(o, nota);
   li.append(nodo("span", texto, clase));
+  if (o.estado === "pendiente" || (o.estado === "procesada" && (nota === null || nota === undefined))) {
+    // RF-8.7: «Analizando la oferta · 60 %»; al analizarse queda en 100 y la puntuación la sigue
+    barraAvance(li, o.estado === "pendiente" ? "Analizando la oferta" : "Puntuando la oferta")
+      .poner(o.estado === "pendiente" ? o.progreso || 0 : 100);
+  }
   li.append(nodo("h3", o.titulo || "Oferta en proceso"));
   const linea = [o.empresa, o.ubicacion].filter(Boolean).join(" · ");
   if (linea) li.append(nodo("p", linea));
@@ -26,17 +32,21 @@ function tarjeta(o, nota) {
     const a = nodo("a", "Verla en Recomendadas", "bloque");
     a.href = "/recomendadas";
     li.append(a);
+    const original = nodo("button", "Ver oferta original", "secundario");
+    original.type = "button";
+    original.addEventListener("click", () => verOriginal(o.id));
+    li.append(original);
   }
   return li;
 }
 
 async function cargar() {
   clearTimeout(sondeo);
-  const [of, rec] = await Promise.all([api("/ofertas"), api("/api/recomendaciones")]);
+  const [of, rec] = await Promise.all([api("/api/ofertas/propias"), api("/api/recomendaciones")]);
   if (!of.ok) return avisar(of.motivo, true);
   const notas = new Map();
   if (rec.ok) for (const x of rec.datos.recomendaciones) notas.set(x.id, x.nota);
-  const propias = of.datos.filter((o) => o.propia).slice(0, ULTIMAS);
+  const propias = of.datos.slice(0, ULTIMAS);
   $("lista").replaceChildren(...propias.map((o) => tarjeta(o, notas.get(o.id))));
   $("vacio").hidden = propias.length > 0;
   const enCurso = propias.some((o) => o.estado === "pendiente" ||
@@ -74,11 +84,13 @@ async function esperarLectura(id) {
   if (r.datos.estado === "pendiente") return setTimeout(() => esperarLectura(id), SONDEO_MS);
   $("enviar-url").disabled = false;
   if (r.datos.estado === "error") {
+    $("lectura-url").replaceChildren();
     avisarUrl(r.datos.motivo || MOTIVO_URL, true);
     $("texto").focus();
     return;
   }
   $("url").value = "";
+  $("lectura-url").replaceChildren();
   avisarUrl("Oferta leída. Se está analizando y puntuando; se actualizará sola.");
   await cargar();
 }
@@ -89,9 +101,13 @@ $("formulario-url").addEventListener("submit", async (e) => {
   if (!url) return avisarUrl("Pega la dirección de la oferta.", true);
   $("enviar-url").disabled = true;
   avisarUrl("Leyendo la página…");
+  $("lectura-url").replaceChildren();
+  lecturaBarra = barraAvance($("lectura-url"), "Analizando la oferta");
+  lecturaBarra.poner(10);
   const r = await api("/ofertas/url", { metodo: "POST", cuerpo: { url } });
   if (!r.ok) {
     $("enviar-url").disabled = false;
+    $("lectura-url").replaceChildren();
     return avisarUrl(r.motivo, true);
   }
   await esperarLectura(r.datos.id);

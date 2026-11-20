@@ -11,6 +11,12 @@ def puntuadas(s: Session, perfil_version: int) -> list[int]:
                           {"v": perfil_version}).scalars())
 
 
+def puntuadas_de(s: Session, perfil_version: int, oferta_id: int) -> list[int]:
+    """[oferta_id] si esa oferta ya tiene nota para esa versión del perfil; si no, []."""
+    return list(s.execute(text("select oferta_id from matches where perfil_version = :v and oferta_id = :o"),
+                          {"v": perfil_version, "o": oferta_id}).scalars())
+
+
 def ids_candidatas(s: Session, consulta: Consulta) -> list[int]:
     """Ejecuta el filtro duro construido por `buscar_ofertas`, en su orden."""
     return [fila[0] for fila in s.execute(text(consulta.sql), consulta.parametros)]
@@ -31,11 +37,21 @@ def listado(s: Session, ids: list[int]) -> list[dict]:
         "as sueldo_comparable, m.nota, m.condiciones, m.explicacion, m.cita_perfil, m.cita_oferta, "
         "m.retirada, m.correccion, m.perfil_version, "
         "m.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
-        "as desfasado "
-        "from ofertas o left join lateral (select * from matches x where x.oferta_id = o.id "
+        "as desfasado, d.oferta_id is not null as descartada, "
+        "c.id as candidatura_id, c.estado as candidatura_estado, c.motivo_cierre as candidatura_motivo "
+        "from ofertas o left join descartes d on d.oferta_id = o.id "
+        "left join lateral (select id, estado, motivo_cierre from candidaturas x where x.oferta_id = o.id "
+        "order by (x.estado <> 'cerrada') desc, x.id desc limit 1) c on true "
+        "left join lateral (select * from matches x where x.oferta_id = o.id "
         "order by x.perfil_version desc limit 1) m on true "
         "where o.id = any(cast(:ids as int[]))"), {"ids": list(ids)}).mappings().all()
-    por_id = {f["id"]: dict(f) for f in filas}
+    por_id = {}
+    for f in filas:
+        f = dict(f)
+        cid = f.pop("candidatura_id")
+        estado, motivo = f.pop("candidatura_estado"), f.pop("candidatura_motivo")
+        f["candidatura"] = None if cid is None else {"id": cid, "estado": estado, "motivo_cierre": motivo}
+        por_id[f["id"]] = f
     return [por_id[i] for i in ids if i in por_id]
 
 

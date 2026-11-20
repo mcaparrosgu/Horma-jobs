@@ -21,45 +21,60 @@
     <h1 class="titulo-pantalla">Recomendadas</h1>
     <p id="entradilla" class="entradilla">Ofertas ya revisadas, sin fraudes ni ofertas fantasma, para tu perfil</p>
 
-    <form id="filtros" class="filtros panel plegados" role="search" aria-label="Filtros">
-      <div class="filtros-rejilla">
-        <div id="grupos" class="grupos-barra"></div>
-        <label class="mas">Sueldo mínimo (€/año)<input id="sueldo-minimo" type="number" min="0" step="500" inputmode="numeric"></label>
-        <div class="mas" role="group" aria-labelledby="t-compat">
-          <span id="t-compat" class="etiqueta-mono">Compatibilidad</span>
-          <span class="rango"><input id="rango-min" class="corto" type="number" min="0" max="100" aria-label="Nota mínima"> a
-          <input id="rango-max" class="corto" type="number" min="0" max="100" aria-label="Nota máxima"></span>
+    <details id="que-buscas" class="panel-desplegado">
+      <summary>Qué buscas</summary>
+      <p class="suave">Marca lo que buscas. Un grupo sin nada marcado no filtra. Entre paréntesis, cuántas ofertas recomendables hay ahora en el catálogo. Puestos, sector, países e idiomas llegan marcados desde tu CV: cámbialos cuando quieras, también para cambiar de carrera.</p>
+      <form id="formulario-busca">
+        <div id="grupos" class="grupos"></div>
+        <fieldset class="grupo panel">
+          <legend class="etiqueta-mono">Condiciones</legend>
+          <div class="casilla-con-ayuda">
+            <label class="casilla"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
+            <p class="suave ayuda">Solo ofertas 100 % en remoto. Si piden ir a la oficina alguna vez, no salen.</p>
+          </div>
+          <div class="casilla-con-ayuda">
+            <label class="casilla"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
+            <p class="suave ayuda">Solo ofertas que dicen cuánto pagan.</p>
+          </div>
+          <label>Sueldo mínimo (euros brutos al año)
+            <input id="sueldo-minimo" class="corto" type="number" min="0" step="500" inputmode="numeric">
+          </label>
+        </fieldset>
+        <div class="fila">
+          <button id="guardar-busca" type="submit">Guardar y buscar</button>
         </div>
-        <label class="mas">Ordenar por
-          <select id="orden">
-            <option value="compatibles">Más compatibles</option>
-            <option value="recientes">Más recientes</option>
-          </select>
-        </label>
-      </div>
-      <div class="fila">
-        <label class="casilla mas"><input id="solo-remoto" type="checkbox"> Solo remoto</label>
-        <label class="casilla mas"><input id="solo-salario" type="checkbox"> Solo con salario publicado</label>
-        <div class="acciones">
-          <button id="mas-filtros" class="secundario" type="button" aria-expanded="false" aria-controls="filtros">Más filtros</button>
-          <button id="buscar" type="submit">Buscar</button>
-        </div>
-      </div>
+      </form>
+    </details>
+
+    <form id="vista" class="vista-rejilla" aria-label="Cómo ver la lista">
+      <label>Nota mínima<input id="nota-min" type="number" min="0" max="100" inputmode="numeric"></label>
+      <label>Nota máxima<input id="nota-max" type="number" min="0" max="100" inputmode="numeric"></label>
+      <label>Ordenar por
+        <select id="orden">
+          <option value="recientes">Más recientes</option>
+          <option value="compatibles">Más compatibles</option>
+        </select>
+      </label>
+      <label>Mostrar
+        <select id="estado"></select>
+      </label>
     </form>
 
+    <div id="avance"></div>
+    <p id="aviso-tope" class="suave" role="status"></p>
     <div class="fila barra-contador">
       <p id="contador" class="contador" aria-live="polite"></p>
-      <button id="recomendar" class="secundario" type="button">Recomendar</button>
       <span id="aviso" role="status"></span>
+      <span id="aviso-descarte" role="status"></span>
     </div>
 
     <details class="leer">
       <summary>Cómo leer las recomendaciones</summary>
       <ul>
         <li><strong>Compatibilidad</strong>: una nota de 0 a 100 de lo bien que encaja la oferta con tu perfil. Orienta, no decide.</li>
-        <li><strong>Sin puntuar</strong>: ofertas nuevas que aún no tienen nota. Pulsa «Recomendar» para puntuar solo lo que falta.</li>
-        <li><strong>Solo remoto</strong>. Solo ofertas 100 % en remoto. Si piden ir a la oficina alguna vez, no salen.</li>
-        <li><strong>Cambiar un filtro</strong> no gasta nada: solo reordena y filtra lo ya puntuado.</li>
+        <li><strong>Sin puntuar</strong>: ofertas que aún no tienen nota. Horma las puntúa sola al abrir esta pantalla o al guardar «Qué buscas»; también puedes pulsar «Puntuar ahora» en una concreta.</li>
+        <li><strong>Cambiar la nota, el orden o lo que se muestra</strong> no gasta nada: solo reordena y filtra lo ya puntuado.</li>
+        <li><strong>Descartar</strong> aparta una oferta de «Nuevas» sin borrarla: la encuentras en «Descartadas» y puedes recuperarla.</li>
         <li><strong>Explicación</strong>: despliega la fila para ver por qué. Si no estás de acuerdo, pulsa «Corregir explicación».</li>
       </ul>
     </details>

@@ -27,6 +27,7 @@ from horma.web.routers import (
     perfil,
     preferencias,
     recomendaciones,
+    tareas,
 )
 
 ESTATICOS = Path(__file__).parent / "static"
@@ -93,13 +94,9 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     app.include_router(ofertas.router)
     app.include_router(ingesta.router)
     app.include_router(costes.router)
-    for r in (cv, estilo, perfil, preferencias, recomendaciones, candidaturas, paginas):
+    for r in (cv, estilo, perfil, preferencias, recomendaciones, tareas, candidaturas, paginas):
         app.include_router(r.router)
     app.mount("/static", StaticFiles(directory=ESTATICOS), name="static")
-
-    @app.get("/", include_in_schema=False)
-    def portada():
-        return FileResponse(ESTATICOS / "index.html")
 
     @app.get("/manifest.webmanifest", include_in_schema=False)
     def manifiesto():

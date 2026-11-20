@@ -115,7 +115,7 @@ def test_estilo_trae_los_componentes_de_la_guia():
 
 
 # --- T04 · cabecera común y tema ----------------------------------------------------------------
-PAGINAS_USUARIA = ("perfil", "preferencias", "cv-base", "anadir-oferta", "recomendadas", "candidaturas",
+PAGINAS_USUARIA = ("perfil", "cv-base", "anadir-oferta", "recomendadas", "candidaturas",
                    "candidatura")
 TODAS = [p.stem for p in sorted(ESTATICOS.glob("*.html")) if p.stem != "offline"]
 
@@ -141,10 +141,10 @@ def test_la_cabecera_de_comun_js_pinta_pestanas_persona_tema_y_salir():
     assert "aria-current" in js and "/api/perfil" in js and "nombre" in js
     assert '"img"' not in js and "<img" not in js                         # nunca una foto (RF-6.3)
     assert "vincularTema" in js and '"Salir"' in js and '"Tema oscuro"' in js
-    assert len(re.findall(r'\["[^"]+", "/[a-z-]+"\]', js)) == 6           # las seis pestañas (P2)
+    assert len(re.findall(r'\["[^"]+", "/[a-z-]+"\]', js)) == 5           # las cinco pestañas (spec 008, RF-8.1e)  # noqa: E501
 
 
-@pytest.mark.parametrize("nombre", ("index", "ingesta", "costes"))
+@pytest.mark.parametrize("nombre", ("ingesta", "costes"))
 def test_portada_e_ingesta_y_costes_llevan_cabecera_minima(nombre):
     html = leer(f"{nombre}.html")
     assert 'class="cabecera' in html and 'class="marca"' in html
@@ -222,14 +222,13 @@ def test_ningun_js_dice_match_ats_ni_trazabilidad_en_sus_textos(js):
 def test_recomendadas_estructura_h1_entradilla_filtros_contador_y_guia():  # T07
     html = leer("recomendadas.html")
     assert 'class="titulo-pantalla">Recomendadas' in html and "sin fraudes ni ofertas fantasma" in html
-    assert re.search(r'<form id="filtros"[^>]*role="search"', html)
-    for ident in ("grupos", "solo-remoto", "solo-salario", "sueldo-minimo", "rango-min", "rango-max", "orden",
-                  "buscar", "recomendar", "contador"):
+    assert re.search(r'<form id="vista"[^>]*aria-label', html)
+    for ident in ("grupos", "solo-remoto", "solo-salario", "sueldo-minimo", "nota-min", "nota-max", "orden",
+                  "guardar-busca", "que-buscas", "contador"):
         assert f'id="{ident}"' in html, ident
     assert re.search(r'id="contador"[^>]*aria-live="polite"|aria-live="polite"[^>]*id="contador"', html)
     assert '<details class="leer' in html and "Cómo leer las recomendaciones" in html
     assert "Corregir explicación" in html and "Modificar" not in html
-    assert "Condiciones" not in html
 
 
 def test_recomendadas_tabla_con_columnas_barra_meter_y_sin_progress():  # T08
@@ -256,19 +255,16 @@ def test_recomendadas_fila_desplegable_con_acciones():  # T09
 def test_recomendadas_movil_mas_filtros_y_ayuda_como_globo():  # T10
     css, js, html = leer("estilo.css"), leer("recomendadas.js"), leer("recomendadas.html")
     assert re.search(r"@media \(max-width: 900px\)\s*\{[^@]*\.tabla-ofertas[^@]*attr\(data-", css, re.S)
-    assert 'id="mas-filtros"' in html and 'aria-expanded="false"' in html and "Más filtros" in html
-    assert "Menos filtros" in js
     assert "Qué significa" in js and "aria-describedby" in js and "Escape" in js and "ayuda-globo" in js
     assert ".title" not in js and 'title="' not in html
 
 
 def test_resto_de_pantallas_usan_los_componentes_2c():  # T11-T15
-    for pagina in ("perfil", "preferencias", "anadir-oferta", "cv-base", "candidaturas", "candidatura"):
+    for pagina in ("perfil", "anadir-oferta", "cv-base", "candidaturas", "candidatura"):
         html = leer(f"{pagina}.html")
         assert 'class="titulo-pantalla"' in html and 'class="pp"' not in html, pagina
-    assert "lista-editorial" in leer("index.html") and "lista-editorial" in leer("perfil.html")
+    assert "lista-editorial" in leer("perfil.html")
     assert 'class="fila panel"' in leer("perfil.html")  # subida en un panel
-    assert 'class="grupo panel"' in leer("preferencias.html")
     assert leer("anadir-oferta.html").count('class="panel"') == 2
     assert "cond-" not in leer("candidaturas.js")
     js = leer("candidatura.js")

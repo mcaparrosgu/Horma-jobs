@@ -7,6 +7,8 @@ Tipos de tarea (la carga es siempre un id, nunca texto):
   trabaja). Las de una usuaria se ejecutan con su sesión (RLS); las demás, en modo sistema.
 - `regenerar_cv_base` (fase 5; id del CV base): lo vuelve a generar con el perfil vigente.
 - `puntuar_propias` (fase 5; id de la usuaria): puntúa las ofertas que ella añadió.
+- `puntuar_una` (fase 8; id de la oferta): «Puntuar ahora», puntúa solo esa oferta.
+Fase 8 (RF-8.7): cada tarea sube su `progreso` (nunca baja) y `recomendar` guarda cada tanda al terminarla.
 - `candidatura` (fase 3; id de la candidatura): CV y carta para una oferta.
 - `leer_url` (fase 5; id de la importación): lee la página con el proveedor y crea la oferta propia.
 - `analizar_estilo` (fase 5; id de la usuaria): guía de estilo con sus CV y cartas.
@@ -47,6 +49,7 @@ from horma.web import alertas, checkpointer
 from horma.web.db import motor, sesion_de, sesion_sistema
 from horma.web.queue import cola
 from horma.web.repositories import candidaturas as repo_candidaturas
+from horma.web.repositories import descartes as repo_descartes
 from horma.web.repositories import estilo as repo_estilo
 from horma.web.repositories import importaciones as repo_importaciones
 from horma.web.repositories import ingesta as repo_ingesta
@@ -68,6 +71,25 @@ class Dependencias:
     engine: Engine | None = None
     entidad_id: int | None = None
     lector: Callable[[str], str] = leer_pagina
+    usuaria_id: int | None = None
+    tarea_id: int | None = None
+    avanzar: Callable[[int], None] | None = None  # RF-8.7: sube el avance de la tarea (nunca baja)
+
+
+def con_avance(flujo, d: Dependencias, desde: int = 0):
+    """Avance por pasos hechos sobre pasos del flujo, hasta el 95 % (al terminar salta a 100). `desde` es el
+    punto de partida (p. ej. 20 % cuando la lectura de la URL ya está hecha)."""
+    if d.avanzar is None:
+        return flujo
+    total, hechos = max(1, len(flujo.pasos())), 0
+
+    def al_paso(_paso: str) -> None:
+        nonlocal hechos
+        hechos += 1
+        d.avanzar(desde + round(min(hechos, total) / total * (95 - desde)))
+
+    flujo.al_paso = al_paso
+    return flujo
 
 
 class _ProcesarOferta:
@@ -75,7 +97,8 @@ class _ProcesarOferta:
         return repo_ofertas.para_procesar(s, tarea["entidad_id"])
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return procesar_oferta.crear(proveedor=d.proveedor, resolver=d.resolver).run(estado)
+        flujo = procesar_oferta.crear(proveedor=d.proveedor, resolver=d.resolver)
+        return con_avance(flujo, d, desde=20 if estado.get("url") else 0).run(estado)  # con URL, leerla fue el 20 %  # noqa: E501
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_ofertas.guardar(s, tarea["entidad_id"], Oferta.model_validate(estado["oferta"]),
@@ -101,7 +124,8 @@ class _CalificarFuente:
         return {"url": repo_ingesta.calificacion(s, tarea["entidad_id"])["url"]}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return calificar_fuente.crear(proveedor=d.proveedor, descargador=d.descargador).run(estado)
+        flujo = calificar_fuente.crear(proveedor=d.proveedor, descargador=d.descargador)
+        return con_avance(flujo, d).run(estado)
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_ingesta.guardar_calificacion(
@@ -132,7 +156,8 @@ class _Perfilar:
         return {"cvs": cvs, "_version": fila["version"]}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return {**perfilar.crear(proveedor=d.proveedor).run(estado), "_version": estado["_version"]}
+        flujo = con_avance(perfilar.crear(proveedor=d.proveedor), d)
+        return {**flujo.run(estado), "_version": estado["_version"]}
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         perfil = Perfil.model_validate({**estado["perfil"], "version": estado["_version"]})
@@ -156,7 +181,7 @@ class _ClasificarPerfil:
         return {"perfil": repo_perfiles.perfil_modelo(fila).model_dump(mode="json")}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return clasificar_perfil.crear(proveedor=d.proveedor).run(estado)
+        return con_avance(clasificar_perfil.crear(proveedor=d.proveedor), d).run(estado)
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         perfil = Perfil.model_validate({**estado["perfil"], "taxonomia": estado["taxonomia"]})
@@ -177,7 +202,7 @@ class _GenerarCvBase:
                 "_version": fila["version"]}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return generar_cv_base.crear(proveedor=d.proveedor).run(estado)
+        return con_avance(generar_cv_base.crear(proveedor=d.proveedor), d).run(estado)
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_perfiles.guardar_cv_base(s, tarea["usuaria_id"], estado["_version"], estado["cv_base"])
@@ -205,7 +230,7 @@ class _RegenerarCvBase:
                 "visibilidad": datos["visibilidad"] or {}, "_version": fila["version"]}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        salida = generar_cv_base.crear(proveedor=d.proveedor).run(estado)
+        salida = con_avance(generar_cv_base.crear(proveedor=d.proveedor), d).run(estado)
         if not salida["cv_base"]["guardados"]:  # no pasó la verificación: no se toca el CV
             rechazo = salida["cv_base"]["rechazados"][0]
             raise ValueError(f"la regeneración no pasó la verificación: {rechazo['motivo']}")
@@ -225,9 +250,11 @@ class _Recomendar:
     def cargar(self, s, tarea: dict) -> dict:
         fila = _perfil_de_la_tarea(s, tarea, hecha=True)
         perfil = repo_perfiles.perfil_modelo(fila)
-        prefs = repo_perfiles.preferencias(s)
+        # Lo que se puntúa no depende de la vista (RF-8.4d): siempre 40-100 y de más a menos parecido.
+        prefs = repo_perfiles.preferencias(s).model_copy(
+            update={"rango_min": 40, "rango_max": 100, "orden": "compatibles"})
         ya = repo_matches.puntuadas(s, fila["version"])
-        consulta = buscar_ofertas(prefs, perfil.taxonomia, excluir_ids=ya,
+        consulta = buscar_ofertas(prefs, perfil.taxonomia, excluir_ids=ya + repo_descartes.ids(s),  # RF-8.5d
                                   limite=recomendar.MAX_TANDAS * recomendar.TANDA)
         ids = repo_matches.ids_candidatas(s, consulta)
         ofertas = repo_ofertas.completas(s, ids)
@@ -237,7 +264,13 @@ class _Recomendar:
                 "ya_puntuadas": ya, "_version": fila["version"]}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return recomendar.crear(proveedor=d.proveedor).run(estado)
+        def al_tanda(nuevas: list[dict], hechas: int, previstas: int) -> None:
+            """Cada tanda se guarda al terminarla, en su propia transacción, y la barra avanza (RF-8.7c-e):
+            si una tanda posterior falla, lo ya guardado se queda."""
+            with sesion_de(d.engine, d.usuaria_id) as s:
+                repo_matches.guardar(s, d.usuaria_id, estado["_version"], nuevas)
+                repo_tareas.avanzar(s, d.tarea_id, min(99, round(hechas / max(1, previstas) * 100)))
+        return recomendar.crear(proveedor=d.proveedor, al_tanda=al_tanda).run(estado)
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_matches.guardar(s, tarea["usuaria_id"], estado["_version"], estado["recomendaciones"])
@@ -275,6 +308,25 @@ class _PuntuarPropias(_Recomendar):
             super().guardar(s, tarea, estado)
 
 
+class _PuntuarUna(_Recomendar):
+    """«Puntuar ahora» (RF-8.5e): puntúa solo una oferta, la del catálogo o una propia (RLS).
+    Entidad = id de la
+    oferta. Va por el mismo flujo que `recomendar`, con una sola candidata."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        fila = repo_perfiles.vigente(s)
+        if fila is None:
+            raise ValueError("la usuaria no tiene un perfil construido")
+        oferta = repo_ofertas.completas(s, [tarea["entidad_id"]]).get(tarea["entidad_id"])
+        if oferta is None:
+            raise ValueError(f"la oferta {tarea['entidad_id']} no está procesada")
+        prefs = repo_perfiles.preferencias(s).model_copy(update={"rango_min": 0, "rango_max": 100})
+        return {"perfil": repo_perfiles.perfil_modelo(fila).model_dump(mode="json"),
+                "preferencias": prefs.model_dump(mode="json"),
+                "candidatas": [{"oferta_id": tarea["entidad_id"], "oferta": oferta.model_dump(mode="json")}],
+                "ya_puntuadas": [], "_version": fila["version"]}
+
+
 class _Candidatura:
     """Prepara CV y carta para una oferta (entidad = id de la candidatura): carga el perfil vigente, el
     CV maestro y todos los CV base de la usuaria; el flujo elige uno."""
@@ -298,7 +350,7 @@ class _Candidatura:
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         """Corre hasta la pausa (antes de `entregar`). Con `langgraph` el estado queda en el hilo de la
         candidatura hasta que se aprueba o se cierra (RF-4.3)."""
-        flujo = checkpointer.flujo_candidatura(d.engine, proveedor=d.proveedor)
+        flujo = con_avance(checkpointer.flujo_candidatura(d.engine, proveedor=d.proveedor), d)
         return flujo.run(estado, hilo=checkpointer.hilo_de(d.entidad_id))
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
@@ -344,7 +396,7 @@ class _AnalizarEstilo:
         return {"documentos": documentos}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return analizar_estilo.crear(proveedor=d.proveedor).run(estado)
+        return con_avance(analizar_estilo.crear(proveedor=d.proveedor), d).run(estado)
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_estilo.guardar(s, tarea["usuaria_id"], GuiaEstilo.model_validate(estado["guia"]), "modelo")
@@ -358,6 +410,7 @@ MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _Procesar
                "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
                "regenerar_cv_base": _RegenerarCvBase(),
                "recomendar": _Recomendar(), "puntuar_propias": _PuntuarPropias(),
+               "puntuar_una": _PuntuarUna(),
                "candidatura": _Candidatura(), "leer_url": _LeerUrl(),
                "analizar_estilo": _AnalizarEstilo()}
 
@@ -385,7 +438,12 @@ def procesar_una(engine: Engine, proveedor: Proveedor | None = None, *,
                 raise ValueError(f"tipo de tarea desconocido: {tarea['tipo']}")
             with sesion() as s:
                 entrada = manejador.cargar(s, tarea)
-            deps = Dependencias(proveedor, resolver, descargador, engine, tarea["entidad_id"], lector)
+            def avanzar(p: int) -> None:
+                with sesion() as s2:
+                    repo_tareas.avanzar(s2, tarea["id"], p)
+
+            deps = Dependencias(proveedor, resolver, descargador, engine, tarea["entidad_id"], lector,
+                                usuaria, tarea["id"], avanzar)
             estado = manejador.ejecutar(entrada, deps)
         except Exception as e:  # noqa: BLE001 - cualquier fallo cuenta como intento fallido
             error = e

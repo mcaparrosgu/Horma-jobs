@@ -1,5 +1,6 @@
-"""Flujo recomendar (RF-2.12, RF-2.14): candidatas → puntuar_tanda → (otra tanda) →
-revisar_explicaciones → componer. Sin acceso a la base de datos: el worker carga las candidatas con
+"""Flujo recomendar (RF-2.12, RF-2.14, RF-8.7): candidatas → puntuar_tanda (con la revisión de rasgos
+personales dentro de cada tanda) → (otra tanda) → componer. Sin acceso a la base de datos: el
+worker carga las candidatas con
 `buscar_ofertas` y guarda los resultados.
 
 Estado de entrada: {"perfil": Perfil, "preferencias": Preferencias,
@@ -7,8 +8,14 @@ Estado de entrada: {"perfil": Perfil, "preferencias": Preferencias,
 "ya_puntuadas"?: [oferta_id, ...] (con nota para esta versión del perfil: no se vuelven a puntuar)}.
 Estado de salida: además, "recomendaciones" ([Match]), "tandas" y "quedan_sin_puntuar".
 
+`al_tanda(nuevas, hechas, previstas)` (opcional) se llama al terminar cada tanda, con sus notas ya revisadas
+(RT-09): el worker las guarda y avanza la barra (RF-8.7). Sigue sin tocar la base de datos.
+
 Se puntúa por tandas de 30 en el orden recibido. Se pide otra tanda solo si la anterior dejó alguna
 nota dentro del rango de la usuaria y quedan candidatas, con tope de 5 tandas (coste, RT-14)."""
+import math
+from collections.abc import Callable
+
 from horma.agents.matcher.agent import Matcher
 from horma.agents.matcher.schemas import MAX_OFERTAS, EntradaMatcher, OfertaCandidata
 from horma.flows.plain import PlainFlow
@@ -23,7 +30,8 @@ TANDA = MAX_OFERTAS
 MAX_TANDAS = 5
 
 
-def crear(proveedor: Proveedor | None = None) -> PlainFlow:
+def crear(proveedor: Proveedor | None = None,
+          al_tanda: Callable[[list[dict], int, int], None] | None = None) -> PlainFlow:
 
     def candidatas(e: dict) -> dict:
         ya = set(e.get("ya_puntuadas") or [])
@@ -33,7 +41,8 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
             if c["oferta_id"] not in ya and c["oferta_id"] not in vistas:
                 vistas.add(c["oferta_id"])
                 pendientes.append(c)
-        e.update(pendientes=pendientes, matches=[], tandas=0, en_rango=False)
+        previstas = min(MAX_TANDAS, math.ceil(len(pendientes) / TANDA))
+        e.update(pendientes=pendientes, matches=[], tandas=0, en_rango=False, previstas=previstas)
         return e
 
     def puntuar_tanda(e: dict) -> dict:
@@ -53,18 +62,20 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                 # Las condiciones no las decide el modelo: se calculan con código (RF-2.12).
                 oferta = next(c.oferta for c in lote_modelo if c.oferta_id == m.oferta_id)
                 m.condiciones = evaluar_condiciones(oferta, prefs)
-                nuevas.append(m.model_dump(mode="json"))
+                nuevas.append(_revisada(m.model_dump(mode="json")))
         e["matches"] += nuevas
         e["tandas"] += 1
         e["en_rango"] = any(prefs.rango_min <= m["nota"] <= prefs.rango_max for m in nuevas)
+        if al_tanda is not None:
+            al_tanda(nuevas, e["tandas"], max(e["previstas"], e["tandas"]))
         return e
 
-    def revisar_explicaciones(e: dict) -> dict:
-        """RT-09: una explicación que menciona un rasgo personal se retira y se marca."""
-        for m in e["matches"]:
-            if rasgos_personales(" ".join([m["explicacion"], m["cita_perfil"], m["cita_oferta"]])):
-                m.update(explicacion="", cita_perfil="", cita_oferta="", retirada=True)
-        return e
+    def _revisada(m: dict) -> dict:
+        """RT-09: una explicación que menciona un rasgo personal se retira y se marca. Se hace en cada tanda,
+        antes de entregarla: lo que se guarda nunca lleva un rasgo personal (RF-8.7c)."""
+        if rasgos_personales(" ".join([m["explicacion"], m["cita_perfil"], m["cita_oferta"]])):
+            m.update(explicacion="", cita_perfil="", cita_oferta="", retirada=True)
+        return m
 
     def componer(e: dict) -> dict:
         e["recomendaciones"] = [Match.model_validate(m).model_dump(mode="json") for m in e["matches"]]
@@ -76,11 +87,9 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
 
     def tras_tanda(e: dict) -> str:
         otra = e["pendientes"] and e["en_rango"] and e["tandas"] < MAX_TANDAS
-        return "puntuar_tanda" if otra else "revisar_explicaciones"
+        return "puntuar_tanda" if otra else "componer"
 
-    pasos = {"candidatas": candidatas, "puntuar_tanda": puntuar_tanda,
-             "revisar_explicaciones": revisar_explicaciones, "componer": componer}
-    aristas = {"candidatas": tras_candidatas, "puntuar_tanda": tras_tanda,
-               "revisar_explicaciones": "componer"}
+    pasos = {"candidatas": candidatas, "puntuar_tanda": puntuar_tanda, "componer": componer}
+    aristas = {"candidatas": tras_candidatas, "puntuar_tanda": tras_tanda}
     return PlainFlow("recomendar", pasos=pasos, aristas=aristas, inicio="candidatas",
                      finales={"componer"})

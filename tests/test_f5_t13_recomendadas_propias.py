@@ -87,7 +87,7 @@ def test_las_propias_se_filtran_igual_pero_salen_aunque_las_marque_el_auditor(
     c.put("/api/preferencias", headers=h, json={**c.get("/api/preferencias").json(),
                                                  "familias": ["hosteleria_restauracion"],
                                                  "niveles": ["junior"], "rango_min": 30, "rango_max": 50})
-    assert c.post("/api/recomendar", headers=h).status_code == 202  # puntúa también las propias
+    assert c.post("/api/recomendar", headers=h).json()["tarea_id"]  # puntúa también las propias
     while worker.procesar_una(motor_app, ProveedorSimulado([_matches(ids, 40)])):
         pass
     r = {x["id"]: x for x in c.get("/api/recomendaciones").json()["recomendaciones"]}

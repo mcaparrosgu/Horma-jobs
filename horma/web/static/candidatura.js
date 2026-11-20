@@ -7,6 +7,7 @@ const ESTADOS = { borrador: "Borrador", aprobada: "Aprobada", enviada: "Enviada"
 const DOCUMENTOS = { cv: "CV", carta: "Carta", oferta: "Oferta" };
 let c = null;
 let temporizador = null;
+let avance = 0;   // % de la tarea que prepara el CV y la carta (RF-8.7)
 
 function boton(texto, alClic, clase) {
   const b = nodo("button", texto, clase);
@@ -33,6 +34,9 @@ function cabecera() {
   s.append(nodo("p", c.oferta.empresa || "Empresa sin indicar", "suave"));
   s.append(nodo("span", ESTADOS[c.estado] || c.estado, "estado bien"));
   if (c.estado === "cerrada" && c.motivo_cierre) s.append(nodo("span", `Motivo: ${c.motivo_cierre}`, "estado apagado"));
+  const fila = nodo("div", null, "fila");
+  fila.append(boton("Ver oferta original", () => verOriginal(c.oferta.id), "secundario"));   // RF-8.3
+  s.append(fila);
   return s;
 }
 
@@ -243,7 +247,9 @@ function avisoDesfasada() {
 function pintar() {
   const partes = [cabecera()];
   if (c.preparacion === "en_curso") {
-    partes.push(nodo("p", "Horma está preparando el CV y la carta… puede tardar un minuto.", "suave"));
+    const caja = nodo("div");
+    barraAvance(caja, "Preparando tu CV y tu carta").poner(avance);
+    partes.push(caja, nodo("p", "Horma está preparando el CV y la carta… puede tardar un minuto.", "suave"));
   } else if (c.preparacion === "error") {
     partes.push(nodo("p", c.motivo_error || "No se pudo preparar esta candidatura.", "alerta"));
     partes.push(boton("Reintentar", () => accion(`/api/candidaturas/${ID}/reintentar`, {}, "Preparando de nuevo…")));
@@ -270,6 +276,11 @@ async function cargar() {
   const r = await api(`/api/candidaturas/${ID}`);
   if (!r.ok) return avisar(r.motivo, true);
   c = r.datos;
+  if (c.preparacion === "en_curso") {   // la barra retoma su punto aunque se haya vuelto a la pantalla (RF-8.7b)
+    const t = await api("/api/tareas/activas?tipo=candidatura");
+    const mia = t.ok ? t.datos.tareas.find((x) => x.entidad_id === ID) : null;
+    avance = mia ? Math.max(avance, mia.progreso) : avance;
+  }
   pintar();
   if (c.preparacion === "en_curso") temporizador = setTimeout(cargar, 3000);
 }

@@ -7,8 +7,8 @@ from horma.config import ajustes
 from horma.tools.validar_url import validar_url
 from horma.web import limites
 from horma.web.auth import claves
-from horma.web.auth.sesion import exigir_csrf, usuaria_actual
-from horma.web.db import sesion_de
+from horma.web.auth.sesion import exigir_admin, exigir_csrf, usuaria_actual
+from horma.web.db import sesion_de, sesion_sistema
 from horma.web.queue import worker
 from horma.web.repositories import importaciones, tareas
 from horma.web.repositories import ofertas as repo
@@ -82,7 +82,7 @@ def estado_de_la_url(importacion_id: int, request: Request, usuaria_id: int = De
     return {k: fila[k] for k in ("id", "estado", "motivo", "oferta_id")}
 
 
-@router.get("/ofertas/total")
+@router.get("/ofertas/total", dependencies=[Depends(exigir_admin)])
 def total(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Cuántas ofertas hay en el catálogo (todas, no solo las listadas), por estado."""
     with sesion_de(request.app.state.engine, usuaria_id) as s:
@@ -90,8 +90,29 @@ def total(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     return {"total": sum(por_estado.values()), "por_estado": por_estado}
 
 
-@router.get("/ofertas")
+@router.get("/ofertas", dependencies=[Depends(exigir_admin)])
 def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    """El catálogo común con su auditoría y su taxonomía."""
+    """El catálogo común con su auditoría y su taxonomía (RF-8.2c: solo administradoras)."""
     with sesion_de(request.app.state.engine, usuaria_id) as s:
         return repo.listar(s)
+
+
+@router.get("/api/ofertas/propias")
+def propias(request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """Las ofertas que la usuaria ha añadido, con el avance de su análisis (RF-8.2c, RF-8.7)."""
+    engine = request.app.state.engine
+    with sesion_de(engine, usuaria_id) as s:
+        filas = repo.propias(s, usuaria_id)
+    with sesion_sistema(engine) as s:  # `procesar_oferta` es tarea del sistema; solo se leen los ids de ella
+        avance = repo.progreso_de_analisis(s, [f["id"] for f in filas])
+    return [{**f, "progreso": avance.get(f["id"])} for f in filas]
+
+
+@router.get("/api/ofertas/{oferta_id}/original")
+def original(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """La oferta tal como entró (RF-8.3). La RLS hace que una propia ajena no exista: 404."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        fila = repo.original(s, oferta_id)
+    if fila is None:
+        raise HTTPException(status_code=404, detail="No existe esa oferta")
+    return fila

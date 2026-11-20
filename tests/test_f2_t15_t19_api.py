@@ -459,13 +459,15 @@ def _puntuar(motor, usuaria, version, *notas):
         matches.guardar(s, usuaria, version, [_match(o, version, n) for o, n in notas])
 
 
-def test_recomendar_encola_y_solo_se_pide_a_mano(app, motor_app):
+def test_recomendar_encola_si_hay_pendientes_y_no_dos_a_la_vez(app, motor_app):
     c, h, _ = entrar(app)
-    assert c.post("/api/recomendar", headers=h).status_code == 409
+    assert c.post("/api/recomendar", headers=h).json() == {"tarea_id": None, "motivo": "sin_perfil"}
     _perfil_hecho(motor_app, _usuaria_id(motor_app, "google-A"))
+    assert c.post("/api/recomendar", headers=h).json()["motivo"] == "sin_pendientes"
+    _oferta(motor_app, titulo="Pendiente")
     r = c.post("/api/recomendar", headers=h)
-    assert r.status_code == 202 and [t.tipo for t in _tareas(motor_app)] == ["recomendar"]
-    assert c.post("/api/recomendar", headers=h).status_code == 409
+    assert r.status_code == 200 and r.json()["tarea_id"] and [t.tipo for t in _tareas(motor_app)] == ["recomendar"]  # noqa: E501
+    assert c.post("/api/recomendar", headers=h).json()["motivo"] == "en_marcha"
 
 
 def test_filtrar_u_ordenar_no_llama_al_modelo_ni_encola(app, motor_app, monkeypatch):
@@ -477,38 +479,35 @@ def test_filtrar_u_ordenar_no_llama_al_modelo_ni_encola(app, motor_app, monkeypa
     _perfil_hecho(motor_app, u)
     a, b = _oferta(motor_app, titulo="A"), _oferta(motor_app, titulo="B", pais="DE")
     _puntuar(motor_app, u, 1, (a, 70), (b, 90))
-    for consulta in ("", "?orden=recientes", "?paises=ES", "?rango=0-100&solo_remoto=true",
-                     "?contratos=indefinido&sueldo_minimo=1000"):
+    for consulta in ("", "?orden=recientes", "?rango=0-100"):  # la vista ya no viaja al servidor (RF-8.4c)
         assert c.get("/api/recomendaciones" + consulta).status_code == 200
     assert _tareas(motor_app) == []
 
 
-def test_lo_puntuado_se_ordena_por_nota_y_lo_nuevo_sale_sin_puntuar(app, motor_app):
+def test_lo_puntuado_y_lo_nuevo_sale_sin_puntuar(app, motor_app):
     c, _, _ = entrar(app)
     u = _usuaria_id(motor_app, "google-A")
     _perfil_hecho(motor_app, u)
     a, b, nueva = (_oferta(motor_app, titulo=t) for t in ("A", "B", "Nueva"))
     _puntuar(motor_app, u, 1, (a, 60), (b, 85))
     r = c.get("/api/recomendaciones").json()
-    assert [(x["titulo"], x["nota"], x["sin_puntuar"]) for x in r["recomendaciones"]] == [
-        ("B", 85, False), ("A", 60, False), ("Nueva", None, True)]
-    assert r["rango"] == [40, 100] and r["sin_puntuar"] == 1 and r["total"] == 3
+    # sin rango ni orden: el navegador los aplica (RF-8.4c)
+    assert {(x["titulo"], x["nota"], x["sin_puntuar"]) for x in r["recomendaciones"]} == {
+        ("B", 85, False), ("A", 60, False), ("Nueva", None, True)}
+    assert r["sin_puntuar"] == 1 and r["total"] == 3 and "rango" not in r
 
 
-def test_el_rango_por_defecto_es_40_100_y_se_puede_cambiar(app, motor_app):
+def test_el_servidor_devuelve_todas_las_notas_sin_aplicar_rango(app, motor_app):
     c, _, _ = entrar(app)
     u = _usuaria_id(motor_app, "google-A")
     _perfil_hecho(motor_app, u)
     baja, alta = _oferta(motor_app, titulo="Baja"), _oferta(motor_app, titulo="Alta")
     _puntuar(motor_app, u, 1, (baja, 20), (alta, 80))
-    assert [x["titulo"] for x in c.get("/api/recomendaciones").json()["recomendaciones"]] == ["Alta"]
-    todas = c.get("/api/recomendaciones?rango=0-100").json()["recomendaciones"]
-    assert {x["titulo"] for x in todas} == {"Baja", "Alta"}
-    assert c.get("/api/recomendaciones?rango=100-0").status_code == 422
-    assert c.get("/api/recomendaciones?rango=abc").status_code == 422
+    todas = c.get("/api/recomendaciones").json()["recomendaciones"]
+    assert {x["titulo"] for x in todas} == {"Baja", "Alta"}  # el rango 40-100 es de la vista, en el navegador
 
 
-def test_los_filtros_de_la_url_y_los_guardados_descartan_ofertas(app, motor_app):
+def test_los_filtros_guardados_descartan_ofertas(app, motor_app):
     c, h, _ = entrar(app)
     u = _usuaria_id(motor_app, "google-A")
     _perfil_hecho(motor_app, u)
@@ -516,11 +515,10 @@ def test_los_filtros_de_la_url_y_los_guardados_descartan_ofertas(app, motor_app)
     _oferta(motor_app, titulo="Fantasma", fantasma=True)
     _puntuar(motor_app, u, 1, (es, 70), (de, 70))
     nombres = lambda q: {x["titulo"] for x in c.get("/api/recomendaciones" + q).json()["recomendaciones"]}  # noqa: E731
-    assert nombres("") == {"ES", "DE"} and nombres("?paises=ES") == {"ES"}
+    assert nombres("") == {"ES", "DE"}
     p = c.get("/api/preferencias").json()
     c.put("/api/preferencias", headers=h, json={**p, "paises": ["DE"]})
-    assert nombres("") == {"DE"}  # sin parámetros, mandan las preferencias guardadas
-    assert c.get("/api/recomendaciones?paises=XX").status_code == 422
+    assert nombres("") == {"DE"}  # mandan las preferencias guardadas («Qué buscas»)
 
 
 def test_el_salario_se_ve_como_en_la_oferta(app, motor_app):
@@ -591,7 +589,7 @@ def test_de_la_subida_al_perfil_y_la_recomendacion_con_el_worker(app, motor_app)
     assert c.get("/api/perfil").json()["perfil"]["experiencias"][0]["puesto"] == "Camarera"
     assert c.get("/api/preferencias").json()["familias"] == ["hosteleria_restauracion"]
     oferta = _oferta(motor_app, titulo="Camarera de sala")
-    assert c.post("/api/recomendar", headers=h).status_code == 202
+    assert c.post("/api/recomendar", headers=h).json()["tarea_id"]
     match = {"oferta_id": oferta, "nota": 88, "condiciones": "alto", "cita_perfil": "Camarera en Bar Sol",
              "cita_oferta": "camarera", "explicacion": "Tiene experiencia en sala. La oferta pide camarera."}
     assert worker.procesar_una(motor_app, ProveedorSimulado([{"matches": [match]}])) == "hecha"

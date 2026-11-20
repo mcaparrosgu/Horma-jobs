@@ -17,9 +17,10 @@ from horma.flows.plain import PlainFlow
 class LangGraphFlow(PlainFlow):
     def __init__(self, nombre: str, *, pasos: dict[str, Paso], aristas: dict[str, str | Decision],
                  inicio: str, finales: set[str], claves: set[str] | frozenset[str],
-                 pausas: set[str] | None = None, checkpointer: Any = None):
+                 pausas: set[str] | None = None, checkpointer: Any = None,
+                 al_paso: Any = None):
         super().__init__(nombre, pasos=pasos, aristas=aristas, inicio=inicio, finales=finales,
-                         pausas=pausas)
+                         pausas=pausas, al_paso=al_paso)
         self.checkpointer = checkpointer if checkpointer is not None else InMemorySaver()
         self.claves = frozenset(claves)
         self.ultimo_hilo: str | None = None

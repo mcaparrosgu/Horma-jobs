@@ -80,7 +80,7 @@ button.boton-texto, button.enlace, .boton-texto{
   background: transparent; color: var(--ink); border: 0; padding: 0 8px; font-weight: 600;
   text-decoration: underline; text-underline-offset: 4px;
 }
-button.boton-texto:hover, button.enlace:hover{ background: transparent; color: var(--muted); filter: none; }
+button.boton-texto:hover, button.enlace:hover, .boton.boton-texto:hover{ background: transparent; color: var(--muted); filter: none; }
 button.icono{ padding: 0; width: var(--tap); }
 button:disabled{ opacity: 0.55; cursor: not-allowed; }
 button.ocupado:disabled{ cursor: wait; }
@@ -218,18 +218,15 @@ button.ayuda:hover{ background: var(--surface-2); filter: none; color: var(--ink
   background: var(--surface); color: var(--ink); border: var(--bw) solid var(--line-strong); padding: 10px 12px;
 }
 
-/* ── Filtros y contador de Recomendadas ── */
-.filtros{ margin-bottom: 1rem; }
-.filtros-rejilla{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: end; }
-.grupos-barra{ display: contents; }
+/* ── «Qué buscas», vista y contador de Recomendadas ── */
+#que-buscas{ margin-bottom: 1rem; }
+#que-buscas > summary{ font-weight: 600; min-height: var(--tap); display: flex; align-items: center; }
 /* Simetría (RF-6.4b): cada celda es etiqueta + control de 44 px, con la misma separación; el alineado es por abajo. */
-.filtros-rejilla > label, .filtros-rejilla > div{ margin: 0; min-width: 0; }
-.filtros-rejilla label input, .filtros-rejilla label select{ margin-top: 6px; }
-.filtros-rejilla > div[role="group"] > .etiqueta-mono{ display: block; margin-bottom: 6px; }
-.filtros-rejilla .rango{ display: flex; align-items: center; gap: 8px; }
-.filtros-rejilla .rango input.corto{ flex: 1 1 0; min-width: 0; width: auto; }
-.filtros .fila{ align-items: center; margin-top: 16px; }
-.filtros .fila .acciones{ margin-left: auto; }
+.vista-rejilla{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: end; margin: 0 0 1rem; }
+.vista-rejilla > label{ margin: 0; min-width: 0; }
+.vista-rejilla label input, .vista-rejilla label select{ margin-top: 6px; width: 100%; }
+.acciones-ahora{ display: grid; gap: 6px; }
+.acciones-ahora p{ margin: 0; }
 .grupos{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }  /* 6 grupos = 2 filas de 3 */
 fieldset.grupo{ border: var(--bw) solid var(--panel-border); padding: 0.6rem 1rem 0.9rem; min-width: 0; margin: 0; }
 fieldset.grupo legend{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); padding: 0 0.4rem; display: flex; gap: 0.5rem; align-items: center; }
@@ -247,7 +244,6 @@ details.grupo > .casillas{
 .barra-contador{ justify-content: flex-start; gap: 12px; }
 .barra-contador .derecha{ margin-left: auto; }
 .contador{ margin: 0; font-size: 20px; font-weight: 600; }
-#mas-filtros{ display: none; }
 
 /* ── Tabla de Recomendadas (escritorio) ── */
 .tabla-ofertas{ width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -269,12 +265,22 @@ details.grupo > .casillas{
 details.porque > summary{ color: var(--accent-text); font-size: 0.9rem; }
 .porque-cuerpo{ margin-top: 0.4rem; display: grid; gap: 0.4rem; }
 
-/* ── Visor de CV (diálogo) ── */
-.visor{ width: min(60rem, 94vw); height: 88vh; padding: 1rem; background: var(--surface); color: var(--ink); border: var(--bw) solid var(--line-strong); border-radius: var(--radius); }
-.visor[open]{ display: flex; flex-direction: column; gap: 0.75rem; }
-.visor header{ justify-content: space-between; align-items: center; display: flex; padding: 0; border: 0; }
-#visor-cuerpo{ flex: 1; min-height: 0; }
+/* ── Ventana (diálogo, RF-6.4): el visor de CV y «Ver oferta original» ── */
+dialog.ventana::backdrop{ background: color-mix(in srgb, var(--ink) 55%, transparent); }
+dialog.ventana{ width: min(60rem, 94vw); max-height: 88vh; padding: 1rem; background: var(--surface); color: var(--ink); border: var(--bw) solid var(--line-strong); border-radius: var(--radius); }
+dialog.ventana.alta{ height: 88vh; }
+dialog.ventana[open]{ display: flex; flex-direction: column; gap: 0.75rem; }
+dialog.ventana > header{ justify-content: space-between; align-items: center; display: flex; gap: 1rem; padding: 0; border: 0; }
+.ventana-cuerpo{ flex: 1; min-height: 0; overflow: auto; display: grid; gap: 0.75rem; align-content: start; }
+.ventana-cuerpo .texto-original{ white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; font-family: var(--f-body); line-height: 1.55; }
 .visor-marco{ width: 100%; height: 100%; border: 0; background: var(--surface); }
+
+/* ── Barra de avance (RF-6.4, RF-8.7): trabajo en marcha, con el porcentaje en texto ── */
+.barra-avance{ display: grid; gap: 6px; margin: 0 0 1rem; }
+.barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); }
+.barra-avance .relleno{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
+.barra-avance .texto{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference){ .barra-avance .relleno{ transition: width 0.4s ease; } }
 
 /* ── Documento (CV y carta) ── */
 .cv-hoja{ background: var(--surface); color: var(--ink); border: var(--bw) solid var(--line); padding: 1.5rem 1.75rem; margin: 0.75rem 0; max-width: 42rem; line-height: 1.5; }
@@ -330,7 +336,7 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   }
   #pestanas::-webkit-scrollbar, .cabecera-admin nav::-webkit-scrollbar{ display: none; }
   .cabecera-admin nav{ flex: 1 1 100%; }
-  .pestana{ flex: none; justify-content: center; white-space: nowrap; min-height: 48px; padding: 0 14px; font-size: 14px; }
+  .pestana{ flex: 1 0 auto; justify-content: center; white-space: nowrap; min-height: 48px; padding: 0 14px; font-size: 14px; }
   .persona{ display: none; }
   h1, .titulo-pantalla{ font-size: clamp(30px, 9.5vw, var(--fs-h1-m)); margin-top: 24px; overflow-wrap: anywhere; }
   .panel{ padding: 16px; }
@@ -338,9 +344,7 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   input:not([type="checkbox"]), select, textarea{ font-size: 16px; }
 
   .grupos{ grid-template-columns: 1fr; }
-  .filtros-rejilla{ grid-template-columns: 1fr; }
-  .filtros.plegados .mas{ display: none; }
-  #mas-filtros{ display: inline-flex; }
+  .vista-rejilla{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
   details.grupo > .casillas{ position: static; max-height: 14rem; }
 
   .tabla-ofertas, .tabla-ofertas tbody, .tabla-ofertas tr, .tabla-ofertas td{ display: block; width: 100%; }
@@ -379,3 +383,10 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{ transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+/* ── Landing y entrada (RF-8.1) ── */
+main.landing{ max-width: 860px; }
+main.landing > .boton{ margin-top: 8px; }
+ol.pasos{ list-style: none; counter-reset: paso; padding: 0; margin: 0 0 24px; }
+ol.pasos > li{ counter-increment: paso; display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: var(--bw) solid var(--line); font-size: 17px; }
+ol.pasos > li::before{ content: counter(paso); display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border: var(--bw) solid var(--line-strong); font-family: var(--f-mono); font-weight: 600; }

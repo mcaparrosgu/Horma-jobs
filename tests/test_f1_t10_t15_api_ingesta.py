@@ -307,13 +307,13 @@ def test_el_js_del_dashboard_pinta_con_textcontent():
     from pathlib import Path
 
     static = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
-    for archivo in ("ingesta.js", "app.js"):
+    for archivo in ("ingesta.js", "catalogo.js"):
         js = (static / archivo).read_text(encoding="utf-8")
         assert "innerHTML" not in js and "insertAdjacentHTML" not in js and "eval(" not in js
 
 
 def test_el_catalogo_muestra_auditoria_y_taxonomia(cliente, motor_app):
-    h = entrar(cliente, "google-normal")
+    h = entrar(cliente, ADMIN)  # el catálogo común es solo de Admin (RF-8.2c)
     cliente.post("/ofertas", json={"texto": "Dev en Acme. Paga 30 euros de alta."}, headers=h)
     worker.procesar_una(motor_app, ProveedorSimulado([
         {"titulo": "Dev", "empresa": "Acme"},
