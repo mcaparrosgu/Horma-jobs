@@ -299,16 +299,17 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
 .solo-lector{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .ocultar-movil{ display: initial; }
 
-/* ── Móvil (< 900 px): barra inferior y tarjetas ── */
+/* ── Móvil (< 900 px): menú arriba y tarjetas ── */
 @media (max-width: 900px){
   main{ padding: 0 var(--pad-page-m) 3rem; }
-  .cabecera{ padding: 8px var(--pad-page-m); min-height: 56px; flex-wrap: nowrap; }
+  .cabecera{ padding: 8px var(--pad-page-m) 0; min-height: 56px; }
+  .cabecera{ position: sticky; top: 0; z-index: 30; background: var(--bg); flex-wrap: wrap; row-gap: 0; }
+  .cabecera .derecha{ order: 2; }
   #pestanas{
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
-    background: var(--surface); border-top: var(--bw) solid var(--line);
+    order: 3; flex: 1 1 100%; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+    margin: 8px calc(-1 * var(--pad-page-m)) 0; border-top: var(--bw) solid var(--line);
   }
   .pestana{ justify-content: center; text-align: center; min-height: 48px; padding: 0 2px; font-size: 12px; }
-  body:has(#pestanas){ padding-bottom: 64px; }
   .persona .nombre{ display: none; }
   h1, .titulo-pantalla{ font-size: var(--fs-h1-m); margin-top: 24px; }
   .panel{ padding: 16px; }

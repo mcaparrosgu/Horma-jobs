@@ -87,7 +87,7 @@ en [clarifications.md](./clarifications.md); aquí se citan como P1…P3.
   - Cada una mide al menos 44 px de alto.
   - La activa lleva `aria-current="page"`, fondo lima, texto tinta y peso 700.
   - El resto va en apagado y pasa a tinta al pasar el ratón.
-- **RF-6.3c** En móvil (< 900 px), la navegación DEBERÁ pasar a una **barra inferior fija**:
+- **RF-6.3c** En móvil (< 900 px), la navegación DEBERÁ pasar a una **barra superior**, bajo la marca y fija al desplazarse (cambio pedido por Mar el 20-nov; antes era inferior):
   - una rejilla de 6 columnas sobre la superficie, con línea superior;
   - pestañas de al menos 48 px de alto y texto de 12 px, sin cortar palabras;
   - la activa, en lima.
@@ -228,7 +228,7 @@ Mismo contenido y mismas acciones que hoy, con los componentes de RF-6.4:
 - [ ] Las 11 pantallas, vistas a 1280 px y 390 px, en claro y en oscuro:
   - [ ] sin desplazamiento horizontal;
   - [ ] cabecera común;
-  - [ ] barra inferior en móvil.
+  - [ ] menú superior en móvil.
 - [ ] Recomendadas:
   - [ ] cumple RF-6.5 a RF-6.5f frente al diseño 2c;
   - [ ] sin «Condiciones»;
@@ -252,7 +252,7 @@ Mismo contenido y mismas acciones que hoy, con los componentes de RF-6.4:
   Puede no coincidir con lo que Mar imagina. Mar revisa cada bloque en local antes del PR.
 - **Contraste de las etiquetas de puesto:** los tonos de color deben dar 4,5:1 en los dos temas.
   Se comprueba con axe.
-- **Barra inferior de 6 pestañas a 390 px:** «Recomendadas» y «Candidaturas» casi no caben con
+- **Barra superior de 6 pestañas a 390 px:** «Recomendadas» y «Candidaturas» casi no caben con
   12 px. Si no caben, se acortan las etiquetas solo en móvil y se pregunta antes a Mar.
 
 ## Fuera de alcance

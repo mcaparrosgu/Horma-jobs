@@ -53,8 +53,8 @@ horma/web/static/
   - saca el nombre de `GET /api/perfil` (`perfil.nombre`). Sin nombre, no pinta nada. El
     `/api/yo` no cambia;
   - sigue devolviendo `yo` y fijando `csrf`.
-- **Móvil (< 900 px):** el `nav` pasa a `position: fixed; bottom: 0` en una rejilla de 6 columnas, y
-  `body` reserva su alto con `padding-bottom`. Si a 390 px no caben las etiquetas, se avisa (riesgo
+- **Móvil (< 900 px):** la cabecera pasa a `position: sticky; top: 0` y el `nav` ocupa su segunda fila, en una rejilla de 6 columnas
+  (pedido de Mar el 20-nov: menú arriba). Si a 390 px no caben las etiquetas, se avisa (riesgo
   de la spec).
 - **`tema.js`** se carga sin `defer` en `<head>`:
   - lee `localStorage["horma-tema"]` dentro de try/catch y pone `data-theme` en `<html>` antes de
@@ -78,7 +78,7 @@ horma/web/static/
   `.linea-anadida`, `.linea-quitada`, `.tabla-costes`, `.solo-lector`, `.estado`.
   Salen `.pp`, `.tarjeta` con sombra y los radios.
 - **Cortes:**
-  - un solo corte principal a `900px` (tabla ↔ tarjetas, barra inferior);
+  - un solo corte principal a `900px` (tabla ↔ tarjetas, menú superior);
   - se mantiene el `@media (max-width: 760px)` que contiene `.tablero`, porque lo exige el test de
     candidaturas;
   - `prefers-reduced-motion` apaga transiciones y giros.
@@ -154,7 +154,7 @@ horma/web/static/
 |---|---|
 | RF-6.1, 6.2 | `tokens.css`, `fuentes/` |
 | RF-6.1d | `tema.js`, botón en `comun.js` / cabeceras mínimas |
-| RF-6.3 | `comun.js` (`arrancar`), HTML de cada pantalla, `estilo.css` (barra inferior) |
+| RF-6.3 | `comun.js` (`arrancar`), HTML de cada pantalla, `estilo.css` (menú superior) |
 | RF-6.4 | `estilo.css` |
 | RF-6.5 | `recomendadas.html` / `recomendadas.js` |
 | RF-6.6 | resto de `*.html` / `*.js` |

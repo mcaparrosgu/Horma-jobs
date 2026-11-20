@@ -29,7 +29,7 @@ Comprobado en el código (19-nov):
 - P1: El diseño 2c muestra la columna «Condiciones», que el profesor pidió quitar (RF-5.2). ¿Qué
   se hace? → R: **sin «Condiciones»**. Se mantienen RF-5.2 y su test; fuera también el icono de barras.
 - P2: El diseño tiene 5 pestañas y Horma 6, porque incluye «Añadir oferta» (RF-5.3b). ¿Qué se
-  hace? → R: **se mantienen las 6**. La barra inferior del móvil pasa a 6 columnas.
+  hace? → R: **se mantienen las 6**. El menú del móvil pasa a 6 columnas (y, por pedido de Mar el 20-nov, va arriba).
 - P3: ¿Cómo se garantiza que las pantallas nuevas usen el diseño 2c y no un estilo por defecto? →
   R: con **`tokens.css` como única fuente de valores de diseño**, esta spec como guía técnica de
   componentes y una regla en `AGENTS.md`. Los `.dc.html`, el prompt y las capturas no se suben.
