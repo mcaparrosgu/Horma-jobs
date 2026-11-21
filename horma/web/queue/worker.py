@@ -1,11 +1,10 @@
 """Worker: ejecuta las tareas de la cola con tope de coste y de reintentos (RT-14).
 
 Tipos de tarea (la carga es siempre un id, nunca texto):
-- `procesar_oferta` / `extraer_oferta` (catálogo, modo sistema) y `calificar_fuente` (fase 1).
+- `procesar_oferta` (catálogo, modo sistema) y `calificar_fuente` (fase 1).
 - `perfilar` (id de una versión nueva y pendiente del perfil), `clasificar_perfil` (id de una versión
-  copiada y pendiente), `generar_cv_base`, `recomendar` (id de la versión del perfil con la que se
+  copiada y pendiente), `recomendar` (id de la versión del perfil con la que se
   trabaja). Las de una usuaria se ejecutan con su sesión (RLS); las demás, en modo sistema.
-- `regenerar_cv_base` (fase 5; id del CV base): lo vuelve a generar con el perfil vigente.
 - `puntuar_propias` (fase 5; id de la usuaria): puntúa las ofertas que ella añadió.
 - `puntuar_una` (fase 8; id de la oferta): «Puntuar ahora», puntúa solo esa oferta.
 Fase 8 (RF-8.7): cada tarea sube su `progreso` (nunca baja) y `recomendar` guarda cada tanda al terminarla.
@@ -14,6 +13,7 @@ Fase 8 (RF-8.7): cada tarea sube su `progreso` (nunca baja) y `recomendar` guard
 - `analizar_estilo` (fase 5; id de la usuaria): guía de estilo con sus CV y cartas.
 El tope de coste vale para cualquier tarea: se corta en la puerta única (`metricas.capturar(tope=…)`) y
 una tarea que lo supera queda en `error` sin reintento y sin guardar su resultado.
+Aparcadas (RF-10.11d): `generar_cv_base`, `regenerar_cv_base` y `extraer_oferta` ya no existen aquí.
 """
 import logging
 import time
@@ -27,7 +27,6 @@ from horma.flows import (
     analizar_estilo,
     calificar_fuente,
     clasificar_perfil,
-    generar_cv_base,
     perfilar,
     procesar_oferta,
     recomendar,
@@ -105,8 +104,7 @@ class _ProcesarOferta:
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         repo_ofertas.guardar(s, tarea["entidad_id"], Oferta.model_validate(estado["oferta"]),
                              [tuple(o) for o in estado["origenes"]])
-        if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
-            _encolar_puntuar_propias(s, usuaria)
+        _encadenar(s, "procesar_oferta", tarea)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_ofertas.marcar_error(s, tarea["entidad_id"], motivo)
@@ -122,6 +120,35 @@ def _encolar_puntuar_propias(s, usuaria_id: int) -> None:
                                 a.tope_reintentos_tarea)
         except presupuesto.SinPresupuesto:
             pass  # sin presupuesto no se puntúa hoy (RF-10.9c)
+
+
+def _propia_procesada(s, tarea: dict) -> None:
+    """Una oferta propia recién analizada se puntúa sola (RF-5.3d)."""
+    if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
+        _encolar_puntuar_propias(s, usuaria)
+
+
+def _puntuar_si_hay_propias(s, tarea: dict) -> None:
+    """Perfil nuevo: las ofertas propias añadidas antes se puntúan con su versión."""
+    if repo_ofertas.hay_propias(s):
+        _encolar_puntuar_propias(s, tarea["usuaria_id"])
+
+
+def _estilo_la_primera_vez(s, tarea: dict) -> None:
+    servicio_estilo.encolar_si_no_hay_guia(s, tarea["usuaria_id"])  # RF-5.6d
+
+
+# Qué se encola al terminar cada tarea, en un solo sitio (RF-10.11). Cada paso decide si le toca.
+ENCADENADOS = {
+    "procesar_oferta": [_propia_procesada],
+    "perfilar": [_puntuar_si_hay_propias, _estilo_la_primera_vez],
+    "clasificar_perfil": [_puntuar_si_hay_propias],
+}
+
+
+def _encadenar(s, tipo: str, tarea: dict) -> None:
+    for siguiente in ENCADENADOS.get(tipo, []):
+        siguiente(s, tarea)
 
 
 class _CalificarFuente:
@@ -170,9 +197,7 @@ class _Perfilar:
                                      estado["cv_maestro"])
         repo_perfiles.aplicar_preferencias_del_cv(
             s, tarea["usuaria_id"], Preferencias.model_validate(estado["preferencias"]))
-        if repo_ofertas.hay_propias(s):  # las añadidas antes de tener perfil se puntúan solas
-            _encolar_puntuar_propias(s, tarea["usuaria_id"])
-        servicio_estilo.encolar_si_no_hay_guia(s, tarea["usuaria_id"])  # la primera vez (RF-5.6d)
+        _encadenar(s, "perfilar", tarea)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_perfiles.marcar_error_perfil(s, tarea["entidad_id"], motivo)
@@ -192,62 +217,10 @@ class _ClasificarPerfil:
         perfil = Perfil.model_validate({**estado["perfil"], "taxonomia": estado["taxonomia"]})
         repo_perfiles.guardar_perfil(s, tarea["usuaria_id"], tarea["entidad_id"], perfil)
         repo_perfiles.aplicar_puestos_del_cv(s, tarea["usuaria_id"], estado.get("puestos") or [])
-        if repo_ofertas.hay_propias(s):  # perfil nuevo: las propias se puntúan con su versión
-            _encolar_puntuar_propias(s, tarea["usuaria_id"])
+        _encadenar(s, "clasificar_perfil", tarea)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         repo_perfiles.marcar_error_perfil(s, tarea["entidad_id"], motivo)
-
-
-class _GenerarCvBase:
-    def cargar(self, s, tarea: dict) -> dict:
-        fila = _perfil_de_la_tarea(s, tarea, hecha=True)
-        return {"perfil": repo_perfiles.perfil_modelo(fila).model_dump(mode="json"),
-                "cv_maestro": fila["cv_maestro"],
-                "preferencias": repo_perfiles.preferencias(s).model_dump(mode="json"),
-                "_version": fila["version"]}
-
-    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        return con_avance(generar_cv_base.crear(proveedor=d.proveedor), d).run(estado)
-
-    def guardar(self, s, tarea: dict, estado: dict) -> None:
-        repo_perfiles.guardar_cv_base(s, tarea["usuaria_id"], estado["_version"], estado["cv_base"])
-
-    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
-        fila = repo_perfiles.perfil_fila(s, tarea["entidad_id"])
-        if fila:
-            repo_perfiles.marcar_error_cv_base(s, tarea["usuaria_id"], fila["version"], motivo)
-
-
-class _RegenerarCvBase:
-    """Vuelve a generar un CV base concreto (id del CV base) con el perfil vigente. Solo a petición."""
-
-    def cargar(self, s, tarea: dict) -> dict:
-        datos = repo_perfiles.datos_para_regenerar(s, tarea["entidad_id"])
-        if datos is None:
-            raise ValueError("el CV base ya no existe")
-        fila = repo_perfiles.vigente(s)
-        if fila is None:
-            raise ValueError("el perfil no está listo")
-        return {"perfil": repo_perfiles.perfil_modelo(fila).model_dump(mode="json"),
-                "cv_maestro": fila["cv_maestro"],
-                "preferencias": repo_perfiles.preferencias(s).model_dump(mode="json"),
-                "destinos": [{"sector": datos["sector"], "familia": datos["familia"]}],
-                "visibilidad": datos["visibilidad"] or {}, "_version": fila["version"]}
-
-    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
-        salida = con_avance(generar_cv_base.crear(proveedor=d.proveedor), d).run(estado)
-        if not salida["cv_base"]["guardados"]:  # no pasó la verificación: no se toca el CV
-            rechazo = salida["cv_base"]["rechazados"][0]
-            raise ValueError(f"la regeneración no pasó la verificación: {rechazo['motivo']}")
-        return salida
-
-    def guardar(self, s, tarea: dict, estado: dict) -> None:
-        repo_perfiles.regenerar_cv_base(s, tarea["entidad_id"], estado["_version"],
-                                        estado["cv_base"]["guardados"][0])
-
-    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
-        repo_perfiles.marcar_error_regeneracion(s, tarea["entidad_id"], motivo)
 
 
 class _Recomendar:
@@ -418,10 +391,9 @@ class _AnalizarEstilo:
         """Sin fila propia: el motivo queda en la tarea."""
 
 
-MANEJADORES = {"procesar_oferta": _ProcesarOferta(), "extraer_oferta": _ProcesarOferta(),
+MANEJADORES = {"procesar_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
-               "clasificar_perfil": _ClasificarPerfil(), "generar_cv_base": _GenerarCvBase(),
-               "regenerar_cv_base": _RegenerarCvBase(),
+               "clasificar_perfil": _ClasificarPerfil(),
                "recomendar": _Recomendar(), "puntuar_propias": _PuntuarPropias(),
                "puntuar_una": _PuntuarUna(),
                "candidatura": _Candidatura(), "leer_url": _LeerUrl(),

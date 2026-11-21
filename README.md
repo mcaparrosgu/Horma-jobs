@@ -82,21 +82,20 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 1. `uv run alembic upgrade head` aplica la migración 0003; `docker compose up -d --build` monta el
    volumen `horma_archivos` (los CV subidos, solo en la API).
-2. Entra en la web: en `/cv-base` subes tu CV (PDF, DOCX o Markdown); en `/perfil` respondes lo que
+2. Entra en la web: en `/perfil` subes tu CV (PDF, DOCX o Markdown) y respondes lo que
    falte; en `/ofertas`, en «Qué buscas», eliges los filtros (grupos de más de 2 casillas con «Seleccionar todo» y «Quitar selección») y ves las ofertas con su nota.
 3. Para probarlo sin web: `horma flujo correr perfilar` y `horma recomendar` (ver Consola).
-4. Puerta de salida: `horma eval correr perfil`, `cv-base` y `recomendacion` con el modelo real
+4. Puerta de salida: `horma eval correr perfil` y `recomendacion` con el modelo real
    (tope de 1 USD por ejecución).
 
 ### Fase 3: candidatura y seguimiento
 
 1. `uv run alembic upgrade head` aplica las migraciones (la 0019 añade `ofertas.modalidad`; la 0021, los puestos y términos excluidos, `ofertas.titulo_norm`, los avisos vistos y la longitud del CV); antes, la 0006 (candidaturas, historial y versiones de CV base).
-2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker elige el CV base y
+2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker parte del CV maestro y
    redacta CV y carta. En `/candidaturas` las ves por estado: revisas, editas, apruebas, descargas
-   los PDF y sigues el proceso (enviada, entrevista, cerrada). Cada CV base guarda su historial en `/cv-base`.
-3. Para probarlo sin web: `horma flujo correr candidatura` y `horma flujo correr clasificar_respuesta`
-   (ver Consola).
-4. Puerta de salida: `horma eval correr cv` y `respuestas` con el modelo real (tope de 1 USD, solo de construcción).
+   los PDF y sigues el proceso (enviada, entrevista, cerrada).
+3. Para probarlo sin web: `horma flujo correr candidatura` (ver Consola).
+4. Puerta de salida: `horma eval correr cv` con el modelo real (tope de 1 USD, solo de construcción).
 
 ### Fase 4 (completa; despliegue local ahora, Vercel después): pausa, calidad y salida
 1. `uv run alembic upgrade head` aplica la migración 0008 (PDF guardados, señales de entrada, alertas y las
@@ -138,19 +137,19 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 - `uv run horma recomendar ana --rango 40-100 [--ofertas catalogo.json]`: puntúa el catálogo con el
   perfil de prueba `evals/perfil/perfiles/ana.json` (`--perfil` para otro) y enseña la lista. Sin
   `--ofertas` pide el catálogo común a `GET /api/catalogo` con `HORMA_CLAVE_INGESTA`.
-- `uv run horma agente correr extractor-perfil|clasificador-postulante|generador-cv-base|matcher
+- `uv run horma agente correr extractor-perfil|clasificador-postulante|matcher
   --entrada x.json`: cada agente nuevo por separado.
 - `uv run horma flujo correr candidatura --usuaria ana --oferta <id> [--aprobar] [--ofertas catalogo.json]
   [--paso-a-paso --traza trazas/]`: prepara CV y carta en local con la usuaria de prueba
   `evals/cv/usuarias/ana` y una oferta del catálogo (sin `--ofertas`, de `GET /api/catalogo`); no guarda nada.
   Se para en la pausa; con `--aprobar` sigue con `entregar` y, con `--traza`, guarda `cv.pdf` y `carta.pdf`.
-- `uv run horma flujo correr clasificar_respuesta --entrada r.json`: `r.json` = `{"texto": "…",
-  "estado_actual": "enviada"}`; enseña la etiqueta y la transición propuesta.
-- `uv run horma agente correr redactor-cv|redactor-carta|juez-candidatura|clasificador-respuesta
+- `uv run horma agente correr redactor-cv|redactor-carta|juez-candidatura
   --entrada x.json`: los agentes de la fase 3, cada uno por separado.
-- `uv run horma eval correr cv|respuestas`: los evals de la fase 3 (`--simulado` solo prueba el harness).
+- `uv run horma eval correr cv`: el eval de la fase 3 (`--simulado` solo prueba el harness).
+- **Aparcados (RF-10.11d):** `clasificador-respuesta` y `generador-cv-base` (y sus flujos y sus evals
+  `respuestas` y `cv-base`) conservan el código, pero la consola avisa de que no se usan y la CI no los corre.
 - `uv run horma eval correr ofertas|fuentes` y, de la fase 2, `horma eval correr perfil`,
-  `horma eval correr cv-base` y `horma eval correr recomendacion` corren los casos de
+  y `horma eval correr recomendacion` corren los casos de
   `evals/<set>/casos/` y dejan la ejecución en `evals/resultados/`. Con `--simulado` solo prueban
   el harness: no miden el modelo. Sin `--simulado` llaman al modelo real y **gastan saldo de
   Anthropic**; `--tope-coste` (1 USD por defecto) detiene el eval al superarlo y lo deja anotado.

@@ -16,7 +16,9 @@ from horma.agents.redactor_cv.agent import RedactorCv
 
 AGENTES: dict[str, type[Agente]] = {
     a.nombre: a for a in (ExtractorOferta, AuditorOferta, ClasificadorOferta, AuditorFuentes,
-                          ExtractorPerfil, ClasificadorPostulante, GeneradorCvBase, Matcher,
-                          RedactorCv, RedactorCarta, JuezCandidatura, ClasificadorRespuesta,
+                          ExtractorPerfil, ClasificadorPostulante, Matcher,
+                          RedactorCv, RedactorCarta, JuezCandidatura,
                           AnalizadorEstilo, AnalizadorOferta)
 }
+# Aparcados (RF-10.11d, 21-nov-2026): el código se conserva, pero no están activos ni en la CI.
+APARCADOS: dict[str, type[Agente]] = {a.nombre: a for a in (GeneradorCvBase, ClasificadorRespuesta)}

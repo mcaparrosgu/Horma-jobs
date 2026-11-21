@@ -28,7 +28,7 @@ def _json(ruta: Path, datos) -> Path:
 # --- T22: registro de flujos --------------------------------------------------------------------
 def test_los_flujos_de_la_fase_2_estan_en_el_registro():
     for nombre, clave in {"perfilar": "perfil", "clasificar_perfil": "taxonomia",
-                          "generar_cv_base": "cv_base", "recomendar": "recomendaciones"}.items():
+                          "recomendar": "recomendaciones"}.items():
         assert nombre in FLUJOS and RESULTADO[nombre] == clave
 
 
@@ -214,9 +214,10 @@ def test_catalogo_pide_clave_de_ingesta_y_no_lleva_datos_personales(api, motor_a
 # --- T23: cierre -----------------------------------------------------------------------------------
 def test_ci_corre_los_tres_sets_de_la_fase_2_en_simulado_y_con_modelo():
     ci = (RAIZ / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    for conjunto in ("perfil", "cv-base", "recomendacion"):
-        assert conjunto in ci.split("evals-reales:")[0].split("Evals en simulado")[1]
-        assert conjunto in ci.split("evals-reales:")[1]
+    simulado = ci.split("evals-reales:")[0].split("Evals en simulado")[1]
+    assert "cv-base" not in simulado and "cv-base" not in ci.split("evals-reales:")[1]  # aparcado (RF-10.11d)
+    assert "perfil" in simulado and "recomendacion" in simulado
+    assert "perfil" in ci.split("evals-reales:")[1]
 
 
 def test_compose_monta_el_volumen_de_archivos_y_env_example_lo_documenta():
@@ -229,7 +230,7 @@ def test_compose_monta_el_volumen_de_archivos_y_env_example_lo_documenta():
 def test_el_readme_documenta_los_comandos_de_la_fase_2():
     readme = (RAIZ / "README.md").read_text(encoding="utf-8")
     for comando in ("horma recomendar", "horma flujo correr perfilar", "horma eval importar-correccion",
-                    "horma eval correr perfil", "horma eval correr cv-base",
+                    "horma eval correr perfil",
                     "horma eval correr recomendacion"):
         assert comando in readme, comando
 

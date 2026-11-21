@@ -22,7 +22,6 @@ ENTRADAS = {
     "juez-candidatura": ({"cv": "Camarera · Bar Sol", "cv_traza": TRAZA, "carta": "Hola equipo",
                           "carta_traza": [], "cv_maestro": "Camarera en Bar Sol",
                           "cv_base": "Camarera en Bar Sol", "oferta": OFERTA}, APROBADO),
-    "clasificador-respuesta": ({"texto": "Queremos entrevistarte."}, {"etiqueta": "entrevista"}),
 }
 
 
@@ -43,6 +42,13 @@ def test_agente_correr_de_los_agentes_de_la_fase_3_en_simulado(tmp_path, nombre)
     r = CliRunner().invoke(cli, ["agente", "correr", nombre, "--entrada", str(e), "--simulado",
                                  "--respuesta", str(r_)])
     assert r.exit_code == 0, r.output
+
+
+@pytest.mark.parametrize("aparcado", ["clasificador-respuesta", "generador-cv-base"])
+def test_agente_aparcado_avisa_y_no_se_ejecuta(tmp_path, aparcado):
+    e = _json(tmp_path / "e.json", {})
+    r = CliRunner().invoke(cli, ["agente", "correr", aparcado, "--entrada", str(e)])
+    assert r.exit_code == 2 and "aparcado" in r.output
 
 
 @pytest.mark.parametrize("quitado", ["juez-cv", "juez-carta", "selector-cv-base"])
@@ -88,15 +94,11 @@ def test_oferta_que_no_esta_en_el_catalogo_da_error(tmp_path):
     assert r.exit_code == 2
 
 
-def test_flujo_correr_clasificar_respuesta_en_simulado(tmp_path):
+def test_flujo_correr_clasificar_respuesta_esta_aparcado(tmp_path):
     entrada = _json(tmp_path / "e.json", {"texto": "Queremos entrevistarte.", "estado_actual": "enviada"})
-    resp = _json(tmp_path / "r.json", [{"etiqueta": "entrevista"}])
     r = CliRunner().invoke(cli, ["flujo", "correr", "clasificar_respuesta", "--entrada", str(entrada),
-                                 "--simulado", "--respuestas", str(resp), "--traza", str(tmp_path / "t"),
-                                 "--salida", str(tmp_path / "s.json")])
-    assert r.exit_code == 0, r.output
-    assert json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))["tipo"] != "ninguna"
-    assert len(list((tmp_path / "t").iterdir())) == 3
+                                 "--simulado"])
+    assert r.exit_code == 2 and "aparcado" in r.output  # RF-10.11d
 
 
 @pytest.mark.usefixtures("limites_reales")
@@ -116,8 +118,8 @@ def _texto(ruta: str) -> str:
 def test_ci_corre_los_dos_sets_de_la_fase_3_con_tope_y_en_simulado_sin_clave():
     ci = _texto(".github/workflows/ci.yml")
     simulado, real = ci.split("evals-reales:")
-    assert "eval correr cv --simulado" in simulado and "respuestas" in simulado
-    assert "eval correr cv --tope-coste 1.0" in real and "respuestas" in real
+    assert "eval correr cv --simulado" in simulado and "respuestas" not in simulado  # aparcado (RF-10.11d)
+    assert "eval correr cv --tope-coste 1.0" in real and "respuestas" not in real
 
 
 def test_env_example_marca_los_topes_nuevos_como_de_construccion():
@@ -128,8 +130,7 @@ def test_env_example_marca_los_topes_nuevos_como_de_construccion():
 
 def test_readme_documenta_los_comandos_de_la_fase_3():
     readme = _texto("README.md")
-    for comando in ("flujo correr candidatura", "flujo correr clasificar_respuesta",
-                    "eval correr cv", "redactor-cv", "juez-candidatura"):
+    for comando in ("flujo correr candidatura", "eval correr cv", "redactor-cv", "juez-candidatura"):
         assert comando in readme
     assert "juez-cv" not in readme.replace("`juez-cv`, `juez-carta` y `selector-cv-base`", "")
     assert "### Fase 3" in readme

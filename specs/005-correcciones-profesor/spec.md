@@ -54,11 +54,11 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
 - **RF-5.1d** Los CV subidos NUNCA DEBERÁN modificarse: son el original. La pantalla del perfil
   DEBERÁ decir en llano qué cambia al editar: «Lo que edites aquí manda sobre tus CV subidos y se usa
   para redactar todos tus CV y cartas».
-- **RF-5.1e** CUANDO el perfil cambie de versión, solo los CV base cuya traza use un dato que cambió
+- **RF-5.1e** *(sustituido por la spec 010, RF-10.3)* CUANDO el perfil cambie de versión, solo los CV base cuya traza use un dato que cambió
   DEBERÁN mostrarse como desfasados (p. ej. editar una experiencia de hostelería no toca el CV base de
   construcción que no la usa), con qué cambió y un botón «Regenerar» por CV. NO DEBERÁN regenerarse
   solos. Al regenerar, la versión anterior DEBERÁ quedar en su historial (P3, P14).
-- **RF-5.1g** Hay **un solo CV maestro por usuaria** (todo lo suyo) y **un CV base por sector** que
+- **RF-5.1g** *(sustituido por la spec 010, RF-10.3)* Hay **un solo CV maestro por usuaria** (todo lo suyo) y **un CV base por sector** que
   elige qué destacar (P14). En un CV base, la experiencia de otro sector DEBERÁ ir **condensada en una
   línea** (puesto · empresa · fechas) por defecto, para no dejar huecos en las fechas. En cada CV base,
   la usuaria DEBERÁ poder marcar cada experiencia como «completa», «condensada» u «oculta»; al
@@ -75,7 +75,7 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
 - **RF-5.3** Antes de cambiar nada, DEBERÁ reproducirse el «limbo» de las ofertas pegadas con una
   prueba que hoy falle: una oferta pegada por la usuaria no llega a Recomendadas ni permite preparar
   una candidatura.
-- **RF-5.3b** La web DEBERÁ tener una pestaña propia, «Añadir oferta», donde la usuaria pega el texto
+- **RF-5.3b** *(sustituido por la spec 010, RF-10.6b)* La web DEBERÁ tener una pestaña propia, «Añadir oferta», donde la usuaria pega el texto
   de una oferta o su URL. El formulario sale de la página del catálogo.
 - **RF-5.3c** Una oferta añadida por una usuaria DEBERÁ ser privada: solo su dueña la DEBERÁ ver (en
   Ofertas, en Recomendadas y en cualquier API). Lo DEBERÁ garantizar la base de datos (RLS), no solo
@@ -110,7 +110,7 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
   como el resto de entradas (RF-4.6d).
 
 ### Validar los CV generados (RF-5.4)
-- **RF-5.4** El sistema DEBERÁ comprobar con código, en cada CV adaptado y en cada CV base, que: la
+- **RF-5.4** *(sustituido en parte por la spec 010, RF-10.3)* El sistema DEBERÁ comprobar con código, en cada CV adaptado y en cada CV base, que: la
   longitud está entre unas 250 y 1.000 palabras (1-2 páginas, P10; con un perfil corto, el mínimo baja al 60 % de las palabras del maestro); tiene las secciones obligatorias
   (al menos Experiencia o Formación); y sus fechas son válidas y en orden (el fin no es anterior al
   inicio).
@@ -120,9 +120,9 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
 - **RF-5.4c** Los errores de RF-5.4 y RF-5.4b DEBERÁN entrar en la vuelta única que ya existe: el
   redactor recorta o corrige lo que se le señala. Lo que siga mal tras la vuelta DEBERÁ mostrarse como
   aviso en llano.
-- **RF-5.4d** Los CV base DEBERÁN pasar también por el juez y por la comprobación de RF-5.4 antes de
+- **RF-5.4d** *(sustituido en parte por la spec 010, RF-10.3)* Los CV base DEBERÁN pasar también por el juez y por la comprobación de RF-5.4 antes de
   guardarse (P8). Esto suma una llamada al modelo por CV base.
-- **RF-5.4e** Los evals del juez (`evals/cv/`) y del CV base (`evals/cv-base/`) DEBERÁN tener casos de
+- **RF-5.4e** *(sustituido en parte por la spec 010, RF-10.3)* Los evals del juez (`evals/cv/`) y del CV base (`evals/cv-base/`) DEBERÁN tener casos de
   CV demasiado largos, demasiado cortos, con fechas incoherentes y con un resumen que no casa, con su
   umbral en `evals/umbrales.json`.
 

@@ -7,8 +7,7 @@ from pathlib import Path
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse, RedirectResponse
 
-from horma.web.db import sesion_de
-from horma.web.repositories import perfiles
+from horma.web.services import perfil as servicio_perfil
 
 router = APIRouter()
 ESTATICOS = Path(__file__).resolve().parent.parent / "static"
@@ -34,8 +33,7 @@ def _entrada(request: Request):
     usuaria_id = request.session.get("usuaria_id")
     if not usuaria_id:
         return FileResponse(ESTATICOS / "index.html")
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        hay_perfil = perfiles.vigente(s) is not None
+    hay_perfil = servicio_perfil.hay_perfil(request.app.state.engine, usuaria_id)
     return RedirectResponse("/ofertas" if hay_perfil else "/perfil", status_code=302)
 
 

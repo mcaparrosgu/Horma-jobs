@@ -7,9 +7,10 @@ from pathlib import Path
 
 import typer
 
-from horma.agents.registry import AGENTES
+from horma.agents.registry import AGENTES, APARCADOS
 from horma.config import ajustes
 from horma.flows.base import ErrorDePaso
+from horma.flows.registry import APARCADOS as FLUJOS_APARCADOS
 from horma.flows.registry import FLUJOS, IMPLEMENTACIONES, RESULTADO, crear_flujo
 from horma.llm import SalidaInvalida
 from horma.llm.simulado import ProveedorSimulado
@@ -49,6 +50,8 @@ def listar() -> None:
     for a in AGENTES.values():
         typer.echo(f"{a.nombre}  modelo={a.modelo}  entrada={a.entrada.__name__}  "
                    f"salida={a.salida.__name__}")
+    if APARCADOS:
+        typer.echo(f"Aparcados (no activos, código conservado): {', '.join(APARCADOS)}")
 
 
 QUITADOS = {  # agentes retirados en el bloque H de la fase 3 (16-nov-2026)
@@ -69,6 +72,9 @@ def correr(
     """Ejecuta un agente con una entrada en archivo y valida su salida."""
     if nombre in QUITADOS:
         typer.echo(f"El agente {nombre} ya no existe: {QUITADOS[nombre]}", err=True)
+        raise typer.Exit(2)
+    if nombre in APARCADOS:
+        typer.echo(f"El agente {nombre} está aparcado (RF-10.11d): código conservado, sin uso.", err=True)
         raise typer.Exit(2)
     if nombre not in AGENTES:
         typer.echo(f"Agente desconocido: {nombre}", err=True)
@@ -189,6 +195,9 @@ def flujo_correr(
     respuestas: Path | None = typer.Option(None, help="JSON con la lista de respuestas simuladas."),
 ) -> None:
     """Ejecuta un flujo mostrando la entrada y la salida de cada paso (RT-05)."""
+    if nombre in FLUJOS_APARCADOS:
+        typer.echo(f"El flujo {nombre} está aparcado (RF-10.11d): código conservado, sin uso.", err=True)
+        raise typer.Exit(2)
     if nombre not in FLUJOS:
         typer.echo(f"Flujo desconocido: {nombre}", err=True)
         raise typer.Exit(2)

@@ -25,23 +25,23 @@ def _desde_la_raiz(monkeypatch):
     config.ajustes.cache_clear()
 
 
-def test_por_defecto_es_plain_y_el_valor_viene_de_la_configuracion(monkeypatch, tmp_path):
+def test_por_defecto_es_langgraph_y_el_valor_viene_de_la_configuracion(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)  # sin .env: el valor por defecto del código, no el de la máquina
     monkeypatch.delenv("HORMA_FLOW_IMPL", raising=False)
     config.ajustes.cache_clear()
-    assert config.ajustes().horma_flow_impl == "plain"
+    assert config.ajustes().horma_flow_impl == "langgraph"  # RF-10.11b
     assert IMPLEMENTACIONES == ("plain", "langgraph")
-    assert isinstance(crear_flujo("candidatura", proveedor=ProveedorSimulado([])), PlainFlow)
-    monkeypatch.setenv("HORMA_FLOW_IMPL", "langgraph")
-    config.ajustes.cache_clear()
     assert isinstance(crear_flujo("candidatura", proveedor=ProveedorSimulado([])), LangGraphFlow)
+    monkeypatch.setenv("HORMA_FLOW_IMPL", "plain")
+    config.ajustes.cache_clear()
+    assert isinstance(crear_flujo("candidatura", proveedor=ProveedorSimulado([])), PlainFlow)
 
 
 def test_el_registro_construye_la_implementacion_pedida_y_langgraph_solo_afecta_a_candidatura():
     assert type(crear_flujo("candidatura", "plain", proveedor=ProveedorSimulado([]))) is PlainFlow
     assert isinstance(crear_flujo("candidatura", "langgraph", proveedor=ProveedorSimulado([])), LangGraphFlow)
     # P1: los demás flujos siguen siendo lineales aunque se pida langgraph.
-    otro = crear_flujo("clasificar_respuesta", "langgraph", proveedor=ProveedorSimulado([]))
+    otro = crear_flujo("analizar_estilo", "langgraph", proveedor=ProveedorSimulado([]))
     assert type(otro) is PlainFlow
 
 
