@@ -43,7 +43,7 @@ stale_after: null
 - [x] T07 — Textos de la usuaria: compatibilidad, estado único, sin textos internos.
   - **Test:** el test de T03 en verde; Candidaturas y el detalle enseñan el estado visible.
   - **Navegador:** Candidaturas y Candidatura a 1280 y 390 px, en claro y en oscuro.
-- [ ] T08 — Cierre de S1: prueba manual de Mar y PR.
+- [x] T08 — Cierre de S1: prueba manual de Mar y PR. *(firmada por Mar el 21-nov)*
 
 ### S2 · Candidatura sin CV base (RF-10.3)
 - [ ] T09 — Flujo y redactor sin CV base; eval `cv`.
