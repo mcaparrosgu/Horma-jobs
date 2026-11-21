@@ -3,10 +3,10 @@ type: spec
 title: cv-maestro-entrevista — Spec funcional
 description: Requisitos de la fase 9 en notación EARS, en dos partes que se construyen y firman por separado — 9a (huecos y avisos del CV, puestos recomendados en «Qué buscas» y CV maestro visible) y 9b (entrevista con catálogo de preguntas de recruiter, texto o audio, valoración para entrenar y respuestas como fuente de CV, carta y estilo).
 tags: [spec, perfil, entrevista, estilo, preferencias, agentes]
-status: draft
+status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md]
 generated: { by: claude-code, at: 2026-11-21 }
-verified: null
+verified: { by: human, at: 2026-11-21 }
 stale_after: null
 ---
 
@@ -25,7 +25,7 @@ La fase se divide en dos partes (P17). Cada una tiene su plan, sus tareas, su ra
   evals.
 
 Todo lo nuevo sigue la guía de la fase 6 (RF-6.9). Las respuestas del Clarify están en
-[clarifications.md](./clarifications.md) y se citan como P1…P17.
+[clarifications.md](./clarifications.md) y se citan como P1…P18.
 
 Esta spec modifica:
 - 9a: RF-2.8 y RF-2.11 (puestos), RF-7.5 (bloques de Perfil) y RF-8.4 (campos de «Qué buscas»).
@@ -40,8 +40,11 @@ Esta spec modifica:
 
 ### Huecos (RF-9.1)
 - **RF-9.1** CUANDO se componga el CV maestro, Horma DEBERÁ detectar con código cada periodo de **6 meses o
-  más** sin experiencia ni formación (P3), desde la primera fecha del perfil hasta hoy. Los periodos que se
-  solapan cuentan juntos.
+  más** sin experiencia, formación ni otra actividad que conste en el CV (P3), desde la primera fecha del perfil
+  hasta hoy. Los periodos que se solapan cuentan juntos.
+- **RF-9.1d** Un periodo con otra actividad que conste en el CV (voluntariado, cuidados, viajes, baja u
+  hospitalización…) NO DEBERÁ contar como hueco (P18). SI la actividad es un dato del art. 9 (salud), Horma
+  DEBERÁ guardar solo sus fechas como «periodo cubierto», sin el motivo.
 - **RF-9.1b** Una fecha con solo el año DEBERÁ leerse a favor de la usuaria (inicio en enero, fin en
   diciembre), para no inventar huecos. Una entrada sin fechas no cuenta: ya es una pregunta pendiente (RF-2.3).
 - **RF-9.1c** En 9a, cada hueco DEBERÁ mostrarse como aviso neutro, sin pedir el motivo: «Entre marzo de 2019
@@ -59,6 +62,9 @@ Esta spec modifica:
   sección de Mi perfil, y «Dar por visto».
 - **RF-9.2c** Un hueco o aviso dado por visto NO DEBERÁ volver a salir mientras no cambie lo que lo causa,
   aunque la usuaria suba otro CV. Lo visto se guarda por usuaria (RLS).
+- **RF-9.2d** El aviso de CV largo DEBERÁ ofrecer dos opciones (P18): «Mantener la longitud» (un perfil sénior
+  puede tenerlo todo relevante) y «Que Horma lo sintetice». La elección se guarda por usuaria y se puede cambiar;
+  la aplica `redactor_cv` en 9b (RF-9.10f). Hasta elegir, Horma sintetiza como hoy.
 
 ### Puestos recomendados (RF-9.3)
 - **RF-9.3** `clasificador_postulante` DEBERÁ sugerir, en la misma llamada, **8-15 títulos de puesto** ajustados
@@ -98,7 +104,9 @@ Esta spec modifica:
 
 ## Criterios de aceptación (9a)
 - Un CV inventado con 8 meses sin trabajo ni estudios da un hueco; uno con 4 meses, no; un año suelto no crea
-  huecos falsos.
+  huecos falsos. Un periodo de voluntariado o de cuidados que conste en el CV no da hueco.
+- Un CV de más de 1.000 palabras ofrece «Mantener la longitud» y «Que Horma lo sintetice», y la elección queda
+  guardada.
 - Un CV con una experiencia sin cifras da el aviso de logros. Un aviso dado por visto no vuelve al subir el mismo
   CV otra vez.
 - «Qué buscas» enseña Área y Puestos, con los sugeridos marcados; la búsqueda trae una oferta con título en
@@ -121,11 +129,19 @@ Esta spec modifica:
   familia, estado civil, religión, ideología, afiliación sindical ni otras categorías del art. 9 del RGPD.
 - **RF-9.6c** Claude prepara el borrador a partir de fuentes de recruiters; **Mar lo revisa y lo firma antes de
   construir el agente**. Cambiarlo después exige su firma.
+- **RF-9.6d** El borrador se prepara con una **skill temporal de asesoría de recruiter** (`asesor-recruiter`,
+  solo de desarrollo, no del producto) (P18). Su criterio: preguntas indirectas, de comportamiento y
+  situacionales, con base en psicología y selección de personal, que saquen la máxima información sobre
+  capacidades, valores y forma de trabajar sin preguntarlo de frente. Cumple RF-9.6b. Se borra al firmar el
+  catálogo.
 
 ### Entrevista (RF-9.7)
 - **RF-9.7** CUANDO termine el primer CV maestro, el `entrevistador` DEBERÁ preparar la **entrevista inicial**:
   **10-12 preguntas** elegidas del catálogo según el CV maestro, los huecos y los avisos, en tres partes:
-  trayectoria y huecos · logros y cómo trabajas · qué buscas y por qué (P14). Es una llamada.
+  trayectoria y huecos · logros y cómo trabajas · qué buscas y por qué (P14). Es una llamada. SI no hay huecos
+  ni avisos, la entrevista se hace igual, con las preguntas que haría un recruiter a ese perfil (P18).
+- **RF-9.7i** La entrevista inicial DEBERÁ estar pensada para **20-30 minutos** y decirlo al empezar («Unos
+  25 minutos. Puedes dejarla a medias y seguir luego.») (P18).
 - **RF-9.7b** El agente DEBERÁ elegir preguntas **solo del catálogo** (por su número) y PODRÁ adaptar la
   redacción a los datos de la usuaria (fechas, empresas, puestos), sin cambiar lo que se pregunta.
 - **RF-9.7c** Cada hueco (RF-9.1) DEBERÁ preguntarse de forma neutra, sin pedir el motivo, y con la opción
@@ -140,10 +156,19 @@ Esta spec modifica:
   dijo «Prefiero no contarlo».
 - **RF-9.7g** No hay más tandas a petición: la entrevista inicial es una vez (P14). «Contar algo más» (RF-9.8d)
   cubre lo que quiera añadir.
+- **RF-9.7h** Para cada experiencia sin logros (aviso de RF-9.2), el `entrevistador` PODRÁ usar una pregunta de
+  logros del catálogo y añadirle **tareas y logros habituales de ese puesto** como ejemplos («En puestos de
+  administración suele haber cierres mensuales o ahorro en proveedores. ¿Hiciste algo así? ¿Con qué
+  resultado?») (P18). Los ejemplos son solo ayuda para recordar: NO DEBERÁN pasar al CV ni a la carta si la
+  usuaria no los cuenta en su respuesta (RT-08).
 
 ### Respuestas (RF-9.8)
-- **RF-9.8** Cada pregunta DEBERÁ poder responderse **por escrito** (hasta 2.000 caracteres) o **por audio**
-  (hasta 3 minutos), o saltarse para luego (P4). El texto siempre está disponible.
+- **RF-9.8** Cada pregunta DEBERÁ poder responderse **por escrito** (hasta **5.000 caracteres**, unas 750
+  palabras) o **por audio** (hasta **5 minutos**), o saltarse para luego (P4, P18). El texto siempre está
+  disponible.
+- **RF-9.8h** Junto a cada pregunta DEBERÁ verse la guía «Lo ideal: 1-2 minutos, como en una entrevista real.»
+  Al llegar al tope, Horma DEBERÁ parar la grabación o no admitir más texto y decirlo: «Has llegado al máximo.
+  En una entrevista real, intenta no pasar de 2 minutos.» (P18).
 - **RF-9.8b** El audio DEBERÁ pasarse a texto con Whisper libre en el worker de Horma, sin enviarlo a terceros
   (P5). La usuaria DEBERÁ ver el texto y poder corregirlo antes de guardar. El audio NO DEBERÁ guardarse: se
   borra al transcribirlo, también si falla. Tope de **30 minutos de audio al día** por usuaria.
@@ -163,6 +188,8 @@ Esta spec modifica:
 - **RF-9.9** CUANDO la usuaria termine la entrevista inicial o un seguimiento, el `valorador_entrevista`
   DEBERÁ dar, en una llamada, una valoración corta de cada respuesta: qué funciona y cómo mejorarla
   (situación, acción, resultado), en segunda persona y en 2-3 frases (P16).
+- **RF-9.9d** SI una respuesta pasa de unas **300 palabras** (unos 2 minutos hablando), la valoración
+  DEBERÁ recomendar acortarla para una entrevista real y decir qué dejar (P18).
 - **RF-9.9b** La valoración NO DEBERÁ juzgar a la persona ni mencionar rasgos personales (RT-09): valora la
   respuesta como respuesta de entrevista.
 - **RF-9.9c** La usuaria DEBERÁ poder reescribir la respuesta desde su valoración; la nueva sustituye a la
@@ -180,6 +207,8 @@ Esta spec modifica:
 - **RF-9.10e** CUANDO termine la entrevista inicial, Horma DEBERÁ reanalizar el estilo SI la usuaria no ha
   editado la guía; SI la editó, «Tu estilo» DEBERÁ ofrecer «Actualizar mi estilo con la entrevista», que avisa
   de que sustituye la guía.
+- **RF-9.10f** `redactor_cv` DEBERÁ respetar la elección de longitud de RF-9.2d: con «Mantener la longitud»
+  conserva todas las experiencias; con «Que Horma lo sintetice» elige las que encajan con la oferta.
 
 ### «Tu entrevista» en Perfil (RF-9.11)
 - **RF-9.11** «Tu entrevista» DEBERÁ sustituir al bloque 3 de RF-9.5 (P8), con el número de preguntas sin
@@ -188,12 +217,17 @@ Esta spec modifica:
   dejar a medias y seguir luego.
 - **RF-9.11b** Mientras Horma prepara la entrevista, transcribe un audio o valora, DEBERÁ verse la barra de
   avance o de espera de la fase 8 (RF-8.7).
-- **RF-9.11c** El control de audio («Grabar», «Parar», tiempo restante) es un componente nuevo: DEBERÁ añadirse
+- **RF-9.11c** El control de audio («Grabar», «Parar», tiempo grabado y tiempo restante) es un componente nuevo: DEBERÁ añadirse
   antes a la guía (RF-6.9), usarse con teclado y no depender solo del color (RF-6.7e).
 
 ## Criterios de aceptación (9b)
 - La entrevista inicial tiene 10-12 preguntas, todas con un número del catálogo; ninguna repite una respondida.
-  Subir otro CV sin nada nuevo no hace ninguna llamada.
+  Subir otro CV sin nada nuevo no hace ninguna llamada. Un CV sin huecos ni avisos también recibe entrevista.
+- Una experiencia sin logros recibe una pregunta con logros habituales del puesto como ejemplo; si la usuaria
+  no los cuenta, no aparecen en el CV ni en la carta.
+- Una respuesta de más de 300 palabras recibe en su valoración la recomendación de acortarla.
+- Una grabación se para sola a los 5 minutos y un texto no admite más de 5.000 caracteres, con el aviso de
+  RF-9.8h.
 - El entrevistador añade al menos un aviso propio, citado, a un CV con logros flojos.
 - Una respuesta por audio se transcribe, se corrige y se guarda; el audio no queda en ningún sitio. Al minuto
   31 del día, el audio se desactiva con un aviso y el texto sigue disponible.
@@ -210,6 +244,7 @@ Esta spec modifica:
 - Accesibilidad específica para personas sordas o ciegas en la entrevista (P4).
 - Entrevista en otros idiomas oficiales de España (P4).
 - Simulacro de entrevista para una oferta concreta (P16).
+- Entrevista por llamada de voz en vivo (P18): idea futura; costaría varios euros por sesión frente a céntimos.
 - Más tandas de preguntas a petición (P14).
 - Revisar cómo el extractor asigna la familia a cada oferta (P10).
 - Descargar el CV maestro (P12).
@@ -218,5 +253,7 @@ Esta spec modifica:
 - Whisper libre (`faster-whisper`, modelo pequeño) entiende bien el castellano y cabe en el worker (~0,5 GB);
   tarda unos segundos por respuesta en CPU. Se mide en el plan de 9b.
 - Coste por usuaria (9b): entrevista inicial ~0,03 USD, valoración ~0,03 USD y cada seguimiento ~0,02 USD.
-  Las respuestas alargan algo las llamadas de los redactores. Es una estimación; se mide con las evals.
+  Las respuestas alargan algo las llamadas de los redactores. En el peor caso (12 respuestas al tope de
+  RF-9.8, unas 9.000 palabras), la valoración subiría a ~0,10 USD. Es una estimación; se mide con las evals.
+- Se habla a unas 130-150 palabras por minuto: 2 minutos son unas 300 palabras y 5 minutos, unas 700.
 - La voz es un dato personal, pero aquí no es biométrico (no se usa para identificar) y no se guarda.

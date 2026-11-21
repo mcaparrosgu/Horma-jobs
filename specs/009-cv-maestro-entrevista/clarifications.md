@@ -3,10 +3,10 @@ type: clarifications
 title: cv-maestro-entrevista — Aclaraciones
 description: Preguntas abiertas de la fase 9 (huecos y avisos del CV, entrevista con catálogo de preguntas de recruiter, respuestas por audio, valoración, estilo, puestos recomendados y CV maestro visible) y sus respuestas, antes de escribir la spec.
 tags: [clarify, perfil, entrevista, estilo, preferencias, agentes]
-status: draft
+status: active
 sources: [../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../005-correcciones-profesor/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md]
 generated: { by: claude-code, at: 2026-11-21 }
-verified: null
+verified: { by: human, at: 2026-11-21 }
 stale_after: null
 ---
 
@@ -71,7 +71,23 @@ Comprobado en el código (21-nov):
   respuestas. Cada parte tiene su plan, sus tareas, su prueba manual y su PR. En 9a, los huecos y avisos
   se ven en el bloque de preguntas pendientes; en 9b pasan a «Tu entrevista».
 
+- P18 (21-nov, aclaraciones de Mar al borrador):
+  - **Huecos:** lo que conste en el CV (voluntariado, cuidados, viajes, hospitalización…) cubre el periodo y no
+    es hueco. Sin huecos, la entrevista se hace igual, con las preguntas que haría un recruiter.
+  - **Longitud:** la usuaria elige si mantiene la longitud (un perfil sénior puede tenerlo todo relevante) o si
+    Horma sintetiza.
+  - **Logros que faltan:** Horma sugiere tareas y logros habituales del puesto como preguntas de la entrevista;
+    solo entra en el CV lo que la usuaria confirme.
+  - **Catálogo:** se prepara con una skill temporal de asesoría de recruiter (preguntas indirectas, con base en
+    psicología, que miden capacidades y valores); se borra al firmar el catálogo.
+  - **Duración:** entrevista inicial de unos 20-30 minutos.
+  - **Longitud de las respuestas:** guía visible «Lo ideal: 1-2 minutos», tope de 5 minutos de audio o 5.000
+    caracteres, con aviso al llegar. Si una respuesta pasa de unas 300 palabras, la valoración recomienda
+    acortarla. Se mantiene el tope de 30 min de audio al día.
+  - **Llamada de voz en vivo:** no; costaría varios euros por sesión frente a céntimos. Queda como idea futura.
+
 ## Fuera de alcance (decidido en el Clarify)
 - Accesibilidad específica para personas sordas o ciegas en la entrevista (P4).
 - Entrevista en otros idiomas oficiales de España (P4).
 - Simulacro de entrevista para una oferta concreta (P16).
+- Entrevista por llamada de voz en vivo (P18): idea futura, por coste.
