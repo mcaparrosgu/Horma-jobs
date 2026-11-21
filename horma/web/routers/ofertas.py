@@ -10,9 +10,10 @@ from horma.web.auth import claves
 from horma.web.auth.sesion import exigir_admin, exigir_csrf, usuaria_actual
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.queue import worker
-from horma.web.repositories import importaciones, tareas
+from horma.web.repositories import importaciones
 from horma.web.repositories import ofertas as repo
 from horma.web.services import ofertas as servicio
+from horma.web.services import presupuesto
 
 router = APIRouter()
 
@@ -70,7 +71,7 @@ def crear_desde_url(datos: NuevaUrl, request: Request, usuaria_id: int = Depends
     a = ajustes()
     with sesion_de(request.app.state.engine, usuaria_id) as s:
         importacion = importaciones.crear(s, usuaria_id, datos.url.strip())
-        tareas.encolar(s, usuaria_id, "leer_url", importacion, a.tope_coste_tarea, 1)  # sin reintentos
+        presupuesto.encolar(s, usuaria_id, "leer_url", importacion, a.tope_coste_tarea, 1)  # sin reintentos
     return {"id": importacion, "estado": "pendiente"}
 
 

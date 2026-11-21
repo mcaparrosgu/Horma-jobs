@@ -29,6 +29,7 @@ from horma.web.routers import (
     recomendaciones,
     tareas,
 )
+from horma.web.services.presupuesto import SinPresupuesto
 
 ESTATICOS = Path(__file__).parent / "static"
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
@@ -59,6 +60,11 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     app.state.engine = engine or motor()
     app.state.identidad = identidad or crear_identidad(a)
     app.state.limitador = Limitador()
+
+    @app.exception_handler(SinPresupuesto)
+    async def sin_presupuesto(_request, exc):
+        """Hoy ya no queda presupuesto: nada se encola (RF-10.9c)."""
+        return JSONResponse({"detail": str(exc), "motivo": "presupuesto"}, status_code=429)
 
     app.add_middleware(SessionMiddleware, secret_key=secreto, session_cookie="horma_sesion",
                        same_site="lax", https_only=not en_desarrollo, max_age=7 * 24 * 3600)

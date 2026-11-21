@@ -53,6 +53,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from horma.agents.juez_candidatura.agent import JuezCandidatura
 from horma.agents.juez_candidatura.schemas import EntradaJuezCandidatura
+from horma.config import ajustes
 from horma.flows import (
     analizar_estilo,
     calificar_fuente,
@@ -103,6 +104,11 @@ def _respuestas_ofertas(e: Oferta) -> list[dict]:
     auditor = {"generica": "generica" in e.auditoria.motivos_fantasma,
                "fraude": e.auditoria.fraude, "senales_fraude": e.auditoria.senales_fraude,
                "dominio_empresa": e.auditoria.dominio_empresa}
+    if ajustes().horma_oferta_un_agente:  # una sola llamada (RF-10.10)
+        return [{"oferta": extraida, "taxonomia": e.taxonomia.model_dump(mode="json"),
+                 "generica": auditor["generica"], "fraude": auditor["fraude"],
+                 "senales_fraude": auditor["senales_fraude"],
+                 "dominio_empresa": auditor["dominio_empresa"]}]
     return [extraida, auditor, e.taxonomia.model_dump(mode="json")]
 
 

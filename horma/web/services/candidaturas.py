@@ -28,6 +28,7 @@ from horma.web.db import sesion_de
 from horma.web.repositories import candidaturas as repo
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles, tareas
+from horma.web.services import presupuesto
 
 log = logging.getLogger("horma.candidaturas")
 
@@ -95,7 +96,7 @@ def crear(engine: Engine, usuaria_id: int, oferta_id: int, repetir: bool = False
                 candidatura_id = repo.crear(s, usuaria_id, oferta_id)
         except IntegrityError as e:  # dos peticiones a la vez: el índice único parcial manda
             raise ErrorCandidatura(409, "Ya tienes una candidatura abierta para esta oferta.") from e
-        tarea = tareas.encolar(s, usuaria_id, "candidatura", candidatura_id, a.tope_coste_candidatura,
+        tarea = presupuesto.encolar(s, usuaria_id, "candidatura", candidatura_id, a.tope_coste_candidatura,
                                a.tope_reintentos_tarea)
     return {"id": candidatura_id, "tarea_id": tarea}
 
@@ -222,7 +223,7 @@ def reintentar(engine: Engine, usuaria_id: int, candidatura_id: int) -> dict:
         if tareas.sin_terminar(s, "candidatura", candidatura_id):
             raise ErrorCandidatura(409, "Ya se está preparando.")
         repo.reiniciar_preparacion(s, candidatura_id)
-        tarea = tareas.encolar(s, usuaria_id, "candidatura", candidatura_id, a.tope_coste_candidatura,
+        tarea = presupuesto.encolar(s, usuaria_id, "candidatura", candidatura_id, a.tope_coste_candidatura,
                                a.tope_reintentos_tarea)
     checkpointer.borrar_hilo(engine, candidatura_id)  # empieza de cero, sin la vuelta anterior
     return {"id": candidatura_id, "tarea_id": tarea}

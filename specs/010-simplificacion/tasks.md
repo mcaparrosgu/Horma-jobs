@@ -67,30 +67,30 @@ stale_after: null
 - [ ] T15 — Cierre de S3: prueba manual de Mar y PR.
 
 ### S4 · Perfil en una pantalla (RF-10.4, RF-10.5)
-- [ ] T16 — `GET /api/perfil/cv.pdf`.
+- [x] T16 — `GET /api/perfil/cv.pdf`.
   - **Test:** da `application/pdf` con el nombre y una experiencia del perfil; otra usuaria o sin perfil, 404.
-- [ ] T17 — Perfil: estado vacío, cinco bloques, «Por resolver», una sola elección de longitud, clases «CV» y
-  «Carta».
+- [x] T17 — Perfil: estado vacío, cinco bloques, «Por resolver», una sola elección de longitud, clases «CV» y
+  «Carta». *(navegador sin comprobar: 1280/390 px, claro/oscuro)*
   - **Test:** orden de RF-10.5b; cada elemento de «Por resolver» con dos acciones; `estetico` nuevo → 422; un
     estético antiguo se lista.
   - **Navegador:** Perfil vacío y lleno a 1280 y 390 px, en claro y en oscuro.
 - [ ] T18 — Cierre de S4: prueba manual de Mar y PR.
 
 ### S5 · Ahorro (RF-10.9, RF-10.10, RF-10.11c)
-- [ ] T19 — `analizador-oferta` y `procesar_oferta` con una llamada; evals.
+- [x] T19 — `analizador-oferta` y `procesar_oferta` con una llamada; evals. *(21-nov: prompt afinado; evals reales `ofertas` 8 de 8 y `red-teaming` sin fallos nuevos; ajuste en `true`)*
   - **Qué se hace:** agente nuevo (RT-01), flujo con el ajuste `HORMA_OFERTA_UN_AGENTE`; avisar del gasto antes
     (~1-2 USD).
   - **Test (simulado):** una llamada con el ajuste activo, tres sin él. **Real:** `ofertas` y `red-teaming` en
     umbral; si no, el ajuste queda en `false` y se apunta.
-- [ ] T20 — Presupuesto diario único.
+- [x] T20 — Presupuesto diario único.
   - **Test:** con 1 USD gastado, ningún tipo se encola (429 `presupuesto`); el tope de cada tarea es el
     restante; una oferta propia queda pendiente y se procesa cuando vuelve a haber presupuesto.
-- [ ] T21 — Caché de la compatibilidad (migración `0022`) y `clasificar_perfil` solo si hace falta.
+- [x] T21 — Caché de la compatibilidad (migración `0022`) y `clasificar_perfil` solo si hace falta.
   - **Test:** editar el resumen no vuelve a puntuar ni a clasificar; editar una experiencia sí; el relleno da
     huella a las filas de hoy.
-- [ ] T22 — Precios oficiales del modelo.
+- [x] T22 — Precios oficiales del modelo.
   - **Test:** `config.py` sin «ESTIMADOS» y con la fecha de consulta.
-- [ ] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR.
+- [ ] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR. *(pasos en `docs/plan-pruebas-010.md`; navegador de S3-S5 comprobado por Claude el 21-nov)*
 
 ### S6 · Orden interno (RF-10.11)
 - [ ] T24 — Solo los servicios encolan; routers sin repositorios; contrato de import-linter.

@@ -158,7 +158,7 @@ def test_el_set_recomendacion_mide_la_segunda_persona():
 # --- T08-T09 · Perfil ------------------------------------------------------------------------------
 def test_perfil_en_el_orden_de_p3_con_el_texto_de_p4():
     html = leer("perfil.html")
-    orden = [html.index(x) for x in ('id="t-cv"', 'id="t-perfil"', 'id="pendientes"', 'id="estilo"')]
+    orden = [html.index(x) for x in ('id="pendientes"', 'id="t-perfil"', 'id="estilo"')]
     assert orden == sorted(orden)
     assert 'id="pendientes" class="panel-desplegado"' in html and "<details id=\"estilo\"" in html
     assert 'id="estilo" class="panel-desplegado" hidden>' in html
@@ -172,7 +172,7 @@ def test_perfil_en_el_orden_de_p3_con_el_texto_de_p4():
 def test_perfil_pendientes_abierto_solo_si_hay():
     js = leer("perfil.js")
     # RF-9.5 (spec 009): el número suma preguntas y avisos
-    assert '$("n-pendientes").textContent = String(total)' in js and "nPendientes + items.length" in js
+    assert '$("n-pendientes").textContent = String(total)' in js and "preguntas.length + items.length" in js
     assert '$("pendientes").open = true' in js and '$("pendientes").open = false' in js
 
 

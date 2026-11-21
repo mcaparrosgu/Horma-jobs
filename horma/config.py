@@ -13,9 +13,11 @@ class Ajustes(BaseSettings):
     # Modelo real por tamaño de modelo (ajustables por entorno)
     modelo_pequeno: str = "claude-haiku-5-5"
     modelo_mayor: str = "claude-sonnet-5-5"
-    # Precio en USD por millón de tokens (entrada, salida): ESTIMADOS, revisar con la tarifa oficial
-    precio_pequeno: tuple[float, float] = (1.0, 5.0)
-    precio_mayor: tuple[float, float] = (3.0, 15.0)
+    # Precio en USD por millón de tokens (entrada, salida): tarifa oficial de Anthropic consultada el
+    # 21-nov-2026 (platform.claude.com/docs/en/about-claude/pricing). Haiku 5.5: tramo de hasta 100K tokens
+    # por petición (0,50 / 2,50 por encima); nuestras peticiones son siempre más cortas.
+    precio_pequeno: tuple[float, float] = (0.10, 0.50)
+    precio_mayor: tuple[float, float] = (2.0, 10.0)
     llm_timeout_s: float = 60.0
     llm_reintentos: int = 3
 
@@ -49,9 +51,11 @@ class Ajustes(BaseSettings):
     apify_timeout_s: float = 60.0
     limite_url_hora: int = 10
 
-    # Fase 8 · puntuar sin botón (RF-8.5). PROVISIONALES (RF-8.5g): la gestión del gasto se decidirá más adelante.  # noqa: E501
-    tope_gasto_diario_puntuar: float = 0.50  # USD por usuaria y día natural (Madrid), solo el catálogo
-    max_sueltas_dia: int = 30  # «Puntuar ahora» por usuaria y día
+    # Simplificación S5 (RF-10.9): un solo presupuesto al día por usuaria, para todo lo que hace por ella.
+    # PROVISIONAL (RF-10.9d): la cifra definitiva sale del estudio de costes.
+    presupuesto_diario_usd: float = 1.0  # USD por usuaria y día natural (Madrid)
+
+    # Fase 8 · puntuar sin botón (RF-8.5)
     intervalo_recomendar_min: int = 60  # entre dos puntuaciones al abrir Recomendadas
     tope_coste_puntuar_una: float = 0.05  # USD por oferta suelta
 
@@ -65,6 +69,11 @@ class Ajustes(BaseSettings):
 
     # Simplificación S2 (RF-10.3d): con `true` se usa un CV base si existe; por defecto se parte del maestro
     horma_cv_base_respaldo: bool = False
+
+    # Simplificación S5 (RF-10.10): una sola llamada (`analizador-oferta`) en vez de tres por oferta.
+    # Evals reales del 21-nov con el agente nuevo: `ofertas` 8 de 8 pasadas y `red-teaming` sin fallos nuevos.
+    # `false` vuelve a las tres llamadas de antes (RF-10.10b).
+    horma_oferta_un_agente: bool = True
 
     # Fase 4: implementación del flujo `candidatura` ("plain" o "langgraph")
     horma_flow_impl: str = "plain"

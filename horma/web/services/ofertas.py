@@ -9,6 +9,7 @@ from horma.web.db import sesion_sistema
 from horma.web.repositories import ingesta as repo_ingesta
 from horma.web.repositories import ofertas as repo
 from horma.web.repositories import tareas
+from horma.web.services import presupuesto
 
 TIPO_TAREA = "procesar_oferta"
 
@@ -55,8 +56,31 @@ def recibir(engine: Engine, texto: str, *, fuente: str | None = None, clave_id: 
         oferta_id, estado, nueva = repo.crear(s, texto, fuente_id=fuente_id, clave_id=clave_id,
                                               id_externo=id_externo, url=url, usuaria_id=usuaria_id,
                                               caduca_en=caduca_en, atribucion=atribucion)
+        aplazada = False
         if nueva:
-            tareas.encolar(s, None, TIPO_TAREA, oferta_id,
-                           a.tope_coste_tarea if tope_coste is None else tope_coste,
-                           a.tope_reintentos_tarea if tope_reintentos is None else tope_reintentos)
-    return {"id": oferta_id, "estado": estado, "nueva": nueva}
+            tope = a.tope_coste_tarea if tope_coste is None else tope_coste
+            reintentos = a.tope_reintentos_tarea if tope_reintentos is None else tope_reintentos
+            if usuaria_id is None:  # catálogo común: gasto del sistema, sin presupuesto de usuaria
+                tareas.encolar(s, None, TIPO_TAREA, oferta_id, tope, reintentos)
+            else:
+                try:
+                    presupuesto.encolar_oferta_propia(s, usuaria_id, oferta_id, tope, reintentos)
+                except presupuesto.SinPresupuesto:  # se guarda y se analiza en cuanto haya presupuesto
+                    aplazada = True
+    return {"id": oferta_id, "estado": estado, "nueva": nueva, **({"aplazada": True} if aplazada else {})}
+
+
+def encolar_propias_aplazadas(engine: Engine) -> int:
+    """Encola el análisis de las ofertas propias que quedaron sin presupuesto, de cada usuaria que ya lo
+    tenga (RF-10.9e). Lo llama el worker de vez en cuando."""
+    a = ajustes()
+    n = 0
+    with sesion_sistema(engine) as s:
+        for oferta_id, usuaria_id in repo.propias_sin_tarea(s):
+            try:
+                presupuesto.encolar_oferta_propia(s, usuaria_id, oferta_id, a.tope_coste_tarea,
+                                                  a.tope_reintentos_tarea)
+                n += 1
+            except presupuesto.SinPresupuesto:
+                continue
+    return n

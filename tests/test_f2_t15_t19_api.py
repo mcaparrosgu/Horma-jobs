@@ -211,14 +211,18 @@ def test_solo_la_ruta_de_ver_se_deja_enmarcar(app):
     assert otra.headers["x-frame-options"] == "DENY"
 
 
-def test_el_cv_estetico_no_se_procesa(app, motor_app):
+def test_la_clase_estetico_ya_no_se_acepta_y_los_antiguos_se_listan(app, motor_app):
+    """Spec 010 · RF-10.5e: un `estetico` nuevo da 422; uno antiguo sigue en «Documentos subidos»."""
     c, h, _ = entrar(app)
     r = subir(c, h, b"%PDF-1.4 maquetado", "bonito.pdf", clase="estetico")
-    assert r.status_code == 201 and r.json()["perfil_id"] is None
-    assert _tareas(motor_app) == []
+    assert r.status_code == 422 and _tareas(motor_app) == []
     with admin() as s:
-        assert s.execute(text("select texto from cv_archivos")).scalar_one() is None
-        assert s.execute(text("select count(*) from perfiles")).scalar_one() == 0
+        u = s.execute(text("select id from usuarias")).scalar_one()
+        s.execute(text("insert into cv_archivos (usuaria_id, nombre, nombre_original, ruta, tipo, clase, "
+                       "tamano) values (:u, 'Antiguo', 'a.pdf', 'ruta-antigua', 'pdf', 'estetico', 10)"),
+                  {"u": u})
+        s.commit()
+    assert [x["clase"] for x in c.get("/api/cv").json()] == ["estetico"]
 
 
 def test_listar_y_renombrar_un_cv(app):
@@ -273,6 +277,15 @@ def test_responder_crea_version_nueva_conserva_la_anterior_y_marca_origen_usuari
     with sesion_de(motor_app, u) as s:
         v1 = perfiles.perfil_modelo(perfiles.por_version(s, 1))
     assert len(v1.preguntas_pendientes) == 1 and v1.idiomas == []  # la anterior, intacta
+    assert [t.tipo for t in _tareas(motor_app)] == []  # un idioma no cambia la clasificación (RF-10.10d)
+
+
+def test_corregir_una_experiencia_encola_clasificar_perfil(app, motor_app):
+    c, h, _ = entrar(app)
+    _perfil_hecho(motor_app, _usuaria_id(motor_app, "google-A"))
+    r = c.patch("/api/perfil/datos", headers=h, json={
+        "campo": "experiencias", "indice": 0, "dato": {"puesto": "Camarera", "empresa": "Bar Luna"}})
+    assert r.status_code == 201
     assert [t.tipo for t in _tareas(motor_app)] == ["clasificar_perfil"]
 
 

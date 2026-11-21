@@ -424,9 +424,9 @@ def test_desde_aprobada_salen_el_cv_y_la_carta_en_pdf(app, motor_app):
         assert texto in "".join(p.extract_text() for p in PdfReader(io.BytesIO(r.content)).pages)
 
 
-def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_un_estetico_subido(app, motor_app):
+def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_otro_documento_subido(app, motor_app):
     c, h, u, cb, oferta, cid = _escenario(app, motor_app)
-    c.post("/api/cv", headers=h, files={"archivo": ("b.md", b"# Mi CV bonito")}, data={"clase": "estetico"})
+    c.post("/api/cv", headers=h, files={"archivo": ("b.md", b"# Mi CV bonito")}, data={"clase": "carta"})
     c.post(f"/api/candidaturas/{cid}/aprobar", headers=h)
     r = c.get(f"/api/candidaturas/{cid}/cv.pdf")
     assert r.status_code == 200 and r.headers["content-type"] == "application/pdf"

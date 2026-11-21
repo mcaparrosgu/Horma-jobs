@@ -10,13 +10,14 @@ from horma.config import ajustes
 from horma.tools.convertir_cv import ArchivoNoValido, convertir_cv
 from horma.web.db import sesion_de
 from horma.web.repositories import cv as repo
-from horma.web.repositories import perfiles, tareas
+from horma.web.repositories import perfiles
 from horma.web.services import estilo as servicio_estilo
+from horma.web.services import presupuesto
 
 EXTENSIONES = {"pdf": "pdf", "docx": "docx", "md": "md", "markdown": "md"}
 MEDIA = {"pdf": "application/pdf", "md": "text/markdown; charset=utf-8",
          "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
-CLASES = ("fuente", "estetico", "carta")
+CLASES = ("fuente", "carta")   # «estetico» se retiró (RF-10.5e); los ya subidos se conservan
 
 
 class ArchivoRechazado(Exception):
@@ -40,30 +41,17 @@ def _tipo(nombre_original: str) -> str:
     return EXTENSIONES[extension]
 
 
-def _firma_estetico(contenido: bytes, tipo: str) -> None:
-    """El estético no se procesa, pero tampoco se guarda cualquier cosa: se mira la firma del archivo."""
-    ok = {"pdf": contenido.lstrip()[:5] == b"%PDF-", "docx": contenido[:4] == b"PK\x03\x04",
-          "md": b"\x00" not in contenido}[tipo]
-    if not ok:
-        raise ArchivoRechazado(422, f"El archivo no es un {tipo.upper()} válido.")
-
-
 def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original: str,
           nombre: str | None, clase: str, escrito_por_ella: bool = False) -> dict:
     a = ajustes()
     if clase not in CLASES:
-        raise ArchivoRechazado(422, "La clase debe ser «fuente», «carta» o «estetico».")
+        raise ArchivoRechazado(422, "La clase debe ser «fuente» o «carta».")
     tipo = _tipo(nombre_original)
     if len(contenido) > a.max_cv_bytes:
         raise ArchivoRechazado(413, f"El archivo supera el máximo de {a.max_cv_bytes // (1024 * 1024)} MB.")
     texto = None
     try:
-        if clase in ("fuente", "carta"):
-            texto = convertir_cv(contenido, tipo)
-        elif not contenido:
-            raise ArchivoNoValido("el archivo está vacío")
-        else:
-            _firma_estetico(contenido, tipo)
+        texto = convertir_cv(contenido, tipo)
     except ArchivoNoValido as e:
         raise ArchivoRechazado(422, str(e)) from e
     nombre = (nombre or "").strip() or Path(nombre_original).stem[:80] or "CV"
@@ -84,7 +72,7 @@ def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original:
             perfil_id = None
             if clase == "fuente":
                 perfil_id, _ = perfiles.nueva_version(s, usuaria_id)
-                tareas.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
+                presupuesto.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
                                a.tope_reintentos_tarea)
             elif clase == "carta":  # solo si aún no hay guía: después, solo con el botón (RF-5.6d)
                 servicio_estilo.encolar_si_no_hay_guia(s, usuaria_id)
