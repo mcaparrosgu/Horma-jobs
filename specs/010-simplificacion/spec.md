@@ -1,0 +1,266 @@
+---
+type: spec
+title: simplificacion — Spec funcional
+description: Requisitos de la simplificación de Horma en notación EARS — recorrido de 4 pantallas y 4 clics, ocho conceptos, tres pestañas, candidatura sin CV base, «Tu CV completo» en PDF, bandeja «Por resolver», un agente por oferta, caché de la compatibilidad, presupuesto diario único y orden interno — y la lista de requisitos anteriores que sustituye.
+tags: [spec, simplificacion, ux, frontend, costes, arquitectura, agentes]
+status: active
+sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
+generated: { by: claude-code, at: 2026-11-21 }
+verified: { by: human, at: 2026-11-21 }
+stale_after: null
+---
+
+# simplificacion — Especificación
+
+## Contexto
+Horma hace lo mismo con menos: menos pantallas, menos clics, menos palabras y menos llamadas al modelo.
+Ninguna línea roja cambia. Las respuestas del Clarify están en [clarifications.md](./clarifications.md) y se
+citan como P1…P12.
+
+Esta spec **sustituye** a los requisitos anteriores que se listan en «Requisitos que sustituye». Las specs
+002-009 no se reescriben: cada requisito sustituido lleva una línea que apunta aquí.
+
+## Recorrido (una página)
+
+| # | Pantalla | Qué hace la usuaria | Clics | Espera |
+|---|---|---|---|---|
+| 1 | Landing | «Continuar con Google» | 1 | Google |
+| 2 | Perfil (vacío: solo «Sube tu CV») | Elige el archivo; se sube solo | 1 | **1.ª** «Estamos leyendo tu CV…» |
+| 3 | Ofertas | Al abrirla, Horma puntúa sola (RF-8.5). «Preparar candidatura» | 1 | **2.ª** puntuar · **3.ª** preparar CV y carta |
+| 4 | Candidatura | «Aprobar y descargar» | 1 | 2 PDF |
+
+**4 pantallas · 4 clics · 3 esperas.** La puntuación no se lanza al acabar el CV (P5): empieza al abrir
+Ofertas, que es adonde lleva Horma cuando el perfil está listo.
+
+```
+Landing ──Google──> Ofertas ◄──► Candidaturas ◄──► Perfil
+                      │               │               ├─ Por resolver
+                      │               │               ├─ Tu CV completo (ver · PDF)
+                      │               │               ├─ Documentos subidos
+                      │               │               └─ Cómo escribes
+                      ├─ Qué buscas (plegable)
+                      ├─ + Añadir oferta (ventana)
+                      └─ Preparar ──> Candidatura (detalle)
+Admin (solo administradoras): Ingesta · Catálogo · Costes
+```
+
+## Requisitos (EARS)
+
+### Entrada y menú (RF-10.1)
+- **RF-10.1** CUANDO alguien sin sesión abra `/`, la landing DEBERÁ tener «Continuar con Google» como botón
+  primario, arriba a la derecha y al final de la página, y llevar directamente a Google. `/entrar` NO DEBERÁ
+  existir como pantalla: redirige a `/`.
+- **RF-10.1b** «Cómo empezar» DEBERÁ tener tres pasos: «Entra con Google» · «Sube tu CV» · «Mira tus ofertas
+  y prepara tu candidatura». No DEBERÁ mencionar el CV base.
+- **RF-10.1c** Las pestañas de la usuaria DEBERÁN ser tres: **Ofertas · Candidaturas · Perfil**, más «Admin»
+  para las administradoras (P3). En móvil, la rejilla se ajusta a tres (RF-6.3c).
+- **RF-10.1d** CUANDO alguien con sesión abra `/` o vuelva de Google, Horma DEBERÁ llevarla a Ofertas; SI aún
+  no tiene perfil, a Perfil. La marca «Horma» lleva a Ofertas.
+- **RF-10.1e** Las direcciones antiguas DEBERÁN redirigir: `/recomendadas` → `/ofertas`; `/anadir-oferta` →
+  `/ofertas` con la ventana «Añadir oferta» abierta; `/cv-base` → `/perfil`.
+
+### Palabras (RF-10.2)
+- **RF-10.2** La usuaria DEBERÁ ver solo estos ocho conceptos (P4):
+
+  | Nombre | Qué es, en una línea | Sustituye a |
+  |---|---|---|
+  | **Tu perfil** | Lo que Horma sabe de ti. Lo que corrijas aquí manda. | Perfil, Mi perfil, Tus CV, versiones |
+  | **Por resolver** | Lo que Horma te pide mirar: responder o «Está bien así». | Preguntas pendientes, huecos, avisos |
+  | **Tu CV completo** | Tu perfil escrito como CV. Se ve y se descarga; no se edita. | CV maestro, CV base |
+  | **Qué buscas** | Los puestos y condiciones que quieres. | Preferencias, área, puestos, excluidos |
+  | **Ofertas** | Las que encajan, con su compatibilidad (0-100) y su porqué. | Recomendadas, Añadir oferta, nota, puntuación |
+  | **Candidatura** | Tu CV y tu carta para una oferta. Nada sale sin tu aprobación. | CV adaptado, carta, preparación |
+  | **Cómo escribes** | Tu forma de redactar, que Horma imita. | Guía de estilo |
+  | **Tu entrevista** | Preguntas de recruiter para conocerte mejor (fase 9b). | — |
+
+- **RF-10.2b** «Compatibilidad» DEBERÁ ser la única palabra para el número 0-100; ningún texto de la usuaria
+  DEBERÁ decir «nota», «puntuación» ni «match».
+- **RF-10.2c** «Hueco» DEBERÁ nombrar solo un periodo sin actividad (RF-9.1). Lo que la oferta pide y el perfil
+  no tiene DEBERÁ decirse: «La oferta pide X y no consta en tu perfil».
+- **RF-10.2d** Ningún texto de la usuaria DEBERÁ mencionar el CV base, el CV maestro, proveedores (Apify),
+  piezas internas («el auditor», «tope de coste») ni a personas del equipo («Mar la revisará»).
+- **RF-10.2e** Todos los textos y etiquetas de la usuaria (estados, motivos, ayudas, avisos) DEBERÁN estar en
+  un solo archivo de textos que usen todas las pantallas, también las de Admin.
+
+### Candidatura sin CV base (RF-10.3)
+- **RF-10.3** CUANDO la usuaria pulse «Preparar candidatura», el flujo `candidatura` DEBERÁ partir del CV
+  maestro de la versión vigente del perfil, sin CV base (P1). Ya no hay que generar nada antes. Sustituye a
+  RF-3.1b y RF-3.7b en lo del CV base.
+- **RF-10.3b** `redactor-cv` DEBERÁ elegir qué destacar según la oferta: la experiencia que no encaje DEBERÁ ir
+  condensada en una línea (puesto · empresa · fechas), sin dejar huecos en las fechas (lo que hacía el CV base,
+  RF-5.1g), y respetar la elección de longitud (RF-9.2d, RF-9.10f).
+- **RF-10.3c** Las fuentes de `verificar_trazabilidad` y del juez DEBERÁN ser el CV maestro (y, para la carta,
+  la oferta). La regla de origen no cambia (RT-08).
+- **RF-10.3d** El eval real `cv` DEBERÁ pasar su umbral sin CV base antes de quitar el CV base del recorrido.
+  SI no lo pasa, el CV base DEBERÁ volver como respaldo: se usa si existe y, si no, el CV maestro.
+- **RF-10.3e** La pantalla y la pestaña del CV base DEBERÁN desaparecer. Las tablas `cv_base` y
+  `cv_base_versiones` dejan de escribirse; NO DEBERÁ borrarse ningún dato.
+- **RF-10.3f** Las candidaturas ya preparadas con un CV base DEBERÁN seguir viéndose, editándose y
+  aprobándose como hoy.
+
+### Tu CV completo (RF-10.4)
+- **RF-10.4** Perfil DEBERÁ tener «Tu CV completo» con «Ver» (el CV maestro con formato, RF-9.4) y «Descargar
+  PDF» (P2). Lo compone el código a partir del perfil, sin modelo. Sustituye a «Tu CV maestro» (RF-9.4) en el
+  nombre.
+- **RF-10.4b** El PDF DEBERÁ ser legible por un ATS (sin tablas ni imágenes) y llevar solo datos del perfil.
+  Solo lo descarga su dueña (RLS).
+- **RF-10.4c** «Tu CV completo» NO DEBERÁ poder editarse: cada sección lleva «Editar», que lleva a esa sección
+  de Tu perfil.
+
+### Perfil en una pantalla (RF-10.5)
+- **RF-10.5** CUANDO la usuaria no tenga perfil, Perfil DEBERÁ mostrar solo «Sube tu CV» (entradilla y un
+  botón de elegir archivo). Al elegir el archivo, DEBERÁ subirse sin otro clic, como CV de perfil.
+- **RF-10.5b** Con perfil, Perfil DEBERÁ mostrar, en este orden (sustituye a RF-9.5):
+  1. **Por resolver (n)**, abierto CUANDO haya algo;
+  2. **Tu perfil**, por secciones plegables con su número («Experiencia (4)») y «Añadir»;
+  3. **Tu CV completo** (RF-10.4);
+  4. **Documentos subidos (n)**, plegado, con «Subir»;
+  5. **Cómo escribes**, plegado.
+
+  A 1280 px, Tu perfil va a la izquierda y lo demás a la derecha, en dos columnas de igual ancho; a 390 px,
+  una columna con «Por resolver» arriba (RF-6.4b).
+- **RF-10.5c** «Por resolver» DEBERÁ reunir, en este orden, las preguntas pendientes (RF-2.3), los huecos
+  (RF-9.1) y los avisos (RF-9.2). Cada elemento DEBERÁ tener dos acciones: la que lo resuelve («Responder»,
+  «Añadir», «Corregir») y «Está bien así» (que sustituye a «Dar por visto»). Lo resuelto no vuelve mientras no
+  cambie su causa (RF-9.2c).
+- **RF-10.5d** La elección de longitud del CV DEBERÁ aparecer en un solo sitio: en el aviso de CV largo de
+  «Por resolver» (RF-9.2d).
+- **RF-10.5e** Al subir un documento, las clases DEBERÁN ser dos: «CV» (por defecto) y «Carta». La clase
+  «estético» se retira (P10); los ya subidos siguen en «Documentos subidos». Ningún documento subido se
+  modifica.
+
+### Ofertas (RF-10.6)
+- **RF-10.6** «Recomendadas» DEBERÁ llamarse **Ofertas** (`/ofertas`), con el contenido de la fase 8
+  («Qué buscas», compatibilidad, descartar, estado de candidatura).
+- **RF-10.6b** Ofertas DEBERÁ tener el botón «+ Añadir oferta», que abre una ventana (componente «Ventana» de
+  la guía) para pegar el texto o la URL. La oferta añadida aparece en la lista con «Añadida por ti».
+- **RF-10.6c** SI la usuaria aún no tiene perfil, Ofertas NO DEBERÁ quedarse en blanco: DEBERÁ decir «Sube tu
+  CV para ver qué ofertas encajan contigo» con un botón a Perfil.
+- **RF-10.6d** «Puntuar ahora» se queda en el detalle de una oferta sin compatibilidad (RF-8.5e), dentro del
+  presupuesto del día (RF-10.9), sin límite propio de sueltas. Los avisos de gasto DEBERÁN verse solo CUANDO se
+  haya llegado al presupuesto; entonces «Puntuar ahora» se desactiva con el aviso de RF-10.9c.
+
+### Candidatura (RF-10.7)
+- **RF-10.7** La usuaria DEBERÁ ver un solo estado por candidatura, que junta `estado` y `preparacion`:
+  **Preparando → Por revisar → Lista para enviar → Enviada → Entrevista → Cerrada** (y «No se pudo preparar»
+  con «Reintentar»). La máquina interna no cambia (RT-10).
+
+  | Estado visible | Interno |
+  |---|---|
+  | Preparando | `borrador` con la preparación en marcha |
+  | Por revisar | `borrador`, preparación `lista` o `pendiente_de_ti` |
+  | Lista para enviar | `aprobada` |
+  | Enviada · Entrevista · Cerrada | `enviada` · `entrevista` · `cerrada` |
+  | No se pudo preparar | `borrador` con la preparación en `error` |
+
+- **RF-10.7b** «Revisa esto» DEBERÁ usar el texto de RF-10.2c para lo que la oferta pide y no consta.
+
+### Avance en la cabecera (RF-10.8)
+- **RF-10.8** Mientras Horma trabaje en una tarea de la usuaria (leer el CV, puntuar, analizar una oferta,
+  preparar una candidatura), la cabecera de todas sus pantallas DEBERÁ mostrar un indicador con la frase y el
+  porcentaje («Puntuando 40 %»). Al pulsarlo, lleva a la pantalla de esa tarea. Sustituye a P8 de la 008 («sin
+  aviso en la cabecera»); la barra de cada pantalla (RF-8.7) se mantiene.
+- **RF-10.8b** El indicador DEBERÁ ser un componente de la guía (RF-6.9), con `role="status"`, y no depender
+  solo del color (RF-6.7e). A 390 px DEBERÁ caber junto a la marca sin desplazar el menú.
+
+### Gasto (RF-10.9)
+- **RF-10.9** Horma NO DEBERÁ gastar más de **1 USD al día** (día natural, hora de Madrid) por usuaria, en
+  todo lo que hace para ella: perfil, puntuar, ofertas propias, candidaturas, estilo y lectura de URL (P11).
+  Sustituye a RF-8.5b (0,50 USD solo para puntuar) y al límite de 30 sueltas de RF-8.5e y RF-8.5f.
+- **RF-10.9b** El presupuesto DEBERÁ comprobarse en un solo sitio, al encolar la tarea. Cada tarea lleva como
+  tope lo que quede del día, sin pasar de su tope por tarea, que se mantiene como red de seguridad (RT-14).
+- **RF-10.9c** CUANDO no quede presupuesto, Horma NO DEBERÁ encolar la tarea y DEBERÁ decir: «Hoy ya hemos
+  trabajado todo lo posible para ti. Mañana seguimos.» Lo ya hecho se conserva.
+- **RF-10.9e** Una oferta que la usuaria añade sin presupuesto DEBERÁ guardarse y procesarse en cuanto vuelva
+  a haberlo (al día siguiente), con el aviso «La analizamos mañana: hoy ya hemos trabajado todo lo posible para
+  ti.». Sustituye a RF-8.5c (las propias se puntuaban también con el tope alcanzado).
+- **RF-10.9d** La cifra de 1 USD es provisional: la definitiva sale del estudio de costes, con los precios
+  oficiales del modelo (RF-10.11c).
+
+### Ahorro (RF-10.10)
+- **RF-10.10** Un solo agente, `analizador-oferta`, DEBERÁ leer cada oferta en una llamada y devolver lo que
+  hoy devuelven `extractor-oferta`, `clasificador-oferta` y `auditor-oferta` (P7). Las comprobaciones que ya son
+  código (fecha, repetición, salario, dominio) siguen en código.
+- **RF-10.10b** `analizador-oferta` DEBERÁ pasar los evals reales `ofertas` y `red-teaming` con los umbrales de
+  hoy (precisión ≥ 0,9 por campo; adversarias 100 %). SI no los pasa, `procesar_oferta` DEBERÁ volver a las
+  tres llamadas de hoy.
+- **RF-10.10c** La compatibilidad guardada DEBERÁ reutilizarse mientras no cambie nada del perfil que la afecte
+  (experiencia, formación, habilidades, idiomas, titular). Corregir una errata en otra parte NO DEBERÁ obligar
+  a volver a puntuar.
+- **RF-10.10d** `clasificar_perfil` DEBERÁ lanzarse solo SI cambia la experiencia, la formación o el titular.
+
+### Orden interno (RF-10.11)
+- **RF-10.11** Solo los servicios DEBERÁN encolar tareas; los routers DEBERÁN llamar solo a servicios, nunca a
+  repositorios. Qué tarea lanza a cuál DEBERÁ estar en una sola tabla del worker.
+- **RF-10.11b** `HORMA_FLOW_IMPL` DEBERÁ valer `langgraph` por defecto en el código (P6). `PlainFlow` se queda
+  como referencia en la suite (RT-12).
+- **RF-10.11c** Los precios del modelo de la configuración DEBERÁN ser los oficiales, con la fecha de consulta.
+- **RF-10.11d** DEBERÁN aparcarse, con su código conservado y fuera de los evals de la CI:
+  `clasificador-respuesta` (y su eval `respuestas`) y `generador-cv-base` (y su eval `cv-base`) (P12). La
+  tarea `extraer_oferta`, sin uso, DEBERÁ borrarse. Lo aparcado no se puede encolar desde la web.
+- **RF-10.11e** `system.md` DEBERÁ ponerse al día con lo que hace el código (anexo de la auditoría): agentes
+  activos, `langgraph` por defecto, número de esquemas, herramientas que usan la red y umbrales de las
+  alertas.
+
+### Fase 9b (RF-10.12)
+- **RF-10.12** La 9b DEBERÁ hacerse solo con texto (P9): sin audio (RF-9.8 en lo del audio, RF-9.8b) ni
+  `valorador_entrevista` (RF-9.9 a RF-9.9d), que quedan aplazados hasta medir el uso.
+- **RF-10.12b** La entrevista sigue siendo la sesión de 20-30 minutos de RF-9.7i (P8), en su propio bloque
+  «Tu entrevista» de Perfil, debajo de «Por resolver». «Por resolver» sigue reuniendo preguntas, huecos y
+  avisos. Sustituye a RF-9.11 en dónde vive la entrevista. El plan de la 9b se escribe después de S6.
+
+## Bloques de construcción
+Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada bloque deja Horma funcionando.
+
+| Bloque | Requisitos | Coste de modelo |
+|---|---|---|
+| S1 · Palabras y menú | RF-10.1, RF-10.2, RF-10.6, RF-10.7 | 0 |
+| S2 · Candidatura sin CV base | RF-10.3 | ~0,5-1 USD (eval `cv`) |
+| S3 · Avance y subida | RF-10.5 (subida), RF-10.8 | 0 |
+| S4 · Perfil en una pantalla | RF-10.4, RF-10.5 | 0 |
+| S5 · Ahorro | RF-10.9, RF-10.10, RF-10.11c | ~1-2 USD (evals `ofertas` y `red-teaming`) |
+| S6 · Orden interno | RF-10.11 (salvo c) | 0 |
+
+## Criterios de aceptación
+- Una usuaria nueva entra con Google, sube su CV y, sin pasar por ninguna otra pantalla, ve sus ofertas con
+  compatibilidad y prepara y descarga una candidatura: 4 pantallas y 4 clics.
+- Ninguna pantalla de la usuaria dice «CV base», «CV maestro», «nota», «puntuación», «match», «Apify», «el
+  auditor», «tope de coste» ni «Mar».
+- `/recomendadas`, `/anadir-oferta`, `/cv-base` y `/entrar` redirigen.
+- Una candidatura se prepara sin CV base y pasa el eval `cv`; una antigua con CV base se sigue viendo.
+- «Descargar PDF» de Tu CV completo da un PDF con los datos del perfil; otra usuaria recibe 404.
+- Ofertas sin perfil enseña la invitación a subir el CV.
+- Con un trabajo en marcha, el indicador de la cabecera se ve en Candidaturas y lleva a su pantalla.
+- Con 1 USD gastado hoy, no se encola ninguna tarea y se ve el aviso de RF-10.9c.
+- Una oferta nueva hace 1 llamada al modelo (Admin › Costes). Corregir una errata en el resumen del perfil no
+  vuelve a puntuar.
+- Sin `HORMA_FLOW_IMPL` en el entorno, `candidatura` corre con LangGraph.
+- Ningún router importa un repositorio ni encola (test de arquitectura).
+- Todo comprobado a 1280 y 390 px, en claro y en oscuro (RF-6.4b).
+
+## Requisitos que sustituye
+| Spec | Requisitos | Por |
+|---|---|---|
+| 002 | RF-2.1b (nombres de CV base y estético), RF-2.4 (CV base desfasados), RF-2.9 a RF-2.9e, RF-2.10 | RF-10.3, RF-10.5e |
+| 003 | RF-3.1b, RF-3.2 y RF-3.3 (CV base como fuente), RF-3.7b (pedir CV base), RF-3.8 («Detalles» del CV base), RF-3.8d | RF-10.3 |
+| 005 | RF-5.1e, RF-5.1g, RF-5.3b (pestaña «Añadir oferta»), RF-5.4 y RF-5.4d-e (en lo del CV base) | RF-10.3, RF-10.6b |
+| 008 | RF-8.1, RF-8.1b-e, RF-8.5b, RF-8.5c, RF-8.5e-g, P8 | RF-10.1, RF-10.8, RF-10.9 |
+| 009 | RF-9.4 (nombre), RF-9.5, RF-9.8 y RF-9.8b (audio), RF-9.9-RF-9.9d, RF-9.11 | RF-10.4, RF-10.5b, RF-10.12 |
+
+## Fuera de alcance
+- **Mejoras próximas, prioridad alta, justo después de la simplificación:** el aplicador autónomo de ofertas y
+  leer el correo con `clasificador-respuesta` desaparcado. El aplicador toca una línea roja («Toda candidatura
+  necesita la aprobación de la usuaria antes de cualquier envío»): antes hay que cambiar la constitución y
+  volver a firmar las líneas rojas.
+- Puntuar al acabar de leer el CV (P5).
+- Entrevista por tandas (P8); audio y valoración en la 9b (P9).
+- Diseños de CV y el CV estético (fase 11).
+- Plan de perfeccionamiento del `matcher`: sigue siendo obligatorio antes de usuarias reales.
+- Otras formas de entrar además de Google (tocan la constitución).
+
+## Supuestos
+- Una candidatura cuesta del orden de céntimos y 1 USD al día cubre un día normal (perfil, puntuar y unas 10
+  candidaturas). Sin medir con los precios oficiales.
+- La compatibilidad no depende de las partes del perfil que no están en RF-10.10c.
+- Las candidaturas de hoy no pierden calidad al partir del CV maestro con la condensación de RF-10.3b; lo
+  decide el eval `cv`.
