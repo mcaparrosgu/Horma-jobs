@@ -28,6 +28,11 @@ Reglas:
   `formacion`, no lo repitas aquí.
 - `otros`: datos útiles que no encajan en ninguna sección (carnet de conducir, disponibilidad,
   movilidad…) en `valor`, tal como los dice el CV. Nunca pongas aquí rasgos personales prohibidos.
+- `actividades`: voluntariado, cuidados, viajes, excedencias, emprendimientos y otras actividades que el
+  CV cuenta fuera de un puesto o una titulación: `descripcion`, `inicio` y `fin` (AAAA o AAAA-MM, «actual»
+  si lo dice; vacío si no aparecen) y su cita literal en `origen`. Si el CV da el motivo de una pausa
+  (salud, familia…), cópiala igualmente en la cita: el código la convierte en un periodo sin texto.
+  Deja `periodos_cubiertos` vacío: lo rellena el código.
 - Los proyectos, certificaciones y otros llevan `origen` con su cita literal igual que el resto.
 - Pregunta siempre (en `preguntas_pendientes`) cuando falta un dato esencial: las fechas de un puesto
   o de una titulación (o son vagas, como «varios años»), el centro de una titulación, o el nivel de un

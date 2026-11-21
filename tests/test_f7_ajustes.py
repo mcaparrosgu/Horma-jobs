@@ -171,7 +171,8 @@ def test_perfil_en_el_orden_de_p3_con_el_texto_de_p4():
 
 def test_perfil_pendientes_abierto_solo_si_hay():
     js = leer("perfil.js")
-    assert '$("n-pendientes").textContent = String(pend.length)' in js
+    # RF-9.5 (spec 009): el número suma preguntas y avisos
+    assert '$("n-pendientes").textContent = String(total)' in js and "nPendientes + items.length" in js
     assert '$("pendientes").open = true' in js and '$("pendientes").open = false' in js
 
 
@@ -186,9 +187,9 @@ def test_estilo_es_un_parrafo_corto_sin_ver_detalle():
 
 
 def test_cuatro_secciones_de_perfil_son_desplegables_cerrados_con_su_numero():
-    """Fase 7 · T19 (RF-7.5d)."""
+    """Fase 7 · T19 (RF-7.5d); la 009 añade «Otras actividades» (RF-9.1d)."""
     js = leer("perfil.js")
-    assert 'const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos"]' in js
+    assert 'const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos", "actividades"]' in js
     assert 'nodo(plegable ? "details" : "section"' in js
     assert 'nodo("span", String(hijos.length), "estado")' in js
     assert "s.open = abiertas.has(clave)" in js   # cerrados salvo que ella los abriera

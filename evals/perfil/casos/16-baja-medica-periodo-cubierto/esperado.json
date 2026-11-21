@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "titular": null,
+  "resumen": null,
+  "habilidades": [],
+  "idiomas": [],
+  "formacion": [],
+  "experiencias": [
+    {
+      "puesto": "Camarera",
+      "empresa": "Bar Luna",
+      "inicio": "2015",
+      "fin": "2018",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Camarera en Bar Luna, Valencia, 2015-2018"
+      }
+    },
+    {
+      "puesto": "Camarera",
+      "empresa": "Hotel Mar",
+      "inicio": "2021",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Camarera en Hotel Mar, 2021-2024"
+      }
+    }
+  ],
+  "actividades": [],
+  "periodos_cubiertos": [
+    {
+      "inicio": "2019",
+      "fin": "2020"
+    }
+  ],
+  "taxonomia": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "junior",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

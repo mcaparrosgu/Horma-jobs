@@ -1,0 +1,13 @@
+{
+  "cvs": [
+    {
+      "cv_id": 1,
+      "nombre": "CV",
+      "texto": "Marcos Vidal\n\nEXPERIENCIA\nAnalista de datos en Retail Sur, Sevilla, 2021-2024\n\nFORMACIÓN\nGrado en Estadística, Universidad de Sevilla, 2017-2021\n\nHABILIDADES\nSQL, Excel, Power BI"
+    }
+  ],
+  "puestos_esperados": [
+    "Analista de datos",
+    "Data Analyst"
+  ]
+}

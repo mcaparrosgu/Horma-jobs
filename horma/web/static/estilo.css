@@ -397,3 +397,42 @@ main.landing > .boton{ margin-top: 8px; }
 ol.pasos{ list-style: none; counter-reset: paso; padding: 0; margin: 0 0 24px; }
 ol.pasos > li{ counter-increment: paso; display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: var(--bw) solid var(--line); font-size: 17px; }
 ol.pasos > li::before{ content: counter(paso); display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border: var(--bw) solid var(--line-strong); font-family: var(--f-mono); font-weight: 600; }
+
+/* ── Fase 9a: avisos con acciones, «Qué buscas» con puestos y CV maestro (RF-9.2b, RF-9.3b, RF-9.4) ── */
+/* Aviso con dos acciones: el texto a la izquierda y las acciones a la derecha, todas de --tap de alto. */
+.aviso-accion{
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 24px; align-items: center;
+  padding: 16px 0; border-bottom: var(--bw) solid var(--line);
+}
+.aviso-accion > p{ margin: 0; color: var(--ink); }
+.aviso-accion > .acciones-aviso{ display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.aviso-accion > .acciones-aviso > button{ min-height: var(--tap); min-width: 11rem; }
+/* Aviso con elección de longitud: el texto arriba y las dos opciones debajo, a partes iguales. */
+.aviso-accion.aviso-longitud{ grid-template-columns: 1fr; }
+.aviso-accion.aviso-longitud > .acciones-aviso{ justify-content: flex-start; }
+.aviso-accion.aviso-longitud > .acciones-aviso > button{ flex: 1 1 14rem; max-width: 20rem; }
+
+/* «Qué buscas»: Puestos y Términos excluidos en dos columnas del mismo alto. */
+.grupos-dos{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; align-items: stretch; }
+fieldset.grupo.grupo-puestos{ display: flex; flex-direction: column; }
+fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
+.casilla-puesto .dato-puesto{ display: block; color: var(--muted); font-size: 0.85rem; }
+.anadir-termino{ margin-top: 12px; flex-wrap: nowrap; }
+.anadir-termino input{ flex: 1 1 0; min-width: 0; }
+.anadir-termino button{ flex: none; }
+.terminos{ list-style: none; padding: 0; margin: 0.4rem 0 0; flex: 1 1 auto; max-height: 18rem; overflow-y: auto; }
+.terminos > li{ display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--tap); border-bottom: var(--bw) solid var(--line); }
+.terminos > li > span{ min-width: 0; overflow-wrap: anywhere; }
+.terminos > li > button{ flex: none; min-height: var(--tap); }
+
+/* Tu CV maestro: el documento con una fila de cabecera y «Editar» por sección. */
+.maestro-meta{ margin: 0 0 12px; }
+.cv-hoja .cv-seccion.con-editar{ display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.cv-hoja .cv-seccion.con-editar > button{ flex: none; min-height: var(--tap); text-transform: none; letter-spacing: normal; }
+
+@media (max-width: 900px){
+  .grupos-dos{ grid-template-columns: 1fr; }
+  .aviso-accion{ grid-template-columns: 1fr; }
+  .aviso-accion > .acciones-aviso{ justify-content: flex-start; }
+  .aviso-accion > .acciones-aviso > button{ flex: 1 1 10rem; }
+}

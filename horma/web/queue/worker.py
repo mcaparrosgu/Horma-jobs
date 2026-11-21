@@ -186,6 +186,7 @@ class _ClasificarPerfil:
     def guardar(self, s, tarea: dict, estado: dict) -> None:
         perfil = Perfil.model_validate({**estado["perfil"], "taxonomia": estado["taxonomia"]})
         repo_perfiles.guardar_perfil(s, tarea["usuaria_id"], tarea["entidad_id"], perfil)
+        repo_perfiles.aplicar_puestos_del_cv(s, tarea["usuaria_id"], estado.get("puestos") or [])
         if repo_ofertas.hay_propias(s):  # perfil nuevo: las propias se puntúan con su versión
             _encolar_puntuar_propias(s, tarea["usuaria_id"])
 

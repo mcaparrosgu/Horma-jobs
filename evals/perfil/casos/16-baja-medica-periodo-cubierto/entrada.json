@@ -1,0 +1,13 @@
+{
+  "cvs": [
+    {
+      "cv_id": 1,
+      "nombre": "CV",
+      "texto": "Elena Prieto\n\nEXPERIENCIA\nCamarera en Bar Luna, Valencia, 2015-2018\nCamarera en Hotel Mar, 2021-2024\n\nOTROS\nBaja por enfermedad, 2019-2020"
+    }
+  ],
+  "puestos_esperados": [
+    "Camarera",
+    "Waitress"
+  ]
+}

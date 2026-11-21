@@ -121,6 +121,8 @@ mientras uno de estos sirva (RF-6.9).
 | **Documento** (CV y carta) | hoja de superficie con borde de 1 px en línea, tipografía del cuerpo y anchura de lectura |
 | **Ventana** (añadida por la spec 008) | `<dialog class="ventana">` modal de ancho de lectura (60 rem como máximo), borde de 1 px en tinta, cabecera con el título y «Cerrar» (secundario de 44 px), cuerpo con desplazamiento propio. Esc la cierra y el foco vuelve al botón que la abrió. Generaliza el visor de CV de Perfil |
 | **Barra de avance** (añadida por la spec 008) | pista de 6 px sin radio con relleno según el tema, `role="progressbar"` con `aria-valuenow`, mínimo y máximo, y encima una frase en mono con el porcentaje («Puntuando ofertas · 40 %»). El color nunca es la única señal. Sin animación si se pide reducir el movimiento |
+| **Aviso con dos acciones** (añadido por la spec 009) | fila con el texto a la izquierda y dos botones a la derecha, ambos de 44 px de alto (la acción que arregla y «Dar por visto»), separada por una línea inferior de 1 px. En móvil, el texto arriba y los botones debajo. Lleva el texto del aviso, nunca solo un color |
+| **Aviso con elección de longitud** (añadido por la spec 009) | el aviso con dos acciones con el texto arriba y las dos opciones debajo, de igual ancho («Mantener la longitud» y «Que Horma lo sintetice») |
 
 - **RF-6.4b** Simetría (prioridad alta de Mar): los elementos de una misma fila o rejilla DEBERÁN
   tener la misma altura, la misma separación y estar alineados por abajo. Una etiqueta o un contador

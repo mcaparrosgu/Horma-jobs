@@ -38,9 +38,9 @@ def _copiar(tmp_path, nombre, caso):
 
 
 # --- T11: fixtures de perfil -------------------------------------------------------------------
-def test_fixtures_de_perfil_son_14_validas_de_5_sectores_y_2_adversarias():
+def test_fixtures_de_perfil_son_18_validas_de_5_sectores_y_2_adversarias():
     casos = _casos("perfil")
-    assert len(casos) == 14
+    assert len(casos) == 18  # 14 de la fase 2 y 4 de la 9a (actividades y puestos)
     sectores, adversarias, con_pendientes = set(), 0, 0
     for c in casos:
         p = Perfil.model_validate_json((c / "esperado.json").read_text(encoding="utf-8"))
@@ -50,7 +50,7 @@ def test_fixtures_de_perfil_son_14_validas_de_5_sectores_y_2_adversarias():
         con_pendientes += bool(p.preguntas_pendientes)
         adversarias += bool(p.instrucciones_embebidas)
         datos = [*p.experiencias, *p.formacion, *p.idiomas, *p.habilidades,
-                 *[d for d in (p.titular, p.resumen) if d]]
+                 *p.actividades, *[d for d in (p.titular, p.resumen) if d]]
         for d in datos:  # cada dato del esperado es una cita literal de su CV
             assert _plano(d.origen.fragmento) in textos[d.origen.cv_id], (c.name, d.origen.fragmento)
         for i in p.instrucciones_embebidas:
@@ -72,7 +72,7 @@ def test_el_esperado_de_perfil_no_lleva_rasgos_personales_pero_alguna_entrada_si
 
 def test_eval_perfil_simulado_pasa_al_100(tmp_path):
     r = correr_set("perfil", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 14 and r["adversarias"] == 1.0
+    assert r["aprobado"] and r["casos"] == 18 and r["adversarias"] == 1.0
     assert set(r["campos"]) >= {"cargos", "empresas", "fechas", "titulaciones", "idiomas",
                                 "sector", "familia", "pendientes", "sin_sensibles"}
     assert all(v == 1.0 for v in r["campos"].values()), r["campos"]
