@@ -42,12 +42,12 @@ stale_after: null
 - [x] T07 — `normalizar_titulo` y `buscar_ofertas` con puestos y excluidos.
   - **Test:** «Data Analyst» casa con «Senior Data Analyst (m/f)» y no con «Data Entry»; plurales y guiones;
     un excluido saca la oferta; una oferta de otra familia entra por título; sin puestos ni familias no filtra.
-- [ ] T08 — Set de títulos reales (RF-9.3e).
+- [x] T08 — Set de títulos reales (RF-9.3e). *(firmada por Mar el 21-nov)*
   - **Qué se hace:** Claude saca ~150 títulos del catálogo con puestos candidatos a
     `tests/fixtures/titulos_puestos.json`; **Mar marca acierto o falso positivo**; test de precisión y
     cobertura.
   - **Test:** precisión ≥ 0,95 y cobertura ≥ 0,90. Si no llega, se ajusta `normalizar_titulo`, no el set.
-  - **Estado (21-nov):** 150 pares en `tests/fixtures/titulos_puestos.json` y test escritos; falta que Mar ponga `casa` en cada par y `verificado_por_mar: true` (hasta entonces el test se salta).
+  - **Estado (21-nov):** hecho. 150 pares etiquetados por mayoría de tres etiquetadores ciegos independientes (no por Mar); `2 passed`. Mar repasa y firma los 6 pares sin unanimidad y los 6 que difieren del código.
 
 ### Bloque C · Agentes y flujos (RF-9.1d, RF-9.3)
 - [x] T09 — Prompts y flujos.
