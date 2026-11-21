@@ -40,27 +40,44 @@ function cabecera() {
 }
 
 // --- «Revisa esto»: una sola lista con lo que la oferta pide y no consta, y los avisos -----------------------------------
+// «Revisa esto» en tres grupos (RF-10.13): No consta en tu CV, Revisa y Dato dudoso. Un grupo vacío no sale, y sin
+// nada que revisar no hay panel. Las candidaturas antiguas, sin `tipo`, se ven en «Revisa».
+function grupoAvisos(titulo, hijos) {
+  const g = nodo("div", null, "grupo-avisos");
+  g.append(nodo("h4", titulo, "etiqueta-mono"));
+  const ul = nodo("ul", null, "lista");
+  ul.append(...hijos);
+  g.append(ul);
+  return g;
+}
+
+function avisoItem(a) {
+  const li = nodo("li", null, "tarjeta alerta");
+  li.append(nodo("strong", DOCUMENTOS[a.documento] || a.documento));
+  if (a.frase) li.append(nodo("blockquote", a.frase));
+  li.append(nodo("p", a.mensaje));
+  return li;
+}
+
 function revisaEsto() {
   const s = nodo("section", null, "panel");
   const hayAlgo = c.huecos.length > 0 || c.avisos.length > 0;
   if (!hayAlgo && c.preparacion !== "pendiente_de_ti") return s;
   s.append(nodo("h3", "Revisa esto", "subtitulo"));
-  const ul = nodo("ul", null, "lista");
-  for (const h of c.huecos) {
+  if (!hayAlgo) {
+    s.append(nodo("p", TEXTOS.revisaFalta, "tarjeta alerta"));
+    return s;
+  }
+  const de = (tipo) => c.avisos.filter((a) => (a.tipo || "revisa") === tipo);
+  if (c.huecos.length) {
     const li = nodo("li", null, "tarjeta");
-    li.append(nodo("strong", textoNoConsta(h.requisito)));
-    if (h.propuesta) li.append(nodo("p", h.propuesta, "suave"));
-    ul.append(li);
+    li.append(nodo("strong", textoNoConstaVarios(c.huecos.map((h) => h.requisito))));
+    const propuesta = c.huecos.find((h) => h.propuesta)?.propuesta;
+    if (propuesta) li.append(nodo("p", propuesta, "suave"));
+    s.append(grupoAvisos("No consta en tu CV", [li]));
   }
-  for (const a of c.avisos) {
-    const li = nodo("li", null, "tarjeta alerta");
-    li.append(nodo("strong", DOCUMENTOS[a.documento] || a.documento));
-    if (a.frase) li.append(nodo("blockquote", a.frase));
-    li.append(nodo("p", a.mensaje));
-    ul.append(li);
-  }
-  if (!hayAlgo) ul.append(nodo("li", TEXTOS.revisaFalta, "tarjeta alerta"));
-  s.append(ul);
+  if (de("revisa").length) s.append(grupoAvisos("Revisa", de("revisa").map(avisoItem)));
+  if (de("dudoso").length) s.append(grupoAvisos("Dato dudoso", de("dudoso").map(avisoItem)));
   return s;
 }
 
@@ -68,7 +85,7 @@ function revisaEsto() {
 function documento(titulo, clave) {
   const s = nodo("section");
   s.append(nodo("h3", titulo, "subtitulo"));
-  const hoja = cvBonito(c[clave]);
+  const hoja = clave === "carta_contenido" ? cartaBonita(c[clave]) : cvBonito(c[clave]);
   s.append(hoja);
   if (c.estado === "borrador") {
     const acciones = nodo("div", null, "fila");

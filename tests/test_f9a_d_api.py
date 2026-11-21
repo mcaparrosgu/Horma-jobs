@@ -118,7 +118,7 @@ def test_otra_usuaria_no_ve_lo_ajeno(app, motor_app, motor_migrador):
     hueco = a.get("/api/perfil/avisos").json()["huecos"][0]
     a.put("/api/perfil/avisos/visto", json={"clave": hueco["clave"], "huella": hueco["huella"]}, headers=ha)
     a.put("/api/perfil/longitud", json={"longitud": "mantener"}, headers=ha)
-    assert b.get("/api/perfil/avisos").json() == {"huecos": [], "avisos": [], "total": 0, "longitud": None}
+    assert b.get("/api/perfil/avisos").json() == {"huecos": [], "avisos": [], "grupos": [], "total": 0, "longitud": None}
 
 
 # --- T12 ------------------------------------------------------------------------------------------------

@@ -109,20 +109,20 @@ stale_after: null
 ### S7 · Correcciones tras la prueba (RF-10.3g, 10.4d, 10.5c, 10.6e, 10.8, 10.13, RF-6.4b)
 Rama `simplificacion-s7`. Sale de la prueba 2.3 de Mar (21-nov). Construcción con Sonnet, todas seguidas.
 - [x] T29 — Spec, plan y tareas de S7. *(Opus; firmadas por Mar el 21-nov)*
-- [ ] T30 — «Por resolver» con el desplegable «Avisos»: «Corregir»/«Añadir» y «Dar por visto».
+- [x] T30 — «Por resolver» con el desplegable «Avisos»: «Corregir»/«Añadir» y «Dar por visto».
   - **Test:** Perfil tiene `details` «Avisos» dentro de «Por resolver»; ningún texto dice «Está bien así».
-- [ ] T31 — Avisos agrupados en tres grupos, en la candidatura y en Perfil.
+- [x] T31 — Avisos agrupados en tres grupos, en la candidatura y en Perfil.
   - **Test:** 20 requisitos ausentes dan 1 aviso «No consta»; 4 experiencias sin cifras, 1 aviso con 4; «Dar por
     visto» del grupo marca las 4; una candidatura antigua sin `tipo` se ve en «Revisa»; sin avisos, no hay panel.
   - **Navegador:** Candidatura y Perfil a 1280 y 390 px, en claro y en oscuro.
-- [ ] T32 — Una sola barra: fuera el indicador de la cabecera; barra con % en Perfil al leer el CV.
+- [x] T32 — Una sola barra: fuera el indicador de la cabecera; barra con % en Perfil al leer el CV.
   - **Test:** ninguna página pinta `.indicador-avance`; Perfil usa `barraAvance` con `tipo=perfilar`.
-- [ ] T33 — Términos excluidos al final de «Qué buscas».
+- [x] T33 — Términos excluidos al final de «Qué buscas».
   - **Test:** en `ofertas.html`, `grupo-excluidos` va después de «Condiciones» y antes de «Guardar y buscar».
-- [ ] T34 — Diseño sobrio del PDF (CV y carta) y la carta como párrafos en «Ver».
+- [x] T34 — Diseño sobrio del PDF (CV y carta) y la carta como párrafos en «Ver».
   - **Test:** el PDF se abre; su texto extraído trae nombre, secciones y fechas en orden; la carta sin
     negritas; los PDF guardados de candidaturas antiguas se siguen sirviendo. Mar ve una muestra.
-- [ ] T35 — Carta que suena humana. *Gasta: avisar antes (~0,7-1,2 USD).*
+- [~] T35 — Carta que suena humana. *Gasta: avisar antes (~0,7-1,2 USD).*
   - **Qué se hace:** diagnóstico de la carta de la 2.3 (sin gasto); prompt reescrito con ejemplo; casos de carta
     en `evals/cv`.
   - **Test (simulado):** el prompt trae la estructura de RF-10.3g y el ejemplo cumple `verificar_trazabilidad`.
@@ -131,3 +131,4 @@ Rama `simplificacion-s7`. Sale de la prueba 2.3 de Mar (21-nov). Construcción c
   - **Navegador:** Perfil (vacío, leyendo, lleno), Ofertas, Candidaturas y Candidatura a 1280 y 390 px, en claro
     y en oscuro, mirando a propósito alineación y alturas.
 - [ ] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README), prueba de Mar y PR si lo pide.
+  - **Estado (21-nov):** T30-T34 hechas y con tests. T35: prompt, ejemplo, `estructura_carta` y casos 32-33 hechos; eval `cv` real: 31 casos (1,60 USD, parado por tope) + casos 32 y 33 de carta pasan en real (0,25 USD). T36: Perfil y Ofertas a 1280 px en claro revisados (h2 de panel sin margen superior; «Qué buscas» con espacio igual); falta 390 px (la ventana no baja de ancho), oscuro, Candidaturas y Candidatura.

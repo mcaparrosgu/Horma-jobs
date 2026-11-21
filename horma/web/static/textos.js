@@ -20,12 +20,11 @@ const MOTIVOS_PREGUNTA = [["descartada", "La descarto yo"], ["retirada", "La ret
 
 // Lo que la oferta pide y el perfil no tiene (RF-10.2c). «Hueco» queda para un periodo sin actividad.
 const textoNoConsta = (requisito) => `La oferta pide ${requisito} y no consta en tu perfil`;
-
-// Frase del indicador de avance de la cabecera (RF-10.8), según el tipo de tarea.
-const FRASES_AVANCE = {
-  perfilar: "Leyendo tu CV", clasificar_perfil: "Leyendo tu CV", analizar_estilo: "Analizando tu estilo",
-  recomendar: "Puntuando", puntuar_propias: "Puntuando", puntuar_una: "Puntuando",
-  leer_url: "Analizando la oferta", candidatura: "Preparando tu candidatura",
+// Todos los huecos de una oferta, en una sola línea (RF-10.13): «La oferta pide Python, SQL y AWS, y no constan…».
+const textoNoConstaVarios = (requisitos) => {
+  if (requisitos.length < 2) return requisitos.length ? textoNoConsta(requisitos[0]) : "";
+  const lista = `${requisitos.slice(0, -1).join(", ")} y ${requisitos[requisitos.length - 1]}`;
+  return `La oferta pide ${lista}, y no constan en tu perfil`;
 };
 
 const TEXTOS = {

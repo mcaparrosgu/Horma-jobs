@@ -33,11 +33,14 @@ def test_dos_columnas_a_1280_y_una_a_390():
 
 def test_por_resolver_junta_preguntas_huecos_y_avisos_con_dos_acciones():
     js = leer("perfil.js")
-    assert "preguntas.map(pregunta), ...items.map(avisoFila)" in js
-    assert js.count('"Está bien así"') == 2          # preguntas y avisos/huecos
+    assert "preguntas.map(pregunta)" in js and "items.map(avisoFila)" in js
+    assert js.count('"Dar por visto"') == 2          # preguntas y avisos/huecos
+    assert "Está bien así" not in js and "Está bien así" not in leer("perfil.html")
+    html = leer("perfil.html")                       # RF-10.5c: «Avisos» desplegable dentro de «Por resolver»
+    assert html.index('id="pendientes"') < html.index('id="avisos"') < html.index('id="lista-avisos"')
     for texto in ("Responder", "Añadir", "Corregir"):
         assert f'"{texto}"' in js, texto
-    for ya_no in ("Dar por visto", "No lo sé / descartar", "Añadir en tu perfil", "lista-avisos", "t-avisos"):
+    for ya_no in ("No lo sé / descartar", "Añadir en tu perfil", "t-avisos"):
         assert ya_no not in js and ya_no not in leer("perfil.html"), ya_no
 
 

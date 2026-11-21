@@ -49,33 +49,19 @@ def test_el_indicador_desaparece_al_terminar(app, motor_migrador):  # noqa: F811
     assert ana.get("/api/tareas/activas").json() == {"tareas": []}
 
 
-# --- T13 · cabecera -------------------------------------------------------------------------------------
-def test_la_guia_recoge_el_indicador_de_avance():
-    spec = (RAIZ / "specs" / "006-rediseno-2c" / "spec.md").read_text(encoding="utf-8")
-    assert "| **Indicador de avance**" in spec
+# --- T13 · una sola barra, en la pantalla de la acción (RF-10.8, reescrito en S7) -------------------------
+def test_ninguna_pagina_pinta_el_indicador_de_la_cabecera():
+    for archivo in ("comun.js", "estilo.css", "textos.js", "perfil.js", "ofertas.js", "candidatura.js"):
+        texto = leer(archivo)
+        assert "indicador-avance" not in texto and "indicadorAvance" not in texto, archivo
+    assert "FRASES_AVANCE" not in leer("textos.js")
 
 
-def test_el_indicador_es_un_componente_con_tokens_y_sin_colores_sueltos():
-    css = leer("estilo.css")
-    bloque = css[css.index("/* ── Indicador de avance"):]
-    assert ".indicador-avance" in bloque and "var(--tap)" in bloque
-    assert not re.search(r"#[0-9a-fA-F]{3,8}\b", bloque)
-
-
-def test_comun_pinta_el_indicador_en_todas_las_pantallas_con_role_status():
-    js = leer("comun.js")
-    assert "/api/tareas/activas" in js and "indicador-avance" in js
-    assert 'setAttribute("role", "status")' in js
-    assert "innerHTML" not in js
-    for pantalla in ("ofertas", "candidaturas", "candidatura", "perfil"):
-        assert 'src="/static/comun.js"' in leer(f"{pantalla}.html")
-
-
-def test_el_indicador_usa_frases_sin_palabras_prohibidas():
-    textos = leer("textos.js")
-    for frase in ("Leyendo tu CV", "Puntuando", "Analizando la oferta", "Preparando tu candidatura"):
-        assert frase in textos, frase
-    assert not PROHIBIDAS.search(textos)
+def test_perfil_usa_la_barra_con_porcentaje_al_leer_el_cv():
+    js = leer("perfil.js")
+    assert "/api/tareas/activas?tipo=perfilar" in js
+    assert 'barraAvance(estado, "Estamos leyendo tu CV").poner(progreso)' in js
+    assert "innerHTML" not in leer("comun.js")
 
 
 # --- T14 · subida al elegir el archivo ------------------------------------------------------------------

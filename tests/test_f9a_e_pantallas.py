@@ -31,7 +31,7 @@ def test_la_guia_recoge_los_dos_avisos_nuevos():
 def test_los_avisos_existen_con_tokens_y_sin_colores_sueltos():
     css = leer("estilo.css")
     bloque = css[css.index("/* ── Fase 9a"):]
-    for clase in (".aviso-accion", ".acciones-aviso", ".aviso-longitud", ".grupos-dos", ".terminos",
+    for clase in (".aviso-accion", ".acciones-aviso", ".aviso-longitud", ".terminos",
                   ".con-editar"):
         assert clase in bloque, clase
     assert not re.search(r"#[0-9a-fA-F]{3,8}\b", bloque)
@@ -65,7 +65,7 @@ def test_perfil_muestra_los_bloques_en_el_orden_de_rf_9_5():
 
 def test_perfil_avisos_con_sus_acciones_y_otras_actividades():
     js = leer("perfil.js")
-    for texto in ("Añadir", "Corregir", "Está bien así", "Mantener la longitud",
+    for texto in ("Añadir", "Corregir", "Dar por visto", "Mantener la longitud",
                   "Que Horma lo sintetice", "Otras actividades", "/api/perfil/avisos",
                   "/api/perfil/avisos/visto", "/api/perfil/longitud"):
         assert texto in js, texto

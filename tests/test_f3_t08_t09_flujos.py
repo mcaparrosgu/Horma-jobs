@@ -224,7 +224,7 @@ def test_lo_que_queda_pendiente_sale_como_avisos_estructurados_en_llano():
     assert e["preparacion"] == "pendiente_de_ti"
     avisos = e["avisos"]
     assert {a["documento"] for a in avisos} == {"cv", "carta"}
-    assert all(set(a) == {"documento", "frase", "mensaje"} for a in avisos)
+    assert all(set(a) == {"documento", "frase", "mensaje", "tipo"} for a in avisos)
     assert any(a["frase"] == "Directora en Hotel Ritz, 2010-2015" and a["documento"] == "cv" for a in avisos)
     assert any(a["frase"] == "Dirigí un hotel de cinco estrellas." for a in avisos)
     assert not any(p in a["mensaje"] for a in avisos for p in ("CV:", "Carta:", "juez", "inflado", "promesa"))

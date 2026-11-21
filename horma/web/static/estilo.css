@@ -296,6 +296,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .cv-hoja .cv-nombre{ font-family: var(--f-head); font-size: 1.5rem; margin: 0 0 0.5rem; }
 .cv-hoja .cv-seccion{ font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: var(--ls-label); text-transform: uppercase; margin: 1.25rem 0 0.5rem; padding-bottom: 0.25rem; border-bottom: var(--bw) solid var(--ink); }
 .cv-hoja .cv-linea{ margin: 0.35rem 0; }
+.carta-hoja .cv-linea{ margin: 0 0 0.75rem; line-height: 1.6; }
 .cv-hoja .cv-detalle{ display: block; color: var(--muted); font-size: 0.92rem; }
 .cv-hoja .cv-lista{ margin: 0.25rem 0 0.25rem 1.1rem; padding: 0; }
 .cv-texto{ white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 0.9rem; margin: 0.5rem 0 0; }
@@ -312,7 +313,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .columna-cerrada > summary{ min-height: var(--tap); box-sizing: border-box; line-height: 1.15; padding-top: calc(var(--tap) - 1.15em - 6px - var(--bw)); padding-bottom: 6px; margin-top: calc(var(--tap) * -1 + 1.15em + 6px + var(--bw)); margin-bottom: 0.5rem; align-items: flex-end; border-bottom: var(--bw) solid var(--line-strong); }
 .columna-cerrada > summary{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--muted); }
 .panel .lista > li:last-child, .panel .lista-editorial > li:last-child{ border-bottom: 0; }
-.panel > .subtitulo:first-child{ margin-top: 0; }
+.panel > .subtitulo:first-child, .panel > h2:first-child{ margin-top: 0; }
 .panel .lista > li:first-child, .panel .lista-editorial > li:first-child{ padding-top: 0; }
 .lista-editorial > li.tarjeta{ margin: 0; }
 .tablero{ display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; align-items: start; }
@@ -419,7 +420,6 @@ ol.pasos > li::before{ content: counter(paso); display: inline-grid; place-items
 .aviso-accion.aviso-longitud > .acciones-aviso > button{ flex: 1 1 14rem; max-width: 20rem; }
 
 /* «Qué buscas»: Puestos y Términos excluidos en dos columnas del mismo alto. */
-.grupos-dos{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; align-items: stretch; }
 fieldset.grupo.grupo-puestos{ display: flex; flex-direction: column; }
 fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 .casilla-puesto .dato-puesto{ display: block; color: var(--muted); font-size: 0.85rem; }
@@ -437,18 +437,10 @@ fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 .cv-hoja .cv-seccion.con-editar > button{ flex: none; min-height: var(--tap); text-transform: none; letter-spacing: normal; }
 
 @media (max-width: 900px){
-  .grupos-dos{ grid-template-columns: 1fr; }
   .aviso-accion > .acciones-aviso > button{ flex: 1 1 10rem; }
 }
 
-/* ── Indicador de avance (RF-10.8): frase y % de la tarea en marcha, en la cabecera ── */
-.indicador-avance{
-  display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 12px; min-width: 0;
-  border: var(--bw) solid var(--line-strong); color: var(--ink); text-decoration: none; white-space: nowrap;
-  font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase;
-  letter-spacing: var(--ls-label); font-weight: 600;
-}
-.indicador-avance:hover{ background: var(--surface-2); }
-@media (max-width: 900px){
-  .indicador-avance{ padding: 0 8px; overflow: hidden; text-overflow: ellipsis; max-width: 11rem; }
-}
+
+/* S7 · simetría de «Qué buscas»: mismo espacio entre todos los grupos (RF-6.4b) */
+#formulario-busca > fieldset.grupo{ margin: 0 0 16px; }
+#que-buscas > .suave{ margin-bottom: 16px; }

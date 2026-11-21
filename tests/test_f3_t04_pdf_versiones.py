@@ -29,7 +29,7 @@ def test_el_pdf_es_valido_y_conserva_el_texto_con_acentos():
     pdf = generar_pdf(MD, "CV de Ana")
     assert pdf.startswith(b"%PDF")
     texto = " ".join(_texto(pdf).split())
-    for esperado in ("Ana Inventada", "Educación", "FP Hostelería", "Señora Directora", "pedidos"):
+    for esperado in ("Ana Inventada", "EDUCACIÓN", "FP Hostelería", "Señora Directora", "pedidos"):
         assert esperado in texto, esperado
     assert "**" not in texto and "##" not in texto  # el Markdown no se cuela
 

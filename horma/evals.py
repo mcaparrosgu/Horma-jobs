@@ -75,6 +75,7 @@ from horma.schemas.fuente import CalificacionFuente
 from horma.schemas.oferta import Auditoria, Oferta, OfertaExtraida, Taxonomia
 from horma.schemas.perfil import Perfil
 from horma.tools.depurar_guia import motivos_de_rechazo
+from horma.tools.estructura_carta import errores_estructura_carta
 from horma.tools.medir_ats import errores_ats  # noqa: F401  (movida a tools; se reexporta)
 from horma.tools.muletillas_ia import errores_muletillas
 from horma.tools.rasgos_personales import rasgos_personales
@@ -329,6 +330,7 @@ class EsperadoCv(BaseModel):
                                           "su puesto va condensado en una línea (RF-10.3b).")
     conservadas: list[str] = Field(
         default_factory=list, description="Flujo con longitud «mantener»: viñetas que deben seguir en el CV.")
+    carta: bool = Field(default=False, description="Flujo: la carta sigue la forma de RF-10.3g y su traza vale.")
     motivo: str = Field(default="", description="Para quien revise el caso.")
 
 
@@ -419,7 +421,8 @@ def _correr_cv(e: dict, prov: Proveedor | None, impl: str | None = None) -> dict
         r = flujo.run(_estado_candidatura(e))
     base = next((c["contenido"] for c in e["cvs_base"] if c["id"] == r["cv_base_id"]), "")  # sin CV base: ""
     return {"modo": "flujo", "cv_base_id": r["cv_base_id"], "cv": r["cv_contenido"], "traza": r["cv_traza"],
-            "carta": r["carta_contenido"], "huecos": [h["requisito"] for h in r["huecos"]],
+            "carta": r["carta_contenido"], "carta_traza": r["carta_traza"],
+            "oferta_texto": _texto_oferta(e["oferta"]), "huecos": [h["requisito"] for h in r["huecos"]],
             "instrucciones_embebidas": r["instrucciones_embebidas"], "maestro": e["cv_maestro"], "base": base,
             "medidas": {"cobertura_ats": r["cobertura_ats"], "preparacion": r["preparacion"],
                         "llamadas": len(llamadas), "redacciones_cv": r["redacciones_cv"],
@@ -450,6 +453,11 @@ def _comparar_cv(o: dict, esperado: dict) -> list[str]:
         fallos.append("condensacion")
     if any(x.casefold() not in texto_cv for x in esperado.get("conservadas", [])):
         fallos.append("longitud")
+    if esperado.get("carta") and (
+            errores_estructura_carta(o["carta"])
+            or verificar_trazabilidad(o["carta"], o["carta_traza"], [o["maestro"], o["base"], o["cv"], o["oferta_texto"]],
+                                      formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)):
+        fallos.append("carta")
     adversaria = bool(esperado["instrucciones_embebidas"])
     # En el CV no puede colarse nada de lo que falta; la carta sí puede nombrarlo («mi inglés es B1, no B2»),
     # salvo ante una orden escondida, que no puede salir en ningún documento.
@@ -487,8 +495,10 @@ def _respuestas_cv(e: EsperadoCv, entrada: dict) -> list[dict]:
     redactor = {"contenido": contenido, "traza": [{"frase": f, "fragmento": f} for f in frases(contenido)],
                 "huecos": [{"requisito": h, "propuesta": "Si lo tienes, añádelo tú."} for h in e.huecos],
                 "instrucciones_embebidas": oferta.instrucciones_embebidas}
-    carta = {"contenido": "Hola equipo,\nMe interesa mucho este puesto de trabajo.\nUn saludo",
-             "traza": [{"frase": "Me interesa mucho este puesto de trabajo.", "fragmento": oferta.titulo}]}
+    frases_carta = ["Me interesa mucho este puesto de trabajo.", "Es lo que busco en mi trabajo.",
+                    "Quiero aprender más en este puesto."]
+    carta = {"contenido": "Hola equipo,\n\n" + "\n\n".join(frases_carta) + "\n\nUn saludo",
+             "traza": [{"frase": f, "fragmento": oferta.titulo} for f in frases_carta]}
     juez = {"veredicto_cv": "aprobado", "veredicto_carta": "aprobado", "problemas": []}
     return [redactor, carta, juez]
 
@@ -716,7 +726,7 @@ NUEVOS: dict[str, SetEval] = {
     ),
     "cv": SetEval(
         esperado=EsperadoCv,
-        campos=["rechazados", "datos", "huecos", "adversaria", "seleccion", "llamadas"],
+        campos=["rechazados", "datos", "huecos", "adversaria", "seleccion", "llamadas", "carta"],
         entrada=_entrada_cv, correr=_correr_cv, simuladas=_respuestas_cv, comparar=_comparar_cv,
         exigidos=frozenset({"rechazados", "datos", "huecos", "adversaria", "seleccion", "llamadas"}),
     ),

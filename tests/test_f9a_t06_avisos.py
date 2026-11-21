@@ -39,3 +39,26 @@ def test_la_huella_cambia_con_la_descripcion_y_la_clave_no():
     b = avisos_perfil(perfil("Atendía a todos los clientes"))[0]
     assert a.clave == b.clave and a.huella != b.huella
     assert avisos_perfil(perfil("Atendía clientes"))[0].huella == a.huella
+
+
+# --- S7 · T31: avisos agrupados (RF-10.13) ---------------------------------------------------------------
+def _como_dicts(avisos):
+    return [{"clave": a.clave, "huella": a.huella, "texto": a.texto, "seccion": a.seccion} for a in avisos]
+
+
+def test_cuatro_experiencias_sin_cifras_son_un_solo_aviso_con_cuatro_elementos():
+    from horma.tools.avisos_perfil import agrupar_avisos
+    p = Perfil.model_validate({
+        "resumen": {"valor": "R", "origen": ORIG},
+        "experiencias": [{"puesto": f"Puesto {i}", "empresa": f"Empresa {i}", "inicio": "2020",
+                          "descripcion": "Atendía clientes", "origen": ORIG} for i in range(4)]})
+    grupos = agrupar_avisos(_como_dicts(avisos_perfil(p)))
+    assert len(grupos) == 1 and grupos[0]["regla"] == "sin_cifras" and len(grupos[0]["elementos"]) == 4
+    assert {x["clave"] for x in grupos[0]["elementos"]} == {a.clave for a in avisos_perfil(p)}
+
+
+def test_un_aviso_suelto_no_se_agrupa_y_cada_regla_va_aparte():
+    from horma.tools.avisos_perfil import agrupar_avisos
+    grupos = agrupar_avisos(_como_dicts(avisos_perfil(perfil(descripcion=None, resumen=False))))
+    assert {g["regla"] for g in grupos} == {"sin_resumen", "sin_descripcion"}
+    assert all(len(g["elementos"]) == 1 for g in grupos)

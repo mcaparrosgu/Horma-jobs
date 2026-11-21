@@ -246,7 +246,7 @@ def test_editar_en_borrador_no_llama_al_modelo_y_recalcula_los_avisos(app, motor
     assert r.status_code == 200, r.text
     assert any(a["documento"] == "cv" and a["frase"] == "Dirigí un equipo de 30 personas"
                for a in r.json()["avisos"]) and r.json()["preparacion"] == "pendiente_de_ti"
-    assert all(set(a) == {"documento", "frase", "mensaje"} and ": " not in a["mensaje"][:12]
+    assert all(set(a) == {"documento", "frase", "mensaje", "tipo"} and ": " not in a["mensaje"][:12]
                for a in r.json()["avisos"])
     assert _fila(motor_app, u, cid)["cv_contenido"] == nuevo
     r = c.patch(f"/api/candidaturas/{cid}", headers=h, json={"cv_contenido": CV})

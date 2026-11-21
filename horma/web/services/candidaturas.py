@@ -273,4 +273,4 @@ def documento_pdf(engine: Engine, usuaria_id: int, candidatura_id: int, cual: st
         return guardado
     texto = c["cv_contenido"] if cual == "cv" else c["carta_contenido"]
     titulo = f"{'CV' if cual == 'cv' else 'Carta de presentación'} · {c['oferta_titulo'] or 'oferta'}"
-    return generar_pdf(texto, titulo)
+    return generar_pdf(texto, titulo, "cv" if cual == "cv" else "carta")

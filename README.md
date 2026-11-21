@@ -33,7 +33,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; cerrada el 20-nov: evals reales y pruebas manuales firmadas por Mar)
 8. **Portada y ofertas** (`008-portada-ofertas`, construida el 20-nov, T01-T21; prueba manual firmada por Mar el 21-nov; RF-8.5 provisional)
 9. **CV maestro y entrevista** (`009-cv-maestro-entrevista`, en dos partes; spec, plan y tareas de 9a firmados el 21-nov; 9a cerrada y firmada por Mar el 21-nov (T01-T19); 9b, después de la simplificación y solo con texto)
-10. **Simplificación** (`010-simplificacion`, spec, plan y tareas firmados por Mar el 21-nov; bloques S1-S7, un PR por bloque; S7, correcciones tras la prueba, firmada y por construir)
+10. **Simplificación** (`010-simplificacion`, spec, plan y tareas firmados por Mar el 21-nov; bloques S1-S7, un PR por bloque; S7, correcciones tras la prueba, firmada; construida salvo la medición real de la carta y el repaso en navegador)
 
 Cada fase se cierra con sus evals en verde.
 
