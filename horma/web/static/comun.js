@@ -4,11 +4,9 @@ const $ = (id) => document.getElementById(id);
 let csrf = null;
 
 const PESTANAS = [
-  ["Perfil", "/perfil"],
-  ["CV base", "/cv-base"],
-  ["Añadir oferta", "/anadir-oferta"],
-  ["Recomendadas", "/recomendadas"],
+  ["Ofertas", "/ofertas"],
   ["Candidaturas", "/candidaturas"],
+  ["Perfil", "/perfil"],
 ];
 
 function nodo(etiqueta, texto, clase) {
@@ -94,8 +92,8 @@ async function arrancar(activa) {
   }
   const yo = await r.json();
   csrf = yo.csrf;
-  const marca = document.querySelector(".cabecera .marca");   // RF-8.1d: la marca lleva a Recomendadas
-  if (marca) marca.href = "/recomendadas";
+  const marca = document.querySelector(".cabecera .marca");   // RF-10.1d: la marca lleva a Ofertas
+  if (marca) marca.href = "/ofertas";
   const nav = $("pestanas");
   for (const [etiqueta, ruta] of PESTANAS) {
     const activaAhora = ruta === activa;
@@ -237,7 +235,7 @@ function ventanaOriginal() {
 
 // Marca de las ofertas propias cuya dirección no es de ninguna fuente del banco de Horma (o que no tienen).
 function textoFuenteDesconocida(o) {
-  return o.url ? "Fuente no reconocida por Horma" : "Sin fuente indicada";
+  return o.url ? TEXTOS.fuenteDesconocida : TEXTOS.sinFuente;
 }
 
 // Da formato legible al texto de una oferta sin tocar su contenido: apartados en negrita, listas y párrafos.
@@ -294,7 +292,7 @@ async function verOriginal(id) {
   const o = r.datos;
   const v = ventanaOriginal();
   $("original-titulo").textContent = o.titulo || "Oferta sin título";
-  const origen = o.propia ? "Añadida por ti" : (o.atribucion || o.fuente || "Catálogo de Horma");
+  const origen = o.propia ? TEXTOS.anadidaPorTi : (o.atribucion || o.fuente || "Catálogo de Horma");
   const cuerpo = $("original-cuerpo");
   cuerpo.replaceChildren(
     nodo("p", [o.empresa || "Empresa sin indicar", origen].join(" · "), "suave"),

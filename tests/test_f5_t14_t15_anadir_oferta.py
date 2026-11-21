@@ -26,26 +26,30 @@ def leer(nombre):
     return (ESTATICOS / nombre).read_text(encoding="utf-8")
 
 
-def test_el_formulario_sale_de_la_portada_y_vive_en_su_pestana():
+def test_el_formulario_sale_de_la_portada_y_vive_en_la_ventana_de_ofertas():
     index, app_js = leer("index.html"), leer("catalogo.js")
     assert "<textarea" not in index and "Procesar oferta" not in index and 'id="formulario"' not in index
     assert "formulario" not in app_js
-    nueva = leer("anadir-oferta.html")
-    assert "<textarea" in nueva and 'id="formulario"' in nueva and 'id="pestanas"' in nueva
-    assert "/static/anadir-oferta.js" in nueva and "<script>" not in nueva
-    js = leer("anadir-oferta.js")
-    assert '"/ofertas"' in js and "POST" in js and "/api/recomendaciones" in js and "/api/ofertas/propias" in js  # noqa: E501
+    nueva = leer("ofertas.html")   # RF-10.6b: «+ Añadir oferta» abre una ventana
+    assert "<textarea" in nueva and 'id="formulario-texto"' in nueva and 'id="pestanas"' in nueva
+    assert '<dialog id="ventana-anadir" class="ventana"' in nueva and "+ Añadir oferta" in nueva
+    assert "/static/ofertas.js" in nueva and "<script>" not in nueva
+    js = leer("ofertas.js")
+    assert '"/ofertas"' in js and "POST" in js and "/api/recomendaciones" in js
     assert "innerHTML" not in js and "insertAdjacentHTML" not in js
+    assert not (ESTATICOS / "anadir-oferta.html").exists()
 
 
 @pytest.mark.bd
 def test_la_pagina_se_sirve_con_sesion_y_sin_ella_va_a_la_portada(motor_app, bd_limpia):
     app = crear_app(engine=motor_app, identidad=IdentidadFalsa())
     c = TestClient(app, follow_redirects=False)
-    assert c.get("/anadir-oferta").status_code == 302
+    assert c.get("/ofertas").status_code == 302
     assert c.get("/auth/google/callback?code=google-A").status_code == 302
-    r = c.get("/anadir-oferta")
-    assert r.status_code == 200 and '<script src="/static/anadir-oferta.js"' in r.text
+    r = c.get("/ofertas")
+    assert r.status_code == 200 and '<script src="/static/ofertas.js"' in r.text
+    r = c.get("/anadir-oferta")   # RF-10.1e: la dirección antigua lleva a la ventana abierta
+    assert r.status_code == 308 and r.headers["location"] == "/ofertas#anadir"
 
 
 @pytest.mark.bd
@@ -64,8 +68,8 @@ def test_ofertas_marca_como_propia_solo_a_su_duena(motor_app, bd_limpia, monkeyp
     prov = ProveedorSimulado([{"titulo": "Del catálogo"}, {"generica": False, "fraude": False}, TAX])
     while worker.procesar_una(motor_app, prov, resolver=None):
         pass
-    marcas = {o["id"]: o["propia"] for o in ana.get("/ofertas").json()}
+    marcas = {o["id"]: o["propia"] for o in ana.get("/api/ofertas").json()}
     assert sorted(marcas.values()) == [False, True]
-    assert [o["propia"] for o in berta.get("/ofertas").json()] == [False]
+    assert [o["propia"] for o in berta.get("/api/ofertas").json()] == [False]
     assert "Añadida por una usuaria" in leer("catalogo.js")
     config.ajustes.cache_clear()

@@ -27,20 +27,20 @@ stale_after: null
   - **Test:** Mar los lee y los firma (`verified`).
 
 ### S1 · Palabras y menú (RF-10.1, 10.2, 10.6, 10.7)
-- [ ] T03 — `textos.js` y test de palabras prohibidas.
+- [x] T03 — `textos.js` y test de palabras prohibidas.
   - **Test:** el test estático falla hoy («nota», «CV base», «Apify», «Mar»…) y pasa al final del bloque;
     `estadoVisible` da los seis estados de RF-10.7.
-- [ ] T04 — Menú de tres pestañas y Admin con `comun.js`.
+- [x] T04 — Menú de tres pestañas y Admin con `comun.js`.
   - **Test:** tres pestañas (más Admin solo para administradoras); `ingesta.js` y `costes.js` sin copias de
     utilidades.
-- [ ] T05 — Landing con Google directo y redirecciones.
+- [x] T05 — Landing con Google directo y redirecciones.
   - **Test:** `/entrar`, `/recomendadas`, `/anadir-oferta` → 308; `/` con sesión → `/ofertas` (o `/perfil`
     sin perfil); «Cómo empezar» en tres pasos y sin «CV base».
-- [ ] T06 — Ofertas: renombrado, ventana «Añadir oferta» y aviso sin perfil.
+- [x] T06 — Ofertas: renombrado, ventana «Añadir oferta» y aviso sin perfil.
   - **Test:** `/ofertas#anadir` abre la ventana; una oferta pegada aparece con «Añadida por ti»; sin perfil se
     ve el texto de RF-10.6c.
   - **Navegador:** Ofertas y la ventana a 1280 y 390 px, en claro y en oscuro.
-- [ ] T07 — Textos de la usuaria: compatibilidad, estado único, sin textos internos.
+- [x] T07 — Textos de la usuaria: compatibilidad, estado único, sin textos internos.
   - **Test:** el test de T03 en verde; Candidaturas y el detalle enseñan el estado visible.
   - **Navegador:** Candidaturas y Candidatura a 1280 y 390 px, en claro y en oscuro.
 - [ ] T08 — Cierre de S1: prueba manual de Mar y PR.

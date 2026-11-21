@@ -320,7 +320,7 @@ def test_el_catalogo_muestra_auditoria_y_taxonomia(cliente, motor_app):
         {"titulo": "Dev", "empresa": "Acme"},
         {"generica": False, "fraude": True, "senales_fraude": ["Paga 30 euros de alta."]}, TAX]),
         resolver=None)
-    o = cliente.get("/ofertas").json()[0]
+    o = cliente.get("/api/ofertas").json()[0]
     assert o["fraude"] is True and o["recomendable"] is False and o["familia"] == "desarrollo_software"
     assert o["motivos_fantasma"] == [] and o["frase_pedir_salario"]  # RF-7.2
 

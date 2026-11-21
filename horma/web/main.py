@@ -80,7 +80,7 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
         es_html = r.headers.get("content-type", "").startswith("text/html")
         if request.url.path.startswith("/static/") or es_html:
             # Revalidar siempre (ETag → 304): así un JS nuevo nunca convive con otro viejo en caché,
-            # y las páginas (/perfil, /recomendadas…) no se sirven desfasadas al pulsar el menú en el móvil.
+            # y las páginas (/perfil, /ofertas…) no se sirven desfasadas al pulsar el menú en el móvil.
             r.headers["Cache-Control"] = "no-cache"
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["Referrer-Policy"] = "no-referrer"

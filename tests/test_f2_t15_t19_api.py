@@ -245,7 +245,7 @@ def test_eliminar_un_cv_quita_fila_y_archivo_y_solo_el_propio(app, motor_app):
 def test_los_estaticos_se_revalidan_siempre(app):
     c, _, _ = entrar(app)
     assert c.get("/static/comun.js").headers["cache-control"] == "no-cache"
-    for ruta in ("/perfil", "/recomendadas", "/candidaturas"):      # las páginas, también (menú del móvil)
+    for ruta in ("/perfil", "/ofertas", "/candidaturas"):      # las páginas, también (menú del móvil)
         assert c.get(ruta).headers["cache-control"] == "no-cache", ruta
 
 

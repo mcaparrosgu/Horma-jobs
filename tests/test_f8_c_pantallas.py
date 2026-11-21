@@ -47,27 +47,23 @@ def test_la_barra_de_avance_es_un_progressbar_con_valor_y_texto():
     assert "${v} %" in js and "innerHTML" not in js
 
 
-# --- T08 · landing y /entrar ---------------------------------------------------------------------------
-def test_la_landing_dice_lo_que_hace_horma_y_lleva_a_entrar():
+# --- T08 · landing (spec 010, RF-10.1: «Continuar con Google» directo, sin pantalla /entrar) -------------
+def test_la_landing_dice_lo_que_hace_horma_y_lleva_directo_a_google():
     html = leer("index.html")
-    assert html.count('href="/entrar"') == 3  # «Entrar», «Crear cuenta» arriba y «Crear cuenta» al final
-    assert ">Crear cuenta<" in html and ">Entrar<" in html
+    assert html.count('href="/auth/google/login"') == 2   # arriba a la derecha y al final de la página
+    assert html.count(">Continuar con Google<") == 2 and 'href="/entrar"' not in html
     for frase in ("Ofertas que encajan contigo, y tu CV listo para cada una.", "Ofertas revisadas",
                   "Compatibilidad explicada", "También las que encuentras tú", "CV y carta a medida",
-                  "Tú decides", "Crea tu cuenta con Google", "Sube tu CV", "Mira tus ofertas recomendadas"):
+                  "Tú decides", "Entra con Google", "Sube tu CV", "Mira tus ofertas y prepara tu candidatura"):  # noqa: E501
         assert frase in html
     assert "<script>" not in html and "style=" not in html
     assert not PROHIBIDAS.search(re.sub(r"<[^>]+>", " ", html))
 
 
-def test_entrar_tiene_el_texto_y_el_boton_de_google():
-    html = leer("entrar.html")
-    assert "Entra en Horma" in html and "Usa tu cuenta de Google. Si es la primera vez, se crea tu cuenta." in html  # noqa: E501
-    assert 'href="/auth/google/login"' in html and "Continuar con Google" in html
-    assert not PROHIBIDAS.search(re.sub(r"<[^>]+>", " ", html))
-    for archivo in ("index.html", "entrar.html"):  # RF-6.9: tokens antes que estilo, y el tema
-        h = leer(archivo)
-        assert h.index("tokens.css") < h.index("estilo.css") and "tema.js" in h
+def test_la_landing_enlaza_tokens_antes_que_estilo_y_el_tema():
+    h = leer("index.html")   # RF-6.9
+    assert h.index("tokens.css") < h.index("estilo.css") and "tema.js" in h
+    assert not (ESTATICOS / "entrar.html").exists()
 
 
 class IdentidadFalsa:
@@ -106,24 +102,22 @@ def dar_perfil(motor_app, motor_migrador, sub="google-A"):
 
 
 @pytest.mark.bd
-def test_sin_sesion_la_raiz_es_la_landing_y_entrar_la_pantalla_de_entrada(app):
+def test_sin_sesion_la_raiz_es_la_landing_y_entrar_redirige_a_ella(app):
     c = TestClient(app, follow_redirects=False)
     r = c.get("/")
-    assert r.status_code == 200 and "Crear cuenta" in r.text and "Ofertas que encajan contigo" in r.text
+    assert r.status_code == 200 and "Continuar con Google" in r.text and "Ofertas que encajan contigo" in r.text  # noqa: E501
     r = c.get("/entrar")
-    assert r.status_code == 200 and "Continuar con Google" in r.text
+    assert r.status_code == 308 and r.headers["location"] == "/"
 
 
 @pytest.mark.bd
-def test_con_sesion_y_sin_perfil_va_a_perfil_y_con_perfil_a_recomendadas(app, motor_app, motor_migrador):
+def test_con_sesion_y_sin_perfil_va_a_perfil_y_con_perfil_a_ofertas(app, motor_app, motor_migrador):
     c = entrar(app)
-    for ruta in ("/", "/entrar"):
-        r = c.get(ruta)
-        assert r.status_code == 302 and r.headers["location"] == "/perfil"
+    r = c.get("/")
+    assert r.status_code == 302 and r.headers["location"] == "/perfil"
     dar_perfil(motor_app, motor_migrador)
-    for ruta in ("/", "/entrar"):
-        r = c.get(ruta)
-        assert r.status_code == 302 and r.headers["location"] == "/recomendadas"
+    r = c.get("/")
+    assert r.status_code == 302 and r.headers["location"] == "/ofertas"
 
 
 @pytest.mark.bd
@@ -134,12 +128,12 @@ def test_el_callback_de_google_vuelve_a_la_raiz_que_decide(app):
 
 
 # --- T09 · pestañas sin Preferencias --------------------------------------------------------------------
-def test_pestanas_son_cinco_y_la_marca_lleva_a_recomendadas():
+def test_pestanas_son_tres_y_la_marca_lleva_a_ofertas():
     js = leer("comun.js")
     bloque = js[js.index("const PESTANAS"):js.index("];", js.index("const PESTANAS"))]
     nombres = re.findall(r'\["([^"]+)", "/[^"]+"\]', bloque)
-    assert nombres == ["Perfil", "CV base", "Añadir oferta", "Recomendadas", "Candidaturas"]
-    assert 'marca.href = "/recomendadas"' in js
+    assert nombres == ["Ofertas", "Candidaturas", "Perfil"]
+    assert 'marca.href = "/ofertas"' in js
 
 
 @pytest.mark.bd
@@ -176,8 +170,8 @@ def test_las_tres_pantallas_de_admin_llevan_las_tres_subpestanas():
 
 
 # --- T11 · «Qué buscas» ---------------------------------------------------------------------------------
-def test_que_buscas_es_un_panel_de_recomendadas_con_guardar_y_buscar():
-    html, js = leer("recomendadas.html"), leer("recomendadas.js")
+def test_que_buscas_es_un_panel_de_ofertas_con_guardar_y_buscar():
+    html, js = leer("ofertas.html"), leer("ofertas.js")
     assert '<details id="que-buscas"' in html and "Guardar y buscar" in html
     for clave in ('id="solo-remoto"', 'id="solo-salario"', 'id="sueldo-minimo"', 'id="grupos"'):
         assert clave in html
@@ -190,7 +184,7 @@ def test_que_buscas_es_un_panel_de_recomendadas_con_guardar_y_buscar():
 
 # --- T12 · vista en el navegador ------------------------------------------------------------------------
 def test_cambiar_la_vista_no_hace_ninguna_peticion_y_el_almacenamiento_va_con_try_catch():
-    js = leer("recomendadas.js")
+    js = leer("ofertas.js")
     for nombre in ("function leerCamposVista", "function pintarVista", "function pintarLista", "function ordenar"):  # noqa: E501
         i = js.index(nombre)
         cuerpo = js[i:js.index("\n}\n", i)]
@@ -201,23 +195,22 @@ def test_cambiar_la_vista_no_hace_ninguna_peticion_y_el_almacenamiento_va_con_tr
         assert "try {" in cuerpo and "catch" in cuerpo and "localStorage" in cuerpo, nombre
     assert 'VISTA_POR_DEFECTO = { min: 40, max: 100, orden: "recientes", estado: "nuevas" }' in js
     assert 'for (const id of ["nota-min", "nota-max", "orden", "estado"])' in js
-    html = leer("recomendadas.html")
-    for texto in ("Nota mínima", "Nota máxima", "Ordenar por", "Mostrar"):
+    html = leer("ofertas.html")
+    for texto in ("Compatibilidad mínima", "Compatibilidad máxima", "Ordenar por", "Mostrar"):
         assert texto in html
     assert "Nuevas" in js and "Con candidatura" in js and "Descartadas" in js
 
 
 # --- T13 · candidatura y descartar ----------------------------------------------------------------------
 def test_estado_de_candidatura_descartar_deshacer_y_recuperar():
-    js = leer("recomendadas.js")
+    js = leer("ofertas.js")
     assert "Ver candidatura" in js and "Descartar" in js and "Deshacer" in js and "Recuperar" in js
     # con candidatura abierta no hay «Descartar» ni «Preparar candidatura»
     assert 'if (o.candidatura && o.candidatura.estado !== "cerrada") return null;' in js
     assert 'c && c.estado !== "cerrada"' in js
     assert "Oferta descartada. " in js and "/api/descartes/" in js
-    for estado in ("Borrador", "Aprobada", "Enviada", "Entrevista", "Cerrada"):
-        assert estado in js
-    assert 'role="status"' in leer("recomendadas.html")
+    assert "estadoVisible(o.candidatura.estado, o.candidatura.preparacion)" in js   # RF-10.7: un solo estado
+    assert 'role="status"' in leer("ofertas.html")
 
 
 # --- T14 · Ver oferta original --------------------------------------------------------------------------
@@ -229,24 +222,26 @@ def test_la_ventana_de_la_oferta_original_pinta_con_textcontent():
     assert "Abrir en la web de origen" in bloque and "if (urlSegura(o.url))" in bloque
     assert 'a.rel = "noopener noreferrer"' in bloque and 'a.target = "_blank"' in bloque
     assert "disparador.focus()" in bloque  # el foco vuelve al botón al cerrar (Esc cierra el diálogo nativo)
-    assert "No consta fecha de publicación" in bloque and "Añadida por ti" in bloque
+    assert "No consta fecha de publicación" in bloque and "TEXTOS.anadidaPorTi" in bloque
     assert "innerHTML" not in js[js.index("function textoBonito"):js.index("async function verOriginal")]
     assert re.search(r"\.apartado-original\{[^}]*font-weight: 600", leer("estilo.css"))
 
 
-def test_ver_oferta_original_esta_en_recomendadas_candidatura_catalogo_y_anadir_oferta():
-    for archivo in ("recomendadas.js", "candidatura.js", "catalogo.js", "anadir-oferta.js"):
+def test_ver_oferta_original_esta_en_ofertas_candidatura_y_catalogo():
+    for archivo in ("ofertas.js", "candidatura.js", "catalogo.js"):
         assert "verOriginal(" in leer(archivo), archivo
         assert "Ver oferta original" in leer(archivo), archivo
 
 
 # --- T19 · pantallas con avance -------------------------------------------------------------------------
-def test_recomendadas_ya_no_tiene_boton_recomendar_ni_limite_de_sondeos():
-    html, js = leer("recomendadas.html"), leer("recomendadas.js")
+def test_ofertas_ya_no_tiene_boton_recomendar_ni_limite_de_sondeos():
+    html, js = leer("ofertas.html"), leer("ofertas.js")
     assert 'id="recomendar"' not in html and ">Recomendar<" not in html
     assert "MAX_PUNTUANDO" not in js and "sondeos" not in js
-    assert 'id="avance"' in html and "barraAvance($(\"avance\"), \"Puntuando ofertas\")" in js
-    assert TEXTO_TOPE in js and TEXTO_SUELTAS in js
+    assert 'id="avance"' in html and "barraAvance($(\"avance\"), \"Calculando la compatibilidad de las ofertas\")" in js  # noqa: E501
+    textos = leer("textos.js")   # RF-10.2e: los textos, en un solo archivo
+    assert TEXTO_TOPE in textos and TEXTO_SUELTAS in textos
+    assert "TEXTOS.presupuesto" in js and "TEXTOS.sueltas" in js
 
 
 TEXTO_TOPE = "Hoy ya hemos puntuado todo lo posible. Mañana seguimos con el resto."
@@ -254,25 +249,24 @@ TEXTO_SUELTAS = "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir."
 
 
 def test_al_cargar_con_una_tarea_activa_la_barra_retoma_su_valor_y_al_terminar_desaparece():
-    js = leer("recomendadas.js")
+    js = leer("ofertas.js")
     assert '"/api/tareas/activas?tipo=recomendar"' in js and "seguirPuntuacion(r.datos.tareas[0].id)" in js
     assert 'lanzarPuntuacion("abrir")' in js
     assert "barra.quitar()" in js and "barra.poner(p)" in js
     comun = leer("comun.js")
     assert "SONDEO_TAREA_MS = 3000" in comun and "function seguirTarea" in comun
     assert "t.estado === \"pendiente\" || t.estado === \"en_curso\"" in comun  # sin límite de sondeos
-    assert "frasePorError" in js and "Lo ya puntuado se conserva." in js  # RF-8.7d
+    assert "frasePorError" in js and "Lo ya calculado se conserva." in leer("textos.js")  # RF-8.7d
 
 
 def test_anadir_oferta_y_candidatura_llevan_su_barra():
-    assert "Analizando la oferta" in leer("anadir-oferta.js") and 'id="lectura-url"' in leer("anadir-oferta.html")  # noqa: E501
+    assert "Analizando la oferta" in leer("ofertas.js") and 'id="lectura-url"' in leer("ofertas.html")
     cand = leer("candidatura.js")
     assert "Preparando tu CV y tu carta" in cand and "/api/tareas/activas?tipo=candidatura" in cand
-    assert '"/api/ofertas/propias"' in leer("anadir-oferta.js")
 
 
 def test_ningun_texto_nuevo_dice_match_ats_ni_trazabilidad():
-    for archivo in ("recomendadas.html", "recomendadas.js", "catalogo.html", "catalogo.js", "index.html", "entrar.html"):  # noqa: E501
+    for archivo in ("ofertas.html", "ofertas.js", "catalogo.html", "catalogo.js", "index.html"):
         textos = re.findall(r'"([^"\n]{4,})"|>([^<>\n]{4,})<', leer(archivo))
         for a, b in textos:
             t = a or b

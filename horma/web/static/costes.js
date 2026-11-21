@@ -1,13 +1,4 @@
 // Pantalla de costes. Todo lo que viene de la API se pinta con textContent: nunca como HTML.
-const $ = (id) => document.getElementById(id);
-
-function nodo(etiqueta, texto, clase) {
-  const el = document.createElement(etiqueta);
-  if (texto !== undefined && texto !== null) el.textContent = texto;
-  if (clase) el.className = clase;
-  return el;
-}
-
 const usd = (n) => `${Number(n).toFixed(4)} USD`;
 const porcentaje = (n) => `${(Number(n) * 100).toFixed(1)} %`;
 const entero = (n) => Number(n).toLocaleString("es-ES");
@@ -90,13 +81,7 @@ function pintar(r) {
 }
 
 async function cargar() {
-  const sesion = await fetch("/api/yo");
-  if (sesion.status === 401) { location.href = "/"; return; }
-  const csrf = (await sesion.json()).csrf;
-  $("salir").addEventListener("click", async () => {
-    await fetch("/auth/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });
-    location.href = "/";
-  });
+  if (!(await arrancarAdmin())) return;
   const r = await fetch("/api/costes");
   if (!r.ok) {
     $("aviso").className = "error";

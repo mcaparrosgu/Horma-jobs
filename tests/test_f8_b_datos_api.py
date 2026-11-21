@@ -160,10 +160,10 @@ def test_el_catalogo_solo_lo_ve_una_administradora(app, motor_migrador):
     ana, _ = entrar(app, "google-A")
     admin, _ = entrar(app, ADMIN)
     oferta(motor_migrador)
-    assert ana.get("/ofertas").status_code == 403
-    assert ana.get("/ofertas/total").status_code == 403
-    assert len(admin.get("/ofertas").json()) == 1
-    assert admin.get("/ofertas/total").json()["total"] == 1
+    assert ana.get("/api/ofertas").status_code == 403
+    assert ana.get("/api/ofertas/total").status_code == 403
+    assert len(admin.get("/api/ofertas").json()) == 1
+    assert admin.get("/api/ofertas/total").json()["total"] == 1
 
 
 def test_propias_solo_las_suyas_y_con_avance(app, motor_migrador):
@@ -243,7 +243,8 @@ def test_el_listado_trae_la_candidatura_abierta_o_la_ultima_cerrada(app, motor_m
     viva = candidatura(motor_migrador, u, ambas, "borrador")
     r = por_id(ana)
     assert r[sin]["candidatura"] is None
-    assert r[abierta]["candidatura"] == {"id": ca, "estado": "enviada", "motivo_cierre": None}
+    assert r[abierta]["candidatura"]["id"] == ca and r[abierta]["candidatura"]["estado"] == "enviada"
+    assert r[abierta]["candidatura"]["motivo_cierre"] is None and "preparacion" in r[abierta]["candidatura"]
     assert r[cerrada]["candidatura"]["estado"] == "cerrada"
     assert r[cerrada]["candidatura"]["motivo_cierre"] == "rechazo"
     assert r[ambas]["candidatura"]["id"] == viva  # la abierta gana a la cerrada

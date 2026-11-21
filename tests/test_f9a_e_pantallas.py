@@ -40,7 +40,7 @@ def test_los_avisos_existen_con_tokens_y_sin_colores_sueltos():
 
 # --- T15 · «Qué buscas» ---------------------------------------------------------------------------------
 def test_que_buscas_separa_area_puestos_y_terminos_excluidos():
-    html, js, comun = leer("recomendadas.html"), leer("recomendadas.js"), leer("comun.js")
+    html, js, comun = leer("ofertas.html"), leer("ofertas.js"), leer("comun.js")
     assert '["familias", "Área"]' in comun
     for id_ in ("casillas-puestos", "nuevo-puesto", "anadir-puesto", "lista-excluidos", "nuevo-excluido",
                 "anadir-excluido"):
@@ -50,8 +50,8 @@ def test_que_buscas_separa_area_puestos_y_terminos_excluidos():
     assert "innerHTML" not in js
 
 
-def test_recomendadas_sin_palabras_prohibidas():
-    assert not PROHIBIDAS.search(re.sub(r"<[^>]+>", " ", leer("recomendadas.html")))
+def test_ofertas_sin_palabras_prohibidas():
+    assert not PROHIBIDAS.search(re.sub(r"<[^>]+>", " ", leer("ofertas.html")))
 
 
 # --- T16 · Perfil: orden y avisos -----------------------------------------------------------------------
@@ -60,12 +60,12 @@ def test_perfil_muestra_los_bloques_en_el_orden_de_rf_9_5():
     orden = [html.index(x) for x in ('id="t-cv"', 'id="mi-perfil"', 'id="pendientes"', 'id="maestro"',
                                      'id="estilo"')]
     assert orden == sorted(orden)
-    assert "Preguntas pendientes y avisos" in html and "Tu CV maestro" in html
+    assert "Preguntas pendientes y avisos" in html and "Tu CV completo" in html
 
 
 def test_perfil_avisos_con_sus_acciones_y_otras_actividades():
     js = leer("perfil.js")
-    for texto in ("Añadir en Mi perfil", "Corregir", "Dar por visto", "Mantener la longitud",
+    for texto in ("Añadir en tu perfil", "Corregir", "Dar por visto", "Mantener la longitud",
                   "Que Horma lo sintetice", "Otras actividades", "/api/perfil/avisos",
                   "/api/perfil/avisos/visto", "/api/perfil/longitud"):
         assert texto in js, texto
@@ -76,7 +76,7 @@ def test_perfil_avisos_con_sus_acciones_y_otras_actividades():
 # --- T17 · Tu CV maestro --------------------------------------------------------------------------------
 def test_cv_maestro_con_frase_fecha_version_editar_y_sin_innerhtml():
     html, js = leer("perfil.html"), leer("perfil.js")
-    assert "Es el texto del que Horma saca tus CV y cartas. Se cambia desde Mi perfil." in html
+    assert "Es el texto del que Horma saca tus CV y cartas. Se cambia desde tu perfil." in html
     assert "cvBonito(maestro)" in js and "Editar" in js and "Versión ${perfil.version}" in js
     assert "innerHTML" not in js and "contenteditable" not in html
 

@@ -49,7 +49,7 @@ def entrar(c, sub="google-A") -> str:
 
 # --- T12: acceso, sesión, CSRF ---------------------------------------------------------------
 def test_sin_sesion_la_api_responde_401(cliente):
-    assert cliente.get("/ofertas").status_code == 401
+    assert cliente.get("/api/ofertas").status_code == 401
     assert cliente.post("/ofertas", json={"texto": "x"}).status_code == 401
     assert cliente.get("/api/yo").status_code == 401
 
@@ -94,18 +94,18 @@ def test_el_catalogo_es_comun_y_lo_pegado_por_una_usuaria_es_solo_suyo(cliente, 
     servicio.recibir(motor_app, "Oferta del catálogo")
     csrf_a = entrar(cliente, "google-A")
     cliente.post("/ofertas", json={"texto": TEXTO}, headers={"X-CSRF-Token": csrf_a})
-    assert len(cliente.get("/ofertas").json()) == 2
+    assert len(cliente.get("/api/ofertas").json()) == 2
     cliente.post("/auth/logout", headers={"X-CSRF-Token": csrf_a})
     entrar(cliente, "google-B")
-    assert len(cliente.get("/ofertas").json()) == 1
+    assert len(cliente.get("/api/ofertas").json()) == 1
 
 
 def test_el_contador_cuenta_todas_las_ofertas_por_estado(cliente):
-    assert cliente.get("/ofertas/total").status_code == 401
+    assert cliente.get("/api/ofertas/total").status_code == 401
     csrf = entrar(cliente)
-    assert cliente.get("/ofertas/total").json() == {"total": 0, "por_estado": {}}
+    assert cliente.get("/api/ofertas/total").json() == {"total": 0, "por_estado": {}}
     cliente.post("/ofertas", json={"texto": TEXTO}, headers={"X-CSRF-Token": csrf})
-    assert cliente.get("/ofertas/total").json() == {"total": 1, "por_estado": {"pendiente": 1}}
+    assert cliente.get("/api/ofertas/total").json() == {"total": 1, "por_estado": {"pendiente": 1}}
 
 
 # --- T14: web plana, CSP y escape ------------------------------------------------------------
@@ -125,7 +125,7 @@ def test_el_js_pinta_siempre_con_textcontent():
     assert "innerHTML" not in js and "insertAdjacentHTML" not in js and "eval(" not in js
     assert "textContent" in js
     html = (static / "catalogo.html").read_text(encoding="utf-8")
-    for permitido in ('<script src="/static/tema.js"', '<script src="/static/comun.js"', '<script src="/static/catalogo.js"', '<script src="/static/pwa.js"'):  # solo externos  # noqa: E501
+    for permitido in ('<script src="/static/tema.js"', '<script src="/static/textos.js"', '<script src="/static/comun.js"', '<script src="/static/catalogo.js"', '<script src="/static/pwa.js"'):  # solo externos  # noqa: E501
         html = html.replace(permitido, "")
     assert "<script" not in html
 
@@ -135,12 +135,12 @@ def test_camino_completo_oferta_pegada_worker_y_lista(cliente, motor_app):
     csrf = entrar(cliente)
     r = cliente.post("/ofertas", json={"texto": TEXTO}, headers={"X-CSRF-Token": csrf})
     assert r.status_code == 201 and r.json()["estado"] == "pendiente"
-    assert cliente.get("/ofertas").json()[0]["estado"] == "pendiente"
+    assert cliente.get("/api/ofertas").json()[0]["estado"] == "pendiente"
 
     assert worker.procesar_una(motor_app, ProveedorSimulado([OFERTA, AUDITOR, TAX]),
                                resolver=None) == "hecha"
 
-    oferta = cliente.get("/ofertas").json()[0]
+    oferta = cliente.get("/api/ofertas").json()[0]
     assert oferta["estado"] == "procesada" and oferta["titulo"] == "Camarera"
     assert oferta["empresa"] == "Bar La Marina" and oferta["salario_minimo"] == 16000
     assert oferta["sector"] == "hosteleria_turismo" and oferta["salario_publicado"] is True
@@ -152,6 +152,6 @@ def test_una_oferta_con_script_se_guarda_como_texto_y_no_rompe_nada(cliente, mot
                  headers={"X-CSRF-Token": csrf})
     worker.procesar_una(motor_app, ProveedorSimulado(
         [{"titulo": "<script>alert(1)</script>"}, AUDITOR, TAX]), resolver=None)
-    r = cliente.get("/ofertas")
+    r = cliente.get("/api/ofertas")
     assert r.headers["content-type"].startswith("application/json")
     assert r.json()[0]["titulo"] == "<script>alert(1)</script>"  # dato inerte; el JS lo pinta como texto

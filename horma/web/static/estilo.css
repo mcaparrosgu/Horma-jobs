@@ -170,6 +170,8 @@ fieldset.grupo.panel > label:not(.casilla){ align-self: stretch; display: flex; 
 fieldset.grupo.panel > label:not(.casilla) > :is(input, select){ margin-top: auto; }
 
 .fila-url{ margin-top: 0; }
+.fila-titulo{ justify-content: space-between; align-items: center; margin: 40px 0 16px; }
+.fila-titulo .titulo-pantalla{ margin: 0; }
 .fila-url input{ flex: 1 1 0; min-width: 0; }
 
 /* ── Plegables y chevrón ── */
@@ -346,6 +348,8 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   .pestana{ flex: 1 0 auto; justify-content: center; white-space: nowrap; min-height: 48px; padding: 0 14px; font-size: 14px; }
   .persona{ display: none; }
   h1, .titulo-pantalla{ font-size: clamp(30px, 9.5vw, var(--fs-h1-m)); margin-top: 24px; overflow-wrap: anywhere; }
+  .fila-titulo{ margin-top: 24px; }
+  .fila-titulo .titulo-pantalla{ margin: 0; }
   .panel{ padding: 16px; }
   form.panel.fila, fieldset.grupo.panel{ grid-template-columns: 1fr; }
   input:not([type="checkbox"]), select, textarea{ font-size: 16px; }

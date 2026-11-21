@@ -51,11 +51,11 @@
     </section>
 
     <section id="mi-perfil" class="panel" aria-labelledby="t-perfil">
-      <h2 id="t-perfil" class="etiqueta-mono">Mi perfil <span id="version" class="estado"></span></h2>
+      <h2 id="t-perfil" class="etiqueta-mono">Tu perfil <span id="version" class="estado"></span></h2>
       <div id="estado-perfil"></div>
       <div id="datos" hidden>
         <p id="aviso-edicion"><strong>Horma escribe tus CV y cartas con lo que ves aquí.</strong> Si corriges algo, Horma usará tu corrección aunque tu CV original diga otra cosa. Tu CV original no se toca: se queda tal como lo subiste.</p>
-        <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y los CV base y recomendaciones anteriores quedan «desfasados».</p>
+        <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y las candidaturas y compatibilidades anteriores quedan «desfasados».</p>
         <div id="perfil"></div>
       </div>
     </section>
@@ -69,8 +69,8 @@
     </details>
 
     <details id="maestro" class="panel-desplegado" hidden>
-      <summary>Tu CV maestro</summary>
-      <p class="suave">Es el texto del que Horma saca tus CV y cartas. Se cambia desde Mi perfil.</p>
+      <summary>Tu CV completo</summary>
+      <p class="suave">Es el texto del que Horma saca tus CV y cartas. Se cambia desde tu perfil.</p>
       <p id="maestro-meta" class="suave maestro-meta"></p>
       <div id="maestro-doc"></div>
     </details>
@@ -90,6 +90,7 @@
     <header class="fila"><h3 id="visor-titulo" class="titulo-oferta"></h3><button id="visor-cerrar" class="secundario" type="button">Cerrar</button></header>
     <div id="visor-cuerpo" class="ventana-cuerpo"></div>
   </dialog>
+  <script src="/static/textos.js"></script>
   <script src="/static/comun.js"></script>
   <script src="/static/perfil.js"></script>
   <script src="/static/pwa.js"></script>

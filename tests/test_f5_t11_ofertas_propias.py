@@ -68,8 +68,8 @@ def test_la_oferta_de_ana_no_la_ve_berta_en_ningun_sitio(app, motor_app, motor_m
     berta, _ = _entrar(app, "google-B")
     propia = _pegar(ana, ha, motor_app)
     catalogo = _del_catalogo(motor_app, "Otra oferta del catálogo")
-    assert propia in {o["id"] for o in ana.get("/ofertas").json()}
-    ids_de_berta = {o["id"] for o in berta.get("/ofertas").json()}
+    assert propia in {o["id"] for o in ana.get("/api/ofertas").json()}
+    ids_de_berta = {o["id"] for o in berta.get("/api/ofertas").json()}
     assert propia not in ids_de_berta and catalogo in ids_de_berta           # /ofertas
     assert propia not in {o["id"] for o in berta.get("/api/recomendaciones").json()["recomendaciones"]}
     with sesion_de(motor_app, _usuaria(motor_migrador, "google-B")) as s:     # por id, en la base
@@ -84,8 +84,8 @@ def test_el_catalogo_comun_lo_ven_las_dos(app, motor_app):
     ana, _ = _entrar(app, "google-A")
     berta, _ = _entrar(app, "google-B")
     oid = _del_catalogo(motor_app)
-    assert oid in {o["id"] for o in ana.get("/ofertas").json()}
-    assert oid in {o["id"] for o in berta.get("/ofertas").json()}
+    assert oid in {o["id"] for o in ana.get("/api/ofertas").json()}
+    assert oid in {o["id"] for o in berta.get("/api/ofertas").json()}
 
 
 def test_dos_usuarias_con_la_misma_oferta_tienen_cada_una_la_suya_y_ninguna_es_fantasma(

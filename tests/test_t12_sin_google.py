@@ -16,6 +16,6 @@ def test_sin_credenciales_de_google_la_app_arranca_y_el_login_da_503(monkeypatch
         assert c.get("/").status_code == 200
         assert c.get("/auth/google/login").status_code == 503
         assert c.get("/auth/google/callback?code=x").status_code == 503
-        assert c.get("/ofertas").status_code == 401
+        assert c.get("/api/ofertas").status_code == 401
     finally:
         config.ajustes.cache_clear()

@@ -76,12 +76,12 @@ def test_los_casos_nuevos_de_evals_de_ofertas_existen():
 # --- T04 · pantalla de modalidad -------------------------------------------------------------------
 def test_la_casilla_solo_remoto_explica_que_es_estricto():
     frase = "Solo ofertas 100 % en remoto. Si piden ir a la oficina alguna vez, no salen."
-    assert frase in leer("recomendadas.html")
+    assert frase in leer("ofertas.html")
 
 
 def test_donde_se_enseñaba_remoto_se_enseña_la_modalidad():
-    assert "nombreModalidad(o.modalidad)" in leer("recomendadas.js")
-    assert "o.remoto" not in leer("recomendadas.js") and "o.remoto" not in leer("catalogo.js")
+    assert "nombreModalidad(o.modalidad)" in leer("ofertas.js")
+    assert "o.remoto" not in leer("ofertas.js") and "o.remoto" not in leer("catalogo.js")
     assert "Híbrido" in leer("comun.js") and "Presencial" in leer("comun.js")
 
 
@@ -115,7 +115,7 @@ def test_para_procesar_pasa_propia():
 
 
 def test_la_pantalla_no_enseña_la_fecha_de_alta_de_una_propia_como_publicada():
-    js = leer("recomendadas.js")
+    js = leer("ofertas.js")
     assert "No consta fecha de publicación" in js
     assert "o.propia && !o.fecha_publicacion" in js
 
@@ -229,13 +229,13 @@ def test_ingesta_y_costes_llevan_subpestañas_y_no_se_ven_sin_admin():
 
 
 def test_lugar_une_modalidad_y_municipio():
-    js = leer("recomendadas.js")
+    js = leer("ofertas.js")
     assert "o.ubicacion ||" in js and "nombreModalidad(o.modalidad) || null, sitio" in js
 
 
 # --- T20 · Condiciones simétricas y totales de Costes ----------------------------------------------
 def test_cada_casilla_de_condiciones_va_con_su_ayuda_en_su_celda():
-    html = leer("recomendadas.html")
+    html = leer("ofertas.html")
     bloques = html.split('<div class="casilla-con-ayuda">')[1:]
     assert len(bloques) == 2
     celdas = [b.split("</div>")[0] for b in bloques]

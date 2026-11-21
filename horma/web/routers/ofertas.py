@@ -84,7 +84,7 @@ def estado_de_la_url(importacion_id: int, request: Request, usuaria_id: int = De
     return {k: fila[k] for k in ("id", "estado", "motivo", "oferta_id")}
 
 
-@router.get("/ofertas/total", dependencies=[Depends(exigir_admin)])
+@router.get("/api/ofertas/total", dependencies=[Depends(exigir_admin)])
 def total(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Cuántas ofertas hay en el catálogo (todas, no solo las listadas), por estado."""
     with sesion_de(request.app.state.engine, usuaria_id) as s:
@@ -92,7 +92,7 @@ def total(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     return {"total": sum(por_estado.values()), "por_estado": por_estado}
 
 
-@router.get("/ofertas", dependencies=[Depends(exigir_admin)])
+@router.get("/api/ofertas", dependencies=[Depends(exigir_admin)])
 def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """El catálogo común con su auditoría y su taxonomía (RF-8.2c: solo administradoras)."""
     with sesion_de(request.app.state.engine, usuaria_id) as s:

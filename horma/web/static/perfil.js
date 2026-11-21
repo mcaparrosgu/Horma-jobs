@@ -232,7 +232,7 @@ function seccion(titulo, hijos, clave) {
 }
 
 // --- Avisos y huecos (RF-9.1c, RF-9.2) ------------------------------------------------------------
-// Lleva a una sección de Mi perfil: la abre, se coloca en ella y, si se pide, abre su formulario de «Añadir».
+// Lleva a una sección de tu perfil: la abre, se coloca en ella y, si se pide, abre su formulario de «Añadir».
 function irASeccion(clave, anadir = false) {
   const s = document.querySelector(`#perfil [data-seccion="${clave}"]`);
   if (!s) { $("mi-perfil").scrollIntoView({ behavior: "smooth" }); return; }
@@ -256,8 +256,8 @@ async function pedirAvisos(ruta, cuerpo, mensaje) {
 }
 
 const MENSAJE_LONGITUD = {
-  mantener: "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV maestro no cambia.",
-  sintetizar: "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV maestro no cambia.",
+  mantener: "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV completo no cambia.",
+  sintetizar: "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV completo no cambia.",
 };
 let longitudElegida = null;
 const elegirLongitud = (longitud) => pedirAvisos("/api/perfil/longitud", { longitud }, MENSAJE_LONGITUD[longitud]);
@@ -283,7 +283,7 @@ function avisoFila(a) {
     boton("Mantener la longitud", () => elegirLongitud("mantener"));
     boton("Que Horma lo sintetice", () => elegirLongitud("sintetizar"));
   } else {
-    boton(a.seccion === "hueco" ? "Añadir en Mi perfil" : "Corregir", () => corregirAviso(a));
+    boton(a.seccion === "hueco" ? "Añadir en tu perfil" : "Corregir", () => corregirAviso(a));
     boton("Dar por visto", () => pedirAvisos("/api/perfil/avisos/visto", { clave: a.clave, huella: a.huella },
                                              "Hecho: no te lo volveremos a decir mientras no cambie."));
   }
@@ -306,7 +306,7 @@ async function cargarAvisos(nPendientes) {
   pendientesPrevias = total;
 }
 
-// --- Tu CV maestro (RF-9.4): el texto que usan los redactores, con «Editar» por sección ------------
+// --- Tu CV completo (RF-9.4, RF-10.4): el texto que usan los redactores, con «Editar» por sección ------------
 const SECCION_DEL_MAESTRO = { "Resumen": "resumen", "Experiencia": "experiencias", "Formación": "formacion",
                               "Idiomas": "idiomas", "Habilidades": "habilidades", "Proyectos": "proyectos",
                               "Certificaciones": "certificaciones", "Otras actividades": "actividades",
@@ -326,7 +326,7 @@ function pintarMaestro(perfil, maestro, creadoEn) {
       ? "Al redactar, Horma conservará todas tus experiencias."
       : longitudElegida === "sintetizar"
         ? "Al redactar, Horma elegirá las experiencias que encajan con la oferta."
-        : `Tu CV maestro tiene ${palabras} palabras. ¿Qué hace Horma al redactar?`));
+        : `Tu CV completo tiene ${palabras} palabras. ¿Qué hace Horma al redactar?`));
     const acciones = nodo("div", null, "fila acciones-aviso");
     for (const [valor, texto] of [["mantener", "Mantener la longitud"], ["sintetizar", "Que Horma lo sintetice"]]) {
       const b = nodo("button", texto, longitudElegida === valor ? null : "secundario");
@@ -345,7 +345,7 @@ function pintarMaestro(perfil, maestro, creadoEn) {
     h.classList.add("con-editar");
     const editar = nodo("button", "Editar", "secundario");
     editar.type = "button";
-    editar.setAttribute("aria-label", `Editar ${h.textContent} en Mi perfil`);
+    editar.setAttribute("aria-label", `Editar ${h.textContent} en tu perfil`);
     editar.addEventListener("click", () => irASeccion(clave));
     h.append(editar);
   }

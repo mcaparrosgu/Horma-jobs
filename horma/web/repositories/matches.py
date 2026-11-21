@@ -38,9 +38,11 @@ def listado(s: Session, ids: list[int]) -> list[dict]:
         "m.retirada, m.correccion, m.perfil_version, "
         "m.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
         "as desfasado, d.oferta_id is not null as descartada, "
-        "c.id as candidatura_id, c.estado as candidatura_estado, c.motivo_cierre as candidatura_motivo "
+        "c.id as candidatura_id, c.estado as candidatura_estado, c.motivo_cierre as candidatura_motivo, "
+        "c.preparacion as candidatura_preparacion "
         "from ofertas o left join descartes d on d.oferta_id = o.id "
-        "left join lateral (select id, estado, motivo_cierre from candidaturas x where x.oferta_id = o.id "
+        "left join lateral (select id, estado, motivo_cierre, preparacion from candidaturas x "
+        "where x.oferta_id = o.id "
         "order by (x.estado <> 'cerrada') desc, x.id desc limit 1) c on true "
         "left join lateral (select * from matches x where x.oferta_id = o.id "
         "order by x.perfil_version desc limit 1) m on true "
@@ -50,7 +52,9 @@ def listado(s: Session, ids: list[int]) -> list[dict]:
         f = dict(f)
         cid = f.pop("candidatura_id")
         estado, motivo = f.pop("candidatura_estado"), f.pop("candidatura_motivo")
-        f["candidatura"] = None if cid is None else {"id": cid, "estado": estado, "motivo_cierre": motivo}
+        preparacion = f.pop("candidatura_preparacion")
+        f["candidatura"] = (None if cid is None else
+                            {"id": cid, "estado": estado, "motivo_cierre": motivo, "preparacion": preparacion})  # noqa: E501
         por_id[f["id"]] = f
     return [por_id[i] for i in ids if i in por_id]
 

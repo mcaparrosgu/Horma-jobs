@@ -2,8 +2,7 @@
 // seguimiento. Todo texto (incluido el que escribió el modelo) se pinta con textContent.
 const ID = Number(location.pathname.split("/").pop());
 const CANALES = [["correo", "Correo"], ["web", "Web de la empresa"], ["linkedin", "LinkedIn"], ["otro", "Otro"]];
-const MOTIVOS = [["descartada", "La descarto yo"], ["retirada", "La retiro"]];
-const ESTADOS = { borrador: "Borrador", aprobada: "Aprobada", enviada: "Enviada", entrevista: "Entrevista", cerrada: "Cerrada" };
+const NOMBRE_ESTADO = { borrador: "Borrador", aprobada: "Aprobada", enviada: "Enviada", entrevista: "Entrevista", cerrada: "Cerrada" };   // historial: los estados internos
 const DOCUMENTOS = { cv: "CV", carta: "Carta", oferta: "Oferta" };
 let c = null;
 let temporizador = null;
@@ -32,15 +31,15 @@ function cabecera() {
   const s = nodo("section");
   s.append(nodo("h2", c.oferta.titulo || "Oferta sin título"));
   s.append(nodo("p", c.oferta.empresa || "Empresa sin indicar", "suave"));
-  s.append(nodo("span", ESTADOS[c.estado] || c.estado, "estado bien"));
-  if (c.estado === "cerrada" && c.motivo_cierre) s.append(nodo("span", `Motivo: ${c.motivo_cierre}`, "estado apagado"));
+  s.append(nodo("span", estadoVisible(c.estado, c.preparacion), "estado bien"));
+  if (c.estado === "cerrada" && c.motivo_cierre) s.append(nodo("span", `Motivo: ${MOTIVOS_CIERRE[c.motivo_cierre] || c.motivo_cierre}`, "estado apagado"));
   const fila = nodo("div", null, "fila");
   fila.append(boton("Ver oferta original", () => verOriginal(c.oferta.id), "secundario"));   // RF-8.3
   s.append(fila);
   return s;
 }
 
-// --- «Revisa esto»: una sola lista con los huecos y los avisos -----------------------------------
+// --- «Revisa esto»: una sola lista con lo que la oferta pide y no consta, y los avisos -----------------------------------
 function revisaEsto() {
   const s = nodo("section", null, "panel");
   const hayAlgo = c.huecos.length > 0 || c.avisos.length > 0;
@@ -49,7 +48,7 @@ function revisaEsto() {
   const ul = nodo("ul", null, "lista");
   for (const h of c.huecos) {
     const li = nodo("li", null, "tarjeta");
-    li.append(nodo("strong", `Hueco: ${h.requisito}`));
+    li.append(nodo("strong", textoNoConsta(h.requisito)));
     if (h.propuesta) li.append(nodo("p", h.propuesta, "suave"));
     ul.append(li);
   }
@@ -60,7 +59,7 @@ function revisaEsto() {
     li.append(nodo("p", a.mensaje));
     ul.append(li);
   }
-  if (!hayAlgo) ul.append(nodo("li", "Horma no pudo cerrar algo por su cuenta: revisa el CV y la carta con cuidado.", "tarjeta alerta"));
+  if (!hayAlgo) ul.append(nodo("li", TEXTOS.revisaFalta, "tarjeta alerta"));
   s.append(ul);
   return s;
 }
@@ -86,7 +85,7 @@ function documento(titulo, clave) {
       const cancelar = boton("Cancelar", () => { f.remove(); hoja.hidden = false; acciones.hidden = false; }, "secundario");
       const fila = nodo("div", null, "fila");
       fila.append(nodo("button", "Guardar"), cancelar);
-      f.append(t, nodo("p", "Lo que escribas es tuyo: Horma lo vuelve a comprobar y lo que no esté en tu CV saldrá en «Revisa esto».", "suave"), fila);
+      f.append(t, nodo("p", TEXTOS.editaDocumento, "suave"), fila);
       f.addEventListener("submit", async (e) => {
         e.preventDefault();
         const r = await api(`/api/candidaturas/${ID}`, { metodo: "PATCH", cuerpo: { [clave]: t.value } });
@@ -107,12 +106,6 @@ function documento(titulo, clave) {
 function detalles() {
   const d = nodo("details", null, "leer");
   d.append(nodo("summary", "Detalles"));
-  if (c.cv_base) {
-    const p = nodo("p", `CV base elegido: «${c.cv_base.nombre}».`);
-    if (c.cv_base_motivo) p.append(" " + c.cv_base_motivo);
-    d.append(p);
-    if (c.cv_base.desfasado) d.append(nodo("p", "Ese CV base es de una versión anterior de tu perfil.", "suave"));
-  }
   if (c.cobertura_ats !== null && c.cobertura_ats !== undefined) {
     d.append(nodo("p", `Palabras de la oferta que aparecen en el CV: ${Math.round(Number(c.cobertura_ats) * 100)} %`, "suave"));
   }
@@ -195,7 +188,7 @@ function formularioCerrar() {
   const f = nodo("form", null, "editor tarjeta");
   f.append(nodo("h3", "Cerrar candidatura", "subtitulo"));
   const sel = nodo("select");
-  for (const [valor, texto] of MOTIVOS) {
+  for (const [valor, texto] of MOTIVOS_PREGUNTA) {
     const o = nodo("option", texto);
     o.value = valor;
     sel.append(o);
@@ -214,7 +207,7 @@ function historial() {
   s.append(nodo("summary", "Historial"));
   const ul = nodo("ul");
   for (const e of c.eventos) {
-    const texto = `${ESTADOS[e.de] || "Inicio"} → ${ESTADOS[e.a] || e.a}${e.motivo ? ` (${e.motivo})` : ""}${e.canal ? ` · ${e.canal}` : ""}`;
+    const texto = `${NOMBRE_ESTADO[e.de] || "Inicio"} → ${NOMBRE_ESTADO[e.a] || e.a}${e.motivo ? ` (${e.motivo})` : ""}${e.canal ? ` · ${e.canal}` : ""}`;
     ul.append(nodo("li", `${fecha(e.creado_en)} · ${texto}`));
   }
   if (!c.eventos.length) ul.append(nodo("li", "Sin movimientos todavía."));
