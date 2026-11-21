@@ -62,7 +62,7 @@ stale_after: null
   - **Qué se hace:** casos nuevos (voluntariado, baja médica, cuidados, puestos esperados en castellano e
     inglés); avisar del gasto antes.
   - **Test:** evals de `perfil` en umbral; ningún rasgo personal en el perfil ni en los puestos.
-  - **Estado (21-nov):** casos 15-18 y comprobación de actividades, periodos y puestos listos y en verde en simulado; falta la corrida real (unos 0,80 USD, tope 1 USD) con el OK de Mar.
+  - **Estado (21-nov):** corrida real hecha (0,74 USD): los casos nuevos 15-18 pasan (un fallo suelto de «puestos» en el 15 no se repitió). Falla `10-sin-datos` (pendientes) también sin los cambios de 9a (comprobado en 098500a): deriva del modelo, ajena a 9a; queda para decidir con Mar.
 
 ### Bloque D · API (RF-9.1c, RF-9.2, RF-9.2d)
 - [x] T11 — `GET /api/perfil/avisos`, `PUT /api/perfil/avisos/visto` y `PUT /api/perfil/longitud`.
