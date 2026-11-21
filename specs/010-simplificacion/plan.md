@@ -142,6 +142,33 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
   módulos de esquemas con tablas en SQL, herramientas con red (`descargar`, `leer_pagina`, `dominio`),
   alertas a 5 USD y 50 %, regla «solo los servicios encolan».
 
+## S7 · Correcciones tras la prueba (RF-10.3g, 10.4d, 10.5c, 10.6e, 10.8, 10.13, RF-6.4b)
+- **«Avisos» en Perfil (RF-10.5c):** se recupera el desplegable de `4fc7024^:static/perfil.html` dentro de «Por
+  resolver»; `perfil.js` (`avisoFila`, `cargarAvisos`) vuelve a «Dar por visto» (texto en `textos.js`). Backend
+  igual (`PUT /api/perfil/avisos/visto`).
+- **Avisos agrupados (RF-10.13):** `Aviso` (`schemas/candidatura.py`) gana `tipo` (`no_consta | revisa |
+  dudoso`, por defecto `revisa` para las antiguas); lo rellenan `componer` (`flows/candidatura.py`) y el
+  recálculo al editar (`services/candidaturas.py`). Los huecos de `ausentes_sin_origen` se juntan en uno.
+  `revisaEsto()` (`candidatura.js`) pinta los tres grupos y no pinta el panel vacío. En Perfil,
+  `tools/avisos_perfil.py` agrupa las claves con prefijo (`sin_cifras:`, `sin_descripcion:`, `sin_contacto:`)
+  y «Dar por visto» del grupo marca todas sus claves.
+- **Avance (RF-10.8):** fuera el indicador de `comun.js` y `.indicador-avance` de `estilo.css`; Perfil usa
+  `barraAvance()` mientras se lee el CV, con `/api/tareas/activas?tipo=perfilar`. Si nadie usa
+  `/api/tareas/activas` sin `tipo`, se quita esa variante.
+- **Qué buscas (RF-10.6e):** `#grupo-excluidos` pasa detrás de «Condiciones» en `ofertas.html`; «Puestos
+  sugeridos» a todo el ancho (`.grupos-dos` en `estilo.css`).
+- **PDF (RF-10.4d):** `tools/generar_pdf.py` (fpdf2) con Familjen Grotesk y DM Mono en TTF en
+  `assets/fuentes/` (OFL) y DejaVu de respaldo; parámetro `tipo="cv"|"carta"` desde `services/perfil.py`,
+  `flows/candidatura.py`, `services/candidaturas.py` y `cli.py`. En «Ver», la carta se pinta como párrafos
+  (`candidatura.js`), no con `cvBonito`.
+- **Carta (RF-10.3g):** diagnóstico de la carta de la prueba 2.3; `agents/redactor_carta/prompt.md` reescrito
+  con la estructura de RF-10.3g y un ejemplo inventado que cumple la traza; casos nuevos de carta en
+  `evals/cv/casos/`. RT-08 y `verificar_trazabilidad` no cambian.
+- **Simetría (RF-6.4b):** h2 dentro de `.panel` sin margen superior; un solo estilo de tarjeta en la columna
+  derecha de Perfil; tablero de Candidaturas sin columna huérfana a 1280 px; «Condiciones» y `.grupos` de
+  Ofertas con la misma línea base; «Sube tu CV» y `#subir-doc` alineados; botones de la candidatura sin
+  estirar y enlace de vuelta a 44 px. Comprobado en el navegador a 1280 y 390 px, en claro y en oscuro.
+
 ## Datos
 - Migración `0022_simplificacion.py` (S5): `matches.huella_perfil` con relleno e índice
   `(usuaria_id, oferta_id, huella_perfil)`. Sin borrar tablas ni columnas.
@@ -169,3 +196,4 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
 ## Coste
 - S2: eval `cv` real, ~0,5-1 USD. S5: evals `ofertas` y `red-teaming`, ~1-2 USD. Prueba manual de cada bloque:
   céntimos (un CV y una candidatura). Se avisa siempre antes.
+- S7: eval `cv` real (~0,5-1 USD) y una candidatura de prueba (~0,2 USD), los dos en T35.
