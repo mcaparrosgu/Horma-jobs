@@ -1,156 +1,907 @@
 {
- "verificado_por_mar": false,
- "instrucciones": "Mar: en cada par pon «casa»: true si el título es de ese puesto (acierto) y false si no (falso positivo). «propuesta» es lo que dice normalizar_titulo hoy. Al terminar, verificado_por_mar a true.",
- "pares": [
-  {"titulo": "AI & Automation Operations Manager", "puesto": "Account Manager", "casa": null, "propuesta": false},
-  {"titulo": "AI & Automation Operations Manager", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "AI & Automation Operations Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "AI & Automation Operations Manager", "puesto": "Operations Manager", "casa": null, "propuesta": true},
-  {"titulo": "AI & Automation Operations Manager", "puesto": "Product Manager", "casa": null, "propuesta": false},
-  {"titulo": "AI & Automation Operations Manager", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "AI & Automation Operations Manager", "puesto": "Social Media Manager", "casa": null, "propuesta": false},
-  {"titulo": "AI Systems Analyst", "puesto": "Data Analyst", "casa": null, "propuesta": false},
-  {"titulo": "Analista de datos junior", "puesto": "Analista de datos", "casa": null, "propuesta": true},
-  {"titulo": "Asesor/a Contable y Fiscal", "puesto": "Asesor contable", "casa": null, "propuesta": false},
-  {"titulo": "Camarera", "puesto": "Camarera", "casa": null, "propuesta": true},
-  {"titulo": "Camarera/o para restaurante", "puesto": "Camarera", "casa": null, "propuesta": true},
-  {"titulo": "Camarero/a", "puesto": "Camarero", "casa": null, "propuesta": true},
-  {"titulo": "Chemical Data Scientist", "puesto": "Data Analyst", "casa": null, "propuesta": false},
-  {"titulo": "Chemical Data Scientist", "puesto": "Data Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Chemical Data Scientist", "puesto": "Data Scientist", "casa": null, "propuesta": true},
-  {"titulo": "Chemicals Supplier Engagement Specialist", "puesto": "Tax Specialist", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Account Manager", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Data Analyst", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Data Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Data Scientist", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Operations Manager", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Product Manager", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "Consulting Manager (m/f/d) Data & AI Strategy", "puesto": "Social Media Manager", "casa": null, "propuesta": false},
-  {"titulo": "Coordinator, Legal Support", "puesto": "Customer Support", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Architect", "puesto": "Customer Success Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Architect", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Architect", "puesto": "Customer Support", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Engineer", "puesto": "Customer Success Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Customer Success Engineer", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Engineer", "puesto": "Customer Support", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Engineer", "puesto": "Data Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Customer Success Engineer", "puesto": "Site Reliability Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Engineer", "puesto": "Software Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Manager", "puesto": "Account Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Manager", "puesto": "Customer Success Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Manager", "puesto": "Customer Success Manager", "casa": null, "propuesta": true},
-  {"titulo": "Customer Success Manager", "puesto": "Customer Support", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Customer Success Manager", "puesto": "Operations Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Manager", "puesto": "Product Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Manager", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Success Manager", "puesto": "Social Media Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Support Services Fiduciary Agent", "puesto": "Customer Success Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Customer Support Services Fiduciary Agent", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Customer Support Services Fiduciary Agent", "puesto": "Customer Support", "casa": null, "propuesta": true},
-  {"titulo": "Desarrolladora Python", "puesto": "Desarrolladora Python", "casa": null, "propuesta": true},
-  {"titulo": "Director of Demand Generation", "puesto": "Director", "casa": null, "propuesta": true},
-  {"titulo": "Director of Demand Generation", "puesto": "Marketing Director", "casa": null, "propuesta": false},
-  {"titulo": "Director, AI Engineering (Data Science)", "puesto": "Data Analyst", "casa": null, "propuesta": false},
-  {"titulo": "Director, AI Engineering (Data Science)", "puesto": "Data Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Director, AI Engineering (Data Science)", "puesto": "Data Scientist", "casa": null, "propuesta": false},
-  {"titulo": "Director, AI Engineering (Data Science)", "puesto": "Director", "casa": null, "propuesta": true},
-  {"titulo": "Director, AI Engineering (Data Science)", "puesto": "Marketing Director", "casa": null, "propuesta": false},
-  {"titulo": "Electricista", "puesto": "Electricista", "casa": null, "propuesta": true},
-  {"titulo": "Embedded Software Leader", "puesto": "Software Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Enterprise Account Executive", "puesto": "Account Executive", "casa": null, "propuesta": true},
-  {"titulo": "Enterprise Account Executive", "puesto": "Account Manager", "casa": null, "propuesta": false},
-  {"titulo": "Forward Deployed Engineer", "puesto": "Customer Success Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Forward Deployed Engineer", "puesto": "Data Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Forward Deployed Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Forward Deployed Engineer", "puesto": "Site Reliability Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Forward Deployed Engineer", "puesto": "Software Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Account Executive", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Account Manager", "casa": null, "propuesta": true},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Business Partner", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "HR Business Partner", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Operations Manager", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Product Manager", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "Growth Partner Account Manager", "puesto": "Social Media Manager", "casa": null, "propuesta": false},
-  {"titulo": "Head of Sales, SMB", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "Key Account Manager", "puesto": "Account Executive", "casa": null, "propuesta": false},
-  {"titulo": "Key Account Manager", "puesto": "Account Manager", "casa": null, "propuesta": true},
-  {"titulo": "Key Account Manager", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Key Account Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Key Account Manager", "puesto": "Operations Manager", "casa": null, "propuesta": false},
-  {"titulo": "Key Account Manager", "puesto": "Product Manager", "casa": null, "propuesta": false},
-  {"titulo": "Key Account Manager", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "Key Account Manager", "puesto": "Social Media Manager", "casa": null, "propuesta": false},
-  {"titulo": "Mechanical Design Engineer", "puesto": "Customer Success Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Mechanical Design Engineer", "puesto": "Data Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Mechanical Design Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Mechanical Design Engineer", "puesto": "Site Reliability Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Mechanical Design Engineer", "puesto": "Software Engineer", "casa": null, "propuesta": false},
-  {"titulo": "Mozo/a de almacén", "puesto": "Mozo de almacén", "casa": null, "propuesta": false},
-  {"titulo": "Mozo/a de almacén", "puesto": "Personal de almacén", "casa": null, "propuesta": false},
-  {"titulo": "National Account Executive - Outside Sales", "puesto": "Account Executive", "casa": null, "propuesta": true},
-  {"titulo": "National Account Executive - Outside Sales", "puesto": "Account Manager", "casa": null, "propuesta": false},
-  {"titulo": "National Account Executive - Outside Sales", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "Paid Advertising Manager", "puesto": "Account Manager", "casa": null, "propuesta": false},
-  {"titulo": "Paid Advertising Manager", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Paid Advertising Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Paid Advertising Manager", "puesto": "Operations Manager", "casa": null, "propuesta": false},
-  {"titulo": "Paid Advertising Manager", "puesto": "Product Manager", "casa": null, "propuesta": false},
-  {"titulo": "Paid Advertising Manager", "puesto": "Sales Manager", "casa": null, "propuesta": false},
-  {"titulo": "Paid Advertising Manager", "puesto": "Social Media Manager", "casa": null, "propuesta": false},
-  {"titulo": "Personal de Equipo", "puesto": "Personal de almacén", "casa": null, "propuesta": false},
-  {"titulo": "Personal de almacén", "puesto": "Mozo de almacén", "casa": null, "propuesta": false},
-  {"titulo": "Personal de almacén", "puesto": "Personal de almacén", "casa": null, "propuesta": true},
-  {"titulo": "Recepcionista", "puesto": "Recepcionista", "casa": null, "propuesta": true},
-  {"titulo": "Regional Sales Manager", "puesto": "Account Manager", "casa": null, "propuesta": false},
-  {"titulo": "Regional Sales Manager", "puesto": "Customer Success Manager", "casa": null, "propuesta": false},
-  {"titulo": "Regional Sales Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Regional Sales Manager", "puesto": "Product Manager", "casa": null, "propuesta": false},
-  {"titulo": "Regional Sales Manager", "puesto": "Sales Manager", "casa": null, "propuesta": true},
-  {"titulo": "Regional Sales Manager", "puesto": "Social Media Manager", "casa": null, "propuesta": false},
-  {"titulo": "Registered Nurse-Care Coordinator", "puesto": "Nurse", "casa": null, "propuesta": true},
-  {"titulo": "Sales & Solutions Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Scrum Master", "puesto": "Scrum Master", "casa": null, "propuesta": true},
-  {"titulo": "Senior ASIC Physical Design Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Senior Account Executive", "puesto": "Account Executive", "casa": null, "propuesta": true},
-  {"titulo": "Senior Consultant (m/f/d) Data & AI Strategy", "puesto": "Consultant", "casa": null, "propuesta": true},
-  {"titulo": "Senior Consultant (m/w/d) Daten & KI-Strategie", "puesto": "Consultant", "casa": null, "propuesta": true},
-  {"titulo": "Senior Consultant (m/w/d) Daten- & KI-Strategie", "puesto": "Consultant", "casa": null, "propuesta": true},
-  {"titulo": "Senior FP&A Business Partner", "puesto": "Business Partner", "casa": null, "propuesta": true},
-  {"titulo": "Senior Global Tax Specialist", "puesto": "Tax Specialist", "casa": null, "propuesta": true},
-  {"titulo": "Senior HR Business Partner (m/w/d)", "puesto": "Business Partner", "casa": null, "propuesta": true},
-  {"titulo": "Senior HR Business Partner (m/w/d)", "puesto": "HR Business Partner", "casa": null, "propuesta": true},
-  {"titulo": "Senior Manager, Strategic Accounts Asia", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Senior Product Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Senior Product Manager", "puesto": "Product Manager", "casa": null, "propuesta": true},
-  {"titulo": "Senior Product Owner, Support Platform & AI", "puesto": "Product Owner", "casa": null, "propuesta": true},
-  {"titulo": "Senior Service Reliability Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Senior ServiceNow Developer", "puesto": "Developer", "casa": null, "propuesta": true},
-  {"titulo": "Senior Software Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Senior Software Engineer", "puesto": "Software Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Senior Talent Acquisition Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Senior Talent Acquisition Manager", "puesto": "Talent Acquisition", "casa": null, "propuesta": true},
-  {"titulo": "Site Reliability Engineer", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Site Reliability Engineer", "puesto": "Site Reliability Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Social Media & AI Manager (m/w/d) – Quereinstieg | Homeoffice | Vollzeit oder Teilzeit", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Social Media Manager / Content Creator (m/w/d)", "puesto": "Content Creator", "casa": null, "propuesta": true},
-  {"titulo": "Social Media Manager / Content Creator (m/w/d)", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Social Media Manager / Content Creator (m/w/d)", "puesto": "Social Media Manager", "casa": null, "propuesta": true},
-  {"titulo": "Staff Software Engineer - Backend", "puesto": "Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Staff Software Engineer - Backend", "puesto": "Software Engineer", "casa": null, "propuesta": true},
-  {"titulo": "Strategic Enterprise Account Executive", "puesto": "Account Executive", "casa": null, "propuesta": true},
-  {"titulo": "Strategic Marketing Director", "puesto": "Director", "casa": null, "propuesta": true},
-  {"titulo": "Strategic Marketing Director", "puesto": "Marketing Director", "casa": null, "propuesta": true},
-  {"titulo": "Strategic Partner Account Manager", "puesto": "Account Manager", "casa": null, "propuesta": true},
-  {"titulo": "Strategic Partner Account Manager", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Technical Program Manager, Software", "puesto": "Manager", "casa": null, "propuesta": true},
-  {"titulo": "Teleoperador/a en teletrabajo", "puesto": "Teleoperador", "casa": null, "propuesta": true}
- ]
+  "verificado_por_mar": true,
+  "instrucciones": "Mar: en cada par pon «casa»: true si el título es de ese puesto (acierto) y false si no (falso positivo). «propuesta» es lo que dice normalizar_titulo hoy. Al terminar, verificado_por_mar a true.",
+  "pares": [
+    {
+      "titulo": "AI & Automation Operations Manager",
+      "puesto": "Account Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "AI & Automation Operations Manager",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "AI & Automation Operations Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "AI & Automation Operations Manager",
+      "puesto": "Operations Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "AI & Automation Operations Manager",
+      "puesto": "Product Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "AI & Automation Operations Manager",
+      "puesto": "Sales Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "AI & Automation Operations Manager",
+      "puesto": "Social Media Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "AI Systems Analyst",
+      "puesto": "Data Analyst",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Analista de datos junior",
+      "puesto": "Analista de datos",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Asesor/a Contable y Fiscal",
+      "puesto": "Asesor contable",
+      "casa": true,
+      "propuesta": false
+    },
+    {
+      "titulo": "Camarera",
+      "puesto": "Camarera",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Camarera/o para restaurante",
+      "puesto": "Camarera",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Camarero/a",
+      "puesto": "Camarero",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Chemical Data Scientist",
+      "puesto": "Data Analyst",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Chemical Data Scientist",
+      "puesto": "Data Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Chemical Data Scientist",
+      "puesto": "Data Scientist",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Chemicals Supplier Engagement Specialist",
+      "puesto": "Tax Specialist",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Account Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Data Analyst",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Data Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Data Scientist",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Operations Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Product Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Sales Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Consulting Manager (m/f/d) Data & AI Strategy",
+      "puesto": "Social Media Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Coordinator, Legal Support",
+      "puesto": "Customer Support",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Architect",
+      "puesto": "Customer Success Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Architect",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Architect",
+      "puesto": "Customer Support",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Engineer",
+      "puesto": "Customer Success Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Customer Success Engineer",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Engineer",
+      "puesto": "Customer Support",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Engineer",
+      "puesto": "Data Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Customer Success Engineer",
+      "puesto": "Site Reliability Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Engineer",
+      "puesto": "Software Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Account Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Customer Success Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Customer Success Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Customer Support",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Operations Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Product Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Sales Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Success Manager",
+      "puesto": "Social Media Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Support Services Fiduciary Agent",
+      "puesto": "Customer Success Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Support Services Fiduciary Agent",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Customer Support Services Fiduciary Agent",
+      "puesto": "Customer Support",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Desarrolladora Python",
+      "puesto": "Desarrolladora Python",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Director of Demand Generation",
+      "puesto": "Director",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Director of Demand Generation",
+      "puesto": "Marketing Director",
+      "casa": true,
+      "propuesta": false
+    },
+    {
+      "titulo": "Director, AI Engineering (Data Science)",
+      "puesto": "Data Analyst",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Director, AI Engineering (Data Science)",
+      "puesto": "Data Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Director, AI Engineering (Data Science)",
+      "puesto": "Data Scientist",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Director, AI Engineering (Data Science)",
+      "puesto": "Director",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Director, AI Engineering (Data Science)",
+      "puesto": "Marketing Director",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Electricista",
+      "puesto": "Electricista",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Embedded Software Leader",
+      "puesto": "Software Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Enterprise Account Executive",
+      "puesto": "Account Executive",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Enterprise Account Executive",
+      "puesto": "Account Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Forward Deployed Engineer",
+      "puesto": "Customer Success Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Forward Deployed Engineer",
+      "puesto": "Data Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Forward Deployed Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Forward Deployed Engineer",
+      "puesto": "Site Reliability Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Forward Deployed Engineer",
+      "puesto": "Software Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Account Executive",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Account Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Business Partner",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "HR Business Partner",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Operations Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Product Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Sales Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Growth Partner Account Manager",
+      "puesto": "Social Media Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Head of Sales, SMB",
+      "puesto": "Sales Manager",
+      "casa": true,
+      "propuesta": false
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Account Executive",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Account Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Operations Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Product Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Sales Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Key Account Manager",
+      "puesto": "Social Media Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Mechanical Design Engineer",
+      "puesto": "Customer Success Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Mechanical Design Engineer",
+      "puesto": "Data Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Mechanical Design Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Mechanical Design Engineer",
+      "puesto": "Site Reliability Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Mechanical Design Engineer",
+      "puesto": "Software Engineer",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Mozo/a de almacén",
+      "puesto": "Mozo de almacén",
+      "casa": true,
+      "propuesta": false
+    },
+    {
+      "titulo": "Mozo/a de almacén",
+      "puesto": "Personal de almacén",
+      "casa": true,
+      "propuesta": false
+    },
+    {
+      "titulo": "National Account Executive - Outside Sales",
+      "puesto": "Account Executive",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "National Account Executive - Outside Sales",
+      "puesto": "Account Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "National Account Executive - Outside Sales",
+      "puesto": "Sales Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Paid Advertising Manager",
+      "puesto": "Account Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Paid Advertising Manager",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Paid Advertising Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Paid Advertising Manager",
+      "puesto": "Operations Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Paid Advertising Manager",
+      "puesto": "Product Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Paid Advertising Manager",
+      "puesto": "Sales Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Paid Advertising Manager",
+      "puesto": "Social Media Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Personal de Equipo",
+      "puesto": "Personal de almacén",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Personal de almacén",
+      "puesto": "Mozo de almacén",
+      "casa": true,
+      "propuesta": false
+    },
+    {
+      "titulo": "Personal de almacén",
+      "puesto": "Personal de almacén",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Recepcionista",
+      "puesto": "Recepcionista",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Regional Sales Manager",
+      "puesto": "Account Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Regional Sales Manager",
+      "puesto": "Customer Success Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Regional Sales Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Regional Sales Manager",
+      "puesto": "Product Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Regional Sales Manager",
+      "puesto": "Sales Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Regional Sales Manager",
+      "puesto": "Social Media Manager",
+      "casa": false,
+      "propuesta": false
+    },
+    {
+      "titulo": "Registered Nurse-Care Coordinator",
+      "puesto": "Nurse",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Sales & Solutions Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Scrum Master",
+      "puesto": "Scrum Master",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior ASIC Physical Design Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Account Executive",
+      "puesto": "Account Executive",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Consultant (m/f/d) Data & AI Strategy",
+      "puesto": "Consultant",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Consultant (m/w/d) Daten & KI-Strategie",
+      "puesto": "Consultant",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Consultant (m/w/d) Daten- & KI-Strategie",
+      "puesto": "Consultant",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior FP&A Business Partner",
+      "puesto": "Business Partner",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Global Tax Specialist",
+      "puesto": "Tax Specialist",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior HR Business Partner (m/w/d)",
+      "puesto": "Business Partner",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior HR Business Partner (m/w/d)",
+      "puesto": "HR Business Partner",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Manager, Strategic Accounts Asia",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Product Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Product Manager",
+      "puesto": "Product Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Product Owner, Support Platform & AI",
+      "puesto": "Product Owner",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Service Reliability Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior ServiceNow Developer",
+      "puesto": "Developer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Software Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Software Engineer",
+      "puesto": "Software Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Talent Acquisition Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Senior Talent Acquisition Manager",
+      "puesto": "Talent Acquisition",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Site Reliability Engineer",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Site Reliability Engineer",
+      "puesto": "Site Reliability Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Social Media & AI Manager (m/w/d) – Quereinstieg | Homeoffice | Vollzeit oder Teilzeit",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Social Media Manager / Content Creator (m/w/d)",
+      "puesto": "Content Creator",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Social Media Manager / Content Creator (m/w/d)",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Social Media Manager / Content Creator (m/w/d)",
+      "puesto": "Social Media Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Staff Software Engineer - Backend",
+      "puesto": "Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Staff Software Engineer - Backend",
+      "puesto": "Software Engineer",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Strategic Enterprise Account Executive",
+      "puesto": "Account Executive",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Strategic Marketing Director",
+      "puesto": "Director",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Strategic Marketing Director",
+      "puesto": "Marketing Director",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Strategic Partner Account Manager",
+      "puesto": "Account Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Strategic Partner Account Manager",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Technical Program Manager, Software",
+      "puesto": "Manager",
+      "casa": true,
+      "propuesta": true
+    },
+    {
+      "titulo": "Teleoperador/a en teletrabajo",
+      "puesto": "Teleoperador",
+      "casa": true,
+      "propuesta": true
+    }
+  ],
+  "etiquetado_por": "Mayoría de 3 etiquetadores ciegos independientes (estricto, candidata, reclutadora); pendiente de repaso de Mar en los pares sin unanimidad"
 }
