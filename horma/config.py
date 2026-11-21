@@ -63,6 +63,9 @@ class Ajustes(BaseSettings):
     limite_cv_por_minuto: int = 10
     limite_candidaturas_por_minuto: int = 10
 
+    # Simplificación S2 (RF-10.3d): con `true` se usa un CV base si existe; por defecto se parte del maestro
+    horma_cv_base_respaldo: bool = False
+
     # Fase 4: implementación del flujo `candidatura` ("plain" o "langgraph")
     horma_flow_impl: str = "plain"
 

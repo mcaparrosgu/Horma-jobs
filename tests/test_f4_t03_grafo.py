@@ -66,10 +66,10 @@ def test_volver_a_correr_el_mismo_hilo_empieza_de_cero():
 
 
 def test_un_fallo_en_un_nodo_llega_como_error_de_paso_con_su_nombre():
-    g, _ = _grafo([])
+    g, _ = _grafo([])  # sin respuestas del modelo, falla el primer nodo que lo llama (RF-10.3)
     with pytest.raises(ErrorDePaso) as exc:
         g.run(_estado(cvs=[]), hilo="h")
-    assert exc.value.paso == "elegir_cv_base"
+    assert exc.value.paso == "redactar_cv"
 
 
 def test_un_flujo_sin_pausas_corre_hasta_el_final():

@@ -82,8 +82,6 @@ def crear(engine: Engine, usuaria_id: int, oferta_id: int, repetir: bool = False
             raise ErrorCandidatura(404, "No existe esa oferta")
         if perfiles.vigente(s) is None:
             raise ErrorCandidatura(409, "Aún no tienes un perfil: sube un CV primero.")
-        if not any(f["estado"] == "hecho" for f in perfiles.listar_cv_base(s)):
-            raise ErrorCandidatura(409, "Genera un CV base primero: sin él no se puede preparar.")
         if repo.hay_viva(s, oferta_id):
             raise ErrorCandidatura(409, "Ya tienes una candidatura abierta para esta oferta.")
         previa = None if repetir else repo.cerrada_previa(s, oferta_id)

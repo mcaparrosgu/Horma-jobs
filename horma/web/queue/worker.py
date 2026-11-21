@@ -330,7 +330,7 @@ class _PuntuarUna(_Recomendar):
 
 class _Candidatura:
     """Prepara CV y carta para una oferta (entidad = id de la candidatura): carga el perfil vigente, el
-    CV maestro y todos los CV base de la usuaria; el flujo elige uno."""
+    CV maestro y la longitud elegida; los CV base solo con el respaldo activo (RF-10.3d)."""
 
     def cargar(self, s, tarea: dict) -> dict:
         c = repo_candidaturas.fila(s, tarea["entidad_id"])
@@ -345,7 +345,9 @@ class _Candidatura:
         guia = repo_estilo.guia(s)
         return {"usuaria_id": tarea["usuaria_id"], "perfil_version": perfil["version"],
                 "oferta": oferta.model_dump(mode="json"), "cv_maestro": perfil["cv_maestro"],
-                "cvs_base": repo_candidaturas.cv_base_para_flujo(s),
+                "cvs_base": (repo_candidaturas.cv_base_para_flujo(s)
+                             if ajustes().horma_cv_base_respaldo else []),
+                "longitud_cv": repo_perfiles.longitud_cv(s),
                 "guia_estilo": guia["guia"] if guia else None}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:

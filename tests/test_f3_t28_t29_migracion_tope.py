@@ -212,10 +212,15 @@ def test_el_worker_abre_el_tope_con_lo_que_queda_de_la_tarea(motor_app, motor_mi
     assert len(prov.llamadas) < 3  # el corte llega antes de acabar la preparación
 
 
-def test_cargar_da_creado_en_de_cada_cv_base(motor_app, bd_limpia):
+def test_cargar_da_creado_en_de_cada_cv_base(motor_app, bd_limpia, monkeypatch):
+    from horma import config
+    monkeypatch.setenv("HORMA_CV_BASE_RESPALDO", "true")  # RF-10.3d: solo con el respaldo se cargan
+    config.ajustes.cache_clear()
     a = _usuaria(motor_app)
     _perfil_y_cv_base(motor_app, a, n_cv_base=2)
     cid = _candidatura(motor_app, a, _oferta(motor_app))
     with sesion_de(motor_app, a) as s:
         entrada = worker.MANEJADORES["candidatura"].cargar(s, {"entidad_id": cid, "usuaria_id": a})
     assert len(entrada["cvs_base"]) == 2 and all(cv["creado_en"] for cv in entrada["cvs_base"])
+    monkeypatch.undo()
+    config.ajustes.cache_clear()

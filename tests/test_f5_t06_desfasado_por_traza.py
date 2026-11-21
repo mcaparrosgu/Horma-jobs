@@ -42,29 +42,3 @@ def _editar(c, h, puesto):
         "campo": "experiencias", "indice": 0,
         "dato": {"puesto": puesto, "empresa": "Bar Sol", "inicio": "2020", "fin": "2023"}})
     assert r.status_code == 201
-
-
-@pytest.mark.bd
-def test_la_api_marca_desfasado_solo_al_cv_afectado_y_dice_que_cambio(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    _perfil_hecho(motor_app, u)
-    _editar(c, h, "Camarera de sala")  # desde aquí el maestro lo compone el código
-    with sesion_de(motor_app, u) as s:
-        vigente = perfiles.vigente(s)
-        lineas = [x.lstrip("-# ").strip() for x in vigente["cv_maestro"].splitlines() if x.strip("-# ")]
-        linea = next(x for x in lineas if "Camarera" in x)
-        otra = next(x for x in lineas if "Camarera" not in x)
-        perfiles.guardar_cv_base(s, u, vigente["version"], {"guardados": [
-            {"destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
-             "contenido": "x", "traza": [{"frase": linea, "fragmento": linea}], "intentos": 1},
-            {"destino": {"sector": "construccion", "familia": "construccion_oficios"},
-             "contenido": "y", "traza": [{"frase": otra, "fragmento": otra}], "intentos": 1},
-        ], "rechazados": []})
-    assert all(not x["desfasado"] for x in c.get("/api/cv-base").json()["cv_base"])
-    _editar(c, h, "Jefa de sala")
-    por_sector = {x["sector"]: x for x in c.get("/api/cv-base").json()["cv_base"]}
-    assert por_sector["hosteleria_turismo"]["desfasado"] is True
-    assert por_sector["hosteleria_turismo"]["cambios"] == [linea]
-    assert por_sector["construccion"]["desfasado"] is False
-    assert por_sector["construccion"]["cambios"] == []

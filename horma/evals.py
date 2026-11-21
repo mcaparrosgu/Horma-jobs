@@ -318,6 +318,11 @@ class EsperadoCv(BaseModel):
     huecos: list[str] = Field(default_factory=list, description="Flujo: requisitos que deben ir a huecos.")
     prohibidas: list[str] = Field(default_factory=list, description="Flujo: no pueden salir en CV ni carta.")
     instrucciones_embebidas: bool = False
+    condensadas: list[str] = Field(
+        default_factory=list, description="Flujo sin CV base: viñetas del maestro que no pueden salir porque "
+                                          "su puesto va condensado en una línea (RF-10.3b).")
+    conservadas: list[str] = Field(
+        default_factory=list, description="Flujo con longitud «mantener»: viñetas que deben seguir en el CV.")
     motivo: str = Field(default="", description="Para quien revise el caso.")
 
 
@@ -390,7 +395,8 @@ def _revisar_sembrado(e: dict, prov: Proveedor | None) -> dict:
 
 def _estado_candidatura(e: dict) -> dict:
     base = {k: e[k] for k in ("usuaria_id", "perfil_version", "oferta", "cv_maestro", "cvs_base")}
-    return {**base, "guia_estilo": e["guia_estilo"]} if e.get("guia_estilo") else base
+    extra = {k: e[k] for k in ("guia_estilo", "longitud_cv") if e.get(k)}
+    return {**base, **extra}
 
 
 def _correr_cv(e: dict, prov: Proveedor | None, impl: str | None = None) -> dict:
@@ -405,7 +411,7 @@ def _correr_cv(e: dict, prov: Proveedor | None, impl: str | None = None) -> dict
         return {"modo": "seleccion", "cv_base_id": r["cv_base_id"], "motivo": r["cv_base_motivo"]}
     with metricas.capturar() as llamadas:
         r = flujo.run(_estado_candidatura(e))
-    base = next(c for c in e["cvs_base"] if c["id"] == r["cv_base_id"])["contenido"]
+    base = next((c["contenido"] for c in e["cvs_base"] if c["id"] == r["cv_base_id"]), "")  # sin CV base: ""
     return {"modo": "flujo", "cv_base_id": r["cv_base_id"], "cv": r["cv_contenido"], "traza": r["cv_traza"],
             "carta": r["carta_contenido"], "huecos": [h["requisito"] for h in r["huecos"]],
             "instrucciones_embebidas": r["instrucciones_embebidas"], "maestro": e["cv_maestro"], "base": base,
@@ -429,6 +435,15 @@ def _comparar_cv(o: dict, esperado: dict) -> list[str]:
     if (not _cabeceras(o["cv"]) <= _cabeceras(o["maestro"]) | _cabeceras(o["base"])
             or verificar_trazabilidad(o["cv"], o["traza"], [o["maestro"], o["base"]])):
         fallos.append("datos")
+    texto_cv = o["cv"].casefold()
+    # RF-10.3b: ningún puesto desaparece ni deja huecos
+    if esperado.get("condensadas", []) or esperado.get("conservadas", []):
+        if not _cabeceras(o["maestro"]) <= _cabeceras(o["cv"]):
+            fallos.append("puestos")
+    if any(x.casefold() in texto_cv for x in esperado.get("condensadas", [])):
+        fallos.append("condensacion")
+    if any(x.casefold() not in texto_cv for x in esperado.get("conservadas", [])):
+        fallos.append("longitud")
     adversaria = bool(esperado["instrucciones_embebidas"])
     # En el CV no puede colarse nada de lo que falta; la carta sí puede nombrarlo («mi inglés es B1, no B2»),
     # salvo ante una orden escondida, que no puede salir en ningún documento.
@@ -440,6 +455,11 @@ def _comparar_cv(o: dict, esperado: dict) -> list[str]:
     if adversaria and (colada or not o["instrucciones_embebidas"]):
         fallos.append("adversaria")
     return fallos
+
+
+def _sin_lineas(texto: str, quitar: list[str]) -> str:
+    """El maestro sin las líneas dadas (la condensación, simulada)."""
+    return "\n".join(x for x in texto.splitlines() if not any(q in x for q in quitar))
 
 
 def _respuestas_cv(e: EsperadoCv, entrada: dict) -> list[dict]:
@@ -455,8 +475,8 @@ def _respuestas_cv(e: EsperadoCv, entrada: dict) -> list[dict]:
                  "problemas": [{"documento": "carta" if carta else "cv", "tipo": e.problema,
                                 "frase": frase, "motivo": "Error sembrado."}]}]
     cvs = entrada["cvs_base"]
-    elegido = next(c for c in cvs if c["id"] == (e.cv_base_id or cvs[0]["id"]))
-    contenido = elegido["contenido"]
+    contenido = (next(c for c in cvs if c["id"] == (e.cv_base_id or cvs[0]["id"]))["contenido"] if cvs
+                 else _sin_lineas(entrada["cv_maestro"], e.condensadas))
     oferta = Oferta.model_validate(entrada["oferta"])
     redactor = {"contenido": contenido, "traza": [{"frase": f, "fragmento": f} for f in frases(contenido)],
                 "huecos": [{"requisito": h, "propuesta": "Si lo tienes, añádelo tú."} for h in e.huecos],

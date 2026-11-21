@@ -1,11 +1,13 @@
-"""Flujo candidatura (RF-3.1): elegir_cv_base → redactar_cv → redactar_carta → comprobar → juzgar →
+"""Flujo candidatura (RF-3.1, RF-10.3): elegir_cv_base → redactar_cv → redactar_carta → comprobar → juzgar →
 (vuelta única) → componer. Sin acceso a la base de datos ni a disco: el worker carga las entradas y guarda
 el resultado.
 
 Estado de entrada: {"usuaria_id": int, "perfil_version": int, "oferta": Oferta, "cv_maestro": str,
-"cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...],
-"guia_estilo": GuiaEstilo | None (opcional, RF-5.6e)}
-(todos los CV base de la usuaria; el código descarta los rechazados y los de otras usuarias).
+"cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...]
+(opcional), "guia_estilo": GuiaEstilo | None (opcional, RF-5.6e), "longitud_cv": "mantener" | "sintetizar" |
+None (opcional, RF-10.3b)}
+Sin CV base (lo normal desde la simplificación, RF-10.3) el flujo parte del CV maestro. Si el worker pasa
+CV base (respaldo, RF-10.3d), el código elige uno y descarta los rechazados y los de otras usuarias.
 Estado de salida: además, lo de `EstadoCandidatura` (cv_base_id, cv_base_motivo, cv_contenido, cv_traza,
 carta_contenido, carta_traza, huecos, avisos, problemas_juez, cobertura_ats, vuelta_hecha,
 redacciones_cv, redacciones_carta, instrucciones_embebidas) y `preparacion` = `lista` o `pendiente_de_ti`.
@@ -89,7 +91,7 @@ def _como_problemas(errores: list[str]) -> list[Problema]:
 CLAVES_INTERNAS = frozenset({
     "errores_cv", "errores_carta", "errores_formato", "palabras_sugeridas", "ausentes_sin_origen",
     "huecos_redactor", "rehacer", "cv_base_contenido", "cv_maestro", "cvs_base", "oferta", "usuaria_id",
-    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo"})
+    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo", "longitud_cv"})
 
 
 CLAVES_ESTADO = frozenset(EstadoCandidatura.model_fields) | CLAVES_INTERNAS
@@ -113,7 +115,9 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
 
     def elegir(e: dict) -> dict:
         validar(e)
-        elegido, motivo = elegir_cv_base(e["oferta"], e["cvs_base"], e["usuaria_id"])
+        # Sin CV base el flujo parte del maestro (RF-10.3); con respaldo (RF-10.3d) elige uno por código.
+        elegido, motivo = (elegir_cv_base(e["oferta"], e["cvs_base"], e["usuaria_id"])
+                           if e.get("cvs_base") else ({"id": None, "contenido": None}, None))
         e.update(avisos=[], problemas_juez=[], errores_cv=[], errores_carta=[], errores_formato=[],
                  palabras_sugeridas=[], ausentes_sin_origen=[], huecos=[], huecos_redactor=[],
                  instrucciones_embebidas=[], vuelta_hecha=False, rehacer=None, redacciones_cv=0,
@@ -125,7 +129,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         validar(e)
         e["redacciones_cv"] += 1
         r = RedactorCv.run(EntradaRedactorCv(
-            cv_base=e["cv_base_contenido"], cv_maestro=e["cv_maestro"],
+            cv_base=e["cv_base_contenido"], cv_maestro=e["cv_maestro"], longitud=e.get("longitud_cv"),
             oferta=Oferta.model_validate(e["oferta"]),
             errores_previos=[*e["errores_cv"], *e["errores_formato"]],
             problemas_previos=[Problema.model_validate(p) for p in e["problemas_juez"]
@@ -155,7 +159,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         longitud, secciones, fechas y ATS del CV."""
         validar(e)
         oferta = Oferta.model_validate(e["oferta"])
-        fuentes_cv = [e["cv_maestro"], e["cv_base_contenido"]]
+        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"]) if x]
         e["errores_cv"] = [
             *verificar_trazabilidad(e["cv_contenido"], e["cv_traza"], fuentes_cv),
             *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])],
@@ -184,8 +188,9 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         validar(e)
         r = JuezCandidatura.run(EntradaJuezCandidatura(
             cv=e["cv_contenido"], cv_traza=e["cv_traza"], carta=e["carta_contenido"],
-            carta_traza=e["carta_traza"], cv_maestro=e["cv_maestro"], cv_base=e["cv_base_contenido"],
-            oferta=Oferta.model_validate(e["oferta"]), guia_estilo=_guia(e)), proveedor=proveedor)
+            carta_traza=e["carta_traza"], cv_maestro=e["cv_maestro"],
+            cv_base=e["cv_base_contenido"] or "", oferta=Oferta.model_validate(e["oferta"]),
+            guia_estilo=_guia(e)), proveedor=proveedor)
         _sumar(e, r.instrucciones_embebidas)
         e["problemas_juez"] = [p.model_dump(mode="json") for p in r.problemas]
         # Si el CV falla se rehace el CV y, después, la carta (que se apoya en él); si solo falla la carta,

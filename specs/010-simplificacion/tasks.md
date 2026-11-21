@@ -46,16 +46,16 @@ stale_after: null
 - [x] T08 — Cierre de S1: prueba manual de Mar y PR. *(firmada por Mar el 21-nov)*
 
 ### S2 · Candidatura sin CV base (RF-10.3)
-- [ ] T09 — Flujo y redactor sin CV base; eval `cv`.
+- [x] T09 — Flujo y redactor sin CV base; eval `cv`. *(eval real en umbral el 21-nov: 31 casos; cobertura ATS 0,81)*
   - **Qué se hace:** `elegir` sin CV base; fuentes solo el maestro; `redactor_cv` con `longitud` y condensación;
     el worker pasa `longitud_cv`; casos nuevos en `evals/cv`; avisar del gasto antes (~0,5-1 USD).
   - **Test (simulado):** el flujo redacta con solo el maestro; `comprobar` acepta frases del maestro y rechaza
     una inventada. **Real:** eval `cv` en umbral.
-- [ ] T10 — Servicio y candidaturas antiguas.
+- [x] T10 — Servicio y candidaturas antiguas.
   - **Test:** `crear` sin CV base no da 409; una candidatura con `cv_base_id` recalcula avisos con él.
-- [ ] T11 — Quitar `/cv-base` (si T09 pasa) o dejar el respaldo (si no).
+- [x] T11 — Quitar `/cv-base` (si T09 pasa) o dejar el respaldo (si no).
   - **Test:** `/cv-base` → 308 a `/perfil`; los endpoints de CV base dan 404; las tablas siguen.
-- [ ] T12 — Cierre de S2: prueba manual de Mar (usuaria nueva: sube CV y prepara candidatura) y PR.
+- [ ] T12 — Cierre de S2: prueba manual de Mar (usuaria nueva: sube CV y prepara candidatura) y PR. *(la prueba pasa al plan de pruebas de la fase 10)*
 
 ### S3 · Avance y subida (RF-10.8, RF-10.5 subida)
 - [ ] T13 — Indicador de avance en la guía y en la cabecera.

@@ -121,59 +121,6 @@ def _cv_base_hecho(motor, u):
         return s.execute(text("select id from cv_base")).scalar_one()
 
 
-@pytest.mark.bd
-def test_la_api_guarda_la_visibilidad_y_lista_las_experiencias_para_marcarla(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    _perfil_hecho(motor_app, u)
-    _dos_experiencias(c, h)
-    cv_id = _cv_base_hecho(motor_app, u)
-    r = c.get("/api/cv-base").json()
-    assert [e["clave"] for e in r["experiencias"]] == [K_BAR, K_OBRA]
-    assert r["experiencias"][1]["nombre"] == "Peón · Obras Norte"
-    assert r["cv_base"][0]["visibilidad"] == {}
-    ok = c.put(f"/api/cv-base/{cv_id}/visibilidad", headers=h, json={"visibilidad": {K_OBRA: "oculta"}})
-    assert ok.status_code == 200
-    assert c.get("/api/cv-base").json()["cv_base"][0]["visibilidad"] == {K_OBRA: "oculta"}
-    # marcar otra vez sustituye lo anterior; vacío = volver a lo automático
-    c.put(f"/api/cv-base/{cv_id}/visibilidad", headers=h, json={"visibilidad": {}})
-    assert c.get("/api/cv-base").json()["cv_base"][0]["visibilidad"] == {}
-
-
-@pytest.mark.bd
-def test_la_api_rechaza_valores_y_experiencias_que_no_existen(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    _perfil_hecho(motor_app, u)
-    _dos_experiencias(c, h)
-    cv_id = _cv_base_hecho(motor_app, u)
-    url = f"/api/cv-base/{cv_id}/visibilidad"
-    assert c.put(url, headers=h, json={"visibilidad": {K_OBRA: "borrosa"}}).status_code == 422
-    assert c.put(url, headers=h, json={"visibilidad": {"inventada|x|1": "oculta"}}).status_code == 422
-    assert c.put("/api/cv-base/9999/visibilidad", headers=h, json={"visibilidad": {}}).status_code == 404
-
-
-@pytest.mark.bd
-def test_al_regenerar_se_respeta_lo_marcado(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    _perfil_hecho(motor_app, u)
-    _dos_experiencias(c, h)
-    cv_id = _cv_base_hecho(motor_app, u)
-    c.put(f"/api/cv-base/{cv_id}/visibilidad", headers=h, json={"visibilidad": {K_OBRA: "oculta"}})
-    with sesion_de(motor_app, u) as s:
-        maestro = perfiles.vigente(s)["cv_maestro"]
-    cab = [x for x in maestro.splitlines() if "Camarera" in x][0]
-    ok = {"contenido": f"## Experiencia\n{cab}", "traza": [{"frase": cab, "fragmento": cab}]}
-    _sin_otras_tareas()
-    _encolar(motor_app, u, "regenerar_cv_base", cv_id, tope_reintentos=1)
-    # el perfil de prueba tiene idiomas: el CV de prueba los incluye para no fallar por otra causa
-    assert worker.procesar_una(motor_app, ProveedorSimulado([_con_idiomas(ok, maestro)])) == "hecha"
-    with sesion_de(motor_app, u) as s:
-        contenido = s.execute(text("select contenido from cv_base")).scalar_one()
-    assert "Obras Norte" not in contenido and "Camarera" in contenido
-
-
 def _con_idiomas(resp, maestro):
     ids = [x for x in maestro.splitlines() if x.strip() and not x.startswith("#")
            and "·" not in x and x not in ("Montaje de andamios",)]
@@ -181,26 +128,6 @@ def _con_idiomas(resp, maestro):
     extra = "\n".join(lineas)
     return {"contenido": resp["contenido"] + ("\n## Idiomas\n" + extra if extra else ""),
             "traza": resp["traza"] + [{"frase": x, "fragmento": x} for x in lineas]}
-
-
-@pytest.mark.bd
-def test_si_regenera_ignorando_lo_oculto_no_se_guarda(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    _perfil_hecho(motor_app, u)
-    _dos_experiencias(c, h)
-    cv_id = _cv_base_hecho(motor_app, u)
-    c.put(f"/api/cv-base/{cv_id}/visibilidad", headers=h, json={"visibilidad": {K_OBRA: "oculta"}})
-    with sesion_de(motor_app, u) as s:
-        maestro = perfiles.vigente(s)["cv_maestro"]
-    todo = _con_idiomas({"contenido": "## Experiencia\n" + "\n".join(
-        x for x in maestro.splitlines() if "·" in x), "traza": [
-        {"frase": x, "fragmento": x} for x in maestro.splitlines() if "·" in x]}, maestro)
-    _sin_otras_tareas()
-    _encolar(motor_app, u, "regenerar_cv_base", cv_id, tope_reintentos=1)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([todo, todo])) == "error"
-    with sesion_de(motor_app, u) as s:
-        assert s.execute(text("select contenido from cv_base")).scalar_one() == "x"
 
 
 # --- los evals ---------------------------------------------------------------------------------
@@ -214,11 +141,3 @@ def test_el_eval_cv_base_incluye_casos_de_visibilidad_y_pasa_en_simulado():
     assert r["aprobado"] and r["casos"] >= 7 and r["campos"] == {"verificacion": 1.0, "ats": 1.0}
     nombres = {c.name for c in (raiz / "cv-base" / "casos").iterdir()}
     assert {"06-visibilidad-oculta", "07-visibilidad-condensada"} <= nombres
-
-
-def test_la_pantalla_deja_marcar_cada_experiencia_y_avisa_que_se_aplica_al_regenerar():
-    from pathlib import Path
-    ruta = Path(__file__).resolve().parent.parent / "horma" / "web" / "static" / "cv-base.js"
-    js = ruta.read_text("utf-8")
-    assert "/visibilidad" in js and "Oculta" in js and "Condensada en una línea" in js
-    assert "Qué experiencias salen" in js and "Regenerar" in js

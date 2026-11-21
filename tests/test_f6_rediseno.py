@@ -115,7 +115,7 @@ def test_estilo_trae_los_componentes_de_la_guia():
 
 
 # --- T04 · cabecera común y tema ----------------------------------------------------------------
-PAGINAS_USUARIA = ("perfil", "cv-base", "ofertas", "candidaturas",
+PAGINAS_USUARIA = ("perfil", "ofertas", "candidaturas",
                    "candidatura")
 TODAS = [p.stem for p in sorted(ESTATICOS.glob("*.html")) if p.stem != "offline"]
 
@@ -260,7 +260,7 @@ def test_ofertas_movil_mas_filtros_y_ayuda_como_globo():  # T10
 
 
 def test_resto_de_pantallas_usan_los_componentes_2c():  # T11-T15
-    for pagina in ("perfil", "ofertas", "cv-base", "candidaturas", "candidatura"):
+    for pagina in ("perfil", "ofertas", "candidaturas", "candidatura"):
         html = leer(f"{pagina}.html")
         assert 'class="titulo-pantalla"' in html and 'class="pp"' not in html, pagina
     assert "lista-editorial" in leer("perfil.html")
