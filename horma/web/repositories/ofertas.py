@@ -173,7 +173,10 @@ def contar_por_puesto(s: Session, titulos: list[str]) -> dict[str, int]:
 
 
 def titulos_que_contienen(s: Session, q: str, limite: int = 8) -> list[str]:
-    """Títulos de ofertas recomendables que contienen lo escrito, los más frecuentes primero (autocompletar)."""
+    """Títulos de ofertas recomendables que contienen lo escrito, los más frecuentes primero.
+
+    Sirve para autocompletar.
+    """
     norm = normalizar_titulo(q)
     if not norm:
         return []

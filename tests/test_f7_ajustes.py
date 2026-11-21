@@ -190,7 +190,8 @@ def test_secciones_de_perfil_son_desplegables_cerrados_con_su_numero():
     """Fase 7 · T19 (RF-7.5d); la 009 añade «Otras actividades» (RF-9.1d) y, a petición de Mar (21-nov),
     habilidades, certificaciones, otros y la lista de CV subidos."""
     js = leer("perfil.js")
-    assert ('const PLEGABLES = ["experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",\n'
+    assert ('const PLEGABLES = ["experiencias", "formacion", "idiomas", "habilidades", "proyectos", '
+            '"certificaciones",\n'
             '                   "actividades", "otros"]') in js
     assert 'id="cvs-subidos"' in leer("perfil.html") and 'id="n-cvs"' in leer("perfil.html")
     assert 'nodo(plegable ? "details" : "section"' in js
