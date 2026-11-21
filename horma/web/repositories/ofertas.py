@@ -172,6 +172,18 @@ def contar_por_puesto(s: Session, titulos: list[str]) -> dict[str, int]:
     return cuentas
 
 
+def titulos_que_contienen(s: Session, q: str, limite: int = 8) -> list[str]:
+    """Títulos de ofertas recomendables que contienen lo escrito, los más frecuentes primero (autocompletar)."""
+    norm = normalizar_titulo(q)
+    if not norm:
+        return []
+    filas = s.execute(text(
+        f"select min(titulo) t, count(*) n {_BASE} and titulo is not null "
+        "and (' ' || coalesce(titulo_norm, '') || ' ') like :p group by titulo_norm "
+        "order by n desc, t limit :l"), {"p": f"%{norm}%", "l": limite}).all()
+    return [f[0] for f in filas]
+
+
 def _url_valida(url: str | None) -> str | None:
     try:
         return str(TypeAdapter(HttpUrl).validate_python(url)) if url else None

@@ -23,16 +23,16 @@
 
     <details id="que-buscas" class="panel-desplegado">
       <summary>Qué buscas</summary>
-      <p class="suave">Marca lo que buscas. Un grupo sin nada marcado no filtra. Entre paréntesis, cuántas ofertas recomendables hay ahora en el catálogo. Área, puestos, sector, países e idiomas llegan marcados desde tu CV: cámbialos cuando quieras, también para cambiar de carrera. Una oferta entra si es de tu área o su título contiene uno de tus puestos; si contiene un término excluido, no entra.</p>
+      <p class="suave">Marca lo que buscas. Un grupo sin nada marcado no filtra. Entre paréntesis, cuántas ofertas recomendables hay ahora en el catálogo. Puestos, área, sector, países e idiomas llegan marcados desde tu CV: cámbialos cuando quieras, también para cambiar de carrera. Una oferta entra si es de tu área o su título contiene uno de tus puestos; si contiene un término excluido, no entra.</p>
       <form id="formulario-busca">
-        <div id="grupos" class="grupos"></div>
         <div class="grupos-dos">
           <fieldset id="grupo-puestos" class="grupo grupo-puestos" data-grupo="puestos">
-            <legend class="etiqueta-mono">Puestos</legend>
+            <legend class="etiqueta-mono">Puestos sugeridos</legend>
             <div id="casillas-puestos" class="casillas"></div>
             <div class="fila anadir-termino">
-              <input id="nuevo-puesto" type="text" maxlength="80" aria-label="Añadir un puesto" placeholder="Otro puesto, p. ej. Data Analyst">
+              <input id="nuevo-puesto" type="text" maxlength="80" list="titulos-puestos" autocomplete="off" aria-label="Añadir un puesto" placeholder="Otro puesto, p. ej. Data Analyst">
               <button id="anadir-puesto" class="secundario" type="button">Añadir</button>
+              <datalist id="titulos-puestos"></datalist>
             </div>
           </fieldset>
           <fieldset id="grupo-excluidos" class="grupo grupo-puestos" data-grupo="excluidos">
@@ -45,6 +45,7 @@
             </div>
           </fieldset>
         </div>
+        <div id="grupos" class="grupos"></div>
         <fieldset class="grupo panel">
           <legend class="etiqueta-mono">Condiciones</legend>
           <div class="casilla-con-ayuda">

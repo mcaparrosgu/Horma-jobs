@@ -186,3 +186,15 @@ def test_opciones_trae_los_sugeridos_con_su_dato_y_cuantas_ofertas_casan(app, mo
     puestos = c.get("/api/preferencias/opciones").json()["puestos"]
     assert puestos[0]["valor"] == "Data Analyst" and puestos[0]["dato"] == "Analista de datos"
     assert puestos[0]["n"] == 1 and puestos[0]["marcado"] is True
+
+
+def test_autocompletar_puestos_con_titulos_reales_de_las_ofertas(app, motor_migrador):
+    c, _ = entrar(app)
+    with motor_migrador.begin() as cx:
+        for i, t in enumerate(["Senior Data Analyst", "Data Analyst", "Data Analyst", "Camarero"]):
+            cx.execute(text("insert into ofertas (texto_crudo, huella, titulo, titulo_norm, estado, fantasma, "
+                            "fraude) values ('t', :h, :t, lower(:t), 'procesada', false, false)"),
+                       {"h": f"h{i}", "t": t})
+    assert c.get("/api/preferencias/titulos", params={"q": "data"}).json()["titulos"] == [
+        "Data Analyst", "Senior Data Analyst"]
+    assert c.get("/api/preferencias/titulos", params={"q": "x"}).json()["titulos"] == []

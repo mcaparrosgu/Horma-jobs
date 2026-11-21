@@ -45,6 +45,13 @@ def _puestos_con_cuenta(s, prefs: Preferencias) -> list[dict]:
             for t in titulos]
 
 
+@router.get("/api/preferencias/titulos")
+def titulos(request: Request, q: str = "", usuaria_id: int = Depends(usuaria_actual)):
+    """Autocompletar «Añadir un puesto»: títulos reales de las ofertas que contienen lo escrito."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        return {"titulos": repo_ofertas.titulos_que_contienen(s, q[:80])}
+
+
 @router.get("/api/preferencias/opciones")
 def opciones(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Cada casilla con cuántas ofertas recomendables tiene el catálogo; las vacías, con 0."""

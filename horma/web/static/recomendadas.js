@@ -572,6 +572,18 @@ $("anadir-excluido").addEventListener("click", () => anadirTermino($("nuevo-excl
   excluidos.push(t);
   pintarExcluidos();
 }));
+// Autocompletar: títulos reales de las ofertas que contienen lo que va escribiendo.
+let esperaTitulos = null;
+$("nuevo-puesto").addEventListener("input", () => {
+  clearTimeout(esperaTitulos);
+  esperaTitulos = setTimeout(async () => {
+    const q = $("nuevo-puesto").value.trim();
+    if (q.length < 2) return $("titulos-puestos").replaceChildren();
+    const r = await api(`/api/preferencias/titulos?q=${encodeURIComponent(q)}`);
+    if (!r.ok) return;
+    $("titulos-puestos").replaceChildren(...r.datos.titulos.map((t) => { const o = nodo("option"); o.value = t; return o; }));
+  }, 200);
+});
 for (const [id, boton] of [["nuevo-puesto", "anadir-puesto"], ["nuevo-excluido", "anadir-excluido"]]) {
   $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $(boton).click(); } });
 }
