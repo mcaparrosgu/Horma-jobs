@@ -508,14 +508,101 @@ async function retomarOLanzar() {
 }
 
 // --- «Qué buscas» (RF-8.4) ---------------------------------------------------------------------
+let puestos = [];     // {valor, dato, n, marcado}: los sugeridos y los que escribe ella (RF-9.3b)
+let excluidos = [];
+
+function casillaPuesto(p) {
+  const l = nodo("label", null, "casilla casilla-puesto");
+  const i = nodo("input");
+  i.type = "checkbox";
+  i.value = p.valor;
+  i.checked = p.marcado;
+  i.addEventListener("change", () => { p.marcado = i.checked; });
+  const texto = nodo("span", `${p.valor} (${p.n})`);
+  if (p.dato) texto.append(nodo("span", `Por tu perfil: ${p.dato}`, "dato-puesto"));
+  l.append(i, texto);
+  return l;
+}
+
+function pintarPuestos() {
+  const caja = $("casillas-puestos");
+  caja.replaceChildren();
+  if (puestos.length > 2) {
+    const masivo = nodo("div", null, "masivo");
+    for (const [texto, valor] of [["Seleccionar todo", true], ["Quitar selección", false]]) {
+      const b = nodo("button", texto, "secundario enlace");
+      b.type = "button";
+      b.addEventListener("click", () => { for (const p of puestos) p.marcado = valor; pintarPuestos(); });
+      masivo.append(b);
+    }
+    caja.append(masivo);
+  }
+  if (!puestos.length) caja.append(nodo("p", "Aún no hay puestos: súbelos tú abajo o sube un CV para que Horma los proponga.", "suave"));
+  caja.append(...puestos.map(casillaPuesto));
+}
+
+function pintarExcluidos() {
+  const ul = $("lista-excluidos");
+  ul.replaceChildren();
+  if (!excluidos.length) ul.append(nodo("li", "Ninguno: no se excluye nada.", "suave"));
+  excluidos.forEach((t, i) => {
+    const li = nodo("li");
+    const quitar = nodo("button", "Quitar", "secundario");
+    quitar.type = "button";
+    quitar.setAttribute("aria-label", `Quitar el término «${t}»`);
+    quitar.addEventListener("click", () => { excluidos.splice(i, 1); pintarExcluidos(); });
+    li.append(nodo("span", t), quitar);
+    ul.append(li);
+  });
+}
+
+function anadirTermino(entrada, lista, alAnadir) {
+  const t = entrada.value.trim().replace(/\s+/g, " ");
+  if (!t) return;
+  if (!lista.some((x) => (x.valor || x).toLowerCase() === t.toLowerCase())) alAnadir(t);
+  entrada.value = "";
+  entrada.focus();
+}
+
+$("anadir-puesto").addEventListener("click", () => anadirTermino($("nuevo-puesto"), puestos, (t) => {
+  puestos.push({ valor: t, dato: null, n: 0, marcado: true });
+  pintarPuestos();
+}));
+$("anadir-excluido").addEventListener("click", () => anadirTermino($("nuevo-excluido"), excluidos, (t) => {
+  excluidos.push(t);
+  pintarExcluidos();
+}));
+// Autocompletar: títulos reales de las ofertas que contienen lo que va escribiendo.
+let esperaTitulos = null;
+$("nuevo-puesto").addEventListener("input", () => {
+  clearTimeout(esperaTitulos);
+  esperaTitulos = setTimeout(async () => {
+    const q = $("nuevo-puesto").value.trim();
+    if (q.length < 2) return $("titulos-puestos").replaceChildren();
+    const r = await api(`/api/preferencias/titulos?q=${encodeURIComponent(q)}`);
+    if (!r.ok) return;
+    $("titulos-puestos").replaceChildren(...r.datos.titulos.map((t) => { const o = nodo("option"); o.value = t; return o; }));
+  }, 200);
+});
+for (const [id, boton] of [["nuevo-puesto", "anadir-puesto"], ["nuevo-excluido", "anadir-excluido"]]) {
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $(boton).click(); } });
+}
+
 function pintarQueBuscas() {
+  puestos = (opciones.puestos || []).map((p) => ({ ...p }));
+  for (const t of guardadas.puestos || []) {   // los que ella escribió y ya no son sugeridos
+    if (!puestos.some((p) => p.valor === t)) puestos.push({ valor: t, dato: null, n: 0, marcado: true });
+  }
+  excluidos = [...(guardadas.excluidos || [])];
+  pintarPuestos();
+  pintarExcluidos();
   $("grupos").replaceChildren(...GRUPOS.map(([clave, titulo]) =>
     grupoCasillas(clave, titulo, opciones.grupos[clave] || [], guardadas[clave] || [],
                   { origen: (guardadas.origen || {})[clave] })));
   $("solo-remoto").checked = guardadas.solo_remoto;
   $("solo-salario").checked = guardadas.solo_salario;
   $("sueldo-minimo").value = guardadas.sueldo_minimo === null ? "" : guardadas.sueldo_minimo;
-  const vacio = GRUPOS.every(([clave]) => !(guardadas[clave] || []).length);
+  const vacio = GRUPOS.every(([clave]) => !(guardadas[clave] || []).length) && !puestos.length;
   $("que-buscas").open = vacio || location.hash === "#que-buscas";   // abierto si aún no hay nada guardado
 }
 
@@ -523,6 +610,8 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   e.preventDefault();
   const nuevas = { ...guardadas };
   for (const [clave] of GRUPOS) nuevas[clave] = marcadas(document.querySelector(`[data-grupo="${clave}"]`));
+  nuevas.puestos = puestos.filter((p) => p.marcado).map((p) => p.valor);
+  nuevas.excluidos = [...excluidos];
   nuevas.solo_remoto = $("solo-remoto").checked;
   nuevas.solo_salario = $("solo-salario").checked;
   const sueldo = $("sueldo-minimo").value.trim();
@@ -530,7 +619,7 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   $("guardar-busca").disabled = true;
   const r = await api("/api/preferencias", { metodo: "PUT", cuerpo: nuevas });
   $("guardar-busca").disabled = false;
-  if (!r.ok) return avisar(r.estado === 422 ? "Revisa el sueldo mínimo: debe ser un número positivo." : r.motivo, true);
+  if (!r.ok) return avisar(r.estado === 422 ? "Revisa el sueldo mínimo (un número positivo) y que puestos y términos no pasen de 80 letras." : r.motivo, true);
   guardadas = r.datos;
   avisar("Guardado.");
   const espera = barraAvance($("avance"), "Buscando y puntuando ofertas", true);   // para que no parezca bloqueada

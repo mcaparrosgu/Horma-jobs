@@ -1,0 +1,13 @@
+{
+  "cvs": [
+    {
+      "cv_id": 1,
+      "nombre": "CV",
+      "texto": "Lucía Ramos\n\nEXPERIENCIA\nDependienta en Moda Sur, Málaga, 2016-2019\nAuxiliar administrativa en Gestoría Costa, 2020-2024\n\nOTRAS ACTIVIDADES\nVoluntariado en el banco de alimentos, 2019-2020"
+    }
+  ],
+  "puestos_esperados": [
+    "Auxiliar administrativa",
+    "Administrative Assistant"
+  ]
+}

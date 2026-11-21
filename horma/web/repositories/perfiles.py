@@ -13,8 +13,9 @@ from horma.tools.cv_base_afectado import lineas_cambiadas
 from horma.tools.visibilidad_cv import clave_experiencia, nombre_experiencia
 
 _j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
-GRUPOS_DEL_CV = ("familias", "sectores", "idiomas")
-_COLUMNAS_PREFS = ("familias", "sectores", "contratos", "niveles", "paises", "idiomas", "solo_remoto",
+GRUPOS_DEL_CV = ("familias", "puestos", "sectores", "idiomas")
+_COLUMNAS_PREFS = ("familias", "puestos", "puestos_sugeridos", "excluidos", "sectores", "contratos",
+                   "niveles", "paises", "idiomas", "solo_remoto",
                    "solo_salario", "sueldo_minimo", "orden", "rango_min", "rango_max", "origen")
 
 
@@ -84,7 +85,7 @@ def _origenes(perfil: Perfil) -> list[tuple[str, str]]:
         if dato:
             salida.append((campo, dato.origen.fragmento))
     for campo in ("experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",
-                  "otros"):
+                  "actividades", "otros"):
         for i, x in enumerate(getattr(perfil, campo)):
             salida.append((f"{campo}.{i}", x.origen.fragmento))
     return salida
@@ -143,8 +144,9 @@ def preferencias(s: Session) -> Preferencias:
 def guardar_preferencias(s: Session, usuaria_id: int, p: Preferencias) -> None:
     valores = p.model_dump(mode="json")
     valores["origen"] = _j(valores["origen"])
+    valores["puestos_sugeridos"] = _j(valores["puestos_sugeridos"])
     columnas = ", ".join(_COLUMNAS_PREFS)
-    marcas = ", ".join(f"cast(:{c} as jsonb)" if c == "origen" else
+    marcas = ", ".join(f"cast(:{c} as jsonb)" if c == "origen" or c == "puestos_sugeridos" else
                        f"cast(:{c} as text[])" if isinstance(valores[c], list) else f":{c}"
                        for c in _COLUMNAS_PREFS)
     cambios = ", ".join(f"{c} = excluded.{c}" for c in _COLUMNAS_PREFS)
@@ -158,6 +160,7 @@ def aplicar_preferencias_del_cv(s: Session, usuaria_id: int, desde_cv: Preferenc
     """Rellena puestos, sectores e idiomas con lo que sale del CV (RF-2.8b) sin pisar los grupos que
     la usuaria ya escribió ella."""
     actual = preferencias(s)
+    actual.puestos_sugeridos = desde_cv.puestos_sugeridos  # siempre se renuevan (RF-9.3b)
     for grupo in GRUPOS_DEL_CV:
         if actual.origen.get(grupo) == "usuaria":
             continue
@@ -168,6 +171,45 @@ def aplicar_preferencias_del_cv(s: Session, usuaria_id: int, desde_cv: Preferenc
         else:
             actual.origen.pop(grupo, None)
     guardar_preferencias(s, usuaria_id, actual)
+
+
+def aplicar_puestos_del_cv(s: Session, usuaria_id: int, sugeridos: list[dict]) -> None:
+    """Tras reclasificar: los sugeridos se renuevan; los puestos marcados, solo si no los tocó ella."""
+    desde_cv = Preferencias(puestos=[p["titulo"] for p in sugeridos], puestos_sugeridos=sugeridos)
+    actual = preferencias(s)
+    actual.puestos_sugeridos = desde_cv.puestos_sugeridos
+    if actual.origen.get("puestos") != "usuaria":
+        actual.puestos = desde_cv.puestos
+        if actual.puestos:
+            actual.origen["puestos"] = "cv"
+        else:
+            actual.origen.pop("puestos", None)
+    guardar_preferencias(s, usuaria_id, actual)
+
+
+# --- avisos vistos y longitud del CV (RF-9.2c, RF-9.2d) -----------------------------------------
+def avisos_vistos(s: Session) -> dict[str, str]:
+    """clave -> huella de lo que la usuaria dio por visto."""
+    return {f["clave"]: f["huella"] for f in s.execute(text(
+        "select clave, huella from avisos_vistos")).mappings()}
+
+
+def marcar_visto(s: Session, usuaria_id: int, clave: str, huella: str) -> None:
+    s.execute(text(
+        "insert into avisos_vistos (usuaria_id, clave, huella) values (:u, :c, :h) "
+        "on conflict (usuaria_id, clave) do update set huella = excluded.huella, creado_en = now()"),
+        {"u": usuaria_id, "c": clave, "h": huella})
+
+
+def longitud_cv(s: Session) -> str | None:
+    return s.execute(text("select longitud_cv from ajustes_perfil")).scalar()
+
+
+def fijar_longitud(s: Session, usuaria_id: int, longitud: str) -> None:
+    s.execute(text(
+        "insert into ajustes_perfil (usuaria_id, longitud_cv) values (:u, :l) "
+        "on conflict (usuaria_id) do update set longitud_cv = excluded.longitud_cv"),
+        {"u": usuaria_id, "l": longitud})
 
 
 # --- CV base -----------------------------------------------------------------------------------

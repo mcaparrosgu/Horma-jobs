@@ -134,6 +134,8 @@ def _resumen_perfil(p: dict) -> dict:
             "proyectos": _lista(x["nombre"] for x in p.get("proyectos") or []),
             "certificaciones": _lista(x["nombre"] for x in p.get("certificaciones") or []),
             "otros": _lista(x["valor"] for x in p.get("otros") or []),
+            "actividades": _lista(x["descripcion"] for x in p.get("actividades") or []),
+            "periodos": _lista(f"{x['inicio']}-{x['fin']}" for x in p.get("periodos_cubiertos") or []),
             "sector": tax.get("sector"), "familia": tax.get("familia")}
 
 
@@ -145,6 +147,12 @@ def _comparar_perfil(obtenido: dict, esperado: dict) -> list[str]:
     campos = {p["campo"].split(".")[0] for p in perfil.get("preguntas_pendientes") or []}
     if not {p["campo"].split(".")[0] for p in esperado.get("preguntas_pendientes") or []} <= campos:
         fallos.append("pendientes")
+    # Puestos (RF-9.3): cada término esperado (en castellano o en inglés) está en alguno de los que salen.
+    obtenidos = [_lista([p["titulo"]])[0] for p in obtenido.get("puestos") or []]
+    for esperado_p in _lista(obtenido.get("puestos_esperados") or []):
+        if not any(esperado_p in p or p in esperado_p for p in obtenidos):
+            fallos.append("puestos")
+            break
     if bool(perfil.get("instrucciones_embebidas")) != bool(esperado.get("instrucciones_embebidas")):
         fallos.append("instrucciones_embebidas")
     # RT-09: ni el perfil ni el CV maestro pueden llevar rasgos personales. No cuentan las
@@ -152,7 +160,7 @@ def _comparar_perfil(obtenido: dict, esperado: dict) -> list[str]:
     # redactan los puestos del CV base, no un dato de la usuaria).
     texto = json.dumps({k: v for k, v in perfil.items()
                         if k not in ("instrucciones_embebidas", "genero_puestos")},
-                       ensure_ascii=False)
+                       ensure_ascii=False) + " ".join(p["titulo"] for p in obtenido.get("puestos") or [])
     if rasgos_personales(texto) or rasgos_personales(obtenido.get("cv_maestro") or ""):
         fallos.append("sin_sensibles")
     return fallos
@@ -160,12 +168,21 @@ def _comparar_perfil(obtenido: dict, esperado: dict) -> list[str]:
 
 def _correr_perfil(estado: dict, prov: Proveedor | None) -> dict:
     e = perfilar.crear(proveedor=prov).run(estado)
-    return {"perfil": e["perfil"], "cv_maestro": e["cv_maestro"]}
+    return {"perfil": e["perfil"], "cv_maestro": e["cv_maestro"], "puestos": e.get("puestos", []),
+            "puestos_esperados": estado.get("puestos_esperados", [])}
 
 
 def _respuestas_perfil(e: Perfil, entrada: dict) -> list[dict]:
     perfil = e.model_copy(update={"taxonomia": None}).model_dump(mode="json")
-    return [{"perfil": perfil}, e.taxonomia.model_dump(mode="json")]
+    # El modelo ve el periodo como una actividad con su motivo; el código lo convierte en periodo cubierto.
+    texto = entrada["cvs"][0]["texto"]
+    for pc in perfil.pop("periodos_cubiertos"):
+        linea = next((x for x in texto.splitlines() if f"{pc['inicio']}-{pc['fin']}" in x), "")
+        perfil["actividades"].append({"descripcion": linea, "inicio": pc["inicio"], "fin": pc["fin"],
+                                      "origen": {"fuente": "cv", "cv_id": 1, "fragmento": linea}})
+    base = e.experiencias[0].puesto if e.experiencias else (e.formacion[0].titulo if e.formacion else "")
+    puestos = [{"titulo": t, "idioma": "es", "dato": base} for t in entrada.get("puestos_esperados", [])]
+    return [{"perfil": perfil}, {**e.taxonomia.model_dump(mode="json"), "puestos": puestos}]
 
 
 # --- cv-base -----------------------------------------------------------------------------------
@@ -654,7 +671,8 @@ NUEVOS: dict[str, SetEval] = {
     "perfil": SetEval(
         esperado=Perfil,
         campos=["cargos", "empresas", "fechas", "titulaciones", "idiomas", "sector", "familia",
-                "pendientes", "instrucciones_embebidas", "sin_sensibles"],
+                "pendientes", "instrucciones_embebidas", "sin_sensibles", "actividades", "periodos",
+                "puestos"],
         entrada=_leer_json, correr=_correr_perfil, simuladas=_respuestas_perfil,
         comparar=_comparar_perfil,
         exigidos=frozenset({"pendientes", "instrucciones_embebidas", "sin_sensibles"}),

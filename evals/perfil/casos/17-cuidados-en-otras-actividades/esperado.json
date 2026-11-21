@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "titular": null,
+  "resumen": null,
+  "habilidades": [],
+  "idiomas": [],
+  "formacion": [],
+  "experiencias": [
+    {
+      "puesto": "Auxiliar de enfermería",
+      "empresa": "Residencia Sol",
+      "inicio": "2012",
+      "fin": "2018",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Auxiliar de enfermería en Residencia Sol, Madrid, 2012-2018"
+      }
+    },
+    {
+      "puesto": "Auxiliar de enfermería",
+      "empresa": "Hospital Norte",
+      "inicio": "2021",
+      "fin": "2024",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Auxiliar de enfermería en Hospital Norte, 2021-2024"
+      }
+    }
+  ],
+  "actividades": [
+    {
+      "descripcion": "Cuidado de una persona dependiente",
+      "inicio": "2019",
+      "fin": "2020",
+      "origen": {
+        "fuente": "cv",
+        "cv_id": 1,
+        "fragmento": "Cuidado de una persona dependiente, 2019-2020"
+      }
+    }
+  ],
+  "periodos_cubiertos": [],
+  "taxonomia": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "intermedio",
+    "stack": []
+  },
+  "preguntas_pendientes": [],
+  "instrucciones_embebidas": []
+}

@@ -32,6 +32,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, construida y probada por Mar el 20-nov)
 7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; cerrada el 20-nov: evals reales y pruebas manuales firmadas por Mar)
 8. **Portada y ofertas** (`008-portada-ofertas`, construida el 20-nov, T01-T21; prueba manual firmada por Mar el 21-nov; RF-8.5 provisional)
+9. **CV maestro y entrevista** (`009-cv-maestro-entrevista`, en dos partes; spec, plan y tareas de 9a firmados el 21-nov; 9a cerrada y firmada por Mar el 21-nov (T01-T19))
 
 Cada fase se cierra con sus evals en verde.
 
@@ -88,7 +89,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 3: candidatura y seguimiento
 
-1. `uv run alembic upgrade head` aplica las migraciones (la 0019 añade `ofertas.modalidad`); antes, la 0006 (candidaturas, historial y versiones de CV base).
+1. `uv run alembic upgrade head` aplica las migraciones (la 0019 añade `ofertas.modalidad`; la 0021, los puestos y términos excluidos, `ofertas.titulo_norm`, los avisos vistos y la longitud del CV); antes, la 0006 (candidaturas, historial y versiones de CV base).
 2. En `/recomendadas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker elige el CV base y
    redacta CV y carta. En `/candidaturas` las ves por estado: revisas, editas, apruebas, descargas
    los PDF y sigues el proceso (enviada, entrevista, cerrada). Cada CV base guarda su historial en `/cv-base`.

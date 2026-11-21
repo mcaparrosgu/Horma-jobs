@@ -85,7 +85,7 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
 - **RF-8.3d** La ventana es un componente nuevo («Ventana»): DEBERÁ añadirse antes a la guía (RF-6.4, RF-6.9).
 
 ### «Qué buscas» dentro de Recomendadas (RF-8.4)
-- **RF-8.4** Recomendadas DEBERÁ tener arriba un panel plegable «Qué buscas» con: puestos, sector, contrato, nivel,
+- **RF-8.4** *(Cambiado por la spec 009, RF-9.3b: «Puestos» pasa a ser «Área» y se añaden los puestos y los términos excluidos.)* Recomendadas DEBERÁ tener arriba un panel plegable «Qué buscas» con: puestos, sector, contrato, nivel,
   país, idiomas, «Solo remoto», «Solo con salario» y sueldo mínimo (P2). Cerrado por defecto; abierto si aún no
   hay nada guardado. Su botón primario es «Guardar y buscar».
 - **RF-8.4b** La pestaña Preferencias DEBERÁ desaparecer y `/preferencias` NO DEBERÁ existir (enmienda P20, 20-nov:

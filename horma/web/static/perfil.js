@@ -7,6 +7,7 @@ const CAMPOS = {
   habilidades: [["nombre", "Habilidad"]],
   proyectos: [["nombre", "Proyecto"], ["descripcion", "Descripción"], ["fecha", "Fecha"]],
   certificaciones: [["nombre", "Certificación"], ["entidad", "Entidad"], ["fecha", "Fecha"]],
+  actividades: [["descripcion", "Actividad"], ["inicio", "Inicio (AAAA o AAAA-MM)"], ["fin", "Fin (AAAA, AAAA-MM o «actual»)"]],
   otros: [["valor", "Dato"]],
   titular: [["valor", "Titular"]],
   resumen: [["valor", "Resumen"]],
@@ -16,9 +17,11 @@ const CAMPOS = {
 const DETALLES = { fechas: ["inicio", "fin"], nivel: ["nivel"] };
 const SECCIONES = [["titular", "Titular"], ["resumen", "Resumen"], ["experiencias", "Experiencia"],
                    ["formacion", "Formación"], ["idiomas", "Idiomas"], ["habilidades", "Habilidades"],
-                   ["proyectos", "Proyectos"], ["certificaciones", "Certificaciones"], ["otros", "Otros"]];
+                   ["proyectos", "Proyectos"], ["certificaciones", "Certificaciones"],
+                   ["actividades", "Otras actividades"], ["otros", "Otros"]];
 // Secciones que siempre se muestran (aunque estén vacías) con su ayuda y un botón para añadir (RF-5.1c).
 const AYUDA = {
+  actividades: "Voluntariado, cuidados, viajes, excedencias… lo que hiciste entre trabajos o estudios. Cubre los huecos del CV. Por ejemplo: «Voluntariado en el banco de alimentos (2019-2020)».",
   proyectos: "Trabajos o iniciativas con nombre propio. Por ejemplo: «Web de reservas para el restaurante familiar (2024)», «TFG: app de turnos».",
   certificaciones: "Acreditaciones, certificados y cursos cortos. Por ejemplo: «Manipulador de alimentos», «Carné de carretillero», «Cambridge B2 First».",
   otros: "Lo útil que no cabe en otra sección. Por ejemplo: «Voluntariado en el banco de alimentos», «Carné de conducir B», «Disponibilidad para viajar».",
@@ -39,6 +42,7 @@ function resumenDe(campoNombre, d) {
   if (campoNombre === "habilidades") return d.nombre;
   if (campoNombre === "proyectos") return [d.nombre, d.fecha].filter(Boolean).join(" · ") + (d.descripcion ? ` — ${d.descripcion}` : "");
   if (campoNombre === "certificaciones") return [d.nombre, d.entidad, d.fecha].filter(Boolean).join(" · ");
+  if (campoNombre === "actividades") return [d.descripcion, [d.inicio, d.fin].filter(Boolean).join(" – ")].filter(Boolean).join(" · ");
   return d.valor;
 }
 
@@ -109,7 +113,7 @@ async function cambiarPerfil(ruta, metodo, cuerpo) {
     avisar(r.motivo, true);
     return;
   }
-  avisar(`Hecho: ya es la versión ${r.datos.version} de tu perfil.`);
+  avisar(`Hecho: ya es la versión ${r.datos.version} de tu perfil.${r.datos.aviso ? ` ${r.datos.aviso}` : ""}`);
   await cargarPerfil();
 }
 
@@ -188,6 +192,7 @@ function botonAnadir(clave, ul) {
   const fila = nodo("div", null, "fila");
   const abrir = nodo("button", "Añadir", "secundario");
   abrir.type = "button";
+  abrir.dataset.anadir = clave;
   abrir.addEventListener("click", () => {
     abrir.hidden = true;
     const f = formularioDato(clave, {}, (nuevo) => cambiarPerfil("/api/perfil/datos", "PATCH",
@@ -199,8 +204,9 @@ function botonAnadir(clave, ul) {
   return fila;
 }
 
-// Estas cuatro se pliegan, cerradas, con su número en el título (RF-7.5d). Lo abierto sobrevive a guardar.
-const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos"];
+// Estas se pliegan, cerradas, con su número en el título (RF-7.5d). Lo abierto sobrevive a guardar.
+const PLEGABLES = ["experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",
+                   "actividades", "otros"];
 const abiertas = new Set();
 
 function seccion(titulo, hijos, clave) {
@@ -213,13 +219,137 @@ function seccion(titulo, hijos, clave) {
     s.dataset.seccion = clave;
     s.open = abiertas.has(clave);
     s.addEventListener("toggle", () => { if (s.open) abiertas.add(clave); else abiertas.delete(clave); });
-  } else s.append(nodo("h3", titulo, "subtitulo"));
+  } else {
+    s.append(nodo("h3", titulo, "subtitulo"));
+    s.dataset.seccion = clave;
+  }
   if (AYUDA[clave]) s.append(nodo("p", AYUDA[clave], "suave"));
   const ul = nodo("ul", null, "lista");
   ul.append(...hijos);
   s.append(ul);
-  if (AYUDA[clave]) s.append(botonAnadir(clave, ul));
+  if (AYUDA[clave] || (clave === "resumen" && !hijos.length)) s.append(botonAnadir(clave, ul));
   return s;
+}
+
+// --- Avisos y huecos (RF-9.1c, RF-9.2) ------------------------------------------------------------
+// Lleva a una sección de Mi perfil: la abre, se coloca en ella y, si se pide, abre su formulario de «Añadir».
+function irASeccion(clave, anadir = false) {
+  const s = document.querySelector(`#perfil [data-seccion="${clave}"]`);
+  if (!s) { $("mi-perfil").scrollIntoView({ behavior: "smooth" }); return; }
+  if (s.tagName === "DETAILS") { s.open = true; abiertas.add(clave); }
+  s.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (anadir) s.querySelector(`[data-anadir="${clave}"]`)?.click();
+}
+
+function corregirAviso(a) {
+  if (a.seccion === "hueco") return irASeccion("actividades", true);
+  if (a.seccion === "resumen") return irASeccion("resumen", true);
+  if (a.seccion === "experiencia") return irASeccion("experiencias");
+  $("mi-perfil").previousElementSibling?.scrollIntoView({ behavior: "smooth" });   // «Tus CV»
+}
+
+async function pedirAvisos(ruta, cuerpo, mensaje) {
+  const r = await api(ruta, { metodo: "PUT", cuerpo });
+  if (!r.ok) return avisar(r.motivo, true);
+  avisar(mensaje);
+  await cargarAvisos(perfilActual?.preguntas_pendientes?.length || 0);
+}
+
+const MENSAJE_LONGITUD = {
+  mantener: "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV maestro no cambia.",
+  sintetizar: "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV maestro no cambia.",
+};
+let longitudElegida = null;
+const elegirLongitud = (longitud) => pedirAvisos("/api/perfil/longitud", { longitud }, MENSAJE_LONGITUD[longitud]);
+
+const ETIQUETA_AVISO ={ hueco: "Hueco", largo: "CV largo", sin_resumen: "Sin resumen",
+                         sin_descripcion: "Sin descripción", sin_cifras: "Sin cifras", sin_contacto: "Sin contacto" };
+
+// Mismo diseño que las preguntas: etiqueta, titular y acciones (la primera, destacada).
+function avisoFila(a) {
+  const li = nodo("li", null, "tarjeta aviso-accion");
+  const tipo = a.seccion === "hueco" ? "hueco" : a.clave.split(":")[0];
+  li.append(nodo("span", ETIQUETA_AVISO[tipo] || "Aviso", "estado apagado"));
+  li.append(nodo("h3", a.texto));
+  const acciones = nodo("div", null, "fila acciones-aviso");
+  const boton = (texto, alPulsar) => {
+    const b = nodo("button", texto, acciones.children.length ? "secundario" : null);
+    b.type = "button";
+    b.addEventListener("click", alPulsar);
+    acciones.append(b);
+  };
+  if (a.clave === "largo") {   // dos opciones en lugar de «Corregir» (RF-9.2d)
+    li.classList.add("aviso-longitud");
+    boton("Mantener la longitud", () => elegirLongitud("mantener"));
+    boton("Que Horma lo sintetice", () => elegirLongitud("sintetizar"));
+  } else {
+    boton(a.seccion === "hueco" ? "Añadir en Mi perfil" : "Corregir", () => corregirAviso(a));
+    boton("Dar por visto", () => pedirAvisos("/api/perfil/avisos/visto", { clave: a.clave, huella: a.huella },
+                                             "Hecho: no te lo volveremos a decir mientras no cambie."));
+  }
+  li.append(acciones);
+  return li;
+}
+
+// El número del título suma las preguntas y los avisos; se abre solo al aparecer alguno (RF-9.5).
+async function cargarAvisos(nPendientes) {
+  const r = await api("/api/perfil/avisos");
+  longitudElegida = r.ok ? r.datos.longitud : null;
+  const items = r.ok ? [...r.datos.huecos, ...r.datos.avisos] : [];
+  $("t-avisos").hidden = !items.length;
+  $("lista-avisos").replaceChildren(...items.map(avisoFila));
+  const total = nPendientes + items.length;
+  $("pendientes").hidden = false;
+  $("n-pendientes").textContent = String(total);
+  if (total && !pendientesPrevias) $("pendientes").open = true;
+  if (!total) $("pendientes").open = false;
+  pendientesPrevias = total;
+}
+
+// --- Tu CV maestro (RF-9.4): el texto que usan los redactores, con «Editar» por sección ------------
+const SECCION_DEL_MAESTRO = { "Resumen": "resumen", "Experiencia": "experiencias", "Formación": "formacion",
+                              "Idiomas": "idiomas", "Habilidades": "habilidades", "Proyectos": "proyectos",
+                              "Certificaciones": "certificaciones", "Otras actividades": "actividades",
+                              "Otros": "otros" };
+
+function pintarMaestro(perfil, maestro, creadoEn) {
+  $("maestro").hidden = !maestro;
+  if (!maestro) return;
+  $("maestro-meta").textContent = `Versión ${perfil.version} · ${fecha(creadoEn)}`;
+  $("maestro-longitud")?.remove();
+  const palabras = maestro.split(/\s+/).filter(Boolean).length;
+  if (palabras > 1000) {   // la elección sigue visible y se puede cambiar (RF-9.2d)
+    const t = nodo("div", null, "tarjeta aviso-accion aviso-longitud");
+    t.id = "maestro-longitud";
+    t.append(nodo("span", "CV largo", "estado apagado"));
+    t.append(nodo("h3", longitudElegida === "mantener"
+      ? "Al redactar, Horma conservará todas tus experiencias."
+      : longitudElegida === "sintetizar"
+        ? "Al redactar, Horma elegirá las experiencias que encajan con la oferta."
+        : `Tu CV maestro tiene ${palabras} palabras. ¿Qué hace Horma al redactar?`));
+    const acciones = nodo("div", null, "fila acciones-aviso");
+    for (const [valor, texto] of [["mantener", "Mantener la longitud"], ["sintetizar", "Que Horma lo sintetice"]]) {
+      const b = nodo("button", texto, longitudElegida === valor ? null : "secundario");
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(longitudElegida === valor));
+      b.addEventListener("click", () => elegirLongitud(valor));
+      acciones.append(b);
+    }
+    t.append(acciones);
+    $("maestro-meta").after(t);
+  }
+  const hoja = cvBonito(maestro);
+  for (const h of hoja.querySelectorAll(".cv-seccion")) {
+    const clave = SECCION_DEL_MAESTRO[h.textContent];
+    if (!clave) continue;
+    h.classList.add("con-editar");
+    const editar = nodo("button", "Editar", "secundario");
+    editar.type = "button";
+    editar.setAttribute("aria-label", `Editar ${h.textContent} en Mi perfil`);
+    editar.addEventListener("click", () => irASeccion(clave));
+    h.append(editar);
+  }
+  $("maestro-doc").replaceChildren(hoja);
 }
 
 async function cargarPerfil() {
@@ -229,7 +359,7 @@ async function cargarPerfil() {
     avisar(r.motivo, true);
     return;
   }
-  const { perfil, construyendo, error } = r.datos;
+  const { perfil, construyendo, error, cv_maestro: maestro, creado_en: creadoEn } = r.datos;
   const estado = $("estado-perfil");
   estado.replaceChildren();
   if (construyendo) {
@@ -238,17 +368,15 @@ async function cargarPerfil() {
   }
   if (error) estado.append(nodo("p", `No se pudo construir el perfil: ${error}`, "alerta"));
   $("pendientes").hidden = true;
+  $("maestro").hidden = true;
   $("datos").hidden = true;
   if (!perfil) return;
 
   perfilActual = perfil;
   const pend = perfil.preguntas_pendientes || [];
-  $("pendientes").hidden = false;
-  $("n-pendientes").textContent = String(pend.length);
-  if (pend.length && !pendientesPrevias) $("pendientes").open = true;   // se abre al aparecer alguna (RF-7.5)
-  if (!pend.length) $("pendientes").open = false;
-  pendientesPrevias = pend.length;
   $("lista-pendientes").replaceChildren(...pend.map(pregunta));
+  await cargarAvisos(pend.length);
+  pintarMaestro(perfil, maestro, creadoEn);
 
   $("datos").hidden = false;
   $("version").textContent = `versión ${perfil.version}`;
@@ -273,7 +401,7 @@ async function cargarPerfil() {
   for (const [clave, titulo] of SECCIONES) {
     const valor = perfil[clave];
     const elementos = Array.isArray(valor) ? valor : valor ? [valor] : [];
-    if (!elementos.length && !AYUDA[clave]) continue;
+    if (!elementos.length && !AYUDA[clave] && clave !== "resumen") continue;
     const esLista = Array.isArray(valor);
     cont.append(seccion(titulo, elementos.map((d, i) => dato(clave, d, esLista ? i : null)), clave));
   }
@@ -379,6 +507,7 @@ async function cargarCvs() {
   if (!r.ok) return avisar(r.motivo, true);
   $("cvs").replaceChildren(...r.datos.map(tarjetaCv));
   $("sin-cvs").hidden = r.datos.length > 0;
+  $("n-cvs").textContent = String(r.datos.length);
 }
 
 $("archivo").addEventListener("change", () => {

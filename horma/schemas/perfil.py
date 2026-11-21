@@ -86,6 +86,28 @@ class OtroDato(_ConOrigen):
     origen: OrigenDato
 
 
+class Actividad(_ConOrigen):
+    """Voluntariado, cuidados, viajes, excedencias… que cubren un hueco del CV (RF-9.1d)."""
+
+    descripcion: str = Field(min_length=1)
+    inicio: str | None = Field(default=None, description="AAAA o AAAA-MM, si aparece.")
+    fin: str | None = Field(default=None, description="AAAA, AAAA-MM o «actual»; vacío si no aparece.")
+    origen: OrigenDato
+
+
+_FECHA = r"^(\d{4}(-(0[1-9]|1[0-2]))?|actual)$"
+
+
+class PeriodoCubierto(BaseModel):
+    """Periodo sin trabajo ni formación que ella ya ha explicado. Sin motivo ni cita: solo cuenta para
+    los huecos (RF-9.1d). Solo fechas; no admite texto."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    inicio: str = Field(pattern=_FECHA)
+    fin: str = Field(pattern=_FECHA)
+
+
 class PreguntaPendiente(BaseModel):
     """Lo que falta, es ambiguo o se contradice entre CV: se le pregunta a la usuaria."""
 
@@ -115,6 +137,8 @@ class Perfil(BaseModel):
     proyectos: list[Proyecto] = Field(default_factory=list)
     certificaciones: list[Certificacion] = Field(default_factory=list)
     otros: list[OtroDato] = Field(default_factory=list)
+    actividades: list[Actividad] = Field(default_factory=list)
+    periodos_cubiertos: list[PeriodoCubierto] = Field(default_factory=list)
     taxonomia: Taxonomia | None = None
     preguntas_pendientes: list[PreguntaPendiente] = Field(default_factory=list)
     instrucciones_embebidas: list[str] = Field(default_factory=list)

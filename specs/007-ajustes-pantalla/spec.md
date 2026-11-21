@@ -58,7 +58,7 @@ correcciones de la prueba manual (20-nov), como P9…P14.
   conocido, se muestra tal cual.
 
 ### Perfil (RF-7.5)
-- **RF-7.5** Perfil DEBERÁ mostrar sus apartados en bloques separados visualmente, en este orden (P3):
+- **RF-7.5** *(Cambiado por la spec 009, RF-9.5: se añaden «Preguntas pendientes y avisos» con huecos y «Tu CV maestro».)* Perfil DEBERÁ mostrar sus apartados en bloques separados visualmente, en este orden (P3):
   1. Tus CV, abierto;
   2. Mi perfil, abierto;
   3. Preguntas pendientes, desplegable, con el número en el título; abierto CUANDO haya alguna;

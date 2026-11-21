@@ -11,6 +11,7 @@ from horma.schemas.oferta import Auditoria, Oferta, Salario
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.normalizar import huella
 from horma.tools.normalizar_oferta import normalizar_oferta
+from horma.tools.normalizar_titulo import normalizar_titulo
 
 COLUMNAS_LISTA = (
     "o.id, o.estado, o.motivo_error, o.titulo, o.empresa, o.ubicacion, o.remoto, o.modalidad, o.contrato, "
@@ -118,7 +119,7 @@ def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str
         "frase_pedir_salario=:frase, sector=:sector, familia=:familia, nivel=:nivel, "
         "stack=cast(:stack as jsonb), pais=:pais, tipo_contrato=:tcontrato, "
         "idiomas_norm=cast(:idiomas_norm as text[]), salario_anual_eur_min=:anual_min, "
-        "salario_anual_eur_max=:anual_max where id=:id"),
+        "salario_anual_eur_max=:anual_max, titulo_norm=:titulo_norm where id=:id"),
         {"id": oferta_id, "titulo": o.titulo, "empresa": o.empresa, "ubicacion": o.ubicacion,
          "remoto": o.remoto, "modalidad": o.modalidad,
          "contrato": o.contrato, "smin": sal.minimo if sal else None,
@@ -131,7 +132,8 @@ def guardar(s: Session, oferta_id: int, o: Oferta, origenes: list[tuple[str, str
          "frase": a.frase_pedir_salario, "sector": t.sector, "familia": t.familia,
          "nivel": t.nivel, "stack": j(t.stack), "pais": n.pais, "tcontrato": n.tipo_contrato,
          "idiomas_norm": n.idiomas, "anual_min": n.salario_anual_eur_min,
-         "anual_max": n.salario_anual_eur_max})
+         "anual_max": n.salario_anual_eur_max,
+         "titulo_norm": normalizar_titulo(o.titulo)})
     s.execute(text("delete from origen where entidad='oferta' and entidad_id=:i and usuaria_id is null"),
               {"i": oferta_id})
     for campo, fragmento in origenes:
@@ -157,6 +159,32 @@ def contadores(s: Session) -> tuple[int, dict[str, dict[str, int]]]:
                            "group by i")).all()
     grupos["idiomas"] = {v: n for v, n in filas}
     return total, grupos
+
+
+def contar_por_puesto(s: Session, titulos: list[str]) -> dict[str, int]:
+    """Cuántas ofertas recomendables casan con cada puesto (frase completa del título, RF-9.3d)."""
+    cuentas = {}
+    for t in titulos:
+        norm = normalizar_titulo(t)
+        cuentas[t] = 0 if not norm else s.execute(text(
+            f"select count(*) {_BASE} and (' ' || coalesce(titulo_norm, '') || ' ') like :p"),
+            {"p": f"% {norm} %"}).scalar_one()
+    return cuentas
+
+
+def titulos_que_contienen(s: Session, q: str, limite: int = 8) -> list[str]:
+    """Títulos de ofertas recomendables que contienen lo escrito, los más frecuentes primero.
+
+    Sirve para autocompletar.
+    """
+    norm = normalizar_titulo(q)
+    if not norm:
+        return []
+    filas = s.execute(text(
+        f"select min(titulo) t, count(*) n {_BASE} and titulo is not null "
+        "and (' ' || coalesce(titulo_norm, '') || ' ') like :p group by titulo_norm "
+        "order by n desc, t limit :l"), {"p": f"%{norm}%", "l": limite}).all()
+    return [f[0] for f in filas]
 
 
 def _url_valida(url: str | None) -> str | None:

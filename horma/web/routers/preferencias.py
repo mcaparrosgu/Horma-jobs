@@ -30,9 +30,26 @@ def guardar(nuevas: Preferencias, request: Request, usuaria_id: int = Depends(us
         for grupo in GRUPOS_CON_ORIGEN:
             if getattr(nuevas, grupo) != getattr(actual, grupo):
                 origen[grupo] = "usuaria"
-        nuevas = nuevas.model_copy(update={"origen": origen})
+        # Los puestos sugeridos salen del CV: ella marca o quita, no los reescribe.
+        nuevas = nuevas.model_copy(update={"origen": origen, "puestos_sugeridos": actual.puestos_sugeridos})
         perfiles.guardar_preferencias(s, usuaria_id, nuevas)
     return nuevas.model_dump(mode="json")
+
+
+def _puestos_con_cuenta(s, prefs: Preferencias) -> list[dict]:
+    """Los sugeridos (con el dato que los justifica) y los que escribió ella, con cuántas ofertas casan."""
+    dato = {p.titulo: p.dato for p in prefs.puestos_sugeridos}
+    titulos = list(dict.fromkeys([*dato, *prefs.puestos]))
+    cuentas = repo_ofertas.contar_por_puesto(s, titulos)
+    return [{"valor": t, "dato": dato.get(t), "n": cuentas.get(t, 0), "marcado": t in prefs.puestos}
+            for t in titulos]
+
+
+@router.get("/api/preferencias/titulos")
+def titulos(request: Request, q: str = "", usuaria_id: int = Depends(usuaria_actual)):
+    """Autocompletar «Añadir un puesto»: títulos reales de las ofertas que contienen lo escrito."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        return {"titulos": repo_ofertas.titulos_que_contienen(s, q[:80])}
 
 
 @router.get("/api/preferencias/opciones")
@@ -40,6 +57,9 @@ def opciones(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Cada casilla con cuántas ofertas recomendables tiene el catálogo; las vacías, con 0."""
     with sesion_de(request.app.state.engine, usuaria_id) as s:
         total, cuentas = repo_ofertas.contadores(s)
-    return {"total": total,
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        prefs = perfiles.preferencias(s)
+        puestos = _puestos_con_cuenta(s, prefs)
+    return {"total": total, "puestos": puestos,
             "grupos": {g: [{"valor": v, "n": cuentas.get(g, {}).get(v, 0)} for v in valores]
                        for g, valores in _CATALOGO.items()}}

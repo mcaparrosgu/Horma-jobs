@@ -17,10 +17,11 @@ from horma.agents.extractor_perfil.agent import ExtractorPerfil
 from horma.agents.extractor_perfil.schemas import CvEntrada, EntradaExtractorPerfil, SalidaExtractorPerfil
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
-from horma.schemas.perfil import Perfil, PreguntaPendiente
+from horma.schemas.perfil import Perfil, PeriodoCubierto, PreguntaPendiente
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.componer_cv_maestro import componer_cv_maestro
+from horma.tools.puestos_del_perfil import puestos_del_perfil
 from horma.tools.rasgos_personales import rasgos_personales
 
 # (campo del perfil, atributo con el nombre del dato, atributos de texto opcionales)
@@ -34,6 +35,7 @@ _LISTAS = (
     ("otros", "valor", ()),
 )
 _UNICOS = ("titular", "resumen")
+_ACTIVIDADES = ("actividades", "descripcion", ())  # se verifican como el resto; aparte al quitar sensibles
 
 
 def _plano(texto: str) -> str:
@@ -107,6 +109,36 @@ def _genero_puestos(perfil: dict) -> list[dict]:
                        ["femenino", "masculino"])]
 
 
+def _actividades_sin_sensibles(actividades: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Una actividad con un rasgo personal (salud, familia…) se convierte en un periodo cubierto, solo con
+    fechas, y se descarta su texto y su cita (RF-9.1d, RT-09). Sin fecha de inicio válida, se descarta."""
+    quedan, periodos = [], []
+    for a in actividades:
+        if not (rasgos_personales(a["descripcion"]) or rasgos_personales(a["origen"]["fragmento"])):
+            quedan.append(a)
+            continue
+        try:
+            periodo = PeriodoCubierto(inicio=a.get("inicio") or "", fin=a.get("fin") or a.get("inicio") or "")
+        except ValueError:
+            continue
+        periodos.append(periodo.model_dump(mode="json"))
+    return quedan, periodos
+
+
+_VACIAS = (("experiencias", "No encuentro experiencia en tu CV. ¿Quieres añadirla?"),
+           ("formacion", "No encuentro estudios en tu CV. ¿Quieres añadirlos?"),
+           ("idiomas", "No encuentro idiomas en tu CV. ¿Quieres añadirlos?"))
+
+
+def _perfil_vacio(perfil: dict, pendientes: list[dict]) -> list[dict]:
+    """Un CV sin experiencia, formación ni idiomas no puede quedarse en silencio: se pregunta por cada
+    sección, sin depender de que el modelo lo haga (RF-2.3)."""
+    if any(perfil[c] for c, _ in _VACIAS):
+        return []
+    ya = {p["campo"].split(".")[0] for p in pendientes}
+    return [_pendiente(campo, "falta", pregunta) for campo, pregunta in _VACIAS if campo not in ya]
+
+
 def crear(proveedor: Proveedor | None = None) -> PlainFlow:
 
     def extraer(e: dict) -> dict:
@@ -119,7 +151,8 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         textos = {c["cv_id"]: _plano(c["texto"]) for c in e["cvs"]}
         perfil = e["extraccion"]["perfil"]
         pendientes = list(perfil["preguntas_pendientes"])
-        for campo, nombre, _ in _LISTAS:
+        perfil["periodos_cubiertos"] = []  # solo los crea el código (RF-9.1d)
+        for campo, nombre, _ in (*_LISTAS, _ACTIVIDADES):
             validos = []
             for x in perfil[campo]:
                 if _origen_valido(x["origen"], textos):
@@ -142,6 +175,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         perfil["idiomas"], nuevas = _fusionar_idiomas(perfil["idiomas"])
         pendientes += nuevas
         pendientes += _genero_puestos(perfil)
+        pendientes += _perfil_vacio(perfil, pendientes)
         # Instrucciones: solo las que están de verdad en algún CV.
         perfil["instrucciones_embebidas"] = [
             i for i in dict.fromkeys(perfil["instrucciones_embebidas"])
@@ -164,6 +198,8 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                         x[o] = None
                 limpios.append(x)
             perfil[campo] = limpios
+        perfil["actividades"], periodos = _actividades_sin_sensibles(perfil["actividades"])
+        perfil["periodos_cubiertos"] = periodos
         for campo in _UNICOS:
             dato = perfil[campo]
             if dato and (rasgos_personales(dato["valor"]) or rasgos_personales(
@@ -183,8 +219,9 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
     def clasificar(e: dict) -> dict:
         perfil = Perfil.model_validate(e["extraccion"]["perfil"]).model_copy(
             update={"instrucciones_embebidas": []})
-        e["taxonomia"] = ClasificadorPostulante.run(
-            EntradaClasificadorPostulante(perfil=perfil), proveedor=proveedor).model_dump(mode="json")
+        r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=perfil), proveedor=proveedor)
+        e["taxonomia"] = r.model_dump(mode="json", exclude={"puestos"})
+        e["puestos"] = [p.model_dump(mode="json") for p in puestos_del_perfil(perfil, r.puestos)]
         return e
 
     def preferencias_desde_cv(e: dict) -> dict:
@@ -193,7 +230,10 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         grupos = {"familias": [tax.familia] if tax.familia != "otros" else [],
                   "sectores": [tax.sector] if tax.sector != "otros" else [],
                   "idiomas": list(dict.fromkeys(i.idioma for i in perfil.idiomas if i.idioma != "otro"))}
-        prefs = Preferencias(**grupos, origen={g: "cv" for g, v in grupos.items() if v})
+        sugeridos = e.get("puestos") or []
+        grupos["puestos"] = [p["titulo"] for p in sugeridos]
+        prefs = Preferencias(**grupos, puestos_sugeridos=sugeridos,
+                             origen={g: "cv" for g, v in grupos.items() if v})
         e["preferencias"] = prefs.model_dump(mode="json")
         return e
 

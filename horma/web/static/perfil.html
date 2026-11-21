@@ -43,8 +43,11 @@
         <label class="casilla"><input id="escrito-por-ella" type="checkbox"> Lo escribí yo</label>
         <button type="submit">Subir CV</button>
       </form>
-      <ul id="cvs" class="lista-editorial"></ul>
-      <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún CV.</p>
+      <details id="cvs-subidos" class="leer seccion-plegable">
+        <summary>CV subidos <span id="n-cvs" class="estado">0</span></summary>
+        <ul id="cvs" class="lista-editorial"></ul>
+        <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún CV.</p>
+      </details>
     </section>
 
     <section id="mi-perfil" class="panel" aria-labelledby="t-perfil">
@@ -58,9 +61,18 @@
     </section>
 
     <details id="pendientes" class="panel-desplegado" hidden>
-      <summary>Preguntas pendientes <span id="n-pendientes" class="estado"></span></summary>
-      <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti.</p>
+      <summary>Preguntas pendientes y avisos <span id="n-pendientes" class="estado"></span></summary>
+      <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti. Los avisos te dicen qué mejorar; ninguno es obligatorio.</p>
       <ul id="lista-pendientes" class="lista-editorial"></ul>
+      <h3 id="t-avisos" class="subtitulo" hidden>Avisos</h3>
+      <ul id="lista-avisos" class="lista-editorial"></ul>
+    </details>
+
+    <details id="maestro" class="panel-desplegado" hidden>
+      <summary>Tu CV maestro</summary>
+      <p class="suave">Es el texto del que Horma saca tus CV y cartas. Se cambia desde Mi perfil.</p>
+      <p id="maestro-meta" class="suave maestro-meta"></p>
+      <div id="maestro-doc"></div>
     </details>
 
     <details id="estilo" class="panel-desplegado" hidden>

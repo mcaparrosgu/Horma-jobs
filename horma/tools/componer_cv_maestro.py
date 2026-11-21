@@ -57,5 +57,7 @@ def componer_cv_maestro(perfil: Perfil) -> str:
     salida += _seccion("Proyectos", proyectos)
     salida += _seccion("Certificaciones", [_linea(c.nombre, c.entidad, c.fecha)
                                            for c in perfil.certificaciones])
+    salida += _seccion("Otras actividades", [
+        _linea(a.descripcion, _periodo(a.inicio, a.fin)) for a in perfil.actividades])
     salida += _seccion("Otros", [o.valor.strip() for o in perfil.otros])
     return "\n".join(salida).rstrip() + "\n"

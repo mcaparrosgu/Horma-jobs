@@ -1,0 +1,13 @@
+{
+  "cvs": [
+    {
+      "cv_id": 1,
+      "nombre": "CV",
+      "texto": "Rosa Díaz\n\nEXPERIENCIA\nAuxiliar de enfermería en Residencia Sol, Madrid, 2012-2018\nAuxiliar de enfermería en Hospital Norte, 2021-2024\n\nOTRAS ACTIVIDADES\nCuidado de una persona dependiente, 2019-2020"
+    }
+  ],
+  "puestos_esperados": [
+    "Auxiliar de enfermería",
+    "Nursing Assistant"
+  ]
+}

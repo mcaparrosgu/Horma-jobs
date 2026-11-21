@@ -16,12 +16,17 @@ Reglas:
   pasan las ofertas con `remoto = true` de cualquier país.
 - El sueldo mínimo es en euros brutos al año y se compara con el máximo (o el mínimo si no hay
   máximo) de la oferta; `sueldo_comparable` dice si la oferta traía un sueldo que se pudo comparar.
+- Puestos y excluidos (RF-9.3c, 9.3d): el título normalizado de la oferta casa con un puesto si lo contiene
+  como frase de palabras completas. Con familias o puestos, la oferta pasa si cumple la familia O el título
+  casa con un puesto (una oferta de otra familia entra por su título). Un término excluido en el título
+  saca la oferta. Sin familias ni puestos no se filtra por puesto.
 - Orden «compatibles»: primero la coincidencia de taxonomía con el perfil y con los puestos marcados,
   después la fecha. Orden «recientes»: solo la fecha. No se descarta nada por el orden."""
 from dataclasses import dataclass, field
 
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
+from horma.tools.normalizar_titulo import normalizar_titulo
 
 
 @dataclass(frozen=True)
@@ -39,8 +44,24 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
         p[nombre] = list(valores)
         return f"CAST(:{nombre} AS text[])"
 
+    def frases(nombre: str, terminos: list[str]) -> str | None:
+        normalizados = [n for n in dict.fromkeys(normalizar_titulo(t) for t in terminos) if n]
+        if not normalizados:
+            return None
+        p[nombre] = [f"% {n} %" for n in normalizados]
+        return f"((' ' || coalesce(titulo_norm, '') || ' ') LIKE ANY(CAST(:{nombre} AS text[])))"
+
+    casa_puesto = frases("puestos", prefs.puestos)
+    por_puesto = []
     if prefs.familias:
-        condiciones.append(f"(familia IS NULL OR familia = ANY({lista('familias', prefs.familias)}))")
+        por_puesto.append(f"(familia IS NULL OR familia = ANY({lista('familias', prefs.familias)}))")
+    if casa_puesto:
+        por_puesto.append(casa_puesto)
+    if por_puesto:
+        condiciones.append("(" + " OR ".join(por_puesto) + ")")
+    casa_excluido = frases("excluidos", prefs.excluidos)
+    if casa_excluido:
+        condiciones.append(f"NOT {casa_excluido}")
     if prefs.sectores:
         condiciones.append(f"(sector IS NULL OR sector = ANY({lista('sectores', prefs.sectores)}))")
     if prefs.niveles:
@@ -79,6 +100,8 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
             puntos += ["(CASE WHEN familia = :t_familia THEN 3 ELSE 0 END)",
                        "(CASE WHEN sector = :t_sector THEN 2 ELSE 0 END)",
                        "(CASE WHEN nivel = :t_nivel THEN 1 ELSE 0 END)"]
+        if casa_puesto:
+            puntos.append(f"(CASE WHEN {casa_puesto} THEN 2 ELSE 0 END)")
         if prefs.familias:
             puntos.append("(CASE WHEN familia = ANY(CAST(:familias AS text[])) THEN 2 ELSE 0 END)")
         if puntos:

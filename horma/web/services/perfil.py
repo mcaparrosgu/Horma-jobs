@@ -8,12 +8,14 @@ from pydantic import ValidationError
 from sqlalchemy import Engine
 
 from horma.config import ajustes
-from horma.schemas.perfil import Perfil
+from horma.schemas.perfil import Perfil, PeriodoCubierto
 from horma.tools.componer_cv_maestro import componer_cv_maestro
+from horma.tools.rasgos_personales import rasgos_personales
 from horma.web.db import sesion_de
 from horma.web.repositories import perfiles, tareas
 
-LISTAS = ("experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones", "otros")
+LISTAS = ("experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",
+          "actividades", "otros")
 UNICOS = ("titular", "resumen")
 
 
@@ -34,14 +36,41 @@ def _con_origen(dato: dict) -> dict:
     return {**{k: v for k, v in dato.items() if k != "origen"}, "origen": _origen_usuaria(dato)}
 
 
-def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], None]) -> dict:
+AVISO_DATO_PERSONAL = "Hemos quitado un dato personal que Horma no guarda."
+
+
+def _periodo_de(dato: dict) -> dict:
+    try:
+        p = PeriodoCubierto(inicio=dato.get("inicio") or "", fin=dato.get("fin") or dato.get("inicio") or "")
+    except ValidationError as e:
+        raise DatoNoValido("Pon al menos la fecha de inicio (AAAA o AAAA-MM).") from e
+    return p.model_dump(mode="json")
+
+
+def _actividad_nueva(p: dict, dato: dict, antigua: int | None = None) -> str | None:
+    """Una actividad suya con un rasgo personal se guarda solo como periodo cubierto (RF-9.1d, RT-09)."""
+    sensible = rasgos_personales(str(dato.get("descripcion") or ""))
+    if antigua is not None:
+        p["actividades"].pop(antigua)
+    if sensible:
+        p["periodos_cubiertos"].append(_periodo_de(dato))
+        return AVISO_DATO_PERSONAL
+    nuevo = _con_origen(dato)
+    if antigua is None:
+        p["actividades"].append(nuevo)
+    else:
+        p["actividades"].insert(antigua, nuevo)
+    return None
+
+
+def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], str | None]) -> dict:
     a = ajustes()
     with sesion_de(engine, usuaria_id) as s:
         fila = perfiles.vigente(s)
         if fila is None:
             raise SinPerfil
         datos = perfiles.perfil_modelo(fila).model_dump(mode="json")
-        cambio(datos)
+        aviso = cambio(datos)
         try:
             perfil = Perfil.model_validate(datos)
         except ValidationError as e:
@@ -52,7 +81,7 @@ def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], Non
                                 componer_cv_maestro(perfil))
         tareas.encolar(s, usuaria_id, "clasificar_perfil", perfil_id, a.tope_coste_perfilar,
                        a.tope_reintentos_tarea)
-    return {"id": perfil_id, "version": version}
+    return {"id": perfil_id, "version": version, **({"aviso": aviso} if aviso else {})}
 
 
 def _buscar(elementos: list[dict], clave: str) -> int | None:
@@ -67,7 +96,7 @@ def _buscar(elementos: list[dict], clave: str) -> int | None:
 
 def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -> dict:
     """Responde una pregunta pendiente: la quita y, si trae un dato, lo añade con origen «usuaria»."""
-    def cambio(p: dict) -> None:
+    def cambio(p: dict) -> str | None:
         pendientes = p["preguntas_pendientes"]
         if not 0 <= indice < len(pendientes):
             raise DatoNoValido("Esa pregunta pendiente no existe.")
@@ -78,6 +107,8 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -
         seccion, _, resto = campo.partition(".")
         clave = resto.partition(".")[0]
         nuevo = {k: v for k, v in dato.items() if v not in (None, "")}
+        if seccion == "actividades":
+            return _actividad_nueva(p, nuevo)
         if seccion in LISTAS:
             existente = _buscar(p[seccion], clave) if clave else None
             if existente is None:
@@ -100,11 +131,15 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -
 def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
              dato: dict | None) -> dict:
     """Cambia o quita un dato del perfil (en una lista, el que está en `indice`)."""
-    def cambio(p: dict) -> None:
+    def cambio(p: dict) -> str | None:
+        if campo == "actividades" and dato is not None:
+            if indice is not None and not 0 <= indice < len(p[campo]):
+                raise DatoNoValido("Ese dato no existe.")
+            return _actividad_nueva(p, dato, indice)
         if campo in LISTAS:
             if indice is None and dato is not None:  # sin índice: dato nuevo al final de la lista
                 p[campo].append(_con_origen(dato))
-                return
+                return None
             if indice is None or not 0 <= indice < len(p[campo]):
                 raise DatoNoValido("Ese dato no existe.")
             if dato is None:
