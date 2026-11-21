@@ -204,8 +204,9 @@ function botonAnadir(clave, ul) {
   return fila;
 }
 
-// Estas cuatro se pliegan, cerradas, con su número en el título (RF-7.5d). Lo abierto sobrevive a guardar.
-const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos", "actividades"];
+// Estas se pliegan, cerradas, con su número en el título (RF-7.5d). Lo abierto sobrevive a guardar.
+const PLEGABLES = ["experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",
+                   "actividades", "otros"];
 const abiertas = new Set();
 
 function seccion(titulo, hijos, clave) {
@@ -254,22 +255,33 @@ async function pedirAvisos(ruta, cuerpo, mensaje) {
   await cargarAvisos(perfilActual?.preguntas_pendientes?.length || 0);
 }
 
+const MENSAJE_LONGITUD = {
+  mantener: "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV maestro no cambia.",
+  sintetizar: "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV maestro no cambia.",
+};
+let longitudElegida = null;
+const elegirLongitud = (longitud) => pedirAvisos("/api/perfil/longitud", { longitud }, MENSAJE_LONGITUD[longitud]);
+
+const ETIQUETA_AVISO ={ hueco: "Hueco", largo: "CV largo", sin_resumen: "Sin resumen",
+                         sin_descripcion: "Sin descripción", sin_cifras: "Sin cifras", sin_contacto: "Sin contacto" };
+
+// Mismo diseño que las preguntas: etiqueta, titular y acciones (la primera, destacada).
 function avisoFila(a) {
-  const li = nodo("li", null, "aviso-accion");
-  li.append(nodo("p", a.texto));
-  const acciones = nodo("div", null, "acciones-aviso");
-  const boton = (texto, alPulsar, clase = "secundario") => {
-    const b = nodo("button", texto, clase);
+  const li = nodo("li", null, "tarjeta aviso-accion");
+  const tipo = a.seccion === "hueco" ? "hueco" : a.clave.split(":")[0];
+  li.append(nodo("span", ETIQUETA_AVISO[tipo] || "Aviso", "estado apagado"));
+  li.append(nodo("h3", a.texto));
+  const acciones = nodo("div", null, "fila acciones-aviso");
+  const boton = (texto, alPulsar) => {
+    const b = nodo("button", texto, acciones.children.length ? "secundario" : null);
     b.type = "button";
     b.addEventListener("click", alPulsar);
     acciones.append(b);
   };
   if (a.clave === "largo") {   // dos opciones en lugar de «Corregir» (RF-9.2d)
     li.classList.add("aviso-longitud");
-    boton("Mantener la longitud", () => pedirAvisos("/api/perfil/longitud", { longitud: "mantener" },
-                                                    "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV maestro no cambia."));
-    boton("Que Horma lo sintetice", () => pedirAvisos("/api/perfil/longitud", { longitud: "sintetizar" },
-                                                       "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV maestro no cambia."));
+    boton("Mantener la longitud", () => elegirLongitud("mantener"));
+    boton("Que Horma lo sintetice", () => elegirLongitud("sintetizar"));
   } else {
     boton(a.seccion === "hueco" ? "Añadir en Mi perfil" : "Corregir", () => corregirAviso(a));
     boton("Dar por visto", () => pedirAvisos("/api/perfil/avisos/visto", { clave: a.clave, huella: a.huella },
@@ -282,6 +294,7 @@ function avisoFila(a) {
 // El número del título suma las preguntas y los avisos; se abre solo al aparecer alguno (RF-9.5).
 async function cargarAvisos(nPendientes) {
   const r = await api("/api/perfil/avisos");
+  longitudElegida = r.ok ? r.datos.longitud : null;
   const items = r.ok ? [...r.datos.huecos, ...r.datos.avisos] : [];
   $("t-avisos").hidden = !items.length;
   $("lista-avisos").replaceChildren(...items.map(avisoFila));
@@ -303,6 +316,28 @@ function pintarMaestro(perfil, maestro, creadoEn) {
   $("maestro").hidden = !maestro;
   if (!maestro) return;
   $("maestro-meta").textContent = `Versión ${perfil.version} · ${fecha(creadoEn)}`;
+  $("maestro-longitud")?.remove();
+  const palabras = maestro.split(/\s+/).filter(Boolean).length;
+  if (palabras > 1000) {   // la elección sigue visible y se puede cambiar (RF-9.2d)
+    const t = nodo("div", null, "tarjeta aviso-accion aviso-longitud");
+    t.id = "maestro-longitud";
+    t.append(nodo("span", "CV largo", "estado apagado"));
+    t.append(nodo("h3", longitudElegida === "mantener"
+      ? "Al redactar, Horma conservará todas tus experiencias."
+      : longitudElegida === "sintetizar"
+        ? "Al redactar, Horma elegirá las experiencias que encajan con la oferta."
+        : `Tu CV maestro tiene ${palabras} palabras. ¿Qué hace Horma al redactar?`));
+    const acciones = nodo("div", null, "fila acciones-aviso");
+    for (const [valor, texto] of [["mantener", "Mantener la longitud"], ["sintetizar", "Que Horma lo sintetice"]]) {
+      const b = nodo("button", texto, longitudElegida === valor ? null : "secundario");
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(longitudElegida === valor));
+      b.addEventListener("click", () => elegirLongitud(valor));
+      acciones.append(b);
+    }
+    t.append(acciones);
+    $("maestro-meta").after(t);
+  }
   const hoja = cvBonito(maestro);
   for (const h of hoja.querySelectorAll(".cv-seccion")) {
     const clave = SECCION_DEL_MAESTRO[h.textContent];
@@ -472,6 +507,7 @@ async function cargarCvs() {
   if (!r.ok) return avisar(r.motivo, true);
   $("cvs").replaceChildren(...r.datos.map(tarjetaCv));
   $("sin-cvs").hidden = r.datos.length > 0;
+  $("n-cvs").textContent = String(r.datos.length);
 }
 
 $("archivo").addEventListener("change", () => {

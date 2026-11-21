@@ -43,8 +43,11 @@
         <label class="casilla"><input id="escrito-por-ella" type="checkbox"> Lo escribí yo</label>
         <button type="submit">Subir CV</button>
       </form>
-      <ul id="cvs" class="lista-editorial"></ul>
-      <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún CV.</p>
+      <details id="cvs-subidos" class="leer seccion-plegable">
+        <summary>CV subidos <span id="n-cvs" class="estado">0</span></summary>
+        <ul id="cvs" class="lista-editorial"></ul>
+        <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún CV.</p>
+      </details>
     </section>
 
     <section id="mi-perfil" class="panel" aria-labelledby="t-perfil">

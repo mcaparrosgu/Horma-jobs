@@ -400,16 +400,10 @@ ol.pasos > li::before{ content: counter(paso); display: inline-grid; place-items
 
 /* ── Fase 9a: avisos con acciones, «Qué buscas» con puestos y CV maestro (RF-9.2b, RF-9.3b, RF-9.4) ── */
 /* Aviso con dos acciones: el texto a la izquierda y las acciones a la derecha, todas de --tap de alto. */
-.aviso-accion{
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 24px; align-items: center;
-  padding: 16px 0; border-bottom: var(--bw) solid var(--line);
-}
-.aviso-accion > p{ margin: 0; color: var(--ink); }
-.aviso-accion > .acciones-aviso{ display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
-.aviso-accion > .acciones-aviso > button{ min-height: var(--tap); min-width: 11rem; }
-/* Aviso con elección de longitud: el texto arriba y las dos opciones debajo, a partes iguales. */
-.aviso-accion.aviso-longitud{ grid-template-columns: 1fr; }
-.aviso-accion.aviso-longitud > .acciones-aviso{ justify-content: flex-start; }
+/* Mismo diseño que las preguntas: etiqueta, titular y acciones debajo (tarjeta). */
+.aviso-accion > .acciones-aviso{ display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.aviso-accion > .acciones-aviso > button{ min-height: var(--tap); }
+/* Aviso con elección de longitud: las dos opciones a partes iguales. */
 .aviso-accion.aviso-longitud > .acciones-aviso > button{ flex: 1 1 14rem; max-width: 20rem; }
 
 /* «Qué buscas»: Puestos y Términos excluidos en dos columnas del mismo alto. */
@@ -432,7 +426,5 @@ fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 
 @media (max-width: 900px){
   .grupos-dos{ grid-template-columns: 1fr; }
-  .aviso-accion{ grid-template-columns: 1fr; }
-  .aviso-accion > .acciones-aviso{ justify-content: flex-start; }
   .aviso-accion > .acciones-aviso > button{ flex: 1 1 10rem; }
 }

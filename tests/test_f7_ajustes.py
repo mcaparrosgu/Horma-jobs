@@ -186,16 +186,18 @@ def test_estilo_es_un_parrafo_corto_sin_ver_detalle():
     assert "Editar guía" in leer("perfil.html") and "Volver a analizar mi estilo" in leer("perfil.html")
 
 
-def test_cuatro_secciones_de_perfil_son_desplegables_cerrados_con_su_numero():
-    """Fase 7 · T19 (RF-7.5d); la 009 añade «Otras actividades» (RF-9.1d)."""
+def test_secciones_de_perfil_son_desplegables_cerrados_con_su_numero():
+    """Fase 7 · T19 (RF-7.5d); la 009 añade «Otras actividades» (RF-9.1d) y, a petición de Mar (21-nov),
+    habilidades, certificaciones, otros y la lista de CV subidos."""
     js = leer("perfil.js")
-    assert 'const PLEGABLES = ["experiencias", "formacion", "idiomas", "proyectos", "actividades"]' in js
+    assert ('const PLEGABLES = ["experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",\n'
+            '                   "actividades", "otros"]') in js
+    assert 'id="cvs-subidos"' in leer("perfil.html") and 'id="n-cvs"' in leer("perfil.html")
     assert 'nodo(plegable ? "details" : "section"' in js
     assert 'nodo("span", String(hijos.length), "estado")' in js
     assert "s.open = abiertas.has(clave)" in js   # cerrados salvo que ella los abriera
     assert 'addEventListener("toggle"' in js
     assert "abiertas.add(clave)" in js and "abiertas.delete(clave)" in js
-    assert "habilidades" not in js.split("const PLEGABLES")[1].split(chr(10))[0]
 
 
 # --- T10 · Ingesta ---------------------------------------------------------------------------------
