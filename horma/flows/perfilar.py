@@ -125,6 +125,20 @@ def _actividades_sin_sensibles(actividades: list[dict]) -> tuple[list[dict], lis
     return quedan, periodos
 
 
+_VACIAS = (("experiencias", "No encuentro experiencia en tu CV. ¿Quieres añadirla?"),
+           ("formacion", "No encuentro estudios en tu CV. ¿Quieres añadirlos?"),
+           ("idiomas", "No encuentro idiomas en tu CV. ¿Quieres añadirlos?"))
+
+
+def _perfil_vacio(perfil: dict, pendientes: list[dict]) -> list[dict]:
+    """Un CV sin experiencia, formación ni idiomas no puede quedarse en silencio: se pregunta por cada
+    sección, sin depender de que el modelo lo haga (RF-2.3)."""
+    if any(perfil[c] for c, _ in _VACIAS):
+        return []
+    ya = {p["campo"].split(".")[0] for p in pendientes}
+    return [_pendiente(campo, "falta", pregunta) for campo, pregunta in _VACIAS if campo not in ya]
+
+
 def crear(proveedor: Proveedor | None = None) -> PlainFlow:
 
     def extraer(e: dict) -> dict:
@@ -161,6 +175,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         perfil["idiomas"], nuevas = _fusionar_idiomas(perfil["idiomas"])
         pendientes += nuevas
         pendientes += _genero_puestos(perfil)
+        pendientes += _perfil_vacio(perfil, pendientes)
         # Instrucciones: solo las que están de verdad en algún CV.
         perfil["instrucciones_embebidas"] = [
             i for i in dict.fromkeys(perfil["instrucciones_embebidas"])

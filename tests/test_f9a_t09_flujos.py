@@ -70,3 +70,10 @@ def test_clasificar_perfil_devuelve_puestos_respaldados():
         {"titulo": "Chef", "idioma": "en", "dato": "Cocinero"}]}]))
     e = flujo.run({"perfil": perfil.model_dump(mode="json")})
     assert [p["titulo"] for p in e["puestos"]] == ["Camarera de sala"]
+
+
+def test_un_cv_sin_experiencia_formacion_ni_idiomas_pregunta_por_cada_seccion():
+    flujo = crear_perfilar(proveedor=ProveedorSimulado([{"perfil": {}, "cv_maestro": ""}, TAX]))
+    e = flujo.run({"cvs": [{"cv_id": 1, "nombre": "CV", "texto": "Pablo\nBusco trabajo."}]})
+    campos = [p["campo"] for p in e["perfil"]["preguntas_pendientes"]]
+    assert campos == ["experiencias", "formacion", "idiomas"]
