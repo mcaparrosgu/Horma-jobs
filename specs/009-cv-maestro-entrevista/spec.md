@@ -18,8 +18,8 @@ Tras subir su CV, la usuaria ve qué le falta (huecos y avisos), busca ofertas p
 conoce mejor y la entrena, y Horma usa lo que cuenta para escribir CV y cartas más suyos (9b).
 
 La fase se divide en dos partes (P17). Cada una tiene su plan, sus tareas, su rama, su prueba manual y su PR:
-- **9a — CV y puestos.** No hay agentes nuevos; cambia `clasificador_postulante` (se rehacen las evals de
-  `perfil`).
+- **9a — CV y puestos.** No hay agentes nuevos; cambian `extractor_perfil` (otras actividades, RF-9.1d) y
+  `clasificador_postulante` (puestos, RF-9.3), así que se rehacen las evals de `perfil`.
 - **9b — Entrevista.** Hay dos agentes nuevos (`entrevistador` y `valorador_entrevista`), cada uno con su set
   de evals y su umbral. Cambian `analizador_estilo`, `redactor_cv` y `redactor_carta`, así que se rehacen sus
   evals.
