@@ -31,6 +31,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 5. **Correcciones del profesor** (`005-correcciones-profesor`, construida, fusionada y probada por Mar el 19-nov)
 6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, construida y probada por Mar el 20-nov)
 7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; cerrada el 20-nov: evals reales y pruebas manuales firmadas por Mar)
+8. **Portada y ofertas** (`008-portada-ofertas`, construida el 20-nov, T01-T21; prueba manual firmada por Mar el 21-nov; RF-8.5 provisional)
 
 Cada fase se cierra con sus evals en verde.
 
@@ -66,8 +67,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 1: fuentes e ingesta
 
-1. Entra en la web: debajo del catálogo sale tu identificador de Google (`sub`). Ponlo en
-   `HORMA_ADMINS` del `.env` y reinicia la API. Ya verás la pestaña «Admin» (Ingesta y Costes).
+1. Entra en la web y mira tu identificador de Google (`sub`) en `/api/yo`. Ponlo en
+   `HORMA_ADMINS` del `.env` y reinicia la API. Ya verás la pestaña «Admin» (Ingesta · Catálogo · Costes).
 2. En `/ingesta`, califica la web de la fuente (p. ej. `https://www.arbeitnow.com`). Solo una
    calificación APTA permite activarla.
 3. Crea una clave de alcance `ingesta`, cópiala (solo se enseña una vez) en `HORMA_CLAVE_INGESTA`
@@ -80,7 +81,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 1. `uv run alembic upgrade head` aplica la migración 0003; `docker compose up -d --build` monta el
    volumen `horma_archivos` (los CV subidos, solo en la API).
 2. Entra en la web: en `/cv-base` subes tu CV (PDF, DOCX o Markdown); en `/perfil` respondes lo que
-   falte; en `/preferencias` eliges los filtros (grupos de más de 2 casillas con «Seleccionar todo» y «Quitar selección»); en `/recomendadas` ves las ofertas con su nota.
+   falte; en `/recomendadas`, en «Qué buscas», eliges los filtros (grupos de más de 2 casillas con «Seleccionar todo» y «Quitar selección») y ves las ofertas con su nota.
 3. Para probarlo sin web: `horma flujo correr perfilar` y `horma recomendar` (ver Consola).
 4. Puerta de salida: `horma eval correr perfil`, `cv-base` y `recomendacion` con el modelo real
    (tope de 1 USD por ejecución).

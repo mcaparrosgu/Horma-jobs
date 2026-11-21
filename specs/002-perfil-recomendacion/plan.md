@@ -39,7 +39,7 @@ docker-compose.yml: volumen `horma_archivos` montado solo en la API
 |---|---|
 | `perfilar` | `extraer` (extractor-perfil, con todos los CV de la usuaria) → `verificar_origen` (código: un dato cuyo fragmento no está en su CV va a `preguntas_pendientes`) → `quitar_sensibles` (código, RT-09) → `clasificar` (clasificador-postulante) → `preferencias_desde_cv` (código) → `componer` |
 | `generar_cv_base` | `elegir_destinos` (código: hasta 4 sectores o familias, de la taxonomía y las preferencias) → `generar` (generador-cv-base) → `verificar` (verificar_trazabilidad) → arista condicional: vuelve a `generar` (máximo 2 intentos) o pasa al destino siguiente → `componer`. Un CV base que no pasa la verificación no se guarda y deja el motivo |
-| `recomendar` | `candidatas` (las carga el worker con `buscar_ofertas`; las que ya tienen nota para esa versión del perfil no se vuelven a puntuar) → `puntuar_tanda` (matcher, 30 por tanda) → arista condicional: otra tanda si la anterior dejó alguna nota dentro del rango y quedan candidatas, con tope de 5 tandas → `revisar_explicaciones` (código: si aparece un rasgo personal, la explicación se retira y se marca) → `componer` |
+| `recomendar` | `candidatas` (las carga el worker con `buscar_ofertas`; las que ya tienen nota para esa versión del perfil no se vuelven a puntuar) → `puntuar_tanda` (matcher, 30 por tanda) → arista condicional: otra tanda si la anterior dejó alguna nota dentro del rango y quedan candidatas, con tope de 5 tandas → `componer` (desde la fase 8, la revisión de rasgos personales, RT-09, va dentro de cada tanda) |
 
 ## Contratos
 **Agentes**

@@ -1,5 +1,6 @@
 """Único lugar donde se escribe SQL sobre ofertas y su origen. El catálogo se escribe en modo sistema."""
 import json
+import re
 
 from pydantic import HttpUrl, TypeAdapter, ValidationError
 from sqlalchemy import text
@@ -18,6 +19,22 @@ COLUMNAS_LISTA = (
     "o.dominio_empresa, o.empresa_validada, o.salario_publicado, o.salario_rango, "
     "o.frase_pedir_salario, o.sector, o.familia, o.nivel, o.stack, o.recomendable, o.creada_en, "
     "o.usuaria_id is not null as propia, f.nombre as fuente")
+
+
+def _dominio(url: str | None) -> str | None:
+    m = re.match(r"https?://([^/:?#]+)", url or "", re.I)
+    return re.sub(r"^www\.", "", m.group(1).lower()) if m else None
+
+
+def marcar_fuente_desconocida(filas: list[dict], s_sistema: Session) -> list[dict]:
+    """RF-8.3f: una oferta propia es de «fuente no reconocida» si su dirección no es de ninguna fuente del
+    banco de Horma (dominio o subdominio) o si no tiene dirección. `fuentes` solo la lee el sistema."""
+    dominios = {d for (w,) in s_sistema.execute(text("select web from fuentes")).all() if (d := _dominio(w))}
+    for f in filas:
+        d = _dominio(f.get("url"))
+        f["fuente_desconocida"] = bool(f.get("propia")) and not (
+            d and any(d == x or d.endswith("." + x) for x in dominios))
+    return filas
 
 
 def _existente(s: Session, fuente_id, clave_id, id_externo) -> dict | None:
@@ -202,6 +219,7 @@ def propias_sin_nota(s: Session, usuaria_id: int, perfil_version: int, limite: i
     return list(s.execute(text(
         "select o.id from ofertas o where o.usuaria_id = :u and o.estado = 'procesada' "
         "and not exists (select 1 from matches m where m.oferta_id = o.id and m.perfil_version = :v) "
+        "and not exists (select 1 from descartes d where d.oferta_id = o.id) "
         "order by o.id limit :l"), {"u": usuaria_id, "v": perfil_version, "l": limite}).scalars())
 
 
@@ -229,3 +247,42 @@ def errores_recientes(s: Session, n: int = 10) -> list[dict]:
         "left join fuentes f on f.id = o.fuente_id where o.estado='error' and o.usuaria_id is null "
         "order by o.id desc limit :n"), {"n": n}).mappings().all()
     return [dict(f) for f in filas]
+
+
+def propias(s: Session, usuaria_id: int, limite: int = 10) -> list[dict]:
+    """Las ofertas añadidas por la usuaria, de la más nueva a la más antigua."""
+    filas = s.execute(text(
+        f"select {COLUMNAS_LISTA} from ofertas o left join fuentes f on f.id = o.fuente_id "
+        "where o.usuaria_id = :u order by o.id desc limit :l"), {"u": usuaria_id, "l": limite}).mappings().all()  # noqa: E501
+    return [dict(f) for f in filas]
+
+
+def progreso_de_analisis(s: Session, ids: list[int]) -> dict[int, int]:
+    """El avance de la última tarea `procesar_oferta` de cada oferta (sesión de sistema)."""
+    if not ids:
+        return {}
+    filas = s.execute(text(
+        "select distinct on (entidad_id) entidad_id, estado, progreso from tareas "
+        "where tipo = 'procesar_oferta' and entidad_id = any(cast(:ids as int[])) "
+        "order by entidad_id, id desc"), {"ids": list(ids)}).all()
+    return {e: (100 if estado == "hecha" else p) for e, estado, p in filas}
+
+
+def original(s: Session, oferta_id: int) -> dict | None:
+    """El texto completo y su origen; la URL solo si es http(s) (RF-8.3b)."""
+    f = s.execute(text(
+        "select o.titulo, o.empresa, o.atribucion, o.usuaria_id is not null as propia, "
+        "o.fecha_publicacion, o.url, o.texto_crudo as texto, f.nombre as fuente "
+        "from ofertas o left join fuentes f on f.id = o.fuente_id where o.id = :i"),
+        {"i": oferta_id}).mappings().first()
+    if f is None:
+        return None
+    url = f["url"] if f["url"] and f["url"].lower().startswith(("http://", "https://")) else None
+    return {"titulo": f["titulo"], "empresa": f["empresa"], "atribucion": f["atribucion"],
+            "fuente": f["fuente"], "propia": f["propia"], "fecha_publicacion": f["fecha_publicacion"],
+            "url": url, "texto": f["texto"]}
+
+
+def visible(s: Session, oferta_id: int) -> bool:
+    """¿La oferta existe y la usuaria de la sesión puede verla? (RLS: catálogo o propia)"""
+    return s.execute(text("select 1 from ofertas where id = :i"), {"i": oferta_id}).first() is not None

@@ -82,7 +82,7 @@ en [clarifications.md](./clarifications.md); aquí se citan como P1…P3.
     y «Salir».
   - SI el perfil no tiene nombre, no se muestran ni el nombre ni la inicial.
   - NUNCA DEBERÁ mostrarse una foto.
-- **RF-6.3b** Las pestañas DEBERÁN ser las seis actuales (P2): Perfil · Preferencias · CV base ·
+- **RF-6.3b** *(sustituido por la spec 008)* Las pestañas DEBERÁN ser las seis actuales (P2): Perfil · Preferencias · CV base ·
   Añadir oferta · Recomendadas · Candidaturas.
   - Cada una mide al menos 44 px de alto.
   - La activa lleva `aria-current="page"`, fondo lima, texto tinta y peso 700.
@@ -91,9 +91,9 @@ en [clarifications.md](./clarifications.md); aquí se citan como P1…P3.
   - una rejilla de 6 columnas sobre la superficie, con línea superior;
   - pestañas de al menos 48 px de alto y texto de 12 px, sin cortar palabras;
   - la activa, en lima.
-- **RF-6.3d** Las pantallas de admin (`/ingesta`, `/costes`) DEBERÁN llevar la misma marca, tema y
+- **RF-6.3d** *(sustituido por la spec 008)* Las pantallas de admin (`/ingesta`, `/costes`) DEBERÁN llevar la misma marca, tema y
   «Salir», sin las pestañas de usuaria. Mantienen sus enlaces entre ellas y a «Ofertas».
-- **RF-6.3e** La portada sin sesión DEBERÁ mostrar la marca, un h1 editorial y el botón primario
+- **RF-6.3e** *(sustituido por la spec 008)* La portada sin sesión DEBERÁ mostrar la marca, un h1 editorial y el botón primario
   «Entrar con Google».
 
 ### Componentes (RF-6.4) — guía para cualquier pantalla
@@ -119,6 +119,8 @@ mientras uno de estos sirva (RF-6.9).
 | **Aviso** | texto con `role="status"` (o `alert` si es un error), con el color de error y nunca solo con color: el texto dice qué pasó |
 | **Tabla de datos** (admin) | cabeceras mono, filas con línea inferior, desplazamiento horizontal dentro de su caja en móvil |
 | **Documento** (CV y carta) | hoja de superficie con borde de 1 px en línea, tipografía del cuerpo y anchura de lectura |
+| **Ventana** (añadida por la spec 008) | `<dialog class="ventana">` modal de ancho de lectura (60 rem como máximo), borde de 1 px en tinta, cabecera con el título y «Cerrar» (secundario de 44 px), cuerpo con desplazamiento propio. Esc la cierra y el foco vuelve al botón que la abrió. Generaliza el visor de CV de Perfil |
+| **Barra de avance** (añadida por la spec 008) | pista de 6 px sin radio con relleno según el tema, `role="progressbar"` con `aria-valuenow`, mínimo y máximo, y encima una frase en mono con el porcentaje («Puntuando ofertas · 40 %»). El color nunca es la única señal. Sin animación si se pide reducir el movimiento |
 
 - **RF-6.4b** Simetría (prioridad alta de Mar): los elementos de una misma fila o rejilla DEBERÁN
   tener la misma altura, la misma separación y estar alineados por abajo. Una etiqueta o un contador
@@ -171,7 +173,7 @@ mientras uno de estos sirva (RF-6.9).
 
   Los filtros, salvo el primero, DEBERÁN plegarse bajo «Más filtros» / «Menos filtros» (con
   `aria-expanded`), en la misma fila que «Buscar».
-- **RF-6.5f** Filtrar y ordenar NO DEBERÁN llamar al modelo (RF-2.15c). «Recomendar» sigue siendo un
+- **RF-6.5f** *(sustituido por la spec 008)* Filtrar y ordenar NO DEBERÁN llamar al modelo (RF-2.15c). «Recomendar» sigue siendo un
   solo botón que puntúa lo pendiente (clarificaciones, «Supuestos»).
 
 ### Resto de pantallas (RF-6.6)

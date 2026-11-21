@@ -1,22 +1,22 @@
-"""Ofertas recomendadas (RF-2.11 a 2.13, RF-2.15c).
+"""Ofertas recomendadas (RF-2.11 a 2.13, RF-8.4 a 8.6).
 
-`GET /api/recomendaciones` solo filtra y ordena lo ya puntuado: no llama al modelo ni encola nada.
+`GET /api/recomendaciones` solo lee lo ya puntuado: no llama al modelo ni encola nada.
 Puntuar lo que falta es `POST /api/recomendar`."""
 import json
-from typing import Annotated
+from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from pydantic import BaseModel, Field, ValidationError
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel, Field
 from sqlalchemy import text
 
 from horma.config import ajustes
-from horma.schemas.preferencias import Preferencias
 from horma.tools.buscar_ofertas import buscar_ofertas
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.db import sesion_de, sesion_sistema
+from horma.web.repositories import candidaturas as repo_candidaturas
+from horma.web.repositories import descartes, perfiles, tareas
 from horma.web.repositories import matches as repo
 from horma.web.repositories import ofertas as repo_ofertas
-from horma.web.repositories import perfiles, tareas
 from horma.web.routers.ingesta import solo_ingesta
 
 router = APIRouter()
@@ -48,71 +48,106 @@ def _aviso_auditor(f: dict) -> str | None:
     return ". ".join(avisos) or None
 
 
-def _rango(valor: str | None, base: Preferencias) -> tuple[int, int]:
-    if not valor:
-        return base.rango_min, base.rango_max
-    try:
-        a, b = (int(x) for x in valor.split("-"))
-        Preferencias(rango_min=a, rango_max=b)
-    except (ValueError, ValidationError) as e:
-        raise HTTPException(status_code=422, detail="El rango debe ser «mínimo-máximo», de 0 a 100.") from e
-    return a, b
+class Recomendar(BaseModel):
+    motivo: Literal["abrir", "buscar"] = "abrir"
 
 
-@router.post("/api/recomendar", status_code=202, dependencies=[Depends(exigir_csrf)])
-def recomendar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    """Puntúa solo lo que falta para la versión vigente del perfil (RF-2.12)."""
+MIN_USD = 0.01  # por debajo de esto no merece la pena lanzar una tarea
+
+
+@router.post("/api/recomendar", dependencies=[Depends(exigir_csrf)])
+def recomendar(request: Request, datos: Recomendar | None = None, usuaria_id: int = Depends(usuaria_actual)):
+    """Puntúa lo que falta sin botón (RF-8.5). Siempre responde 200 con `{tarea_id}` o, si no lanza nada,
+    `{tarea_id: null, motivo}`: `sin_perfil`, `en_marcha` (con la tarea en curso),
+    `sin_pendientes`, `reciente`
+    (solo al abrir: la última empezó hace menos de una hora) o `tope` (el gasto del día)."""
+    motivo_pedido = (datos or Recomendar()).motivo
+    a = ajustes()
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        fila = perfiles.vigente(s)
+        if fila is None:
+            return {"tarea_id": None, "motivo": "sin_perfil"}
+        if en_curso := tareas.activas(s, usuaria_id, ["recomendar"]):
+            return {"tarea_id": en_curso[0]["id"], "motivo": "en_marcha"}
+        if motivo_pedido == "abrir":
+            ultima = tareas.ultima(s, usuaria_id, "recomendar")
+            if ultima and ultima["hace_s"] < a.intervalo_recomendar_min * 60:
+                return {"tarea_id": None, "motivo": "reciente"}
+        prefs = perfiles.preferencias(s).model_copy(
+            update={"rango_min": 40, "rango_max": 100, "orden": "compatibles"})
+        taxonomia = perfiles.perfil_modelo(fila).taxonomia
+        excluir = repo.puntuadas(s, fila["version"]) + descartes.ids(s)
+        if not repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia, excluir_ids=excluir, limite=1)):
+            return {"tarea_id": None, "motivo": "sin_pendientes"}
+        queda = round(a.tope_gasto_diario_puntuar - tareas.gasto_hoy(s, usuaria_id), 6)
+        if queda < MIN_USD:
+            return {"tarea_id": None, "motivo": "tope"}
+        tarea = tareas.encolar(s, usuaria_id, "recomendar", fila["id"],
+                               min(a.tope_coste_recomendar, queda), a.tope_reintentos_tarea)
+    return {"tarea_id": tarea, "perfil_version": fila["version"]}
+
+
+TEXTO_SUELTAS = "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir."
+
+
+@router.post("/api/matches/{oferta_id}/puntuar", status_code=202, dependencies=[Depends(exigir_csrf)])
+def puntuar_ahora(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """«Puntuar ahora» (RF-8.5e): puntúa solo esa oferta. Funciona con el tope del día alcanzado y con una
+    tanda en marcha; tiene su propio límite de sueltas al día (RF-8.5f)."""
     a = ajustes()
     with sesion_de(request.app.state.engine, usuaria_id) as s:
         fila = perfiles.vigente(s)
         if fila is None:
             raise HTTPException(status_code=409, detail="Aún no tienes un perfil: sube un CV primero.")
-        if tareas.sin_terminar(s, "recomendar", fila["id"]):
-            raise HTTPException(status_code=409, detail="Ya se está puntuando.")
-        tarea = tareas.encolar(s, usuaria_id, "recomendar", fila["id"], a.tope_coste_recomendar,
+        if not repo_ofertas.visible(s, oferta_id):
+            raise HTTPException(status_code=404, detail="No existe esa oferta")
+        if oferta_id in repo.puntuadas_de(s, fila["version"], oferta_id) or tareas.sin_terminar(
+                s, "puntuar_una", oferta_id):
+            raise HTTPException(status_code=409, detail="Esa oferta ya tiene nota o se está puntuando.")
+        if tareas.sueltas_hoy(s, usuaria_id) >= a.max_sueltas_dia:
+            raise HTTPException(status_code=429, detail=TEXTO_SUELTAS)
+        tarea = tareas.encolar(s, usuaria_id, "puntuar_una", oferta_id, a.tope_coste_puntuar_una,
                                a.tope_reintentos_tarea)
-    return {"tarea_id": tarea, "perfil_version": fila["version"]}
+    return {"tarea_id": tarea}
 
 
 @router.get("/api/recomendaciones")
-def listar(request: Request, usuaria_id: int = Depends(usuaria_actual),
-           rango: str | None = None, orden: str | None = None,
-           familias: Annotated[list[str] | None, Query()] = None,
-           sectores: Annotated[list[str] | None, Query()] = None,
-           contratos: Annotated[list[str] | None, Query()] = None,
-           niveles: Annotated[list[str] | None, Query()] = None,
-           paises: Annotated[list[str] | None, Query()] = None,
-           idiomas: Annotated[list[str] | None, Query()] = None,
-           solo_remoto: bool | None = None, solo_salario: bool | None = None,
-           sueldo_minimo: float | None = None):
-    """Filtra y ordena lo ya puntuado; lo que aún no tiene nota sale «sin puntuar». Lo que no se pasa
-    en la URL sale de las preferencias guardadas."""
+def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """Todo lo que pasa «Qué buscas», con su nota (o «sin puntuar»), su candidatura y si está descartada.
+    Rango, orden y estado los aplica el navegador (RF-8.4c): aquí no hay parámetros de vista."""
     with sesion_de(request.app.state.engine, usuaria_id) as s:
-        guardadas = perfiles.preferencias(s)
-        cambios = {k: v for k, v in {
-            "familias": familias, "sectores": sectores, "contratos": contratos, "niveles": niveles,
-            "paises": paises, "idiomas": idiomas, "solo_remoto": solo_remoto,
-            "solo_salario": solo_salario, "sueldo_minimo": sueldo_minimo, "orden": orden}.items()
-            if v is not None}
-        try:
-            prefs = Preferencias.model_validate({**guardadas.model_dump(), **cambios})
-        except ValidationError as e:
-            raise HTTPException(status_code=422, detail="Algún filtro no es válido.") from e
-        minimo, maximo = _rango(rango, guardadas)
+        prefs = perfiles.preferencias(s)
         vigente = perfiles.vigente(s)
         taxonomia = perfiles.perfil_modelo(vigente).taxonomia if vigente else None
         ids = repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia))
         filas = repo.listado(s, ids)
-    salida = []
-    for f in filas:
-        if f["nota"] is not None and not minimo <= f["nota"] <= maximo:
-            continue  # el rango vale igual para las propias y las del catálogo (RF-7.1f)
-        salida.append({**f, "salario": _salario(f), "sin_puntuar": f["nota"] is None,
-                       "aviso_auditor": _aviso_auditor(f) if f["propia"] else None})
-    if prefs.orden == "compatibles":  # lo puntuado primero, de más a menos nota; el resto, al final
-        salida.sort(key=lambda f: -1 if f["nota"] is None else f["nota"], reverse=True)
-    return {"total": len(salida), "rango": [minimo, maximo],
-            "sin_puntuar": sum(1 for f in salida if f["sin_puntuar"]), "recomendaciones": salida}
+        sueltas = tareas.sueltas_hoy(s, usuaria_id)
+    with sesion_sistema(request.app.state.engine) as s:
+        repo_ofertas.marcar_fuente_desconocida(filas, s)
+    salida = [{**f, "salario": _salario(f), "sin_puntuar": f["nota"] is None,
+               "aviso_auditor": _aviso_auditor(f) if f["propia"] else None} for f in filas]
+    return {"total": len(salida), "sin_puntuar": sum(1 for f in salida if f["sin_puntuar"]),
+            "sueltas_hoy": sueltas, "max_sueltas": ajustes().max_sueltas_dia, "recomendaciones": salida}
+
+
+@router.put("/api/descartes/{oferta_id}", dependencies=[Depends(exigir_csrf)])
+def descartar(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """Descarta una oferta: deja de puntuarse y sale de «Nuevas». No cabe con candidatura abierta (RF-8.6)."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        if not repo_ofertas.visible(s, oferta_id):
+            raise HTTPException(status_code=404, detail="No existe esa oferta")
+        if repo_candidaturas.hay_viva(s, oferta_id):
+            raise HTTPException(status_code=409,
+                                detail="Esa oferta tiene una candidatura abierta: ciérrala antes de descartarla.")  # noqa: E501
+        descartes.descartar(s, usuaria_id, oferta_id)
+    return {"oferta_id": oferta_id, "descartada": True}
+
+
+@router.delete("/api/descartes/{oferta_id}", dependencies=[Depends(exigir_csrf)])
+def recuperar(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        descartes.recuperar(s, oferta_id)
+    return {"oferta_id": oferta_id, "descartada": False}
 
 
 @router.post("/api/matches/{oferta_id}/correccion", dependencies=[Depends(exigir_csrf)])

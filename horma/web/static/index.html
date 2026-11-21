@@ -12,36 +12,39 @@
   <script src="/static/tema.js"></script>
 </head>
 <body>
-  <header class="cabecera cabecera-admin">
+  <header class="cabecera">
     <a class="marca" href="/">Horma</a>
-    <nav id="accesos" aria-label="Accesos">
-      <a id="ir-perfil" class="pestana" href="/perfil" hidden>Mi perfil</a>
-      <a id="ir-anadir" class="pestana" href="/anadir-oferta" hidden>Añadir oferta</a>
-      <a id="ir-recomendadas" class="pestana" href="/recomendadas" hidden>Recomendadas</a>
-      <a id="ir-ingesta" class="pestana" href="/ingesta" hidden>Admin</a>
-    </nav>
     <div class="derecha">
       <button id="tema" class="secundario" type="button">Tema oscuro</button>
-      <button id="salir" class="secundario" type="button" hidden>Salir</button>
+      <a class="boton boton-texto" href="/entrar">Entrar</a>
+      <a class="boton" href="/entrar">Crear cuenta</a>
     </div>
   </header>
-  <main>
+  <main class="landing">
+    <h1 class="titulo-pantalla">Ofertas que encajan contigo, y tu CV listo para cada una.</h1>
+    <p class="entradilla">Horma busca ofertas de empleo, te dice cuáles encajan con tu experiencia y por qué, y prepara tu CV y tu carta para cada una con lo que tú has hecho.</p>
 
-    <section id="entrada" hidden>
-      <h1 class="titulo-pantalla">Ofertas de empleo, a tu medida</h1>
-      <p class="entradilla">Para guardar y procesar ofertas, entra con tu cuenta de Google.</p>
-      <a class="boton" href="/auth/google/login">Entrar con Google</a>
+    <section aria-labelledby="t-hace">
+      <h2 id="t-hace">Qué hace Horma</h2>
+      <ul class="lista-editorial">
+        <li><h3>Ofertas revisadas</h3><p>Reúne ofertas de varias webs de empleo y aparta las que parecen fraude o ya no existen.</p></li>
+        <li><h3>Compatibilidad explicada</h3><p>Puntúa cada oferta según tu experiencia y tu formación, y te dice por qué con frases de tu CV y de la oferta.</p></li>
+        <li><h3>También las que encuentras tú</h3><p>¿Has visto una oferta en otro sitio? Pega el texto o el enlace y Horma la analiza igual. Solo la ves tú.</p></li>
+        <li><h3>CV y carta a medida</h3><p>Adapta tu CV y escribe tu carta para cada oferta, con tu forma de escribir. No inventa: cada frase sale de lo que tú has contado.</p></li>
+        <li><h3>Tú decides</h3><p>Sigues cada candidatura de borrador a entrevista. Nada sale sin tu aprobación.</p></li>
+      </ul>
     </section>
 
-    <section id="aplicacion" hidden>
-      <h1 class="titulo-pantalla">Ofertas</h1>
-      <p id="contador" class="etiqueta-mono" role="status"></p>
-      <ul id="lista" class="lista-editorial"></ul>
-      <p id="vacio" hidden>Todavía no hay ofertas.</p>
-      <p id="mi-sub" class="suave"></p>
+    <section aria-labelledby="t-empezar">
+      <h2 id="t-empezar">Cómo empezar</h2>
+      <ol class="pasos">
+        <li>Crea tu cuenta con Google</li>
+        <li>Sube tu CV</li>
+        <li>Mira tus ofertas recomendadas</li>
+      </ol>
+      <a class="boton" href="/entrar">Crear cuenta</a>
     </section>
   </main>
-  <script src="/static/app.js"></script>
   <script src="/static/pwa.js"></script>
 </body>
 </html>

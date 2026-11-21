@@ -31,10 +31,14 @@ class IdentidadFalsa:
 
 
 @pytest.fixture
-def cliente(motor_app, bd_limpia):
+def cliente(motor_app, bd_limpia, monkeypatch):
+    monkeypatch.setenv("HORMA_ADMINS", "google-A,google-B")  # el catálogo común es solo de Admin (RF-8.2c)
+    from horma import config
+    config.ajustes.cache_clear()
     app = crear_app(engine=motor_app, identidad=IdentidadFalsa())
     with TestClient(app, follow_redirects=False) as c:
         yield c
+    config.ajustes.cache_clear()
 
 
 def entrar(c, sub="google-A") -> str:
@@ -117,11 +121,11 @@ def test_la_portada_lleva_csp_estricta_y_cabeceras_de_seguridad(cliente):
 
 def test_el_js_pinta_siempre_con_textcontent():
     static = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
-    js = (static / "app.js").read_text(encoding="utf-8")
+    js = (static / "catalogo.js").read_text(encoding="utf-8")
     assert "innerHTML" not in js and "insertAdjacentHTML" not in js and "eval(" not in js
     assert "textContent" in js
-    html = (static / "index.html").read_text(encoding="utf-8")
-    for permitido in ('<script src="/static/tema.js"', '<script src="/static/app.js"', '<script src="/static/pwa.js"'):  # solo externos  # noqa: E501
+    html = (static / "catalogo.html").read_text(encoding="utf-8")
+    for permitido in ('<script src="/static/tema.js"', '<script src="/static/comun.js"', '<script src="/static/catalogo.js"', '<script src="/static/pwa.js"'):  # solo externos  # noqa: E501
         html = html.replace(permitido, "")
     assert "<script" not in html
 
@@ -144,7 +148,7 @@ def test_camino_completo_oferta_pegada_worker_y_lista(cliente, motor_app):
 
 def test_una_oferta_con_script_se_guarda_como_texto_y_no_rompe_nada(cliente, motor_app):
     csrf = entrar(cliente)
-    cliente.post("/ofertas", json={"texto": "<script>alert(1)</script> Cajero en Tienda X"},
+    cliente.post("/ofertas", json={"texto": "<script>alert(1)</script> Cajero en Tienda X, turno de tarde"},
                  headers={"X-CSRF-Token": csrf})
     worker.procesar_una(motor_app, ProveedorSimulado(
         [{"titulo": "<script>alert(1)</script>"}, AUDITOR, TAX]), resolver=None)

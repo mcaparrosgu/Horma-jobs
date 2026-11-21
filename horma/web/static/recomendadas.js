@@ -1,23 +1,30 @@
-// Pantalla de ofertas recomendadas (RF-2.8, 2.15b, 2.15c, 6.5). Cambiar un filtro solo reordena y filtra
-// lo ya puntuado: guarda las preferencias y vuelve a pedir la lista; nunca llama al modelo.
+// Pantalla de ofertas recomendadas (RF-2.8, 6.5, 8.4 a 8.7). «Qué buscas» se guarda y vuelve a buscar y puntuar;
+// la vista (nota, orden y estado) se aplica aquí, en el navegador, sin pedir nada al servidor ni al modelo.
 const AYUDA = [
-  ["Oferta", "El título de la oferta y la empresa que la publica. El enlace lleva a la oferta original."],
+  ["Oferta", "El título de la oferta y la empresa que la publica. «Ver oferta original» abre el texto completo."],
   ["Puesto", "El tipo de trabajo según la clasificación de Horma, sea cual sea el sector."],
   ["Compatibilidad", "Nota de 0 a 100 de lo bien que encajan tu experiencia y formación con lo que pide la oferta. Orienta, no decide. Despliega la fila para ver por qué."],
   ["Salario", "Tal como lo dice la oferta, sin convertirlo. Si no lo publica, lo verás indicado."],
   ["Lugar", "El país donde está el puesto, o «Remoto»."],
   ["Publicado", "El día en que se publicó la oferta. Si no lo dice, «No consta fecha de publicación»."],
 ];
-const MAX_PUNTUANDO = 30;  // sondeos de 3 s tras pulsar «Recomendar»
+const CLAVE_VISTA = "horma.vista.recomendadas";
+const VISTA_POR_DEFECTO = { min: 40, max: 100, orden: "recientes", estado: "nuevas" };
+const ESTADOS_VISTA = [["nuevas", "Nuevas"], ["candidatura", "Con candidatura"], ["descartadas", "Descartadas"]];
+const ETIQUETA_CANDIDATURA = { borrador: "Borrador", aprobada: "Aprobada", enviada: "Enviada",
+  entrevista: "Entrevista", cerrada: "Cerrada" };
+const TEXTO_TOPE = "Hoy ya hemos puntuado todo lo posible. Mañana seguimos con el resto.";
+const TEXTO_SUELTAS = "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir.";
 let guardadas = null;
 let opciones = null;
-let sondeos = 0;
-let sondeo = null;
+let todas = [];            // lo que devuelve la API; la vista lo filtra y ordena sin volver a pedirlo
+let vista = { ...VISTA_POR_DEFECTO };
+let sueltasHoy = 0;
+let maxSueltas = 30;
+let barra = null;          // barra de avance de la puntuación en marcha
+let ultimoAvance = -1;
+let dejarDeSeguir = null;
 let abiertas = null;       // ids de las filas desplegadas; null hasta el primer pintado (entonces, solo la primera)
-
-function urlSegura(u) {
-  return typeof u === "string" && /^https?:\/\//i.test(u);
-}
 
 // Mapeo fijo familia → tono (.tono-0…5, RF-6.4): la misma familia sale siempre del mismo color.
 function tonoDe(texto) {
@@ -148,7 +155,74 @@ function accionesCandidatura(o, contenedor) {
   return b;
 }
 
-// Contenido de la fila desplegada (RF-6.5d): a la izquierda el porqué; a la derecha, las dos acciones.
+// --- Vista en el navegador (RF-8.4c) -----------------------------------------------------------
+function leerVista() {
+  try {
+    const v = JSON.parse(localStorage.getItem(CLAVE_VISTA) || "null");
+    if (v && typeof v === "object") return { ...VISTA_POR_DEFECTO, ...v };
+  } catch (e) {
+    /* sin almacenamiento o valor roto: valores por defecto */
+  }
+  return { ...VISTA_POR_DEFECTO };
+}
+
+function guardarVista() {
+  try {
+    localStorage.setItem(CLAVE_VISTA, JSON.stringify(vista));
+  } catch (e) {
+    /* modo privado o datos bloqueados: la vista vale solo para esta visita */
+  }
+}
+
+function estadoDe(o) {
+  if (o.descartada) return "descartadas";
+  return o.candidatura ? "candidatura" : "nuevas";
+}
+
+function enRango(o) {
+  return o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
+}
+
+function fechaOrden(o) {
+  return new Date(o.fecha_publicacion || o.creada_en || 0).getTime() || 0;
+}
+
+function ordenar(lista) {
+  const porFecha = (a, b) => fechaOrden(b) - fechaOrden(a) || b.id - a.id;
+  if (vista.orden === "compatibles") {   // lo puntuado primero, de más a menos nota; el resto, al final
+    return [...lista].sort((a, b) => (b.sin_puntuar ? -1 : b.nota) - (a.sin_puntuar ? -1 : a.nota) || porFecha(a, b));
+  }
+  return [...lista].sort(porFecha);
+}
+
+function pintarVista() {
+  $("nota-min").value = vista.min;
+  $("nota-max").value = vista.max;
+  $("orden").value = vista.orden;
+  const visibles = todas.filter(enRango);
+  const n = (e) => visibles.filter((o) => estadoDe(o) === e).length;
+  $("estado").replaceChildren(...ESTADOS_VISTA.map(([valor, texto]) => {
+    const op = nodo("option", `${texto} (${n(valor)})`);
+    op.value = valor;
+    return op;
+  }));
+  $("estado").value = vista.estado;
+}
+
+function leerCamposVista() {
+  const num = (id, defecto) => {
+    const v = $(id).value.trim();
+    const x = v === "" ? defecto : Number(v);
+    return Number.isFinite(x) ? Math.max(0, Math.min(100, Math.round(x))) : defecto;
+  };
+  vista = { min: num("nota-min", 0), max: num("nota-max", 100), orden: $("orden").value, estado: $("estado").value };
+  if (vista.min > vista.max) [vista.min, vista.max] = [vista.max, vista.min];
+  guardarVista();
+  pintarLista();
+}
+
+// --- Detalle de cada oferta ----------------------------------------------------------------------
+// Contenido de la fila desplegada (RF-6.5d): a la izquierda el porqué; a la derecha, las acciones.
 function detalle(o) {
   const cont = nodo("div", null, "detalle");
   const izq = nodo("div", null, "porque-cuerpo");
@@ -157,7 +231,7 @@ function detalle(o) {
   const pintar = () => {
     izq.replaceChildren(nodo("span", "Por qué te la recomendamos", "etiqueta-mono"));
     if (o.sin_puntuar) {
-      izq.append(nodo("p", "Esta oferta todavía no tiene nota. Pulsa «Recomendar» para calcularla."));
+      izq.append(nodo("p", "Esta oferta todavía no tiene nota. Horma la puntuará sola; si la quieres ya, pulsa «Puntuar ahora»."));
       return;
     }
     if (o.retirada) {
@@ -175,40 +249,138 @@ function detalle(o) {
     }
   };
   pintar();
-  if (o.sin_puntuar) return cont;
-
-  const corregir = nodo("button", "Corregir explicación", "secundario");
-  corregir.type = "button";
-  corregir.addEventListener("click", (e) => {
-    e.stopPropagation();
-    corregir.hidden = true;
-    const f = formularioCorreccion(o, (guardada) => {
-      if (guardada) pintar();
-      f.remove();
-      corregir.hidden = false;
-    });
-    izq.append(f);
-  });
-  dch.append(corregir, accionesCandidatura(o, dch), nodo("p", "Horma elige tu CV base más adecuado.", "suave"));
   cont.append(dch);
+
+  const original = nodo("button", "Ver oferta original", "secundario");
+  original.type = "button";
+  original.addEventListener("click", (e) => { e.stopPropagation(); verOriginal(o.id); });
+
+  if (o.sin_puntuar) {
+    dch.append(botonPuntuarAhora(o), original);
+  } else {
+    const corregir = nodo("button", "Corregir explicación", "secundario");
+    corregir.type = "button";
+    corregir.addEventListener("click", (e) => {
+      e.stopPropagation();
+      corregir.hidden = true;
+      const f = formularioCorreccion(o, (guardada) => {
+        if (guardada) pintar();
+        f.remove();
+        corregir.hidden = false;
+      });
+      izq.append(f);
+    });
+    dch.append(corregir);
+    if (!o.descartada) dch.append(accionCandidatura(o, dch));
+    dch.append(original);
+  }
+  const descarte = botonDescartar(o);
+  if (descarte) dch.append(descarte);
+  if (!o.sin_puntuar && !o.descartada) dch.append(nodo("p", "Horma elige tu CV base más adecuado.", "suave"));
   return cont;
+}
+
+// «Puntuar ahora» (RF-8.5e): puntúa solo esta oferta; con 30 sueltas hoy, desactivado con su texto (RF-8.5f).
+function botonPuntuarAhora(o) {
+  const caja = nodo("div", null, "acciones-ahora");
+  const b = nodo("button", "Puntuar ahora");
+  b.type = "button";
+  const nota = nodo("p", "", "suave");
+  nota.setAttribute("role", "status");
+  const agotadas = () => { b.disabled = true; nota.textContent = TEXTO_SUELTAS; };
+  if (sueltasHoy >= maxSueltas) agotadas();
+  b.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    b.disabled = true;
+    nota.textContent = "Puntuando…";
+    const r = await api(`/api/matches/${o.id}/puntuar`, { metodo: "POST" });
+    if (r.estado === 429) return agotadas();
+    if (!r.ok) {
+      b.disabled = false;
+      nota.textContent = "";
+      return avisar(r.motivo, true);
+    }
+    sueltasHoy += 1;
+    seguirTarea(r.datos.tarea_id, (p) => { nota.textContent = `Puntuando… ${p} %`; }, async (t) => {
+      if (t.estado === "error") {
+        b.disabled = false;
+        nota.textContent = "No se ha podido puntuar esta oferta. Inténtalo otra vez.";
+        return;
+      }
+      await cargarLista();
+    });
+  });
+  caja.append(b, nota);
+  return caja;
+}
+
+// Estado de la candidatura (RF-8.6): con una abierta, «Ver candidatura» sustituye a «Preparar candidatura».
+function accionCandidatura(o, contenedor) {
+  const c = o.candidatura;
+  if (c && c.estado !== "cerrada") {
+    const a = nodo("a", "Ver candidatura", "boton");
+    a.href = `/candidaturas/${c.id}`;
+    return a;
+  }
+  return accionesCandidatura(o, contenedor);
+}
+
+// «Descartar» (RF-8.6b) y «Recuperar» (RF-8.6d). Una oferta con candidatura abierta no se descarta.
+function botonDescartar(o) {
+  if (o.descartada) {
+    const b = nodo("button", "Recuperar", "boton-texto");
+    b.type = "button";
+    b.addEventListener("click", (e) => { e.stopPropagation(); recuperar(o); });
+    return b;
+  }
+  if (o.candidatura && o.candidatura.estado !== "cerrada") return null;
+  const b = nodo("button", "Descartar", "boton-texto");
+  b.type = "button";
+  b.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    b.disabled = true;
+    const r = await api(`/api/descartes/${o.id}`, { metodo: "PUT" });
+    if (!r.ok) {
+      b.disabled = false;
+      return avisar(r.motivo, true);
+    }
+    o.descartada = true;
+    avisarDescarte(o);
+    pintarLista();
+  });
+  return b;
+}
+
+async function recuperar(o) {
+  const r = await api(`/api/descartes/${o.id}`, { metodo: "DELETE" });
+  if (!r.ok) return avisar(r.motivo, true);
+  o.descartada = false;
+  $("aviso-descarte").replaceChildren();
+  pintarLista();
+}
+
+// «Oferta descartada. Deshacer»: sin confirmar antes (RF-8.6b).
+function avisarDescarte(o) {
+  const deshacer = nodo("button", "Deshacer", "boton-texto");
+  deshacer.type = "button";
+  deshacer.addEventListener("click", () => recuperar(o));
+  $("aviso-descarte").replaceChildren(nodo("span", "Oferta descartada. "), deshacer);
 }
 
 function filaOferta(o) {
   const id = `detalle-${o.id}`;
   const tr = nodo("tr", null, "fila-oferta");
-  const titulo = urlSegura(o.url) ? nodo("a", o.titulo || "Sin título") : nodo("span", o.titulo || "Sin título");
-  if (urlSegura(o.url)) {
-    titulo.href = o.url;
-    titulo.target = "_blank";
-    titulo.rel = "noopener noreferrer";
-  }
-  titulo.classList.add("titulo-oferta");
+  const titulo = nodo("span", o.titulo || "Sin título", "titulo-oferta");   // el enlace de origen va en «Ver oferta original»
   const celdaOferta = celda("Oferta", "c-oferta", titulo, nodo("span", o.empresa || "Empresa sin indicar", "suave bloque"));
   if (o.atribucion) celdaOferta.append(nodo("span", o.atribucion, "suave bloque"));  // cita de la fuente (RF-5.5d)
   if (o.propia) {  // las que añade la usuaria salen siempre, con su marca y lo que vio el auditor (RF-5.3e)
     celdaOferta.append(nodo("span", `Añadida por ti · analizada el ${fecha(o.analizada_en)}`, "estado bien bloque"));
+    if (o.fuente_desconocida) celdaOferta.append(nodo("span", textoFuenteDesconocida(o), "estado apagado bloque"));
     if (o.aviso_auditor) celdaOferta.append(nodo("span", o.aviso_auditor, "estado error bloque"));
+  }
+  if (o.candidatura) {  // el estado, siempre con texto (RF-6.7e)
+    celdaOferta.append(nodo("span", `Candidatura: ${ETIQUETA_CANDIDATURA[o.candidatura.estado] || o.candidatura.estado}`,
+      "estado bloque"));
   }
   tr.append(celdaOferta);
   tr.append(celda("Puesto", "c-puesto", nodo("span", etiqueta(o.familia), `etiqueta-puesto ${tonoDe(o.familia)}`),
@@ -218,17 +390,17 @@ function filaOferta(o) {
   if (o.sin_puntuar) {
     comp.append(nodo("em", "Sin puntuar", "suave"));
   } else {
-    const barra = nodo("div", null, "barra-compat");
-    barra.setAttribute("role", "meter");
-    barra.setAttribute("aria-valuenow", String(o.nota));
-    barra.setAttribute("aria-valuemin", "0");
-    barra.setAttribute("aria-valuemax", "100");
-    barra.setAttribute("aria-label", "Compatibilidad");
+    const barraNota = nodo("div", null, "barra-compat");
+    barraNota.setAttribute("role", "meter");
+    barraNota.setAttribute("aria-valuenow", String(o.nota));
+    barraNota.setAttribute("aria-valuemin", "0");
+    barraNota.setAttribute("aria-valuemax", "100");
+    barraNota.setAttribute("aria-label", "Compatibilidad");
     const relleno = nodo("span");
     relleno.style.width = `${Math.max(0, Math.min(100, o.nota))}%`;   // por CSSOM: la CSP no permite style= en el HTML
-    barra.append(relleno);
+    barraNota.append(relleno);
     const fila = nodo("div", null, "nota");
-    fila.append(barra, nodo("span", String(o.nota), "numero"));
+    fila.append(barraNota, nodo("span", String(o.nota), "numero"));
     comp.append(fila);
   }
   tr.append(comp);
@@ -272,100 +444,107 @@ function filaOferta(o) {
   return [tr, det];
 }
 
-// --- Filtros ------------------------------------------------------------------------------------
-function pintarFiltros() {
-  // En móvil solo se ve el primer grupo; el resto cuelga de «Más filtros» (clase .mas).
-  $("grupos").replaceChildren(...GRUPOS.map(([clave, titulo], i) => {
-    const g = grupoCasillas(clave, titulo, opciones.grupos[clave] || [], guardadas[clave] || [], { plegable: true });
-    if (i > 0) g.classList.add("mas");
-    return g;
-  }));
-  $("solo-remoto").checked = guardadas.solo_remoto;
-  $("solo-salario").checked = guardadas.solo_salario;
-  $("sueldo-minimo").value = guardadas.sueldo_minimo === null ? "" : guardadas.sueldo_minimo;
-  $("orden").value = guardadas.orden;
-  $("rango-min").value = guardadas.rango_min;
-  $("rango-max").value = guardadas.rango_max;
-}
-
-function leerFiltros() {
-  const p = { ...guardadas };
-  for (const [clave] of GRUPOS) p[clave] = marcadas(document.querySelector(`[data-grupo="${clave}"]`));
-  p.solo_remoto = $("solo-remoto").checked;
-  p.solo_salario = $("solo-salario").checked;
-  const sueldo = $("sueldo-minimo").value.trim();
-  p.sueldo_minimo = sueldo === "" ? null : Number(sueldo);
-  p.orden = $("orden").value;
-  p.rango_min = Number($("rango-min").value === "" ? 0 : $("rango-min").value);
-  p.rango_max = Number($("rango-max").value === "" ? 100 : $("rango-max").value);
-  return p;
-}
-
-async function aplicarFiltros() {
-  const nuevas = leerFiltros();
-  const r = await api("/api/preferencias", { metodo: "PUT", cuerpo: nuevas });
-  if (!r.ok) {
-    return avisar(r.estado === 422 ? "Revisa los filtros: el mínimo no puede superar al máximo y el sueldo debe ser positivo." : r.motivo, true);
-  }
-  guardadas = r.datos;
-  avisar("");
-  await cargarLista();
-}
-
 // --- Lista --------------------------------------------------------------------------------------
+function pintarLista() {
+  pintarVista();
+  const lista = ordenar(todas.filter((o) => enRango(o) && estadoDe(o) === vista.estado));
+  if (abiertas === null) abiertas = new Set(lista.slice(0, 1).map((o) => o.id));   // la primera, abierta
+  $("filas").replaceChildren(...lista.flatMap(filaOferta));
+  $("vacio").hidden = lista.length > 0;
+  $("tabla").hidden = lista.length === 0;
+  const pendientes = todas.filter((o) => o.sin_puntuar && !o.descartada).length;
+  const n = lista.length === 1 ? "1 oferta" : `${lista.length} ofertas`;
+  $("contador").textContent = pendientes ? `${n} · ${pendientes} sin puntuar en total` : n;
+}
+
 async function cargarLista() {
   const r = await api("/api/recomendaciones");
   if (!r.ok) return avisar(r.motivo, true);
-  const { total, sin_puntuar: pendientes, recomendaciones } = r.datos;
-  if (abiertas === null) abiertas = new Set(recomendaciones.slice(0, 1).map((o) => o.id));   // la primera, abierta
-  $("filas").replaceChildren(...recomendaciones.flatMap(filaOferta));
-  $("vacio").hidden = total > 0;
-  $("tabla").hidden = total === 0;
-  const n = total === 1 ? "1 oferta" : `${total} ofertas`;
-  $("contador").textContent = pendientes ? `${n} · ${pendientes} sin puntuar` : n;
-  $("recomendar").disabled = pendientes === 0;
-  if (pendientes === 0) $("recomendar").classList.remove("ocupado");
-  return pendientes;
+  todas = r.datos.recomendaciones;
+  sueltasHoy = r.datos.sueltas_hoy;
+  maxSueltas = r.datos.max_sueltas;
+  pintarLista();
 }
 
-async function sondear() {
-  clearTimeout(sondeo);
-  const pendientes = await cargarLista();
-  sondeos += 1;
-  if (pendientes && sondeos < MAX_PUNTUANDO) {
-    sondeo = setTimeout(sondear, 3000);
-  } else {
-    avisar(pendientes ? "Aún quedan ofertas sin puntuar: puede que sigan en marcha. Vuelve en un rato." : "Listo: todo puntuado.");
-  }
+// --- Puntuación sin botón y avance (RF-8.5, RF-8.7) ------------------------------------------------
+function frasePorError(t) {
+  const tope = /tope de coste/i.test(t.motivo || "");
+  return (tope ? "Se ha alcanzado el tope de gasto de esta puntuación." : "La puntuación se ha detenido por un error.")
+    + " Lo ya puntuado se conserva.";
 }
 
-$("recomendar").addEventListener("click", async () => {
-  $("recomendar").disabled = true;
-  $("recomendar").classList.add("ocupado");
-  avisar("Puntuando lo que falta… se actualizará sola.");
-  const r = await api("/api/recomendar", { metodo: "POST" });
-  if (!r.ok) {
-    $("recomendar").disabled = false;
-    return avisar(r.motivo, true);
-  }
-  sondeos = 0;
-  sondeo = setTimeout(sondear, 3000);
-});
+// Sigue una tarea de puntuar: barra con su %, y la lista se recarga cada vez que sube (las notas llegan por tandas).
+function seguirPuntuacion(tareaId) {
+  if (dejarDeSeguir) dejarDeSeguir();
+  if (!barra) barra = barraAvance($("avance"), "Puntuando ofertas");
+  ultimoAvance = -1;
+  dejarDeSeguir = seguirTarea(tareaId, async (p) => {
+    if (barra) barra.poner(p);
+    if (p > ultimoAvance) {
+      ultimoAvance = p;
+      await cargarLista();
+    }
+  }, async (t) => {
+    if (barra) barra.quitar();
+    barra = null;
+    dejarDeSeguir = null;
+    await cargarLista();
+    if (t.estado === "error") avisar(frasePorError(t), true);
+  });
+}
 
-// «Más filtros» / «Menos filtros» (solo se ve en móvil).
-$("mas-filtros").addEventListener("click", () => {
-  const plegado = $("filtros").classList.toggle("plegados");
-  $("mas-filtros").setAttribute("aria-expanded", String(!plegado));
-  $("mas-filtros").textContent = plegado ? "Más filtros" : "Menos filtros";
-});
+// Al abrir, o al guardar «Qué buscas»: Horma decide si hay que puntuar y lo hace sola.
+async function lanzarPuntuacion(motivo) {
+  const r = await api("/api/recomendar", { metodo: "POST", cuerpo: { motivo } });
+  if (!r.ok) return avisar(r.motivo, true);
+  $("aviso-tope").textContent = r.datos.motivo === "tope" ? TEXTO_TOPE : "";
+  if (r.datos.tarea_id) seguirPuntuacion(r.datos.tarea_id);
+}
 
-// Los filtros solo se aplican al pulsar «Buscar» (o Intro en un campo).
-$("filtros").addEventListener("submit", async (e) => {
+async function retomarOLanzar() {
+  const r = await api("/api/tareas/activas?tipo=recomendar");
+  if (r.ok && r.datos.tareas.length) return seguirPuntuacion(r.datos.tareas[0].id);   // RF-8.7b
+  await lanzarPuntuacion("abrir");
+}
+
+// --- «Qué buscas» (RF-8.4) ---------------------------------------------------------------------
+function pintarQueBuscas() {
+  $("grupos").replaceChildren(...GRUPOS.map(([clave, titulo]) =>
+    grupoCasillas(clave, titulo, opciones.grupos[clave] || [], guardadas[clave] || [],
+                  { origen: (guardadas.origen || {})[clave] })));
+  $("solo-remoto").checked = guardadas.solo_remoto;
+  $("solo-salario").checked = guardadas.solo_salario;
+  $("sueldo-minimo").value = guardadas.sueldo_minimo === null ? "" : guardadas.sueldo_minimo;
+  const vacio = GRUPOS.every(([clave]) => !(guardadas[clave] || []).length);
+  $("que-buscas").open = vacio || location.hash === "#que-buscas";   // abierto si aún no hay nada guardado
+}
+
+$("formulario-busca").addEventListener("submit", async (e) => {
   e.preventDefault();
-  $("buscar").disabled = true;
-  await aplicarFiltros();
-  $("buscar").disabled = false;
+  const nuevas = { ...guardadas };
+  for (const [clave] of GRUPOS) nuevas[clave] = marcadas(document.querySelector(`[data-grupo="${clave}"]`));
+  nuevas.solo_remoto = $("solo-remoto").checked;
+  nuevas.solo_salario = $("solo-salario").checked;
+  const sueldo = $("sueldo-minimo").value.trim();
+  nuevas.sueldo_minimo = sueldo === "" ? null : Number(sueldo);
+  $("guardar-busca").disabled = true;
+  const r = await api("/api/preferencias", { metodo: "PUT", cuerpo: nuevas });
+  $("guardar-busca").disabled = false;
+  if (!r.ok) return avisar(r.estado === 422 ? "Revisa el sueldo mínimo: debe ser un número positivo." : r.motivo, true);
+  guardadas = r.datos;
+  avisar("Guardado.");
+  const espera = barraAvance($("avance"), "Buscando y puntuando ofertas", true);   // para que no parezca bloqueada
+  try {
+    await cargarLista();
+    await lanzarPuntuacion("buscar");   // sin esperar a la hora (RF-8.5)
+  } finally {
+    espera.quitar();
+  }
 });
+
+// La vista cambia en el navegador: ninguna petición (RF-8.4c).
+for (const id of ["nota-min", "nota-max", "orden", "estado"]) $(id).addEventListener("change", leerCamposVista);
+$("vista").addEventListener("submit", (e) => e.preventDefault());
 
 // Entradilla: si el perfil tiene titular, va detrás de dos puntos (RF-6.5).
 async function pintarTitular() {
@@ -377,11 +556,13 @@ async function pintarTitular() {
 (async () => {
   if (!(await arrancar("/recomendadas"))) return;
   cabeceras();
+  vista = leerVista();
   const [p, o] = await Promise.all([api("/api/preferencias"), api("/api/preferencias/opciones")]);
   if (!p.ok || !o.ok) return avisar(p.motivo || o.motivo, true);
   guardadas = p.datos;
   opciones = o.datos;
-  pintarFiltros();
+  pintarQueBuscas();
   await cargarLista();
   pintarTitular();
+  await retomarOLanzar();
 })();

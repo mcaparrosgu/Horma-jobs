@@ -49,6 +49,12 @@ class Ajustes(BaseSettings):
     apify_timeout_s: float = 60.0
     limite_url_hora: int = 10
 
+    # Fase 8 · puntuar sin botón (RF-8.5). PROVISIONALES (RF-8.5g): la gestión del gasto se decidirá más adelante.  # noqa: E501
+    tope_gasto_diario_puntuar: float = 0.50  # USD por usuaria y día natural (Madrid), solo el catálogo
+    max_sueltas_dia: int = 30  # «Puntuar ahora» por usuaria y día
+    intervalo_recomendar_min: int = 60  # entre dos puntuaciones al abrir Recomendadas
+    tope_coste_puntuar_una: float = 0.05  # USD por oferta suelta
+
     # Fase 3: topes de construcción (USD); el de uso real se fija al medir el coste, antes de usuarias
     tope_coste_candidatura: float = 1.00
 

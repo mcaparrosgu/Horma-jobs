@@ -31,6 +31,7 @@ class IdentidadFalsa:
 @pytest.fixture
 def app(motor_app, bd_limpia, tmp_path, monkeypatch):
     monkeypatch.setenv("RUTA_ARCHIVOS", str(tmp_path / "archivos"))
+    monkeypatch.setenv("HORMA_ADMINS", "google-A,google-B")  # el catálogo común es solo de Admin (RF-8.2c)
     config.ajustes.cache_clear()
     yield crear_app(engine=motor_app, identidad=IdentidadFalsa())
     config.ajustes.cache_clear()

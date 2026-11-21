@@ -49,6 +49,11 @@ def pagina():
     return FileResponse(ESTATICOS / "ingesta.html")
 
 
+@router.get("/catalogo", include_in_schema=False, dependencies=[Depends(exigir_admin)])
+def pagina_catalogo():
+    return FileResponse(ESTATICOS / "catalogo.html")
+
+
 @router.get("/api/ingesta/resumen", dependencies=[Depends(exigir_admin)])
 def resumen(request: Request):
     return servicio.resumen(request.app.state.engine)
