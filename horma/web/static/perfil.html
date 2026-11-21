@@ -23,25 +23,15 @@
 
     <section class="panel" aria-labelledby="t-cv">
       <h2 id="t-cv" class="etiqueta-mono">Tus CV</h2>
-      <p class="entradilla">Sube tu CV (PDF, DOCX o Markdown) y Horma construye tu perfil. Un CV «estético» se guarda tal cual, sin procesarlo.</p>
+      <p class="entradilla">Elige tu CV (PDF, DOCX o Markdown) y Horma construye tu perfil al momento.</p>
       <form id="subir" class="fila panel">
         <label class="archivo">Archivo
           <span class="selector-archivo">
             <span class="boton secundario" aria-hidden="true">Elegir archivo</span>
             <span id="archivo-nombre" class="suave">Ningún archivo seleccionado</span>
           </span>
-          <input id="archivo" class="solo-lector" type="file" accept=".pdf,.docx,.md,.markdown" required>
+          <input id="archivo" class="solo-lector" type="file" accept=".pdf,.docx,.md,.markdown">
         </label>
-        <label>Nombre (opcional)<input id="nombre-cv" type="text" maxlength="80"></label>
-        <label>Tipo
-          <select id="clase-cv">
-            <option value="fuente">Para construir mi perfil</option>
-            <option value="carta">Carta de presentación mía (solo para mi estilo)</option>
-            <option value="estetico">Estético (se guarda sin procesar)</option>
-          </select>
-        </label>
-        <label class="casilla"><input id="escrito-por-ella" type="checkbox"> Lo escribí yo</label>
-        <button type="submit">Subir CV</button>
       </form>
       <details id="cvs-subidos" class="leer seccion-plegable">
         <summary>CV subidos <span id="n-cvs" class="estado">0</span></summary>

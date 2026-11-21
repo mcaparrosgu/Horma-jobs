@@ -58,11 +58,11 @@ stale_after: null
 - [ ] T12 — Cierre de S2: prueba manual de Mar (usuaria nueva: sube CV y prepara candidatura) y PR. *(la prueba pasa al plan de pruebas de la fase 10)*
 
 ### S3 · Avance y subida (RF-10.8, RF-10.5 subida)
-- [ ] T13 — Indicador de avance en la guía y en la cabecera.
+- [x] T13 — Indicador de avance en la guía y en la cabecera. *(navegador sin comprobar: 1280/390 px, claro/oscuro)*
   - **Test:** `/api/tareas/activas` sin `tipo` da las tareas de la usuaria con su URL; otra usuaria no las ve;
     el indicador desaparece al terminar.
   - **Navegador:** cabecera con indicador a 1280 y 390 px, en claro y en oscuro.
-- [ ] T14 — Subida al elegir el archivo.
+- [x] T14 — Subida al elegir el archivo. *(«Carta» no se sube hasta S4)*
   - **Test:** el `change` sube con `clase=fuente`; no hay botón «Subir CV» en el estado vacío.
 - [ ] T15 — Cierre de S3: prueba manual de Mar y PR.
 

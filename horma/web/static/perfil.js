@@ -510,29 +510,23 @@ async function cargarCvs() {
   $("n-cvs").textContent = String(r.datos.length);
 }
 
-$("archivo").addEventListener("change", () => {
-  const f = $("archivo").files[0];
-  $("archivo-nombre").textContent = f ? f.name : "Ningún archivo seleccionado";
-});
-
-$("subir").addEventListener("submit", async (e) => {
-  e.preventDefault();
+// Al elegir el archivo se sube sin otro clic, como CV de perfil (RF-10.5).
+$("archivo").addEventListener("change", async () => {
   const archivo = $("archivo").files[0];
+  $("archivo-nombre").textContent = archivo ? archivo.name : "Ningún archivo seleccionado";
   if (!archivo) return;
-  const boton = e.target.querySelector("button");
   const datos = new FormData();
   datos.append("archivo", archivo);
-  datos.append("clase", $("clase-cv").value);
-  datos.append("escrito_por_ella", $("escrito-por-ella").checked ? "true" : "false");
-  if ($("nombre-cv").value.trim()) datos.append("nombre", $("nombre-cv").value.trim());
-  const clase = $("clase-cv").value;
-  boton.disabled = true;
+  datos.append("clase", "fuente");
+  datos.append("escrito_por_ella", "false");
+  $("archivo").disabled = true;
   avisar("Subiendo…");
   const r = await api("/api/cv", { metodo: "POST", formulario: datos });
-  boton.disabled = false;
+  $("archivo").disabled = false;
+  $("subir").reset();
+  $("archivo-nombre").textContent = "Ningún archivo seleccionado";
   if (!r.ok) return avisar(r.motivo, true);
-  e.target.reset();
-  avisar({ fuente: "CV subido; se está construyendo tu perfil.", carta: "Carta guardada; solo sirve de muestra de estilo." }[clase] || "CV guardado.");
+  avisar("CV subido; se está construyendo tu perfil.");
   await cargarCvs();
   await cargarPerfil();
   await cargarEstilo();
