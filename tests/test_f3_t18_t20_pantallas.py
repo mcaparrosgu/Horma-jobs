@@ -13,7 +13,7 @@ from horma.web.main import crear_app
 
 ESTATICOS = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
 PAGINAS = {"/candidaturas": "candidaturas", "/candidaturas/7": "candidatura"}
-JS = ("comun", "candidaturas", "candidatura", "recomendadas", "cv-base")
+JS = ("comun", "candidaturas", "candidatura", "ofertas", "textos", "cv-base")
 PROHIBIDO = ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function")
 
 
@@ -77,8 +77,8 @@ def test_hay_una_pestana_candidaturas():
 def test_tablero_pide_la_api_y_pinta_las_columnas_con_cerradas_plegada():
     js = leer("candidaturas.js")
     assert "/api/candidaturas" in js
-    assert "te_toca_revisar" in js and "Te toca revisar" in js
-    assert "Cerradas" in js and '"details"' in js                           # «Cerradas» plegada
+    assert "estadoVisible(c.estado, c.preparacion)" in js                   # RF-10.7: un solo estado visible
+    assert '"Cerrada"' in js and '"details"' in js                          # «Cerrada» plegada
     assert "/candidaturas/" in js                                           # cada tarjeta lleva a su pantalla
     assert "preparando" in js.lower() or "en_curso" in js                   # la que aún se prepara se ve
 
@@ -99,12 +99,11 @@ def test_revisa_esto_une_huecos_y_avisos_cada_aviso_junto_a_su_frase():
     assert "`CV: " not in js and "`Carta: " not in js and "Carta, rasgo" not in js  # sin prefijos técnicos
 
 
-def test_detalles_va_plegado_con_cv_base_motivo_y_porcentaje_ats():
+def test_detalles_va_plegado_con_el_porcentaje_ats_y_sin_hablar_del_cv_base():
     js = leer("candidatura.js")
     assert '"details"' in js and '"Detalles"' in js
     corte = js[js.index("function detalles"):js.index("// --- botones")]
-    for pieza in ("cv_base", "cv_base_motivo", "cobertura_ats"):
-        assert pieza in corte, pieza
+    assert "cobertura_ats" in corte and "cv_base" not in corte              # RF-10.2d
     cabecera = js[js.index("function cabecera"):js.index("// --- «Revisa esto»")]
     assert "cv_base" not in cabecera and "cobertura_ats" not in cabecera   # fuera de la vista principal
 
@@ -155,7 +154,7 @@ def test_los_botones_cambian_con_el_estado():
     for estado in ("borrador", "aprobada", "enviada", "entrevista", "cerrada"):
         assert f'"{estado}"' in js, estado
     for motivo in ("descartada", "retirada"):
-        assert f'"{motivo}"' in js
+        assert f'"{motivo}"' in leer("textos.js")   # RF-10.2e: los motivos, en el archivo de textos
 
 
 def test_la_pantalla_espera_solo_mientras_se_prepara():
@@ -164,18 +163,18 @@ def test_la_pantalla_espera_solo_mientras_se_prepara():
 
 
 # --- T20 · recomendadas y CV base ---------------------------------------------------------------
-def test_los_textos_de_recomendadas_y_cv_base_no_hablan_de_elegir_cv_ni_de_cv_estetico():
-    for nombre in ("recomendadas", "cv-base"):
+def test_los_textos_de_ofertas_y_cv_base_no_hablan_de_elegir_cv_ni_de_cv_estetico():
+    for nombre in ("ofertas", "cv-base"):
         js = leer(f"{nombre}.js")
         assert "estético" not in js and "guardas una candidatura" not in js
         assert "desde una candidatura" not in js
-    assert "Horma elige tu CV base" in leer("recomendadas.js")
+    assert "Horma prepara tu CV a partir de tu perfil." in leer("textos.js")   # RF-10.2d: sin «CV base»
 
 
-def test_recomendadas_tiene_preparar_candidatura_que_no_pide_cv_base():
-    js = leer("recomendadas.js")
+def test_ofertas_tiene_preparar_candidatura_que_no_pide_cv_base():
+    js = leer("ofertas.js")
     assert "Preparar candidatura" in js and "/api/candidaturas" in js and "oferta_id" in js
-    assert "/cv-base" in js                                                 # sin CV base, enlaza a generarlo
+    assert "/cv-base" not in js                                             # RF-10.2d: ya no se habla del CV base  # noqa: E501
     assert "location" in js                                                 # y lleva a la candidatura
 
 

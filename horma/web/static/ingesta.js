@@ -1,17 +1,8 @@
 // Dashboard de ingesta. Todo el texto que viene de la API se pinta con textContent: nunca como HTML.
-const $ = (id) => document.getElementById(id);
-let csrf = null;
 let conservados = {};
 let editando = null; // id de la fuente que se edita, o null si es nueva
 let temporizador = null;
 const pendientes = new Set(); // calificaciones que aún no han terminado
-
-function nodo(etiqueta, texto, clase) {
-  const el = document.createElement(etiqueta);
-  if (texto !== undefined && texto !== null) el.textContent = texto;
-  if (clase) el.className = clase;
-  return el;
-}
 
 function boton(texto, accion, clase) {
   const b = nodo("button", texto, clase);
@@ -20,33 +11,18 @@ function boton(texto, accion, clase) {
   return b;
 }
 
-function avisar(texto, error) {
-  const a = $("aviso");
-  a.className = error ? "error" : "";
-  a.textContent = texto;
+// Las utilidades ($, nodo, avisar, api, csrf) son las de comun.js; aquí solo se adapta `api` a «lanza si falla».
+async function llamar(metodo, ruta, cuerpo) {
+  const r = await api(ruta, { metodo, cuerpo });
+  if (!r.ok) throw new Error(r.motivo);
+  return r.datos;
 }
 
-async function api(metodo, ruta, cuerpo) {
-  const opciones = { method: metodo, headers: { "X-CSRF-Token": csrf } };
-  if (cuerpo !== undefined) {
-    opciones.headers["Content-Type"] = "application/json";
-    opciones.body = JSON.stringify(cuerpo);
-  }
-  const r = await fetch(ruta, opciones);
-  let datos = null;
-  if (r.status !== 204) datos = await r.json().catch(() => null);
-  if (!r.ok) {
-    const detalle = datos && datos.detail;
-    throw new Error(typeof detalle === "string" ? detalle : `Error ${r.status}`);
-  }
-  return datos;
-}
-
-const fecha = (v) => (v ? new Date(v).toLocaleString("es-ES") : "—");
+const fechaHora = (v) => (v ? new Date(v).toLocaleString("es-ES") : "—");
 
 function textoEjecucion(c) {
   if (!c) return "Sin ejecuciones todavía.";
-  const base = `Última ejecución: ${c.estado} · ${fecha(c.terminada_en || c.creada_en)}`;
+  const base = `Última ejecución: ${c.estado} · ${fechaHora(c.terminada_en || c.creada_en)}`;
   if (c.estado === "hecha" || c.estado === "error") {
     return `${base} · recibidas ${c.recibidas} · nuevas ${c.nuevas} · repetidas ${c.repetidas} · errores ${c.errores}`;
   }
@@ -60,7 +36,7 @@ function tarjetaFuente(f) {
   li.append(nodo("p", f.web, "suave"));
   const c = f.calificacion;
   if (c) {
-    li.append(nodo("p", `Calificación: ${c.apta ? "APTA" : "NO APTA"} (${fecha(c.calificada_en)})`, c.apta ? null : "alerta"));
+    li.append(nodo("p", `Calificación: ${c.apta ? "APTA" : "NO APTA"} (${fechaHora(c.calificada_en)})`, c.apta ? null : "alerta"));
     for (const m of c.motivos || []) li.append(nodo("p", `· ${m}`, "suave"));
   } else {
     li.append(nodo("p", "Sin calificar: no se puede activar.", "suave"));
@@ -80,7 +56,7 @@ function tarjetaFuente(f) {
   limite.setAttribute("aria-label", `Límite de ofertas para ${f.nombre}`);
   const lanzar = boton("Lanzar ingesta", async () => {
     try {
-      await api("POST", "/api/ingesta/ejecuciones", { fuente_id: f.id, limite: Number(limite.value) || 20 });
+      await llamar("POST", "/api/ingesta/ejecuciones", { fuente_id: f.id, limite: Number(limite.value) || 20 });
       avisar(`Ejecución pedida para ${f.nombre}. La ejecuta el ingestor.`);
       await cargar();
     } catch (e) {
@@ -104,7 +80,7 @@ function tarjetaFuente(f) {
 async function cambiarActiva(f) {
   const { id, calificacion, ultima_ejecucion, ...datos } = f;
   try {
-    await api("PUT", `/api/fuentes/${id}`, { ...datos, activa: !f.activa });
+    await llamar("PUT", `/api/fuentes/${id}`, { ...datos, activa: !f.activa });
     avisar(`${f.nombre}: ${f.activa ? "desactivada" : "activada"}.`);
     await cargar();
   } catch (e) {
@@ -159,8 +135,8 @@ $("form-fuente").addEventListener("submit", async (e) => {
     return;
   }
   try {
-    if (editando) await api("PUT", `/api/fuentes/${editando}`, cuerpo);
-    else await api("POST", "/api/fuentes", cuerpo);
+    if (editando) await llamar("PUT", `/api/fuentes/${editando}`, cuerpo);
+    else await llamar("POST", "/api/fuentes", cuerpo);
     $("editor").hidden = true;
     avisar("Fuente guardada.");
     await cargar();
@@ -171,7 +147,7 @@ $("form-fuente").addEventListener("submit", async (e) => {
 
 async function calificar(url) {
   try {
-    const r = await api("POST", "/api/fuentes/calificaciones", { url });
+    const r = await llamar("POST", "/api/fuentes/calificaciones", { url });
     pendientes.add(r.id);
     avisar(`Calificación de ${url} pedida; la hace el worker.`);
     await cargarCalificaciones();
@@ -192,7 +168,7 @@ async function cargarCalificaciones() {
   const items = [];
   for (const id of [...pendientes]) {
     try {
-      const c = await api("GET", `/api/fuentes/calificaciones/${id}`);
+      const c = await llamar("GET", `/api/fuentes/calificaciones/${id}`);
       if (c.estado !== "pendiente") pendientes.delete(id);
       const li = nodo("li", null, "tarjeta");
       const titulo = c.estado === "pendiente" ? "calificando…" : c.estado === "error" ? "error" : c.apta ? "APTA" : "NO APTA";
@@ -212,18 +188,18 @@ async function cargarCalificaciones() {
 }
 
 async function cargarClaves() {
-  const claves = await api("GET", "/api/claves");
+  const claves = await llamar("GET", "/api/claves");
   $("claves").replaceChildren(
     ...claves.map((k) => {
       const li = nodo("li", null, "tarjeta");
       li.append(nodo("span", k.revocada_en ? "revocada" : k.alcance, k.revocada_en ? "estado apagado" : "estado"));
       li.append(nodo("h3", k.nombre));
-      li.append(nodo("p", `${k.prefijo}… · creada ${fecha(k.creada_en)}`, "suave"));
+      li.append(nodo("p", `${k.prefijo}… · creada ${fechaHora(k.creada_en)}`, "suave"));
       if (!k.revocada_en) {
         li.append(
           boton("Revocar", async () => {
             try {
-              await api("DELETE", `/api/claves/${k.id}`);
+              await llamar("DELETE", `/api/claves/${k.id}`);
               avisar("Clave revocada.");
               await cargarClaves();
             } catch (e) {
@@ -240,7 +216,7 @@ async function cargarClaves() {
 $("form-clave").addEventListener("submit", async (e) => {
   e.preventDefault();
   try {
-    const r = await api("POST", "/api/claves", { nombre: e.target.nombre.value.trim(), alcance: e.target.alcance.value });
+    const r = await llamar("POST", "/api/claves", { nombre: e.target.nombre.value.trim(), alcance: e.target.alcance.value });
     const aviso = $("clave-nueva");
     aviso.textContent = `Copia la clave ahora; no se volverá a enseñar: ${r.clave}`;
     aviso.hidden = false;
@@ -272,7 +248,7 @@ $("buscar-fuente").addEventListener("input", pintarFuentes);
 $("filtro-fuente").addEventListener("change", pintarFuentes);
 
 async function cargar() {
-  const r = await api("GET", "/api/ingesta/resumen");
+  const r = await llamar("GET", "/api/ingesta/resumen");
   const estados = Object.entries(r.ofertas_por_estado);
   $("estados").replaceChildren(
     ...(estados.length ? estados.map(([e, n]) => nodo("li", `${e}: ${n}`, "chip")) : [nodo("li", "Sin ofertas todavía.", "chip")]),
@@ -302,16 +278,7 @@ async function cargar() {
 }
 
 async function iniciar() {
-  const r = await fetch("/api/yo");
-  if (!r.ok) {
-    location.href = "/";
-    return;
-  }
-  csrf = (await r.json()).csrf;
-  $("salir").addEventListener("click", async () => {
-    await fetch("/auth/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });
-    location.href = "/";
-  });
+  if (!(await arrancarAdmin())) return;
   try {
     await cargar();
     await cargarClaves();

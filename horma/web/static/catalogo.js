@@ -75,7 +75,7 @@ function tarjeta(o) {
 }
 
 async function cargarContador() {
-  const r = await api("/ofertas/total");
+  const r = await api("/api/ofertas/total");
   if (!r.ok) return;
   const { total, por_estado } = r.datos;
   const desglose = Object.entries(por_estado).map(([e, n]) => `${n} ${e}`).join(" · ");
@@ -84,7 +84,7 @@ async function cargarContador() {
 
 async function cargarLista() {
   cargarContador();
-  const r = await api("/ofertas");
+  const r = await api("/api/ofertas");
   if (!r.ok) return avisar(r.motivo, true);
   const ofertas = r.datos;
   const lista = $("lista");

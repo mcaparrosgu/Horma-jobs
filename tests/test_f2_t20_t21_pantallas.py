@@ -9,8 +9,7 @@ from horma import config
 from horma.web.main import crear_app
 
 ESTATICOS = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
-PAGINAS = {"/perfil": "perfil", "/cv-base": "cv-base",
-           "/recomendadas": "recomendadas", "/anadir-oferta": "anadir-oferta"}
+PAGINAS = {"/perfil": "perfil", "/cv-base": "cv-base", "/ofertas": "ofertas"}
 PROHIBIDO = ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function")
 
 
@@ -63,23 +62,22 @@ def test_cada_pagina_lleva_tokens_pestanas_y_sus_propios_scripts(ruta, nombre):
     assert " style=" not in html and "onclick=" not in html
 
 
-def test_las_pestanas_son_las_cinco_de_la_spec_008():
+def test_las_pestanas_son_las_tres_de_la_spec_010():
     js = leer("comun.js")
-    for etiqueta, ruta in (("Perfil", "/perfil"), ("CV base", "/cv-base"), ("Añadir oferta", "/anadir-oferta"),  # noqa: E501
-                           ("Recomendadas", "/recomendadas"), ("Candidaturas", "/candidaturas")):
+    for etiqueta, ruta in (("Ofertas", "/ofertas"), ("Candidaturas", "/candidaturas"), ("Perfil", "/perfil")):
         assert f'"{etiqueta}"' in js and f'"{ruta}"' in js
-    assert '"Preferencias"' not in js  # RF-8.1e: ahora es el panel «Qué buscas» de Recomendadas
+    assert '"Preferencias"' not in js  # RF-8.1e: ahora es el panel «Qué buscas» de Ofertas
 
 
 def test_el_js_de_las_pantallas_pinta_solo_con_textcontent():
-    for nombre in ("comun", "perfil", "catalogo", "cv-base", "recomendadas", "anadir-oferta"):
+    for nombre in ("comun", "perfil", "catalogo", "cv-base", "ofertas", "textos"):
         js = leer(f"{nombre}.js")
         for malo in PROHIBIDO:
             assert malo not in js, f"{nombre}.js usa {malo}"
 
 
 def test_que_buscas_son_casillas_con_contador_y_un_campo_numerico_de_sueldo():
-    js, html = leer("recomendadas.js"), leer("recomendadas.html")
+    js, html = leer("ofertas.js"), leer("ofertas.html")
     assert '"checkbox"' in leer("comun.js") and "grupoCasillas" in js
     assert "/api/preferencias/opciones" in js
     assert 'type="number"' in html and 'id="sueldo-minimo"' in html and "sueldo_minimo" in js
@@ -103,8 +101,8 @@ def test_cv_base_se_genera_a_peticion_y_se_renombra():
     assert "desfasado" in js and "avisos" in js
 
 
-def test_recomendadas_sigue_la_maqueta():
-    html, js = leer("recomendadas.html"), leer("recomendadas.js")
+def test_ofertas_sigue_la_maqueta():
+    html, js = leer("ofertas.html"), leer("ofertas.js")
     assert "Cómo leer las recomendaciones" in html and "<details" in html   # bloque plegable
     assert 'id="contador"' in html and 'id="que-buscas"' in html and 'id="vista"' in html  # contador y filtros  # noqa: E501
     for columna in ("Oferta", "Puesto", "Compatibilidad", "Salario", "Lugar", "Publicado"):
@@ -116,7 +114,7 @@ def test_recomendadas_sigue_la_maqueta():
     assert 'value="recientes"' in html and 'value="compatibles"' in html     # ordenación
     assert "nota-min" in js and "nota-max" in js                              # rango de la vista (RF-8.4c)
     assert '"Condiciones"' not in js and "cond-" not in js                    # fase 5, RF-5.2: sin columna
-    assert "Añadida por ti · analizada el" in js and "aviso_auditor" in js    # fase 5, RF-5.3e
+    assert "analizada el" in js and "TEXTOS.anadidaPorTi" in js and "aviso_auditor" in js    # fase 5, RF-5.3e
 
 
 def test_en_movil_las_filas_pasan_a_tarjetas():

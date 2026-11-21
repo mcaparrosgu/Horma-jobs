@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recomendadas · Horma</title>
+  <title>Ofertas · Horma</title>
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
@@ -13,13 +13,21 @@
 </head>
 <body>
   <header id="cabecera" class="cabecera">
-    <a class="marca" href="/">Horma</a>
+    <a class="marca" href="/ofertas">Horma</a>
     <nav id="pestanas" class="pestanas" aria-label="Principal"></nav>
     <div id="derecha" class="derecha"></div>
   </header>
   <main class="muy-ancho">
-    <h1 class="titulo-pantalla">Recomendadas</h1>
+    <div class="fila fila-titulo">
+      <h1 class="titulo-pantalla">Ofertas</h1>
+      <button id="abrir-anadir" type="button">+ Añadir oferta</button>
+    </div>
     <p id="entradilla" class="entradilla">Ofertas ya revisadas, sin fraudes ni ofertas fantasma, para tu perfil</p>
+
+    <section id="sin-perfil" class="panel" hidden>
+      <h2 id="sin-perfil-texto" class="subtitulo"></h2>
+      <a id="sin-perfil-boton" class="boton" href="/perfil"></a>
+    </section>
 
     <details id="que-buscas" class="panel-desplegado">
       <summary>Qué buscas</summary>
@@ -67,8 +75,8 @@
     </details>
 
     <form id="vista" class="vista-rejilla" aria-label="Cómo ver la lista">
-      <label>Nota mínima<input id="nota-min" type="number" min="0" max="100" inputmode="numeric"></label>
-      <label>Nota máxima<input id="nota-max" type="number" min="0" max="100" inputmode="numeric"></label>
+      <label>Compatibilidad mínima<input id="nota-min" type="number" min="0" max="100" inputmode="numeric"></label>
+      <label>Compatibilidad máxima<input id="nota-max" type="number" min="0" max="100" inputmode="numeric"></label>
       <label>Ordenar por
         <select id="orden">
           <option value="recientes">Más recientes</option>
@@ -91,9 +99,9 @@
     <details class="leer">
       <summary>Cómo leer las recomendaciones</summary>
       <ul>
-        <li><strong>Compatibilidad</strong>: una nota de 0 a 100 de lo bien que encaja la oferta con tu perfil. Orienta, no decide.</li>
-        <li><strong>Sin puntuar</strong>: ofertas que aún no tienen nota. Horma las puntúa sola al abrir esta pantalla o al guardar «Qué buscas»; también puedes pulsar «Puntuar ahora» en una concreta.</li>
-        <li><strong>Cambiar la nota, el orden o lo que se muestra</strong> no gasta nada: solo reordena y filtra lo ya puntuado.</li>
+        <li><strong>Compatibilidad</strong>: un número de 0 a 100 de lo bien que encaja la oferta con tu perfil. Orienta, no decide.</li>
+        <li><strong>Sin compatibilidad</strong>: ofertas que aún no la tienen. Horma la calcula sola al abrir esta pantalla o al guardar «Qué buscas»; también puedes pulsar «Puntuar ahora» en una concreta.</li>
+        <li><strong>Cambiar la compatibilidad, el orden o lo que se muestra</strong> no gasta nada: solo reordena y filtra lo que ya tiene compatibilidad.</li>
         <li><strong>Descartar</strong> aparta una oferta de «Nuevas» sin borrarla: la encuentras en «Descartadas» y puedes recuperarla.</li>
         <li><strong>Explicación</strong>: despliega la fila para ver por qué. Si no estás de acuerdo, pulsa «Corregir explicación».</li>
       </ul>
@@ -105,8 +113,37 @@
     </table>
     <p id="vacio" class="suave" hidden>Ninguna oferta cumple estos filtros.</p>
   </main>
+
+  <dialog id="ventana-anadir" class="ventana" aria-labelledby="anadir-titulo">
+    <header>
+      <h3 id="anadir-titulo" class="titulo-oferta">Añadir oferta</h3>
+      <button id="anadir-cerrar" class="secundario" type="button">Cerrar</button>
+    </header>
+    <div class="ventana-cuerpo">
+      <p id="anadir-intro" class="suave"></p>
+      <form id="formulario-url">
+        <label for="url">Dirección de la oferta</label>
+        <div class="fila fila-url">
+          <input id="url" type="url" maxlength="2000" placeholder="https://…" autocomplete="off">
+          <button id="enviar-url" class="secundario" type="submit">Leer oferta</button>
+        </div>
+        <div id="lectura-url"></div>
+        <span id="aviso-url" role="status"></span>
+        <p id="anadir-url-ayuda" class="suave"></p>
+      </form>
+      <form id="formulario-texto">
+        <label for="texto">Texto de la oferta</label>
+        <textarea id="texto" rows="8" maxlength="20000" required></textarea>
+        <div class="fila">
+          <button id="enviar" type="submit">Añadir oferta</button>
+          <span id="aviso-texto" role="status"></span>
+        </div>
+      </form>
+    </div>
+  </dialog>
+  <script src="/static/textos.js"></script>
   <script src="/static/comun.js"></script>
-  <script src="/static/recomendadas.js"></script>
+  <script src="/static/ofertas.js"></script>
   <script src="/static/pwa.js"></script>
 </body>
 </html>

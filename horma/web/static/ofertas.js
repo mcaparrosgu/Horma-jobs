@@ -1,27 +1,23 @@
-// Pantalla de ofertas recomendadas (RF-2.8, 6.5, 8.4 a 8.7). «Qué buscas» se guarda y vuelve a buscar y puntuar;
-// la vista (nota, orden y estado) se aplica aquí, en el navegador, sin pedir nada al servidor ni al modelo.
+// Pantalla de Ofertas (RF-2.8, 6.5, 8.4 a 8.7, 10.6). «Qué buscas» se guarda y vuelve a buscar y puntuar;
+// la vista (compatibilidad, orden y estado) se aplica aquí, en el navegador, sin pedir nada al servidor ni al modelo.
 const AYUDA = [
   ["Oferta", "El título de la oferta y la empresa que la publica. «Ver oferta original» abre el texto completo."],
   ["Puesto", "El tipo de trabajo según la clasificación de Horma, sea cual sea el sector."],
-  ["Compatibilidad", "Nota de 0 a 100 de lo bien que encajan tu experiencia y formación con lo que pide la oferta. Orienta, no decide. Despliega la fila para ver por qué."],
+  ["Compatibilidad", TEXTOS.compatibilidad],
   ["Salario", "Tal como lo dice la oferta, sin convertirlo. Si no lo publica, lo verás indicado."],
   ["Lugar", "El país donde está el puesto, o «Remoto»."],
   ["Publicado", "El día en que se publicó la oferta. Si no lo dice, «No consta fecha de publicación»."],
 ];
-const CLAVE_VISTA = "horma.vista.recomendadas";
+const CLAVE_VISTA = "horma.vista.recomendadas";   // la clave no cambia: conserva la vista de quien ya la guardó
 const VISTA_POR_DEFECTO = { min: 40, max: 100, orden: "recientes", estado: "nuevas" };
 const ESTADOS_VISTA = [["nuevas", "Nuevas"], ["candidatura", "Con candidatura"], ["descartadas", "Descartadas"]];
-const ETIQUETA_CANDIDATURA = { borrador: "Borrador", aprobada: "Aprobada", enviada: "Enviada",
-  entrevista: "Entrevista", cerrada: "Cerrada" };
-const TEXTO_TOPE = "Hoy ya hemos puntuado todo lo posible. Mañana seguimos con el resto.";
-const TEXTO_SUELTAS = "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir.";
 let guardadas = null;
 let opciones = null;
 let todas = [];            // lo que devuelve la API; la vista lo filtra y ordena sin volver a pedirlo
 let vista = { ...VISTA_POR_DEFECTO };
 let sueltasHoy = 0;
 let maxSueltas = 30;
-let barra = null;          // barra de avance de la puntuación en marcha
+let barra = null;          // barra de avance del cálculo de compatibilidad en marcha
 let ultimoAvance = -1;
 let dejarDeSeguir = null;
 let abiertas = null;       // ids de las filas desplegadas; null hasta el primer pintado (entonces, solo la primera)
@@ -94,12 +90,12 @@ function celda(rotulo, clase, ...hijos) {
 
 function formularioCorreccion(o, alTerminar) {
   const f = nodo("form", null, "editor");
-  const nota = nodo("input");
-  nota.type = "number";
-  nota.min = 0;
-  nota.max = 100;
-  nota.className = "corto";
-  nota.placeholder = String(o.nota);
+  const valor = nodo("input");
+  valor.type = "number";
+  valor.min = 0;
+  valor.max = 100;
+  valor.className = "corto";
+  valor.placeholder = String(o.nota);
   const motivo = nodo("textarea");
   motivo.rows = 3;
   motivo.maxLength = 1000;
@@ -111,20 +107,20 @@ function formularioCorreccion(o, alTerminar) {
   cancelar.addEventListener("click", () => alTerminar(false));
   const fila = nodo("div", null, "fila");
   fila.append(enviar, cancelar);
-  f.append(campo("Nota que te parece justa (opcional)", nota), campo("Motivo", motivo), fila);
+  f.append(campo(TEXTOS.corregirNota, valor), campo("Motivo", motivo), fila);
   f.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const cuerpo = { comentario: motivo.value.trim(), nota: nota.value === "" ? null : Number(nota.value) };
+    const cuerpo = { comentario: motivo.value.trim(), nota: valor.value === "" ? null : Number(valor.value) };
     const r = await api(`/api/matches/${o.id}/correccion`, { metodo: "POST", cuerpo });
-    if (!r.ok) return avisar(r.estado === 422 ? "La nota va de 0 a 100 y el motivo no puede estar vacío." : r.motivo, true);
-    avisar("Corrección guardada. Gracias: Mar la revisará.");
+    if (!r.ok) return avisar(r.estado === 422 ? TEXTOS.correccionRango : r.motivo, true);
+    avisar(TEXTOS.correccionGuardada);
     o.correccion = r.datos;
     alTerminar(true);
   });
   return f;
 }
 
-// «Preparar candidatura» (RF-3.7b): crea la candidatura y lleva a ella; el CV base lo elige Horma.
+// «Preparar candidatura» (RF-3.7b): crea la candidatura y lleva a ella.
 function accionesCandidatura(o, contenedor) {
   const b = nodo("button", "Preparar candidatura", "primario-mov");
   b.type = "button";
@@ -144,11 +140,6 @@ function accionesCandidatura(o, contenedor) {
       b.textContent = "Preparar otra igualmente";
       const a = nodo("a", "Ver cerradas", "bloque");
       a.href = "/candidaturas";
-      contenedor.append(a);
-    }
-    if (r.estado === 409 && /CV base/i.test(r.motivo || "") && !contenedor.querySelector("a[href='/cv-base']")) {
-      const a = nodo("a", "Generar CV base", "bloque");
-      a.href = "/cv-base";
       contenedor.append(a);
     }
   });
@@ -231,21 +222,21 @@ function detalle(o) {
   const pintar = () => {
     izq.replaceChildren(nodo("span", "Por qué te la recomendamos", "etiqueta-mono"));
     if (o.sin_puntuar) {
-      izq.append(nodo("p", "Esta oferta todavía no tiene nota. Horma la puntuará sola; si la quieres ya, pulsa «Puntuar ahora»."));
+      izq.append(nodo("p", TEXTOS.sinNota));
       return;
     }
     if (o.retirada) {
-      izq.append(nodo("p", "Se ha retirado la explicación porque no cumplía las reglas de Horma. La nota sigue siendo válida.", "suave"));
+      izq.append(nodo("p", TEXTOS.explicacionRetirada, "suave"));
     } else {
       izq.append(nodo("p", o.explicacion));
       if (o.cita_perfil) izq.append(nodo("p", `De tu perfil: «${o.cita_perfil}»`, "suave"));
       if (o.cita_oferta) izq.append(nodo("p", `De la oferta: «${o.cita_oferta}»`, "suave"));
     }
-    if (o.desfasado) izq.append(nodo("p", "Esta nota se calculó con una versión anterior de tu perfil.", "suave"));
+    if (o.desfasado) izq.append(nodo("p", TEXTOS.desfasada, "suave"));
     if (o.correccion) {
       const c = o.correccion;
-      const nota = c.nota !== null && c.nota !== undefined ? ` (nota que propones: ${c.nota})` : "";
-      izq.append(nodo("p", `Tu corrección${nota}: ${c.comentario}`, "origen"));
+      const propuesta = c.nota !== null && c.nota !== undefined ? TEXTOS.propuesta(c.nota) : "";
+      izq.append(nodo("p", `Tu corrección${propuesta}: ${c.comentario}`, "origen"));
     }
   };
   pintar();
@@ -276,7 +267,7 @@ function detalle(o) {
   }
   const descarte = botonDescartar(o);
   if (descarte) dch.append(descarte);
-  if (!o.sin_puntuar && !o.descartada) dch.append(nodo("p", "Horma elige tu CV base más adecuado.", "suave"));
+  if (!o.sin_puntuar && !o.descartada) dch.append(nodo("p", TEXTOS.eligeCv, "suave"));
   return cont;
 }
 
@@ -285,32 +276,32 @@ function botonPuntuarAhora(o) {
   const caja = nodo("div", null, "acciones-ahora");
   const b = nodo("button", "Puntuar ahora");
   b.type = "button";
-  const nota = nodo("p", "", "suave");
-  nota.setAttribute("role", "status");
-  const agotadas = () => { b.disabled = true; nota.textContent = TEXTO_SUELTAS; };
+  const aviso = nodo("p", "", "suave");
+  aviso.setAttribute("role", "status");
+  const agotadas = () => { b.disabled = true; aviso.textContent = TEXTOS.sueltas; };
   if (sueltasHoy >= maxSueltas) agotadas();
   b.addEventListener("click", async (e) => {
     e.stopPropagation();
     b.disabled = true;
-    nota.textContent = "Puntuando…";
+    aviso.textContent = "Calculando…";
     const r = await api(`/api/matches/${o.id}/puntuar`, { metodo: "POST" });
     if (r.estado === 429) return agotadas();
     if (!r.ok) {
       b.disabled = false;
-      nota.textContent = "";
+      aviso.textContent = "";
       return avisar(r.motivo, true);
     }
     sueltasHoy += 1;
-    seguirTarea(r.datos.tarea_id, (p) => { nota.textContent = `Puntuando… ${p} %`; }, async (t) => {
+    seguirTarea(r.datos.tarea_id, (p) => { aviso.textContent = `Calculando… ${p} %`; }, async (t) => {
       if (t.estado === "error") {
         b.disabled = false;
-        nota.textContent = "No se ha podido puntuar esta oferta. Inténtalo otra vez.";
+        aviso.textContent = TEXTOS.errorPuntuar;
         return;
       }
       await cargarLista();
     });
   });
-  caja.append(b, nota);
+  caja.append(b, aviso);
   return caja;
 }
 
@@ -373,13 +364,13 @@ function filaOferta(o) {
   const titulo = nodo("span", o.titulo || "Sin título", "titulo-oferta");   // el enlace de origen va en «Ver oferta original»
   const celdaOferta = celda("Oferta", "c-oferta", titulo, nodo("span", o.empresa || "Empresa sin indicar", "suave bloque"));
   if (o.atribucion) celdaOferta.append(nodo("span", o.atribucion, "suave bloque"));  // cita de la fuente (RF-5.5d)
-  if (o.propia) {  // las que añade la usuaria salen siempre, con su marca y lo que vio el auditor (RF-5.3e)
-    celdaOferta.append(nodo("span", `Añadida por ti · analizada el ${fecha(o.analizada_en)}`, "estado bien bloque"));
+  if (o.propia) {  // las que añade la usuaria salen siempre, con su marca y lo que Horma vio en ellas (RF-5.3e)
+    celdaOferta.append(nodo("span", `${TEXTOS.anadidaPorTi} · analizada el ${fecha(o.analizada_en)}`, "estado bien bloque"));
     if (o.fuente_desconocida) celdaOferta.append(nodo("span", textoFuenteDesconocida(o), "estado apagado bloque"));
     if (o.aviso_auditor) celdaOferta.append(nodo("span", o.aviso_auditor, "estado error bloque"));
   }
   if (o.candidatura) {  // el estado, siempre con texto (RF-6.7e)
-    celdaOferta.append(nodo("span", `Candidatura: ${ETIQUETA_CANDIDATURA[o.candidatura.estado] || o.candidatura.estado}`,
+    celdaOferta.append(nodo("span", `Candidatura: ${estadoVisible(o.candidatura.estado, o.candidatura.preparacion)}`,
       "estado bloque"));
   }
   tr.append(celdaOferta);
@@ -388,19 +379,19 @@ function filaOferta(o) {
 
   const comp = celda("Compatibilidad", "c-compat");
   if (o.sin_puntuar) {
-    comp.append(nodo("em", "Sin puntuar", "suave"));
+    comp.append(nodo("em", TEXTOS.sinCompatibilidad, "suave"));
   } else {
-    const barraNota = nodo("div", null, "barra-compat");
-    barraNota.setAttribute("role", "meter");
-    barraNota.setAttribute("aria-valuenow", String(o.nota));
-    barraNota.setAttribute("aria-valuemin", "0");
-    barraNota.setAttribute("aria-valuemax", "100");
-    barraNota.setAttribute("aria-label", "Compatibilidad");
+    const barraCompat = nodo("div", null, "barra-compat");
+    barraCompat.setAttribute("role", "meter");
+    barraCompat.setAttribute("aria-valuenow", String(o.nota));
+    barraCompat.setAttribute("aria-valuemin", "0");
+    barraCompat.setAttribute("aria-valuemax", "100");
+    barraCompat.setAttribute("aria-label", "Compatibilidad");
     const relleno = nodo("span");
     relleno.style.width = `${Math.max(0, Math.min(100, o.nota))}%`;   // por CSSOM: la CSP no permite style= en el HTML
-    barraNota.append(relleno);
+    barraCompat.append(relleno);
     const fila = nodo("div", null, "nota");
-    fila.append(barraNota, nodo("span", String(o.nota), "numero"));
+    fila.append(barraCompat, nodo("span", String(o.nota), "numero"));
     comp.append(fila);
   }
   tr.append(comp);
@@ -454,7 +445,7 @@ function pintarLista() {
   $("tabla").hidden = lista.length === 0;
   const pendientes = todas.filter((o) => o.sin_puntuar && !o.descartada).length;
   const n = lista.length === 1 ? "1 oferta" : `${lista.length} ofertas`;
-  $("contador").textContent = pendientes ? `${n} · ${pendientes} sin puntuar en total` : n;
+  $("contador").textContent = pendientes ? `${n} · ${pendientes} sin compatibilidad en total` : n;
 }
 
 async function cargarLista() {
@@ -466,17 +457,15 @@ async function cargarLista() {
   pintarLista();
 }
 
-// --- Puntuación sin botón y avance (RF-8.5, RF-8.7) ------------------------------------------------
+// --- Compatibilidad sin botón y avance (RF-8.5, RF-8.7) ------------------------------------------------
 function frasePorError(t) {
-  const tope = /tope de coste/i.test(t.motivo || "");
-  return (tope ? "Se ha alcanzado el tope de gasto de esta puntuación." : "La puntuación se ha detenido por un error.")
-    + " Lo ya puntuado se conserva.";
+  return /tope de coste/i.test(t.motivo || "") ? TEXTOS.errorPresupuesto : TEXTOS.errorPuntuacion;
 }
 
-// Sigue una tarea de puntuar: barra con su %, y la lista se recarga cada vez que sube (las notas llegan por tandas).
+// Sigue una tarea de puntuar: barra con su %, y la lista se recarga cada vez que sube (llegan por tandas).
 function seguirPuntuacion(tareaId) {
   if (dejarDeSeguir) dejarDeSeguir();
-  if (!barra) barra = barraAvance($("avance"), "Puntuando ofertas");
+  if (!barra) barra = barraAvance($("avance"), "Calculando la compatibilidad de las ofertas");
   ultimoAvance = -1;
   dejarDeSeguir = seguirTarea(tareaId, async (p) => {
     if (barra) barra.poner(p);
@@ -497,7 +486,8 @@ function seguirPuntuacion(tareaId) {
 async function lanzarPuntuacion(motivo) {
   const r = await api("/api/recomendar", { metodo: "POST", cuerpo: { motivo } });
   if (!r.ok) return avisar(r.motivo, true);
-  $("aviso-tope").textContent = r.datos.motivo === "tope" ? TEXTO_TOPE : "";
+  if (r.datos.motivo === "sin_perfil") return mostrarSinPerfil();
+  $("aviso-tope").textContent = r.datos.motivo === "tope" ? TEXTOS.presupuesto : "";
   if (r.datos.tarea_id) seguirPuntuacion(r.datos.tarea_id);
 }
 
@@ -622,7 +612,7 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   if (!r.ok) return avisar(r.estado === 422 ? "Revisa el sueldo mínimo (un número positivo) y que puestos y términos no pasen de 80 letras." : r.motivo, true);
   guardadas = r.datos;
   avisar("Guardado.");
-  const espera = barraAvance($("avance"), "Buscando y puntuando ofertas", true);   // para que no parezca bloqueada
+  const espera = barraAvance($("avance"), "Buscando ofertas y calculando su compatibilidad", true);   // para que no parezca bloqueada
   try {
     await cargarLista();
     await lanzarPuntuacion("buscar");   // sin esperar a la hora (RF-8.5)
@@ -642,10 +632,108 @@ async function pintarTitular() {
   if (titular) $("entradilla").textContent = `Ofertas ya revisadas, sin fraudes ni ofertas fantasma, para tu perfil: ${titular}`;
 }
 
+// Sin perfil (RF-10.6c): ni lista en blanco ni filtros; un texto y un botón a Perfil.
+function mostrarSinPerfil() {
+  $("sin-perfil-texto").textContent = TEXTOS.sinPerfil;
+  $("sin-perfil-boton").textContent = TEXTOS.sinPerfilBoton;
+  $("sin-perfil").hidden = false;
+  for (const id of ["entradilla", "que-buscas", "vista", "tabla", "vacio", "contador"]) {
+    const el = $(id);
+    if (el) el.hidden = true;
+  }
+  const leer = document.querySelector("details.leer");
+  if (leer) leer.hidden = true;
+}
+
+// --- «+ Añadir oferta» (RF-10.6b): ventana con la dirección o el texto; la oferta sale en la lista -------------
+const SONDEO_MS = 3000;
+let lecturaBarra = null;
+let sondeoAnadidas = null;
+function avisarUrl(texto, error) {
+  const a = $("aviso-url");
+  a.textContent = texto;
+  a.className = error ? "alerta" : "suave";
+}
+
+// Mientras alguna oferta propia espera su compatibilidad, la lista se refresca sola.
+async function refrescarMientrasTrabaja() {
+  clearTimeout(sondeoAnadidas);
+  await cargarLista();
+  if (todas.some((o) => o.propia && o.sin_puntuar && !o.descartada)) sondeoAnadidas = setTimeout(refrescarMientrasTrabaja, SONDEO_MS);
+}
+
+function abrirAnadir() {
+  $("anadir-intro").textContent = TEXTOS.anadirIntro;
+  $("anadir-url-ayuda").textContent = TEXTOS.anadirUrl;
+  const v = $("ventana-anadir");
+  if (!v.open) v.showModal();
+  $("url").focus();
+}
+$("abrir-anadir").addEventListener("click", abrirAnadir);
+$("anadir-cerrar").addEventListener("click", () => $("ventana-anadir").close());
+
+$("formulario-texto").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const texto = $("texto").value.trim();
+  const aviso = $("aviso-texto");
+  if (!texto) { aviso.textContent = "Pega el texto de la oferta."; return; }
+  $("enviar").disabled = true;
+  aviso.textContent = "Enviando…";
+  const r = await api("/ofertas", { metodo: "POST", cuerpo: { texto } });
+  $("enviar").disabled = false;
+  if (!r.ok) {
+    aviso.textContent = r.estado === 422 && /^Revisa los datos/.test(r.motivo || "")
+      ? "El texto está vacío o es demasiado largo (máximo 20 000 caracteres)." : r.motivo;
+    return;
+  }
+  $("texto").value = "";
+  aviso.textContent = "";
+  $("ventana-anadir").close();
+  avisar(TEXTOS.anadirOk);
+  await refrescarMientrasTrabaja();
+});
+
+async function esperarLectura(id) {
+  const r = await api(`/ofertas/url/${id}`);
+  if (!r.ok) return avisarUrl(r.motivo, true);
+  if (r.datos.estado === "pendiente") return setTimeout(() => esperarLectura(id), SONDEO_MS);
+  $("enviar-url").disabled = false;
+  $("lectura-url").replaceChildren();
+  if (r.datos.estado === "error") {
+    avisarUrl(r.datos.motivo || "La página no se ha podido leer: pega el texto de la oferta.", true);
+    $("texto").focus();
+    return;
+  }
+  $("url").value = "";
+  avisarUrl("");
+  $("ventana-anadir").close();
+  avisar(TEXTOS.leidaOk);
+  await refrescarMientrasTrabaja();
+}
+
+$("formulario-url").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = $("url").value.trim();
+  if (!url) return avisarUrl("Pega la dirección de la oferta.", true);
+  $("enviar-url").disabled = true;
+  avisarUrl("Leyendo la página…");
+  $("lectura-url").replaceChildren();
+  lecturaBarra = barraAvance($("lectura-url"), "Analizando la oferta");
+  lecturaBarra.poner(10);
+  const r = await api("/ofertas/url", { metodo: "POST", cuerpo: { url } });
+  if (!r.ok) {
+    $("enviar-url").disabled = false;
+    $("lectura-url").replaceChildren();
+    return avisarUrl(r.motivo, true);
+  }
+  await esperarLectura(r.datos.id);
+});
+
 (async () => {
-  if (!(await arrancar("/recomendadas"))) return;
+  if (!(await arrancar("/ofertas"))) return;
   cabeceras();
   vista = leerVista();
+  if (location.hash === "#anadir") abrirAnadir();
   const [p, o] = await Promise.all([api("/api/preferencias"), api("/api/preferencias/opciones")]);
   if (!p.ok || !o.ok) return avisar(p.motivo || o.motivo, true);
   guardadas = p.datos;
@@ -654,4 +742,5 @@ async function pintarTitular() {
   await cargarLista();
   pintarTitular();
   await retomarOLanzar();
+  if (todas.some((o) => o.propia && o.sin_puntuar && !o.descartada)) refrescarMientrasTrabaja();
 })();

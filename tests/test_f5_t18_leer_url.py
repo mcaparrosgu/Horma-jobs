@@ -117,9 +117,9 @@ def test_el_token_no_sale_en_ningun_log(caplog):
 def test_la_pestana_tiene_el_campo_de_url_y_pinta_con_textcontent():
     from pathlib import Path
     est = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
-    html = (est / "anadir-oferta.html").read_text(encoding="utf-8")
-    js = (est / "anadir-oferta.js").read_text(encoding="utf-8")
-    assert 'id="url"' in html and "Apify" in html
+    html = (est / "ofertas.html").read_text(encoding="utf-8")
+    js = (est / "ofertas.js").read_text(encoding="utf-8")
+    assert 'id="url"' in html and "Apify" not in html + js   # RF-10.2d: el proveedor no se nombra
     assert "/ofertas/url" in js and "innerHTML" not in js and "insertAdjacentHTML" not in js
 
 

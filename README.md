@@ -83,7 +83,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 1. `uv run alembic upgrade head` aplica la migración 0003; `docker compose up -d --build` monta el
    volumen `horma_archivos` (los CV subidos, solo en la API).
 2. Entra en la web: en `/cv-base` subes tu CV (PDF, DOCX o Markdown); en `/perfil` respondes lo que
-   falte; en `/recomendadas`, en «Qué buscas», eliges los filtros (grupos de más de 2 casillas con «Seleccionar todo» y «Quitar selección») y ves las ofertas con su nota.
+   falte; en `/ofertas`, en «Qué buscas», eliges los filtros (grupos de más de 2 casillas con «Seleccionar todo» y «Quitar selección») y ves las ofertas con su nota.
 3. Para probarlo sin web: `horma flujo correr perfilar` y `horma recomendar` (ver Consola).
 4. Puerta de salida: `horma eval correr perfil`, `cv-base` y `recomendacion` con el modelo real
    (tope de 1 USD por ejecución).
@@ -91,7 +91,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 ### Fase 3: candidatura y seguimiento
 
 1. `uv run alembic upgrade head` aplica las migraciones (la 0019 añade `ofertas.modalidad`; la 0021, los puestos y términos excluidos, `ofertas.titulo_norm`, los avisos vistos y la longitud del CV); antes, la 0006 (candidaturas, historial y versiones de CV base).
-2. En `/recomendadas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker elige el CV base y
+2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker elige el CV base y
    redacta CV y carta. En `/candidaturas` las ves por estado: revisas, editas, apruebas, descargas
    los PDF y sigues el proceso (enviada, entrevista, cerrada). Cada CV base guarda su historial en `/cv-base`.
 3. Para probarlo sin web: `horma flujo correr candidatura` y `horma flujo correr clasificar_respuesta`
@@ -162,7 +162,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
   Reactivarlo antes de abrir a usuarias reales. Un push nuevo cancela la ejecución anterior. `main` está
   protegida: solo se cambia con PR y con `secretos` y `calidad` en verde.
 - `uv run horma eval importar-correccion --archivo caso.json`: enseña una corrección de la usuaria
-  (se exporta desde la pantalla de recomendadas) y, solo si confirmas, la copia a
+  (se exporta desde la pantalla de Ofertas) y, solo si confirmas, la copia a
   `evals/recomendacion/casos/`. Nada entra en los evals sin pasar por aquí.
 
 ## Git

@@ -1,8 +1,6 @@
 // Tablero de candidaturas (RF-3.10): una columna por estado; «Cerradas» va plegada.
-const TITULOS = {
-  borrador: "Borrador", aprobada: "Aprobadas", enviada: "Enviadas", entrevista: "Entrevista", cerrada: "Cerradas",
-};
-const MOTIVOS = { rechazo: "Rechazo", descartada: "Descartada", retirada: "Retirada" };
+// Un solo estado visible por candidatura (RF-10.7): las columnas del servidor se reagrupan aquí.
+const COLUMNAS = [...ESTADOS_VISIBLES, "No se pudo preparar"];
 let temporizador = null;
 
 function tarjetaCandidatura(c) {
@@ -12,21 +10,20 @@ function tarjetaCandidatura(c) {
   li.append(nodo("h3"));
   li.firstChild.append(enlace);
   li.append(nodo("p", c.empresa || "Empresa sin indicar"));
-  if (c.preparacion === "en_curso") li.append(nodo("span", "preparando…", "estado apagado"));
-  else if (c.preparacion === "error") li.append(nodo("span", "no se pudo preparar", "estado error"));
-  else if (c.te_toca_revisar) li.append(nodo("span", "Te toca revisar", "estado bien"));
-  if (c.estado === "cerrada" && c.motivo_cierre) li.append(nodo("span", MOTIVOS[c.motivo_cierre] || c.motivo_cierre, "estado apagado"));
+  const visible = estadoVisible(c.estado, c.preparacion);
+  li.append(nodo("span", visible, visible === "No se pudo preparar" ? "estado error" : visible === "Preparando" ? "estado apagado" : "estado bien"));
+  if (c.estado === "cerrada" && c.motivo_cierre) li.append(nodo("span", MOTIVOS_CIERRE[c.motivo_cierre] || c.motivo_cierre, "estado apagado"));
   li.append(nodo("p", `Último cambio: ${fecha(c.actualizado_en)}`, "suave"));
   return li;
 }
 
 function columna(col) {
   const n = col.candidaturas.length;
-  const titulo = `${TITULOS[col.estado] || col.estado} (${n})`;
+  const titulo = `${col.estado} (${n})`;
   const lista = nodo("ul", null, "lista");
   lista.append(...col.candidaturas.map(tarjetaCandidatura));
   if (!n) lista.append(nodo("li", "Ninguna.", "suave"));
-  if (col.estado === "cerrada") {
+  if (col.estado === "Cerrada") {
     const d = nodo("details", null, "columna columna-cerrada");
     d.append(nodo("summary", titulo), lista);
     return d;
@@ -41,8 +38,13 @@ async function cargar() {
   const r = await api("/api/candidaturas");
   if (!r.ok) return avisar(r.motivo, true);
   const { total, columnas } = r.datos;
+  const todas = columnas.flatMap((c) => c.candidaturas);
+  $("vacio").textContent = TEXTOS.sinCandidaturas;
   $("vacio").hidden = total > 0;
-  $("tablero").replaceChildren(...columnas.map(columna));
+  const grupos = COLUMNAS.map((estado) => ({
+    estado, candidaturas: todas.filter((c) => estadoVisible(c.estado, c.preparacion) === estado),
+  })).filter((g) => g.candidaturas.length || g.estado !== "No se pudo preparar");
+  $("tablero").replaceChildren(...grupos.map(columna));
   if (columnas.some((c) => c.candidaturas.some((x) => x.preparacion === "en_curso"))) {
     temporizador = setTimeout(cargar, 3000);
   }

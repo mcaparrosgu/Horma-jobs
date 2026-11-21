@@ -115,7 +115,7 @@ def test_estilo_trae_los_componentes_de_la_guia():
 
 
 # --- T04 · cabecera común y tema ----------------------------------------------------------------
-PAGINAS_USUARIA = ("perfil", "cv-base", "anadir-oferta", "recomendadas", "candidaturas",
+PAGINAS_USUARIA = ("perfil", "cv-base", "ofertas", "candidaturas",
                    "candidatura")
 TODAS = [p.stem for p in sorted(ESTATICOS.glob("*.html")) if p.stem != "offline"]
 
@@ -141,7 +141,7 @@ def test_la_cabecera_de_comun_js_pinta_pestanas_persona_tema_y_salir():
     assert "aria-current" in js and "/api/perfil" in js and "nombre" in js
     assert '"img"' not in js and "<img" not in js                         # nunca una foto (RF-6.3)
     assert "vincularTema" in js and '"Salir"' in js and '"Tema oscuro"' in js
-    assert len(re.findall(r'\["[^"]+", "/[a-z-]+"\]', js)) == 5           # las cinco pestañas (spec 008, RF-8.1e)  # noqa: E501
+    assert len(re.findall(r'\["[^"]+", "/[a-z-]+"\]', js)) == 3           # las tres pestañas (spec 010, RF-10.1c)  # noqa: E501
 
 
 @pytest.mark.parametrize("nombre", ("ingesta", "costes"))
@@ -219,9 +219,9 @@ def test_ningun_js_dice_match_ats_ni_trazabilidad_en_sus_textos(js):
 
 
 # --- Bloque C · Recomendadas (T07-T10) ----------------------------------------------------------
-def test_recomendadas_estructura_h1_entradilla_filtros_contador_y_guia():  # T07
-    html = leer("recomendadas.html")
-    assert 'class="titulo-pantalla">Recomendadas' in html and "sin fraudes ni ofertas fantasma" in html
+def test_ofertas_estructura_h1_entradilla_filtros_contador_y_guia():  # T07
+    html = leer("ofertas.html")
+    assert 'class="titulo-pantalla">Ofertas' in html and "sin fraudes ni ofertas fantasma" in html
     assert re.search(r'<form id="vista"[^>]*aria-label', html)
     for ident in ("grupos", "solo-remoto", "solo-salario", "sueldo-minimo", "nota-min", "nota-max", "orden",
                   "guardar-busca", "que-buscas", "contador"):
@@ -231,41 +231,41 @@ def test_recomendadas_estructura_h1_entradilla_filtros_contador_y_guia():  # T07
     assert "Corregir explicación" in html and "Modificar" not in html
 
 
-def test_recomendadas_tabla_con_columnas_barra_meter_y_sin_progress():  # T08
-    js = leer("recomendadas.js")
+def test_ofertas_tabla_con_columnas_barra_meter_y_sin_progress():  # T08
+    js = leer("ofertas.js")
     for columna in ("Oferta", "Puesto", "Compatibilidad", "Salario", "Lugar", "Publicado"):
         assert f'["{columna}",' in js, columna
     assert '"Candidatura"' not in js.split("const MAX_PUNTUANDO")[0]  # ya no es columna
     assert '"meter"' in js and "aria-valuenow" in js and "aria-valuemin" in js and "aria-valuemax" in js
     assert "barra-compat" in js and "progress" not in js
-    assert "Sin puntuar" in js and "No publicado" in js
+    assert "TEXTOS.sinCompatibilidad" in js and "No publicado" in js
     assert "Condiciones" not in js and "cond-" not in js and "celdaCandidatura" not in js
 
 
-def test_recomendadas_fila_desplegable_con_acciones():  # T09
-    js = leer("recomendadas.js")
+def test_ofertas_fila_desplegable_con_acciones():  # T09
+    js = leer("ofertas.js")
     for pieza in ("aria-expanded", "aria-controls", "Por qué te la recomendamos", "Corregir explicación",
-                  "/correccion", "Preparar candidatura", "Preparar otra igualmente", "Generar CV base",
+                  "/correccion", "Preparar candidatura", "Preparar otra igualmente",
                   "fila-detalle", "stopPropagation", "accionesCandidatura"):
         assert pieza in js, pieza
     assert '"Modificar' not in js and "details.porque" not in js
     assert re.search(r"abiertas?\b", js)  # la primera sale abierta
 
 
-def test_recomendadas_movil_mas_filtros_y_ayuda_como_globo():  # T10
-    css, js, html = leer("estilo.css"), leer("recomendadas.js"), leer("recomendadas.html")
+def test_ofertas_movil_mas_filtros_y_ayuda_como_globo():  # T10
+    css, js, html = leer("estilo.css"), leer("ofertas.js"), leer("ofertas.html")
     assert re.search(r"@media \(max-width: 900px\)\s*\{[^@]*\.tabla-ofertas[^@]*attr\(data-", css, re.S)
     assert "Qué significa" in js and "aria-describedby" in js and "Escape" in js and "ayuda-globo" in js
     assert ".title" not in js and 'title="' not in html
 
 
 def test_resto_de_pantallas_usan_los_componentes_2c():  # T11-T15
-    for pagina in ("perfil", "anadir-oferta", "cv-base", "candidaturas", "candidatura"):
+    for pagina in ("perfil", "ofertas", "cv-base", "candidaturas", "candidatura"):
         html = leer(f"{pagina}.html")
         assert 'class="titulo-pantalla"' in html and 'class="pp"' not in html, pagina
     assert "lista-editorial" in leer("perfil.html")
     assert 'class="fila panel"' in leer("perfil.html")  # subida en un panel
-    assert leer("anadir-oferta.html").count('class="panel"') == 2
+    assert 'class="panel"' in leer("ofertas.html")   # el aviso «sin perfil» (RF-10.6c)
     assert "cond-" not in leer("candidaturas.js")
     js = leer("candidatura.js")
     assert '"Revisa esto"' in js and '"panel"' in js
@@ -280,6 +280,6 @@ def test_objetivos_tactiles_de_44_px():  # T17 · RF-6.7b
     assert re.search(r"a\.bloque\{[^}]*min-height: var\(--tap\)", css)
 
 
-def test_pais_en_texto_en_recomendadas():  # T17b · hallazgo 6
-    js = leer("recomendadas.js")
+def test_pais_en_texto_en_ofertas():  # T17b · hallazgo 6
+    js = leer("ofertas.js")
     assert "nombrePais(o.pais)" in js and "Intl.DisplayNames" in leer("comun.js")
