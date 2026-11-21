@@ -267,9 +267,9 @@ function avisoFila(a) {
   if (a.clave === "largo") {   // dos opciones en lugar de «Corregir» (RF-9.2d)
     li.classList.add("aviso-longitud");
     boton("Mantener la longitud", () => pedirAvisos("/api/perfil/longitud", { longitud: "mantener" },
-                                                    "Hecho: Horma mantendrá la longitud de tu CV."));
+                                                    "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV maestro no cambia."));
     boton("Que Horma lo sintetice", () => pedirAvisos("/api/perfil/longitud", { longitud: "sintetizar" },
-                                                       "Hecho: Horma sintetizará tu CV al redactar."));
+                                                       "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV maestro no cambia."));
   } else {
     boton(a.seccion === "hueco" ? "Añadir en Mi perfil" : "Corregir", () => corregirAviso(a));
     boton("Dar por visto", () => pedirAvisos("/api/perfil/avisos/visto", { clave: a.clave, huella: a.huella },

@@ -37,8 +37,8 @@ def avisos_perfil(perfil: Perfil, cv_maestro: str = "",
     palabras = len(cv_maestro.split())
     if palabras > PALABRAS_CV_LARGO:
         avisos.append(Aviso("largo", _hash(str(round(palabras, -2))),
-                            f"Tu CV maestro tiene unas {round(palabras, -2)} palabras; un CV de "
-                            f"selección suele quedarse por debajo de {PALABRAS_CV_LARGO}.", "cv"))
+                            "Tu CV maestro tiene más de 1.000 palabras; un CV de selección "
+                            "suele quedarse por debajo.", "cv"))
     if perfil.resumen is None:
         avisos.append(Aviso("sin_resumen", _hash("sin_resumen"),
                             "Tu perfil no tiene resumen: tres líneas sobre quién eres y qué buscas.",
