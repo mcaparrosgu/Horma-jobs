@@ -9,12 +9,31 @@ from horma.web.repositories import tareas
 
 router = APIRouter()
 
+# Tareas que la usuaria ve en la cabecera (RF-10.8) y la pantalla a la que lleva cada una.
+PANTALLA_DE_TIPO = {
+    "perfilar": "/perfil", "clasificar_perfil": "/perfil", "analizar_estilo": "/perfil",
+    "recomendar": "/ofertas", "puntuar_propias": "/ofertas", "puntuar_una": "/ofertas",
+    "leer_url": "/ofertas",
+}
+
+
+def _url(t: dict) -> str | None:
+    if t["tipo"] == "candidatura":
+        return f"/candidaturas/{t['entidad_id']}"
+    return PANTALLA_DE_TIPO.get(t["tipo"])
+
 
 @router.get("/api/tareas/activas")
 def activas(request: Request, usuaria_id: int = Depends(usuaria_actual),
             tipo: Annotated[list[str] | None, Query()] = None):
     with sesion_de(request.app.state.engine, usuaria_id) as s:
-        return {"tareas": tareas.activas(s, usuaria_id, tipo)}
+        filas = tareas.activas(s, usuaria_id, tipo)
+    salida = []
+    for t in filas:
+        url = _url(t)
+        if url is not None:   # lo que la usuaria no ve (p. ej. interno) no sale
+            salida.append({**t, "url": url})
+    return {"tareas": salida}
 
 
 @router.get("/api/tareas/{tarea_id}")

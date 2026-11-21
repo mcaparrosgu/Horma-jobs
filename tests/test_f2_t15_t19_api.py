@@ -211,14 +211,18 @@ def test_solo_la_ruta_de_ver_se_deja_enmarcar(app):
     assert otra.headers["x-frame-options"] == "DENY"
 
 
-def test_el_cv_estetico_no_se_procesa(app, motor_app):
+def test_la_clase_estetico_ya_no_se_acepta_y_los_antiguos_se_listan(app, motor_app):
+    """Spec 010 · RF-10.5e: un `estetico` nuevo da 422; uno antiguo sigue en «Documentos subidos»."""
     c, h, _ = entrar(app)
     r = subir(c, h, b"%PDF-1.4 maquetado", "bonito.pdf", clase="estetico")
-    assert r.status_code == 201 and r.json()["perfil_id"] is None
-    assert _tareas(motor_app) == []
+    assert r.status_code == 422 and _tareas(motor_app) == []
     with admin() as s:
-        assert s.execute(text("select texto from cv_archivos")).scalar_one() is None
-        assert s.execute(text("select count(*) from perfiles")).scalar_one() == 0
+        u = s.execute(text("select id from usuarias")).scalar_one()
+        s.execute(text("insert into cv_archivos (usuaria_id, nombre, nombre_original, ruta, tipo, clase, "
+                       "tamano) values (:u, 'Antiguo', 'a.pdf', 'ruta-antigua', 'pdf', 'estetico', 10)"),
+                  {"u": u})
+        s.commit()
+    assert [x["clase"] for x in c.get("/api/cv").json()] == ["estetico"]
 
 
 def test_listar_y_renombrar_un_cv(app):
@@ -273,6 +277,15 @@ def test_responder_crea_version_nueva_conserva_la_anterior_y_marca_origen_usuari
     with sesion_de(motor_app, u) as s:
         v1 = perfiles.perfil_modelo(perfiles.por_version(s, 1))
     assert len(v1.preguntas_pendientes) == 1 and v1.idiomas == []  # la anterior, intacta
+    assert [t.tipo for t in _tareas(motor_app)] == []  # un idioma no cambia la clasificación (RF-10.10d)
+
+
+def test_corregir_una_experiencia_encola_clasificar_perfil(app, motor_app):
+    c, h, _ = entrar(app)
+    _perfil_hecho(motor_app, _usuaria_id(motor_app, "google-A"))
+    r = c.patch("/api/perfil/datos", headers=h, json={
+        "campo": "experiencias", "indice": 0, "dato": {"puesto": "Camarera", "empresa": "Bar Luna"}})
+    assert r.status_code == 201
     assert [t.tipo for t in _tareas(motor_app)] == ["clasificar_perfil"]
 
 
@@ -396,55 +409,6 @@ def test_los_contadores_de_las_casillas_coinciden_con_el_catalogo(app, motor_app
 
 
 # --- T18: CV base ------------------------------------------------------------------------------
-def test_los_cv_base_se_generan_a_peticion_y_no_por_si_solos(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    assert c.post("/api/cv-base", headers=h).status_code == 409  # sin perfil
-    _perfil_hecho(motor_app, u)
-    assert _tareas(motor_app) == []  # tener perfil no genera nada
-    r = c.post("/api/cv-base", headers=h)
-    assert r.status_code == 202 and r.json()["perfil_version"] == 1
-    assert [t.tipo for t in _tareas(motor_app)] == ["generar_cv_base"]
-    assert c.post("/api/cv-base", headers=h).status_code == 409  # ya en curso
-    assert c.get("/api/cv-base").json()["generando"] is True
-
-
-def test_cv_base_listado_renombrado_y_rechazados_ocultos(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    pid, _ = _perfil_hecho(motor_app, u)
-    with sesion_de(motor_app, u) as s:
-        perfiles.guardar_cv_base(s, u, 1, {
-            "guardados": [{"destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
-                           "contenido": "## Experiencia\nCamarera", "traza": [], "intentos": 1}],
-            "rechazados": [{"destino": {"sector": "tecnologia", "familia": "desarrollo_software"},
-                            "motivo": "Dato sin origen", "errores": ["Dato sin origen"]}]})
-    r = c.get("/api/cv-base").json()
-    assert [x["familia"] for x in r["cv_base"]] == ["hosteleria_restauracion"]  # el rechazado no aparece
-    assert r["cv_base"][0]["desfasado"] is False
-    assert r["avisos"] == [{"nombre": "CV base · desarrollo_software · tecnologia · v1",
-                            "estado": "rechazado", "motivo": "Dato sin origen", "perfil_version": 1}]
-    cv_id = r["cv_base"][0]["id"]
-    assert c.patch(f"/api/cv-base/{cv_id}", headers=h, json={"nombre": "CV hostelería"}).status_code == 200
-    assert c.get("/api/cv-base").json()["cv_base"][0]["nombre"] == "CV hostelería"
-    subir(c, h, nombre="Otro")
-    assert c.patch(f"/api/cv-base/{cv_id}", headers=h, json={"nombre": "otro"}).status_code == 409
-    assert pid  # el CV base ya generado de esta versión impide generarlo otra vez
-    assert c.post("/api/cv-base", headers=h).status_code == 409
-
-
-def test_al_cambiar_el_perfil_los_cv_base_salen_desfasados_sin_regenerarse(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    _perfil_hecho(motor_app, u)
-    with sesion_de(motor_app, u) as s:
-        perfiles.guardar_cv_base(s, u, 1, {"guardados": [{
-            "destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
-            "contenido": "x", "traza": [{"frase": "x", "fragmento": "Dato que el perfil nuevo ya no tiene"}],
-            "intentos": 1}], "rechazados": []})
-    c.post("/api/perfil/respuestas", headers=h, json={"indice": 0})
-    assert c.get("/api/cv-base").json()["cv_base"][0]["desfasado"] is True
-    assert "generar_cv_base" not in [t.tipo for t in _tareas(motor_app)]
 
 
 # --- T19: recomendaciones ----------------------------------------------------------------------
@@ -609,27 +573,6 @@ def test_el_genero_de_los_puestos_se_fija_y_se_cambia_despues(app, motor_app):
     assert r.status_code == 422
 
 
-def test_un_cv_base_se_modifica_y_se_borra_y_solo_el_propio(app, motor_app):
-    c, h, _ = entrar(app)
-    u = _usuaria_id(motor_app, "google-A")
-    _perfil_hecho(motor_app, u)
-    with sesion_de(motor_app, u) as s:
-        perfiles.guardar_cv_base(s, u, 1, {"guardados": [{
-            "destino": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion"},
-            "contenido": "## Experiencia\nCamarera", "traza": [], "intentos": 1}], "rechazados": []})
-    cv_id = c.get("/api/cv-base").json()["cv_base"][0]["id"]
-    r = c.patch(f"/api/cv-base/{cv_id}", headers=h, json={"contenido": "## Experiencia\nCamarera en Bar Sol"})
-    assert r.status_code == 200
-    ver = c.get("/api/cv-base").json()["cv_base"][0]
-    assert ver["contenido"].endswith("Bar Sol") and ver["nombre"].startswith("CV base")
-    assert c.patch(f"/api/cv-base/{cv_id}", headers=h, json={}).status_code == 422
-    otra, h2, _ = entrar(app, "google-B")
-    assert otra.delete(f"/api/cv-base/{cv_id}", headers=h2).status_code == 404
-    assert c.delete(f"/api/cv-base/{cv_id}", headers=h).status_code == 200
-    assert c.get("/api/cv-base").json()["cv_base"] == []
-    assert c.delete(f"/api/cv-base/{cv_id}", headers=h).status_code == 404
-
-
 def test_una_cuenta_nueva_ve_vacio_perfil_cv_base_y_recomendadas_de_otra(app, motor_app):
     """Plan de pruebas 7.1: lo de la usuaria A no aparece en las pantallas de la usuaria B."""
     a, ha, _ = entrar(app, "google-A")
@@ -642,10 +585,9 @@ def test_una_cuenta_nueva_ve_vacio_perfil_cv_base_y_recomendadas_de_otra(app, mo
                            "contenido": "## Experiencia\nCamarera", "traza": [], "intentos": 1}],
             "rechazados": []})
     _puntuar(motor_app, u, 1, (_oferta(motor_app, titulo="Oferta A"), 80))
-    assert a.get("/api/cv-base").json()["cv_base"] and a.get("/api/recomendaciones").json()["recomendaciones"]
+    assert a.get("/api/recomendaciones").json()["recomendaciones"]
 
     b, _, _ = entrar(app, "google-B")
     assert b.get("/api/cv").json() == []
     assert b.get("/api/perfil").json()["perfil"] is None
-    assert b.get("/api/cv-base").json()["cv_base"] == []
     assert all(x["nota"] is None for x in b.get("/api/recomendaciones").json()["recomendaciones"])

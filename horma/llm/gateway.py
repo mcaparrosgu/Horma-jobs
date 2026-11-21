@@ -49,6 +49,17 @@ def _proveedor_por_defecto() -> Proveedor:
     return ProveedorAnthropic(clave)
 
 
+def _cadenas(valor) -> str:
+    """Todas las cadenas de un dato, una por línea y sin el escapado de JSON."""
+    if isinstance(valor, str):
+        return valor
+    if isinstance(valor, dict):
+        valor = list(valor.values())
+    if isinstance(valor, (list, tuple, set)):
+        return "\n".join(_cadenas(v) for v in valor)
+    return ""
+
+
 def completar(*, agente: str, prompt: str, entrada: BaseModel, esquema_salida: type[BaseModel],
               modelo: str = "pequeno", proveedor: Proveedor | None = None,
               dormir: Callable[[float], None] = time.sleep) -> BaseModel:
@@ -58,7 +69,10 @@ def completar(*, agente: str, prompt: str, entrada: BaseModel, esquema_salida: t
     nombre_modelo, (p_in, p_out) = _modelo_real(modelo)
     esquema = esquema_salida.model_json_schema()
     usuario = entrada.model_dump_json()
-    senales = tuple(vigilancia.senales_entrada(usuario))  # RF-4.5: marca y registra; no bloquea
+    # RF-4.5: marca y registra; no bloquea. Se mira el texto real y el JSON: en el JSON un salto de línea
+    # es la secuencia «barra n» y una orden al principio de línea no casaría con el límite de palabra.
+    senales = tuple(dict.fromkeys(
+        [*vigilancia.senales_entrada(usuario), *vigilancia.senales_entrada(_cadenas(entrada.model_dump()))]))
     t_in = t_out = 0
     t0 = time.monotonic()
 

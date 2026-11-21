@@ -300,18 +300,18 @@ def test_con_el_gasto_del_dia_en_el_tope_no_se_lanza(app, motor_app, motor_migra
     u = usuaria(motor_migrador)
     perfil_hecho(motor_app, u)
     ofertas(motor_migrador, 2)
-    gasto(motor_migrador, u, 0.50)
+    gasto(motor_migrador, u, 1.00)
     assert c.post("/api/recomendar", headers=h, json={"motivo": "buscar"}).json() == {
-        "tarea_id": None, "motivo": "tope"}
+        "tarea_id": None, "motivo": "presupuesto"}
     # y el tope de la tarea es lo que queda del día
     with motor_migrador.begin() as cx:
-        cx.execute(text("update tareas set coste_acumulado = 0.20"))
+        cx.execute(text("update tareas set coste_acumulado = 0.80"))
     t = c.post("/api/recomendar", headers=h, json={"motivo": "buscar"}).json()["tarea_id"]
-    assert float(tarea_fila(motor_migrador, t).tope_coste) == pytest.approx(0.30)
+    assert float(tarea_fila(motor_migrador, t).tope_coste) == pytest.approx(0.20)
 
 
 @pytest.mark.bd
-def test_puntuar_propias_sigue_con_el_tope_alcanzado_y_su_gasto_cuenta(app, motor_app, motor_migrador):
+def test_una_tarea_ya_encolada_sigue_y_su_gasto_cuenta(app, motor_app, motor_migrador):
     c, h = entrar(app)
     u = usuaria(motor_migrador)
     perfil_hecho(motor_app, u)
@@ -352,26 +352,80 @@ def test_puntuar_ahora_una_oferta_que_ya_se_esta_puntuando_da_409(app, motor_app
 
 
 @pytest.mark.bd
-def test_la_oferta_31_del_dia_da_429_con_su_texto(app, motor_app, motor_migrador):
+def test_puntuar_ahora_con_poco_presupuesto_limita_el_tope_de_la_tarea(app, motor_app, motor_migrador):
     c, h = entrar(app)
     u = usuaria(motor_migrador)
     perfil_hecho(motor_app, u)
-    ids = ofertas(motor_migrador, 31)
-    for o in ids[:30]:
-        assert c.post(f"/api/matches/{o}/puntuar", headers=h).status_code == 202
-    r = c.post(f"/api/matches/{ids[30]}/puntuar", headers=h)
-    assert r.status_code == 429
-    assert r.json()["detail"] == "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir."
+    gasto(motor_migrador, u, 0.98)
+    (o,) = ofertas(motor_migrador, 1)
+    t = c.post(f"/api/matches/{o}/puntuar", headers=h).json()["tarea_id"]
+    assert float(tarea_fila(motor_migrador, t).tope_coste) == pytest.approx(0.02)
+    assert worker.procesar_una(motor_app, ProveedorSimulado([matches([o])])) == "hecha"
+    assert o in notas(motor_migrador)
+
+
+# --- S5 · T20 · presupuesto diario único (RF-10.9) -----------------------------------------------
+def _pendientes(motor):
+    with motor.connect() as cx:
+        return cx.execute(text("select count(*) from tareas where estado = 'pendiente'")).scalar_one()
 
 
 @pytest.mark.bd
-def test_puntuar_ahora_funciona_con_el_tope_del_dia_alcanzado_y_su_gasto_cuenta(app, motor_app, motor_migrador):  # noqa: E501
+def test_con_1_usd_gastado_ningun_tipo_se_encola(app, motor_app, motor_migrador):
     c, h = entrar(app)
     u = usuaria(motor_migrador)
     perfil_hecho(motor_app, u)
-    gasto(motor_migrador, u, 0.50)
+    gasto(motor_migrador, u, 1.00)
     (o,) = ofertas(motor_migrador, 1)
-    t = c.post(f"/api/matches/{o}/puntuar", headers=h).json()["tarea_id"]
-    assert float(tarea_fila(motor_migrador, t).tope_coste) == config.ajustes().tope_coste_puntuar_una
-    assert worker.procesar_una(motor_app, ProveedorSimulado([matches([o])])) == "hecha"
-    assert o in notas(motor_migrador)
+    antes = _pendientes(motor_migrador)
+    r = c.post(f"/api/matches/{o}/puntuar", headers=h)  # puntuar_una
+    assert r.status_code == 429 and r.json()["motivo"] == "presupuesto"
+    assert "Hoy ya hemos trabajado todo lo posible para ti" in r.json()["detail"]
+    assert c.post("/api/recomendar", headers=h, json={"motivo": "buscar"}).json()["motivo"] == "presupuesto"
+    url = "https://job-boards.greenhouse.io/hotelmar/jobs/1"
+    r = c.post("/ofertas/url", headers=h, json={"url": url})  # leer_url
+    assert r.status_code == 429 and r.json()["motivo"] == "presupuesto"
+    assert _pendientes(motor_migrador) == antes  # no se encoló nada
+
+
+@pytest.mark.bd
+def test_una_oferta_propia_sin_presupuesto_queda_pendiente_y_se_procesa_cuando_vuelve(app, motor_app, motor_migrador):  # noqa: E501
+    from horma.web.services import ofertas as servicio
+    c, h = entrar(app)
+    u = usuaria(motor_migrador)
+    gasto(motor_migrador, u, 1.00)
+    texto = "Camarera para Bar Sol en Valencia. Se requiere experiencia en sala y manejo de TPV, jornada completa."  # noqa: E501
+    r = c.post("/ofertas", headers=h, json={"texto": texto})
+    assert r.status_code == 201 and r.json()["estado"] == "pendiente" and r.json()["aplazada"] is True
+    oferta_id = r.json()["id"]
+    with motor_migrador.connect() as cx:
+        assert cx.execute(text("select count(*) from tareas where tipo = 'procesar_oferta'")
+                          ).scalar_one() == 0
+    assert servicio.encolar_propias_aplazadas(motor_app) == 0  # hoy sigue sin presupuesto
+    with motor_migrador.begin() as cx:  # «mañana»: el gasto de hoy pasa a ayer
+        cx.execute(text("update tareas set creada_en = now() - interval '2 days'"))
+    assert servicio.encolar_propias_aplazadas(motor_app) == 1
+    assert servicio.encolar_propias_aplazadas(motor_app) == 0  # no se encola dos veces
+    with motor_migrador.connect() as cx:
+        fila = cx.execute(text("select entidad_id, tope_coste from tareas "
+                               "where tipo = 'procesar_oferta'")).one()
+    assert fila.entidad_id == oferta_id and float(fila.tope_coste) <= 1.0
+
+
+@pytest.mark.bd
+def test_el_analisis_de_una_oferta_propia_gasta_del_presupuesto_de_su_duena(app, motor_app, motor_migrador):
+    from horma.web.repositories import tareas
+    entrar(app)
+    u = usuaria(motor_migrador)
+    (propia,) = ofertas(motor_migrador, 1, duena=u)
+    with motor_migrador.begin() as cx:
+        cx.execute(text("insert into tareas (usuaria_id, tipo, entidad_id, tope_coste, coste_acumulado) "
+                        "values (null, 'procesar_oferta', :o, 1, 0.30)"), {"o": propia})
+    with sesion_de(motor_app, u) as s:
+        assert tareas.gasto_hoy(s, u) == pytest.approx(0.30)
+
+
+def test_config_sin_los_limites_antiguos():
+    a = config.Ajustes()
+    assert a.presupuesto_diario_usd == 1.0
+    assert not hasattr(a, "tope_gasto_diario_puntuar") and not hasattr(a, "max_sueltas_dia")

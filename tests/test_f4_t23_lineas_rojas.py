@@ -11,8 +11,8 @@ PROMPTS = {n: (Path(__import__(a.__module__, fromlist=["x"]).__file__).parent / 
            .read_text(encoding="utf-8") for n, a in AGENTES.items()}
 
 
-def test_estan_los_13_agentes_activos():
-    assert len(PROMPTS) == 13
+def test_estan_los_14_agentes_activos():
+    assert len(PROMPTS) == 14  # S5: +analizador-oferta; S6 aparca 2 y los 3 antiguos salen
 
 
 @pytest.mark.parametrize("nombre", sorted(PROMPTS))

@@ -21,6 +21,13 @@ const MOTIVOS_PREGUNTA = [["descartada", "La descarto yo"], ["retirada", "La ret
 // Lo que la oferta pide y el perfil no tiene (RF-10.2c). «Hueco» queda para un periodo sin actividad.
 const textoNoConsta = (requisito) => `La oferta pide ${requisito} y no consta en tu perfil`;
 
+// Frase del indicador de avance de la cabecera (RF-10.8), según el tipo de tarea.
+const FRASES_AVANCE = {
+  perfilar: "Leyendo tu CV", clasificar_perfil: "Leyendo tu CV", analizar_estilo: "Analizando tu estilo",
+  recomendar: "Puntuando", puntuar_propias: "Puntuando", puntuar_una: "Puntuando",
+  leer_url: "Analizando la oferta", candidatura: "Preparando tu candidatura",
+};
+
 const TEXTOS = {
   compatibilidad: "Número de 0 a 100 de lo bien que encajan tu experiencia y formación con lo que pide la oferta. Orienta, no decide. Despliega la fila para ver por qué.",
   sinCompatibilidad: "Sin compatibilidad",
@@ -35,8 +42,7 @@ const TEXTOS = {
   explicacionRetirada: "Se ha retirado la explicación porque no cumplía las reglas de Horma. La compatibilidad sigue siendo válida.",
   desfasada: "Esta compatibilidad se calculó con una versión anterior de tu perfil.",
   eligeCv: "Horma prepara tu CV a partir de tu perfil.",
-  sueltas: "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir.",
-  presupuesto: "Hoy ya hemos puntuado todo lo posible. Mañana seguimos con el resto.",
+  presupuesto: "Hoy ya hemos trabajado todo lo posible para ti. Mañana seguimos.",
   errorPuntuar: "No se ha podido puntuar esta oferta. Inténtalo otra vez.",
   errorPuntuacion: "El cálculo de compatibilidad se ha detenido por un error. Lo ya calculado se conserva.",
   errorPresupuesto: "Se ha alcanzado el límite de gasto de hoy. Lo ya calculado se conserva.",
@@ -45,6 +51,7 @@ const TEXTOS = {
   sinFuente: "Sin fuente indicada",
   anadirIntro: "Pega el texto de una oferta o la dirección de su página. Es solo tuya: nadie más la ve. Horma la analiza y calcula su compatibilidad con tu perfil, y aparece siempre en Ofertas, pase o no tus filtros.",
   anadirUrl: "Para leerla, la dirección se envía a un servicio externo de lectura de páginas. LinkedIn, Indeed, Glassdoor e InfoJobs no se pueden leer: pega su texto.",
+  anadirAplazada: "Oferta guardada. La analizamos mañana: hoy ya hemos trabajado todo lo posible para ti.",
   anadirOk: "Oferta añadida. Se está analizando; se actualizará sola.",
   leidaOk: "Oferta leída. Se está analizando; se actualizará sola.",
   sinCandidaturas: "Todavía no tienes candidaturas.",

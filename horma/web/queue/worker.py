@@ -42,6 +42,7 @@ from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.tools import descargar, dominio
 from horma.tools.buscar_ofertas import buscar_ofertas
+from horma.tools.huella_perfil import huella_compatibilidad
 from horma.tools.leer_pagina import MENSAJE as MOTIVO_LECTURA
 from horma.tools.leer_pagina import leer_pagina
 from horma.tools.validar_url import validar_url
@@ -59,6 +60,7 @@ from horma.web.repositories import perfiles as repo_perfiles
 from horma.web.repositories import tareas as repo_tareas
 from horma.web.services import estilo as servicio_estilo
 from horma.web.services import ofertas as servicio_ofertas
+from horma.web.services import presupuesto
 
 log = logging.getLogger("horma.worker")
 
@@ -115,8 +117,11 @@ def _encolar_puntuar_propias(s, usuaria_id: int) -> None:
     (RF-5.3d). La carga es el id de la usuaria porque el worker, en modo sistema, no ve su perfil."""
     if not repo_tareas.pendiente(s, "puntuar_propias", usuaria_id):
         a = ajustes()
-        repo_tareas.encolar(s, usuaria_id, "puntuar_propias", usuaria_id, a.tope_coste_puntuar_propias,
-                            a.tope_reintentos_tarea)
+        try:
+            presupuesto.encolar(s, usuaria_id, "puntuar_propias", usuaria_id, a.tope_coste_puntuar_propias,
+                                a.tope_reintentos_tarea)
+        except presupuesto.SinPresupuesto:
+            pass  # sin presupuesto no se puntúa hoy (RF-10.9c)
 
 
 class _CalificarFuente:
@@ -254,7 +259,8 @@ class _Recomendar:
         # Lo que se puntúa no depende de la vista (RF-8.4d): siempre 40-100 y de más a menos parecido.
         prefs = repo_perfiles.preferencias(s).model_copy(
             update={"rango_min": 40, "rango_max": 100, "orden": "compatibles"})
-        ya = repo_matches.puntuadas(s, fila["version"])
+        huella = huella_compatibilidad(perfil)
+        ya = repo_matches.puntuadas(s, huella)
         consulta = buscar_ofertas(prefs, perfil.taxonomia, excluir_ids=ya + repo_descartes.ids(s),  # RF-8.5d
                                   limite=recomendar.MAX_TANDAS * recomendar.TANDA)
         ids = repo_matches.ids_candidatas(s, consulta)
@@ -262,19 +268,20 @@ class _Recomendar:
         return {"perfil": perfil.model_dump(mode="json"), "preferencias": prefs.model_dump(mode="json"),
                 "candidatas": [{"oferta_id": i, "oferta": ofertas[i].model_dump(mode="json")}
                                for i in ids if i in ofertas],
-                "ya_puntuadas": ya, "_version": fila["version"]}
+                "ya_puntuadas": ya, "_version": fila["version"], "_huella": huella}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         def al_tanda(nuevas: list[dict], hechas: int, previstas: int) -> None:
             """Cada tanda se guarda al terminarla, en su propia transacción, y la barra avanza (RF-8.7c-e):
             si una tanda posterior falla, lo ya guardado se queda."""
             with sesion_de(d.engine, d.usuaria_id) as s:
-                repo_matches.guardar(s, d.usuaria_id, estado["_version"], nuevas)
+                repo_matches.guardar(s, d.usuaria_id, estado["_version"], nuevas, estado["_huella"])
                 repo_tareas.avanzar(s, d.tarea_id, min(99, round(hechas / max(1, previstas) * 100)))
         return recomendar.crear(proveedor=d.proveedor, al_tanda=al_tanda).run(estado)
 
     def guardar(self, s, tarea: dict, estado: dict) -> None:
-        repo_matches.guardar(s, tarea["usuaria_id"], estado["_version"], estado["recomendaciones"])
+        repo_matches.guardar(s, tarea["usuaria_id"], estado["_version"], estado["recomendaciones"],
+                             estado["_huella"])
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
         """Sin fila propia: el motivo queda en la tarea."""
@@ -291,13 +298,14 @@ class _PuntuarPropias(_Recomendar):
             return {"candidatas": []}
         perfil = repo_perfiles.perfil_modelo(fila)
         prefs = repo_perfiles.preferencias(s).model_copy(update={"rango_min": 0, "rango_max": 100})
-        ids = repo_ofertas.propias_sin_nota(s, tarea["usuaria_id"], fila["version"],
+        huella = huella_compatibilidad(perfil)
+        ids = repo_ofertas.propias_sin_nota(s, tarea["usuaria_id"], huella,
                                             recomendar.MAX_TANDAS * recomendar.TANDA)
         ofertas = repo_ofertas.completas(s, ids)
         return {"perfil": perfil.model_dump(mode="json"), "preferencias": prefs.model_dump(mode="json"),
                 "candidatas": [{"oferta_id": i, "oferta": ofertas[i].model_dump(mode="json")}
                                for i in ids if i in ofertas],
-                "ya_puntuadas": [], "_version": fila["version"]}
+                "ya_puntuadas": [], "_version": fila["version"], "_huella": huella}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         if not estado["candidatas"]:
@@ -322,15 +330,17 @@ class _PuntuarUna(_Recomendar):
         if oferta is None:
             raise ValueError(f"la oferta {tarea['entidad_id']} no está procesada")
         prefs = repo_perfiles.preferencias(s).model_copy(update={"rango_min": 0, "rango_max": 100})
-        return {"perfil": repo_perfiles.perfil_modelo(fila).model_dump(mode="json"),
+        perfil = repo_perfiles.perfil_modelo(fila)
+        return {"perfil": perfil.model_dump(mode="json"),
                 "preferencias": prefs.model_dump(mode="json"),
                 "candidatas": [{"oferta_id": tarea["entidad_id"], "oferta": oferta.model_dump(mode="json")}],
-                "ya_puntuadas": [], "_version": fila["version"]}
+                "ya_puntuadas": [], "_version": fila["version"],
+                "_huella": huella_compatibilidad(perfil)}
 
 
 class _Candidatura:
     """Prepara CV y carta para una oferta (entidad = id de la candidatura): carga el perfil vigente, el
-    CV maestro y todos los CV base de la usuaria; el flujo elige uno."""
+    CV maestro y la longitud elegida; los CV base solo con el respaldo activo (RF-10.3d)."""
 
     def cargar(self, s, tarea: dict) -> dict:
         c = repo_candidaturas.fila(s, tarea["entidad_id"])
@@ -345,7 +355,9 @@ class _Candidatura:
         guia = repo_estilo.guia(s)
         return {"usuaria_id": tarea["usuaria_id"], "perfil_version": perfil["version"],
                 "oferta": oferta.model_dump(mode="json"), "cv_maestro": perfil["cv_maestro"],
-                "cvs_base": repo_candidaturas.cv_base_para_flujo(s),
+                "cvs_base": (repo_candidaturas.cv_base_para_flujo(s)
+                             if ajustes().horma_cv_base_respaldo else []),
+                "longitud_cv": repo_perfiles.longitud_cv(s),
                 "guia_estilo": guia["guia"] if guia else None}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
@@ -486,6 +498,17 @@ def comprobar_alertas(engine: Engine, ultima: float | None, ahora: float) -> flo
     return ahora
 
 
+def comprobar_aplazadas(engine: Engine, ultima: float | None, ahora: float) -> float | None:
+    """Cada `ALERTA_INTERVALO_MIN` minutos encola las propias que quedaron sin presupuesto (RF-10.9e)."""
+    if ultima is not None and ahora - ultima < ajustes().alerta_intervalo_min * 60:
+        return ultima
+    try:
+        servicio_ofertas.encolar_propias_aplazadas(engine)
+    except Exception as e:  # noqa: BLE001
+        log.error("No se pudieron encolar las ofertas aplazadas (%s)", type(e).__name__)
+    return ahora
+
+
 def main() -> None:
     configurar_logs()
     engine = motor()
@@ -495,8 +518,10 @@ def main() -> None:
     if not alertas.correo_configurado(ajustes()):
         log.warning("SMTP_HOST o ALERTAS_CORREO sin configurar: las alertas solo salen en pantalla y log")
     ultima: float | None = None
+    ultima_aplazadas: float | None = None
     while True:
         ultima = comprobar_alertas(engine, ultima, time.monotonic())
+        ultima_aplazadas = comprobar_aplazadas(engine, ultima_aplazadas, time.monotonic())
         if procesar_una(engine) is None:
             time.sleep(1.0)
 

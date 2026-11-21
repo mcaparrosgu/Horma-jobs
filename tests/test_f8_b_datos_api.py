@@ -127,11 +127,10 @@ def test_el_dia_se_corta_a_medianoche_de_madrid(app, motor_app, motor_migrador):
                                 "at time zone 'Europe/Madrid'")).scalar_one()
     tarea(motor_migrador, u, entidad=1, coste=0.10, creada=inicio)  # justo a medianoche: hoy
     tarea(motor_migrador, u, entidad=2, coste=0.30, creada=inicio - timedelta(seconds=1))  # ayer
-    tarea(motor_migrador, u, tipo="perfilar", coste=9)  # otro tipo: no cuenta
+    tarea(motor_migrador, u, tipo="perfilar", coste=9, creada=inicio - timedelta(seconds=1))  # ayer
     tarea(motor_migrador, u, tipo="puntuar_una", entidad=5, coste=0.02)
     with sesion_de(motor_app, u) as s:
-        assert tareas.gasto_hoy(s, u) == pytest.approx(0.12)
-        assert tareas.sueltas_hoy(s, u) == 1
+        assert tareas.gasto_hoy(s, u) == pytest.approx(0.12)  # RF-10.9: cuentan todos los tipos
         assert tareas.ultima(s, u, "perfilar")["estado"] == "pendiente"
         assert tareas.ultima(s, u, "inexistente") is None
 

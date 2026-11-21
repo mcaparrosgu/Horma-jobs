@@ -1,4 +1,4 @@
-// Pantalla de perfil: CV subidos, preguntas pendientes y datos con su origen (RF-2.1b, 2.2-2.4, 2.15).
+// Pantalla de perfil (RF-10.5): Por resolver, Tu perfil, Tu CV completo, Documentos subidos y Cómo escribes.
 const CAMPOS = {
   experiencias: [["puesto", "Puesto"], ["empresa", "Empresa"], ["inicio", "Inicio"], ["fin", "Fin"],
                  ["descripcion", "Descripción"]],
@@ -29,6 +29,7 @@ const AYUDA = {
 const MOTIVOS = { falta: "Falta", ambiguo: "Ambiguo", contradiccion: "Contradicción entre CV" };
 let idiomasValidos = [];
 let perfilActual = null;
+let maestroActual = "";
 let pendientesPrevias = 0;
 let temporizador = null;
 
@@ -121,16 +122,24 @@ function pregunta(p, i) {
   const li = nodo("li", null, "tarjeta");
   li.append(nodo("span", MOTIVOS[p.motivo] || p.motivo, "estado apagado"));
   li.append(nodo("h3", p.pregunta));
-  const acciones = nodo("div", null, "fila");
+  const acciones = nodo("div", null, "fila acciones-aviso");
   const responder = (dato) => cambiarPerfil("/api/perfil/respuestas", "POST", { indice: i, dato });
   const [seccion, clave = "", detalle = ""] = p.campo.split(".");
   if (seccion === "genero_puestos") {
-    for (const g of ["femenino", "masculino"]) {
-      const b = nodo("button", g.charAt(0).toUpperCase() + g.slice(1));
-      b.type = "button";
-      b.addEventListener("click", () => responder({ valor: g }));
-      acciones.append(b);
-    }
+    const abrir = nodo("button", "Responder");
+    abrir.type = "button";
+    abrir.addEventListener("click", () => {
+      abrir.hidden = true;
+      const opciones = nodo("div", null, "fila");
+      for (const g of ["femenino", "masculino"]) {
+        const b = nodo("button", g.charAt(0).toUpperCase() + g.slice(1), "secundario");
+        b.type = "button";
+        b.addEventListener("click", () => responder({ valor: g }));
+        opciones.append(b);
+      }
+      li.insertBefore(opciones, acciones);
+    });
+    acciones.append(abrir);
   } else if (CAMPOS[seccion]) {
     const abrir = nodo("button", "Responder");
     abrir.type = "button";
@@ -156,7 +165,7 @@ function pregunta(p, i) {
     });
     acciones.append(abrir);
   }
-  const descartar = nodo("button", "No lo sé / descartar", "secundario");
+  const descartar = nodo("button", "Está bien así", acciones.children.length ? "secundario" : null);
   descartar.type = "button";
   descartar.addEventListener("click", () => responder(null));
   acciones.append(descartar);
@@ -245,21 +254,22 @@ function corregirAviso(a) {
   if (a.seccion === "hueco") return irASeccion("actividades", true);
   if (a.seccion === "resumen") return irASeccion("resumen", true);
   if (a.seccion === "experiencia") return irASeccion("experiencias");
-  $("mi-perfil").previousElementSibling?.scrollIntoView({ behavior: "smooth" });   // «Tus CV»
+  const docs = $("cvs-subidos");   // lo que falta está en el CV original: se sube uno corregido
+  docs.open = true;
+  docs.scrollIntoView({ behavior: "smooth" });
 }
 
 async function pedirAvisos(ruta, cuerpo, mensaje) {
   const r = await api(ruta, { metodo: "PUT", cuerpo });
   if (!r.ok) return avisar(r.motivo, true);
   avisar(mensaje);
-  await cargarAvisos(perfilActual?.preguntas_pendientes?.length || 0);
+  await cargarAvisos(perfilActual?.preguntas_pendientes || []);
 }
 
 const MENSAJE_LONGITUD = {
   mantener: "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV completo no cambia.",
   sintetizar: "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV completo no cambia.",
 };
-let longitudElegida = null;
 const elegirLongitud = (longitud) => pedirAvisos("/api/perfil/longitud", { longitud }, MENSAJE_LONGITUD[longitud]);
 
 const ETIQUETA_AVISO ={ hueco: "Hueco", largo: "CV largo", sin_resumen: "Sin resumen",
@@ -283,22 +293,20 @@ function avisoFila(a) {
     boton("Mantener la longitud", () => elegirLongitud("mantener"));
     boton("Que Horma lo sintetice", () => elegirLongitud("sintetizar"));
   } else {
-    boton(a.seccion === "hueco" ? "Añadir en tu perfil" : "Corregir", () => corregirAviso(a));
-    boton("Dar por visto", () => pedirAvisos("/api/perfil/avisos/visto", { clave: a.clave, huella: a.huella },
+    boton(a.seccion === "hueco" ? "Añadir" : "Corregir", () => corregirAviso(a));
+    boton("Está bien así", () => pedirAvisos("/api/perfil/avisos/visto", { clave: a.clave, huella: a.huella },
                                              "Hecho: no te lo volveremos a decir mientras no cambie."));
   }
   li.append(acciones);
   return li;
 }
 
-// El número del título suma las preguntas y los avisos; se abre solo al aparecer alguno (RF-9.5).
-async function cargarAvisos(nPendientes) {
+// «Por resolver» reúne, en este orden, preguntas, huecos y avisos (RF-10.5c); se abre solo al aparecer alguno.
+async function cargarAvisos(preguntas) {
   const r = await api("/api/perfil/avisos");
-  longitudElegida = r.ok ? r.datos.longitud : null;
   const items = r.ok ? [...r.datos.huecos, ...r.datos.avisos] : [];
-  $("t-avisos").hidden = !items.length;
-  $("lista-avisos").replaceChildren(...items.map(avisoFila));
-  const total = nPendientes + items.length;
+  $("lista-pendientes").replaceChildren(...preguntas.map(pregunta), ...items.map(avisoFila));
+  const total = preguntas.length + items.length;
   $("pendientes").hidden = false;
   $("n-pendientes").textContent = String(total);
   if (total && !pendientesPrevias) $("pendientes").open = true;
@@ -316,29 +324,12 @@ function pintarMaestro(perfil, maestro, creadoEn) {
   $("maestro").hidden = !maestro;
   if (!maestro) return;
   $("maestro-meta").textContent = `Versión ${perfil.version} · ${fecha(creadoEn)}`;
-  $("maestro-longitud")?.remove();
-  const palabras = maestro.split(/\s+/).filter(Boolean).length;
-  if (palabras > 1000) {   // la elección sigue visible y se puede cambiar (RF-9.2d)
-    const t = nodo("div", null, "tarjeta aviso-accion aviso-longitud");
-    t.id = "maestro-longitud";
-    t.append(nodo("span", "CV largo", "estado apagado"));
-    t.append(nodo("h3", longitudElegida === "mantener"
-      ? "Al redactar, Horma conservará todas tus experiencias."
-      : longitudElegida === "sintetizar"
-        ? "Al redactar, Horma elegirá las experiencias que encajan con la oferta."
-        : `Tu CV completo tiene ${palabras} palabras. ¿Qué hace Horma al redactar?`));
-    const acciones = nodo("div", null, "fila acciones-aviso");
-    for (const [valor, texto] of [["mantener", "Mantener la longitud"], ["sintetizar", "Que Horma lo sintetice"]]) {
-      const b = nodo("button", texto, longitudElegida === valor ? null : "secundario");
-      b.type = "button";
-      b.setAttribute("aria-pressed", String(longitudElegida === valor));
-      b.addEventListener("click", () => elegirLongitud(valor));
-      acciones.append(b);
-    }
-    t.append(acciones);
-    $("maestro-meta").after(t);
-  }
-  const hoja = cvBonito(maestro);
+  maestroActual = maestro;
+}
+
+// «Ver» abre el CV completo en la Ventana, con «Editar» en cada sección (RF-10.4c).
+function verMaestro() {
+  const hoja = cvBonito(maestroActual);
   for (const h of hoja.querySelectorAll(".cv-seccion")) {
     const clave = SECCION_DEL_MAESTRO[h.textContent];
     if (!clave) continue;
@@ -346,11 +337,14 @@ function pintarMaestro(perfil, maestro, creadoEn) {
     const editar = nodo("button", "Editar", "secundario");
     editar.type = "button";
     editar.setAttribute("aria-label", `Editar ${h.textContent} en tu perfil`);
-    editar.addEventListener("click", () => irASeccion(clave));
+    editar.addEventListener("click", () => { $("visor").close(); irASeccion(clave); });
     h.append(editar);
   }
-  $("maestro-doc").replaceChildren(hoja);
+  $("visor-titulo").textContent = "Tu CV completo";
+  $("visor-cuerpo").replaceChildren(hoja);
+  $("visor").showModal();
 }
+$("maestro-ver").addEventListener("click", verMaestro);
 
 async function cargarPerfil() {
   clearTimeout(temporizador);
@@ -370,12 +364,12 @@ async function cargarPerfil() {
   $("pendientes").hidden = true;
   $("maestro").hidden = true;
   $("datos").hidden = true;
+  $("pantalla").hidden = !perfil;   // sin perfil, solo «Sube tu CV» (RF-10.5)
+  $("sube-cv").hidden = !!perfil;
   if (!perfil) return;
 
   perfilActual = perfil;
-  const pend = perfil.preguntas_pendientes || [];
-  $("lista-pendientes").replaceChildren(...pend.map(pregunta));
-  await cargarAvisos(pend.length);
+  await cargarAvisos(perfil.preguntas_pendientes || []);
   pintarMaestro(perfil, maestro, creadoEn);
 
   $("datos").hidden = false;
@@ -413,7 +407,7 @@ async function cargarPerfil() {
 // --- CV subidos -----------------------------------------------------------------------------
 function tarjetaCv(c) {
   const li = nodo("li", null, "tarjeta");
-  li.append(nodo("span", { estetico: "estético", carta: "carta" }[c.clase] || "fuente", "estado apagado"));
+  li.append(nodo("span", { carta: "Carta", fuente: "CV" }[c.clase] || "Documento", "estado apagado"));
   const titulo = nodo("h3", c.nombre);
   li.append(titulo);
   li.append(nodo("p", `${c.nombre_original} · ${c.tipo.toUpperCase()} · ${Math.max(1, Math.round(c.tamano / 1024))} KB · ${fecha(c.creado_en)}`, "suave"));
@@ -510,33 +504,31 @@ async function cargarCvs() {
   $("n-cvs").textContent = String(r.datos.length);
 }
 
-$("archivo").addEventListener("change", () => {
-  const f = $("archivo").files[0];
-  $("archivo-nombre").textContent = f ? f.name : "Ningún archivo seleccionado";
-});
-
-$("subir").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const archivo = $("archivo").files[0];
+// Al elegir el archivo se sube sin otro clic (RF-10.5). Sin perfil, como CV; en «Documentos subidos», CV o Carta.
+async function subirDocumento(entrada, nombreVisible, clase) {
+  const archivo = entrada.files[0];
+  if (nombreVisible) nombreVisible.textContent = archivo ? archivo.name : "Ningún archivo seleccionado";
   if (!archivo) return;
-  const boton = e.target.querySelector("button");
   const datos = new FormData();
   datos.append("archivo", archivo);
-  datos.append("clase", $("clase-cv").value);
-  datos.append("escrito_por_ella", $("escrito-por-ella").checked ? "true" : "false");
-  if ($("nombre-cv").value.trim()) datos.append("nombre", $("nombre-cv").value.trim());
-  const clase = $("clase-cv").value;
-  boton.disabled = true;
+  datos.append("clase", clase);
+  datos.append("escrito_por_ella", "false");
+  entrada.disabled = true;
   avisar("Subiendo…");
   const r = await api("/api/cv", { metodo: "POST", formulario: datos });
-  boton.disabled = false;
+  entrada.disabled = false;
+  entrada.value = "";
+  if (nombreVisible) nombreVisible.textContent = "Ningún archivo seleccionado";
   if (!r.ok) return avisar(r.motivo, true);
-  e.target.reset();
-  avisar({ fuente: "CV subido; se está construyendo tu perfil.", carta: "Carta guardada; solo sirve de muestra de estilo." }[clase] || "CV guardado.");
+  avisar(clase === "carta" ? "Carta subida; Horma la usará para aprender cómo escribes."
+                           : "CV subido; se está construyendo tu perfil.");
   await cargarCvs();
   await cargarPerfil();
   await cargarEstilo();
-});
+}
+
+$("archivo").addEventListener("change", () => subirDocumento($("archivo"), $("archivo-nombre"), "fuente"));
+$("archivo-doc").addEventListener("change", () => subirDocumento($("archivo-doc"), null, $("clase-doc").value));
 
 // --- Guía de estilo ---------------------------------------------------------------------------
 let estiloVisto = null;

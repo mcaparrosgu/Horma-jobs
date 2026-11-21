@@ -2,11 +2,12 @@
 from datetime import date
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 
 from horma.tools.avisos_perfil import aviso_de_hueco, avisos_perfil
 from horma.tools.detectar_huecos import detectar_huecos
+from horma.tools.generar_pdf import generar_pdf
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.db import sesion_de
 from horma.web.repositories import perfiles
@@ -40,6 +41,19 @@ def ver(request: Request, usuaria_id: int = Depends(usuaria_actual)):
                 "construyendo": ultima["version"] > fila["version"] and ultima["estado"] == "pendiente",
                 "error": ultima["motivo_error"] if ultima["version"] > fila["version"]
                 and ultima["estado"] == "error" else None}
+
+
+@router.get("/api/perfil/cv.pdf")
+def cv_completo_pdf(request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """PDF de «Tu CV completo» (RF-10.4): el CV maestro del perfil vigente, sin modelo. Solo su dueña."""
+    with sesion_de(request.app.state.engine, usuaria_id) as s:
+        fila = perfiles.vigente(s)
+        nombre = perfiles.perfil_modelo(fila).nombre if fila else None
+    if fila is None or not (fila["cv_maestro"] or "").strip():
+        raise HTTPException(status_code=404, detail="Aún no tienes un perfil: sube un CV primero.")
+    pdf = generar_pdf(fila["cv_maestro"], f"CV completo · {nombre}" if nombre else "CV completo")
+    return Response(pdf, media_type="application/pdf",
+                    headers={"Content-Disposition": 'attachment; filename="cv-completo.pdf"'})
 
 
 def _cambiar(request: Request, usuaria_id: int, accion):

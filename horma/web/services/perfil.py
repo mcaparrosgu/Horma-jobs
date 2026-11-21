@@ -10,9 +10,12 @@ from sqlalchemy import Engine
 from horma.config import ajustes
 from horma.schemas.perfil import Perfil, PeriodoCubierto
 from horma.tools.componer_cv_maestro import componer_cv_maestro
+from horma.tools.huella_perfil import huella_clasificacion
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.web.db import sesion_de
-from horma.web.repositories import perfiles, tareas
+from horma.web.repositories import perfiles
+from horma.web.services import presupuesto
+from horma.web.services.presupuesto import SinPresupuesto
 
 LISTAS = ("experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",
           "actividades", "otros")
@@ -76,11 +79,17 @@ def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], str
         except ValidationError as e:
             raise DatoNoValido("El dato no es válido: " + "; ".join(
                 f"{'.'.join(map(str, x['loc']))}: {x['msg']}" for x in e.errors()[:3])) from e
+        antes = huella_clasificacion(perfiles.perfil_modelo(fila))
+        cambia_clasificacion = antes != huella_clasificacion(perfil)
         perfil_id, version = perfiles.nueva_version(s, usuaria_id)
         perfiles.guardar_perfil(s, usuaria_id, perfil_id, perfil.model_copy(update={"version": version}),
                                 componer_cv_maestro(perfil))
-        tareas.encolar(s, usuaria_id, "clasificar_perfil", perfil_id, a.tope_coste_perfilar,
-                       a.tope_reintentos_tarea)
+        if cambia_clasificacion:  # RF-10.10d: solo si cambia la experiencia, la formación o el titular
+            try:  # sin presupuesto la edición se guarda y la clasificación espera a otro cambio (RF-10.9c)
+                presupuesto.encolar(s, usuaria_id, "clasificar_perfil", perfil_id, a.tope_coste_perfilar,
+                                    a.tope_reintentos_tarea)
+            except SinPresupuesto:
+                pass
     return {"id": perfil_id, "version": version, **({"aviso": aviso} if aviso else {})}
 
 

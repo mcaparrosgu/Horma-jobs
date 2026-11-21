@@ -144,16 +144,42 @@ def test_crear_con_solo_la_oferta_encola_la_tarea(app, motor_app):
     assert t.tipo == "candidatura" and t.entidad_id == cid and float(t.tope_coste) == 1.0
 
 
-def test_sin_cv_base_valido_pide_generarlo(app, motor_app):
+def test_sin_cv_base_se_puede_preparar_la_candidatura(app, motor_app):
+    """RF-10.3: ya no hay que generar nada antes; basta el perfil."""
     c, h, u = entrar(app)
     _perfil(motor_app, u)
     oferta = _oferta(motor_app)
     r = c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta})
-    assert r.status_code == 409 and "CV base" in r.json()["detail"]
+    assert r.status_code == 202, r.text
     with sesion_de(motor_app, u) as s:
-        s.execute(text("insert into cv_base (usuaria_id, perfil_version, nombre, estado, motivo_error) "
-                       "values (:u, 1, 'malo', 'rechazado', 'x')"), {"u": u})
-    assert c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta}).status_code == 409
+        assert s.execute(text("select count(*) from tareas where tipo = 'candidatura'")).scalar_one() == 1
+
+
+def test_sin_perfil_no_se_prepara_y_lo_dice_sin_hablar_del_cv_base(app, motor_app):
+    c, h, u = entrar(app)
+    oferta = _oferta(motor_app)
+    r = c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta})
+    assert r.status_code == 409 and "CV base" not in r.json()["detail"]
+
+
+def test_una_candidatura_antigua_recalcula_los_avisos_con_su_cv_base_y_una_nueva_sin_el(app, motor_app):
+    """RF-10.3f: lo que solo está en el CV base sigue teniendo origen en la candidatura antigua."""
+    c, h, u = entrar(app)
+    _perfil(motor_app, u)
+    extra = "Barista en Café Mar, 2019-2020"
+    cb = _cv_base(motor_app, u, contenido=BASE + chr(10) + extra)
+    oferta = _oferta(motor_app)
+    texto = CV + chr(10) + extra
+    traza = [*TRAZA_CV, {"frase": extra, "fragmento": extra}]
+    antigua = _candidatura(motor_app, u, oferta, cb, cv_contenido=texto, cv_traza=traza)
+    r = c.patch(f"/api/candidaturas/{antigua}", headers=h, json={"cv_contenido": texto})
+    assert r.status_code == 200, r.text
+    assert not any(a["documento"] == "cv" and a["frase"] == extra for a in r.json()["avisos"])
+    oferta2 = _oferta(motor_app, "Camarera de sala")
+    nueva = _candidatura(motor_app, u, oferta2, None, cv_contenido=texto, cv_traza=traza,
+                         cv_base_motivo=None)
+    r = c.patch(f"/api/candidaturas/{nueva}", headers=h, json={"cv_contenido": texto})
+    assert any(a["documento"] == "cv" and a["frase"] == extra for a in r.json()["avisos"])
 
 
 def test_sin_perfil_o_con_oferta_inexistente(app, motor_app):
@@ -282,42 +308,6 @@ def test_ya_no_se_guarda_ni_se_responde_desde_la_candidatura(app, motor_app):
         assert c.post(f"{ruta}/{sufijo}", headers=h, json={"texto": "hola"}).status_code == 404, sufijo
 
 
-def test_el_historial_recoge_ediciones_manuales_y_se_puede_restaurar(app, motor_app):
-    c, h, u, cb, oferta, cid = _escenario(app, motor_app)
-    assert c.patch(f"/api/cv-base/{cb}", headers=h,
-                   json={"contenido": BASE + "\nIngles B2"}).status_code == 200
-    assert c.patch(f"/api/cv-base/{cb}", headers=h,
-                   json={"contenido": BASE + "\nIngles B2\nCarné B"}).status_code == 200
-    v = c.get(f"/api/cv-base/{cb}/versiones").json()["versiones"]
-    assert len(v) == 2 and v[0]["origen"] == "edicion" and v[0]["nombre"] == "CV hostelería"
-    marcas = {(x["marca"], x["linea"]) for x in v[0]["lineas"]}  # la más reciente, frente a la actual
-    assert ("añadida", "Carné B") in marcas
-    assert ("añadida", "Ingles B2") in {(x["marca"], x["linea"]) for x in v[1]["lineas"]}
-    r = c.post(f"/api/cv-base/{cb}/versiones/{v[1]['id']}/restaurar", headers=h)
-    assert r.status_code == 200, r.text
-    with sesion_de(motor_app, u) as s:
-        assert s.execute(text("select contenido from cv_base where id = :i"), {"i": cb}).scalar_one() == BASE
-        guardadas = s.execute(text("select contenido, origen from cv_base_versiones where cv_base_id = :i "
-                                   "order by id"), {"i": cb}).all()
-    assert len(guardadas) == 3 and guardadas[-1].contenido == BASE + "\nIngles B2\nCarné B"
-    assert guardadas[-1].origen == "restauracion"
-
-
-def test_cambiar_solo_el_nombre_o_nada_no_ensucia_el_historial(app, motor_app):
-    c, h, u, cb, oferta, cid = _escenario(app, motor_app)
-    c.patch(f"/api/cv-base/{cb}", headers=h, json={"contenido": BASE})  # igual: nada cambia
-    assert c.get(f"/api/cv-base/{cb}/versiones").json()["versiones"] == []
-
-
-def test_otra_usuaria_no_ve_ni_restaura_versiones(app, motor_app):
-    c, h, u, cb, oferta, cid = _escenario(app, motor_app)
-    c.patch(f"/api/cv-base/{cb}", headers=h, json={"contenido": "otro texto"})
-    vid = c.get(f"/api/cv-base/{cb}/versiones").json()["versiones"][0]["id"]
-    otra, h2, _ = entrar(app, "google-B")
-    assert otra.get(f"/api/cv-base/{cb}/versiones").status_code == 404
-    assert otra.post(f"/api/cv-base/{cb}/versiones/{vid}/restaurar", headers=h2).status_code == 404
-
-
 def test_aprobar_no_pide_casilla_ni_documento_y_los_avisos_no_bloquean(app, motor_app):
     c, h, u, cb, oferta, cid = _escenario(app, motor_app, avisos=[_aviso()], preparacion="pendiente_de_ti")
     assert c.post(f"/api/candidaturas/{cid}/aprobar", headers=h).status_code == 200
@@ -434,9 +424,9 @@ def test_desde_aprobada_salen_el_cv_y_la_carta_en_pdf(app, motor_app):
         assert texto in "".join(p.extract_text() for p in PdfReader(io.BytesIO(r.content)).pages)
 
 
-def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_un_estetico_subido(app, motor_app):
+def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_otro_documento_subido(app, motor_app):
     c, h, u, cb, oferta, cid = _escenario(app, motor_app)
-    c.post("/api/cv", headers=h, files={"archivo": ("b.md", b"# Mi CV bonito")}, data={"clase": "estetico"})
+    c.post("/api/cv", headers=h, files={"archivo": ("b.md", b"# Mi CV bonito")}, data={"clase": "carta"})
     c.post(f"/api/candidaturas/{cid}/aprobar", headers=h)
     r = c.get(f"/api/candidaturas/{cid}/cv.pdf")
     assert r.status_code == 200 and r.headers["content-type"] == "application/pdf"

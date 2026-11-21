@@ -242,13 +242,13 @@ def hay_propias(s: Session) -> bool:
                           "limit 1")).first() is not None
 
 
-def propias_sin_nota(s: Session, usuaria_id: int, perfil_version: int, limite: int) -> list[int]:
-    """Las propias procesadas que aún no tienen nota para esa versión del perfil."""
+def propias_sin_nota(s: Session, usuaria_id: int, huella: str, limite: int) -> list[int]:
+    """Las propias procesadas que aún no tienen nota para esa huella del perfil (RF-10.10c)."""
     return list(s.execute(text(
         "select o.id from ofertas o where o.usuaria_id = :u and o.estado = 'procesada' "
-        "and not exists (select 1 from matches m where m.oferta_id = o.id and m.perfil_version = :v) "
+        "and not exists (select 1 from matches m where m.oferta_id = o.id and m.huella_perfil = :h) "
         "and not exists (select 1 from descartes d where d.oferta_id = o.id) "
-        "order by o.id limit :l"), {"u": usuaria_id, "v": perfil_version, "l": limite}).scalars())
+        "order by o.id limit :l"), {"u": usuaria_id, "h": huella, "l": limite}).scalars())
 
 
 def marcar_error(s: Session, oferta_id: int, motivo: str) -> None:
@@ -314,3 +314,13 @@ def original(s: Session, oferta_id: int) -> dict | None:
 def visible(s: Session, oferta_id: int) -> bool:
     """¿La oferta existe y la usuaria de la sesión puede verla? (RLS: catálogo o propia)"""
     return s.execute(text("select 1 from ofertas where id = :i"), {"i": oferta_id}).first() is not None
+
+
+def propias_sin_tarea(s: Session) -> list[tuple[int, int]]:
+    """(oferta, usuaria) de las ofertas propias guardadas sin presupuesto: pendientes y sin ninguna tarea
+    de análisis (RF-10.9e). Solo en modo sistema."""
+    filas = s.execute(text(
+        "select o.id, o.usuaria_id from ofertas o where o.usuaria_id is not null and o.estado = 'pendiente' "
+        "and not exists (select 1 from tareas t where t.tipo = 'procesar_oferta' and t.entidad_id = o.id) "
+        "order by o.id")).all()
+    return [(f[0], f[1]) for f in filas]

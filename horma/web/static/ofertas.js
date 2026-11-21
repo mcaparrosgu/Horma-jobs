@@ -15,8 +15,6 @@ let guardadas = null;
 let opciones = null;
 let todas = [];            // lo que devuelve la API; la vista lo filtra y ordena sin volver a pedirlo
 let vista = { ...VISTA_POR_DEFECTO };
-let sueltasHoy = 0;
-let maxSueltas = 30;
 let barra = null;          // barra de avance del cálculo de compatibilidad en marcha
 let ultimoAvance = -1;
 let dejarDeSeguir = null;
@@ -271,15 +269,14 @@ function detalle(o) {
   return cont;
 }
 
-// «Puntuar ahora» (RF-8.5e): puntúa solo esta oferta; con 30 sueltas hoy, desactivado con su texto (RF-8.5f).
+// «Puntuar ahora» (RF-8.5e): puntúa solo esta oferta; sin presupuesto hoy, desactivado con su texto (RF-10.9c).
 function botonPuntuarAhora(o) {
   const caja = nodo("div", null, "acciones-ahora");
   const b = nodo("button", "Puntuar ahora");
   b.type = "button";
   const aviso = nodo("p", "", "suave");
   aviso.setAttribute("role", "status");
-  const agotadas = () => { b.disabled = true; aviso.textContent = TEXTOS.sueltas; };
-  if (sueltasHoy >= maxSueltas) agotadas();
+  const agotadas = () => { b.disabled = true; aviso.textContent = TEXTOS.presupuesto; };
   b.addEventListener("click", async (e) => {
     e.stopPropagation();
     b.disabled = true;
@@ -291,7 +288,6 @@ function botonPuntuarAhora(o) {
       aviso.textContent = "";
       return avisar(r.motivo, true);
     }
-    sueltasHoy += 1;
     seguirTarea(r.datos.tarea_id, (p) => { aviso.textContent = `Calculando… ${p} %`; }, async (t) => {
       if (t.estado === "error") {
         b.disabled = false;
@@ -452,8 +448,6 @@ async function cargarLista() {
   const r = await api("/api/recomendaciones");
   if (!r.ok) return avisar(r.motivo, true);
   todas = r.datos.recomendaciones;
-  sueltasHoy = r.datos.sueltas_hoy;
-  maxSueltas = r.datos.max_sueltas;
   pintarLista();
 }
 
@@ -487,7 +481,7 @@ async function lanzarPuntuacion(motivo) {
   const r = await api("/api/recomendar", { metodo: "POST", cuerpo: { motivo } });
   if (!r.ok) return avisar(r.motivo, true);
   if (r.datos.motivo === "sin_perfil") return mostrarSinPerfil();
-  $("aviso-tope").textContent = r.datos.motivo === "tope" ? TEXTOS.presupuesto : "";
+  $("aviso-tope").textContent = r.datos.motivo === "presupuesto" ? TEXTOS.presupuesto : "";
   if (r.datos.tarea_id) seguirPuntuacion(r.datos.tarea_id);
 }
 
@@ -689,7 +683,7 @@ $("formulario-texto").addEventListener("submit", async (e) => {
   $("texto").value = "";
   aviso.textContent = "";
   $("ventana-anadir").close();
-  avisar(TEXTOS.anadirOk);
+  avisar(r.datos.aplazada ? TEXTOS.anadirAplazada : TEXTOS.anadirOk);   // sin presupuesto, se analiza mañana (RF-10.9e)
   await refrescarMientrasTrabaja();
 });
 

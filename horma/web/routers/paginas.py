@@ -12,7 +12,7 @@ from horma.web.repositories import perfiles
 
 router = APIRouter()
 ESTATICOS = Path(__file__).resolve().parent.parent / "static"
-PAGINAS = {"/perfil": "perfil.html", "/cv-base": "cv-base.html", "/ofertas": "ofertas.html",
+PAGINAS = {"/perfil": "perfil.html", "/ofertas": "ofertas.html",
            "/candidaturas": "candidaturas.html",
            "/candidaturas/{candidatura_id}": "candidatura.html"}
 
@@ -49,5 +49,5 @@ def _redireccion(destino: str):
 
 
 # Direcciones antiguas (RF-10.1e): marcadores y enlaces de antes siguen funcionando.
-for _antigua, _destino in {"/entrar": "/", "/recomendadas": "/ofertas", "/anadir-oferta": "/ofertas#anadir"}.items():  # noqa: E501
+for _antigua, _destino in {"/entrar": "/", "/cv-base": "/perfil", "/recomendadas": "/ofertas", "/anadir-oferta": "/ofertas#anadir"}.items():  # noqa: E501
     router.add_api_route(_antigua, _redireccion(_destino), methods=["GET"], include_in_schema=False)

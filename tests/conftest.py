@@ -105,6 +105,23 @@ def _sin_analisis_de_estilo_salvo_que_se_pida(request, monkeypatch):
 
 
 @pytest.fixture
+def oferta_un_agente():
+    """Marca de los tests que usan `analizador-oferta` (S5, RF-10.10): una sola llamada por oferta."""
+
+
+@pytest.fixture(autouse=True)
+def _oferta_con_tres_llamadas_salvo_que_se_pida(request, monkeypatch):
+    """Los tests antiguos de `procesar_oferta` simulan tres respuestas (extractor, auditor, clasificador).
+    El ajuste vale `true` por defecto en producción; aquí se pone a `false` salvo que el test pida
+    `oferta_un_agente`. La caché de ajustes se limpia al empezar y al acabar."""
+    if "oferta_un_agente" not in request.fixturenames:
+        monkeypatch.setenv("HORMA_OFERTA_UN_AGENTE", "false")
+    ajustes.cache_clear()
+    yield
+    ajustes.cache_clear()
+
+
+@pytest.fixture
 def limites_reales():
     """Marca de los tests de la fase 5 (T20-T23) que comprueban de verdad el mínimo y el máximo."""
 

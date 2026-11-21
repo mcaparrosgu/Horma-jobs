@@ -70,7 +70,6 @@ def test_una_clase_desconocida_sigue_rechazada(app):  # noqa: F811
 
 
 def test_la_pantalla_ofrece_cartas_y_la_marca():
-    html = Path("horma/web/static/perfil.html").read_text(encoding="utf-8")
+    # S4 (spec 010): «Carta» se sube desde «Documentos subidos».
     js = Path("horma/web/static/perfil.js").read_text(encoding="utf-8")
-    assert 'value="carta"' in html and 'id="escrito-por-ella"' in html
     assert "escrito-por-ella" in js and "Lo escribí yo" in js

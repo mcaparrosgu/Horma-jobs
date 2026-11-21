@@ -5,16 +5,17 @@ from sqlalchemy.orm import Session
 from horma.tools.buscar_ofertas import Consulta
 
 
-def puntuadas(s: Session, perfil_version: int) -> list[int]:
-    """Ofertas que ya tienen nota para esa versión del perfil."""
-    return list(s.execute(text("select oferta_id from matches where perfil_version = :v order by 1"),
-                          {"v": perfil_version}).scalars())
+def puntuadas(s: Session, huella: str) -> list[int]:
+    """Ofertas con una nota calculada con un perfil de esa huella (RF-10.10c): no se vuelven a puntuar."""
+    return list(s.execute(text("select distinct oferta_id from matches where huella_perfil = :h order by 1"),
+                          {"h": huella}).scalars())
 
 
-def puntuadas_de(s: Session, perfil_version: int, oferta_id: int) -> list[int]:
-    """[oferta_id] si esa oferta ya tiene nota para esa versión del perfil; si no, []."""
-    return list(s.execute(text("select oferta_id from matches where perfil_version = :v and oferta_id = :o"),
-                          {"v": perfil_version, "o": oferta_id}).scalars())
+def puntuadas_de(s: Session, huella: str, oferta_id: int) -> list[int]:
+    """[oferta_id] si esa oferta ya tiene nota para esa huella del perfil; si no, []."""
+    return list(s.execute(text("select distinct oferta_id from matches "
+                               "where huella_perfil = :h and oferta_id = :o"),
+                          {"h": huella, "o": oferta_id}).scalars())
 
 
 def ids_candidatas(s: Session, consulta: Consulta) -> list[int]:
@@ -22,9 +23,10 @@ def ids_candidatas(s: Session, consulta: Consulta) -> list[int]:
     return [fila[0] for fila in s.execute(text(consulta.sql), consulta.parametros)]
 
 
-def listado(s: Session, ids: list[int]) -> list[dict]:
-    """Las ofertas con la nota más reciente de la usuaria (o ninguna: «sin puntuar»), en el orden de
-    `ids`. `desfasado`: la nota se calculó con una versión anterior del perfil."""
+def listado(s: Session, ids: list[int], huella: str | None = None) -> list[dict]:
+    """Las ofertas con la nota vigente de la usuaria (o ninguna: «sin puntuar»), en el orden de `ids`.
+    Vigente = calculada con la huella actual del perfil; si no hay, la más reciente. `desfasado`: la nota
+    se calculó con otra huella (RF-10.10c). Las filas sin huella usan la regla de las versiones."""
     if not ids:
         return []
     filas = s.execute(text(
@@ -36,8 +38,9 @@ def listado(s: Session, ids: list[int]) -> list[dict]:
         "(o.salario_anual_eur_min is not null or o.salario_anual_eur_max is not null) "
         "as sueldo_comparable, m.nota, m.condiciones, m.explicacion, m.cita_perfil, m.cita_oferta, "
         "m.retirada, m.correccion, m.perfil_version, "
+        "case when m.huella_perfil is null or cast(:h as text) is null then "
         "m.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
-        "as desfasado, d.oferta_id is not null as descartada, "
+        "else m.huella_perfil <> cast(:h as text) end as desfasado, d.oferta_id is not null as descartada, "
         "c.id as candidatura_id, c.estado as candidatura_estado, c.motivo_cierre as candidatura_motivo, "
         "c.preparacion as candidatura_preparacion "
         "from ofertas o left join descartes d on d.oferta_id = o.id "
@@ -45,8 +48,9 @@ def listado(s: Session, ids: list[int]) -> list[dict]:
         "where x.oferta_id = o.id "
         "order by (x.estado <> 'cerrada') desc, x.id desc limit 1) c on true "
         "left join lateral (select * from matches x where x.oferta_id = o.id "
-        "order by x.perfil_version desc limit 1) m on true "
-        "where o.id = any(cast(:ids as int[]))"), {"ids": list(ids)}).mappings().all()
+        "order by (x.huella_perfil is not distinct from cast(:h as text)) desc, "
+        "x.perfil_version desc limit 1) m on true "
+        "where o.id = any(cast(:ids as int[]))"), {"ids": list(ids), "h": huella}).mappings().all()
     por_id = {}
     for f in filas:
         f = dict(f)
@@ -72,15 +76,17 @@ def guardar_correccion(s: Session, oferta_id: int, perfil_version: int, correcci
               {"o": oferta_id, "v": perfil_version, "c": correccion})
 
 
-def guardar(s: Session, usuaria_id: int, perfil_version: int, matches: list[dict]) -> None:
+def guardar(s: Session, usuaria_id: int, perfil_version: int, matches: list[dict],
+            huella: str | None = None) -> None:
     for m in matches:
         s.execute(text(
             "insert into matches (usuaria_id, oferta_id, perfil_version, nota, condiciones, explicacion, "
-            "cita_perfil, cita_oferta, retirada) values (:u, :o, :v, :n, :c, :e, :cp, :co, :r) "
+            "cita_perfil, cita_oferta, retirada, huella_perfil) "
+            "values (:u, :o, :v, :n, :c, :e, :cp, :co, :r, :h) "
             "on conflict (usuaria_id, oferta_id, perfil_version) do update set nota = excluded.nota, "
             "condiciones = excluded.condiciones, explicacion = excluded.explicacion, "
             "cita_perfil = excluded.cita_perfil, cita_oferta = excluded.cita_oferta, "
-            "retirada = excluded.retirada"),
+            "retirada = excluded.retirada, huella_perfil = excluded.huella_perfil"),
             {"u": usuaria_id, "o": m["oferta_id"], "v": perfil_version, "n": m["nota"],
              "c": m["condiciones"], "e": m["explicacion"], "cp": m["cita_perfil"],
-             "co": m["cita_oferta"], "r": m["retirada"]})
+             "co": m["cita_oferta"], "r": m["retirada"], "h": huella})

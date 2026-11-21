@@ -1,4 +1,5 @@
 from horma.agents.analizador_estilo.agent import AnalizadorEstilo
+from horma.agents.analizador_oferta.agent import AnalizadorOferta
 from horma.agents.auditor_fuentes.agent import AuditorFuentes
 from horma.agents.auditor_oferta.agent import AuditorOferta
 from horma.agents.base import Agente
@@ -17,5 +18,5 @@ AGENTES: dict[str, type[Agente]] = {
     a.nombre: a for a in (ExtractorOferta, AuditorOferta, ClasificadorOferta, AuditorFuentes,
                           ExtractorPerfil, ClasificadorPostulante, GeneradorCvBase, Matcher,
                           RedactorCv, RedactorCarta, JuezCandidatura, ClasificadorRespuesta,
-                          AnalizadorEstilo)
+                          AnalizadorEstilo, AnalizadorOferta)
 }

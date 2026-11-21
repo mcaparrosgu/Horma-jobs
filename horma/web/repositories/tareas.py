@@ -46,16 +46,14 @@ def actualizar(s: Session, tarea_id: int, estado: str, coste_extra: float = 0.0,
               {"i": tarea_id, "e": estado, "c": coste_extra, "m": motivo})
 
 
-# --- Fase 8: topes del día y avance (RF-8.5, RF-8.7) ---------------------------------------------------
-TIPOS_GASTO = ("recomendar", "puntuar_propias", "puntuar_una")
-_HOY = ("(creada_en at time zone 'Europe/Madrid')::date = (now() at time zone 'Europe/Madrid')::date")
+# --- Fase 8: avance (RF-8.7) y gasto del día (RF-10.9) -------------------------------------------------
 
 
-def gasto_hoy(s: Session, usuaria_id: int, tipos: tuple[str, ...] = TIPOS_GASTO) -> float:
-    """USD gastados hoy (el día se corta a medianoche de Madrid) en las tareas que puntúan."""
-    return float(s.execute(text(
-        f"select coalesce(sum(coste_acumulado), 0) from tareas where usuaria_id = :u "
-        f"and tipo = any(:t) and {_HOY}"), {"u": usuaria_id, "t": list(tipos)}).scalar_one())
+def gasto_hoy(s: Session, usuaria_id: int) -> float:
+    """USD gastados hoy (el día se corta a medianoche de Madrid) en todo lo que se hace para la usuaria:
+    sus tareas y el análisis de las ofertas que ella añadió (`procesar_oferta` es del sistema y la RLS lo
+    esconde: lo suma la función `gasto_hoy_usuaria`, migración 0022)."""
+    return float(s.execute(text("select gasto_hoy_usuaria(:u)"), {"u": usuaria_id}).scalar_one())
 
 
 def ultima(s: Session, usuaria_id: int, tipo: str) -> dict | None:
@@ -64,12 +62,6 @@ def ultima(s: Session, usuaria_id: int, tipo: str) -> dict | None:
                           "order by creada_en desc, id desc limit 1"),
                      {"u": usuaria_id, "t": tipo}).mappings().first()
     return dict(fila) if fila else None
-
-
-def sueltas_hoy(s: Session, usuaria_id: int) -> int:
-    """Cuántas «Puntuar ahora» ha pedido hoy."""
-    return s.execute(text(f"select count(*) from tareas where usuaria_id = :u and tipo = 'puntuar_una' "
-                          f"and {_HOY}"), {"u": usuaria_id}).scalar_one()
 
 
 def activas(s: Session, usuaria_id: int, tipos: list[str] | None = None) -> list[dict]:

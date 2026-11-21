@@ -13,7 +13,7 @@ from horma.web.main import crear_app
 
 ESTATICOS = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
 PAGINAS = {"/candidaturas": "candidaturas", "/candidaturas/7": "candidatura"}
-JS = ("comun", "candidaturas", "candidatura", "ofertas", "textos", "cv-base")
+JS = ("comun", "candidaturas", "candidatura", "ofertas", "textos")
 PROHIBIDO = ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function")
 
 
@@ -163,12 +163,6 @@ def test_la_pantalla_espera_solo_mientras_se_prepara():
 
 
 # --- T20 · recomendadas y CV base ---------------------------------------------------------------
-def test_los_textos_de_ofertas_y_cv_base_no_hablan_de_elegir_cv_ni_de_cv_estetico():
-    for nombre in ("ofertas", "cv-base"):
-        js = leer(f"{nombre}.js")
-        assert "estético" not in js and "guardas una candidatura" not in js
-        assert "desde una candidatura" not in js
-    assert "Horma prepara tu CV a partir de tu perfil." in leer("textos.js")   # RF-10.2d: sin «CV base»
 
 
 def test_ofertas_tiene_preparar_candidatura_que_no_pide_cv_base():
@@ -176,13 +170,3 @@ def test_ofertas_tiene_preparar_candidatura_que_no_pide_cv_base():
     assert "Preparar candidatura" in js and "/api/candidaturas" in js and "oferta_id" in js
     assert "/cv-base" not in js                                             # RF-10.2d: ya no se habla del CV base  # noqa: E501
     assert "location" in js                                                 # y lleva a la candidatura
-
-
-def test_cv_base_tiene_historial_plegado_con_lineas_marcadas_y_volver():
-    js = leer("cv-base.js")
-    assert "Historial" in js and "/versiones" in js and "/restaurar" in js
-    assert "Volver a esta versión" in js
-    assert "añadida" in js and "quitada" in js
-    css = leer("estilo.css")
-    assert ".linea-anadida" in css and ".linea-quitada" in css
-    assert "line-through" in css                                            # no solo el color

@@ -11,6 +11,7 @@ from sqlalchemy import text
 
 from horma.config import ajustes
 from horma.tools.buscar_ofertas import buscar_ofertas
+from horma.tools.huella_perfil import huella_compatibilidad
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import candidaturas as repo_candidaturas
@@ -18,6 +19,7 @@ from horma.web.repositories import descartes, perfiles, tareas
 from horma.web.repositories import matches as repo
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.routers.ingesta import solo_ingesta
+from horma.web.services import presupuesto
 
 router = APIRouter()
 
@@ -52,15 +54,12 @@ class Recomendar(BaseModel):
     motivo: Literal["abrir", "buscar"] = "abrir"
 
 
-MIN_USD = 0.01  # por debajo de esto no merece la pena lanzar una tarea
-
-
 @router.post("/api/recomendar", dependencies=[Depends(exigir_csrf)])
 def recomendar(request: Request, datos: Recomendar | None = None, usuaria_id: int = Depends(usuaria_actual)):
     """Puntúa lo que falta sin botón (RF-8.5). Siempre responde 200 con `{tarea_id}` o, si no lanza nada,
     `{tarea_id: null, motivo}`: `sin_perfil`, `en_marcha` (con la tarea en curso),
     `sin_pendientes`, `reciente`
-    (solo al abrir: la última empezó hace menos de una hora) o `tope` (el gasto del día)."""
+    (solo al abrir: la última empezó hace menos de una hora) o `presupuesto` (RF-10.9c: hoy ya no queda)."""
     motivo_pedido = (datos or Recomendar()).motivo
     a = ajustes()
     with sesion_de(request.app.state.engine, usuaria_id) as s:
@@ -76,24 +75,22 @@ def recomendar(request: Request, datos: Recomendar | None = None, usuaria_id: in
         prefs = perfiles.preferencias(s).model_copy(
             update={"rango_min": 40, "rango_max": 100, "orden": "compatibles"})
         taxonomia = perfiles.perfil_modelo(fila).taxonomia
-        excluir = repo.puntuadas(s, fila["version"]) + descartes.ids(s)
+        huella = huella_compatibilidad(perfiles.perfil_modelo(fila))
+        excluir = repo.puntuadas(s, huella) + descartes.ids(s)
         if not repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia, excluir_ids=excluir, limite=1)):
             return {"tarea_id": None, "motivo": "sin_pendientes"}
-        queda = round(a.tope_gasto_diario_puntuar - tareas.gasto_hoy(s, usuaria_id), 6)
-        if queda < MIN_USD:
-            return {"tarea_id": None, "motivo": "tope"}
-        tarea = tareas.encolar(s, usuaria_id, "recomendar", fila["id"],
-                               min(a.tope_coste_recomendar, queda), a.tope_reintentos_tarea)
+        try:
+            tarea = presupuesto.encolar(s, usuaria_id, "recomendar", fila["id"],
+                                        a.tope_coste_recomendar, a.tope_reintentos_tarea)
+        except presupuesto.SinPresupuesto:
+            return {"tarea_id": None, "motivo": "presupuesto"}
     return {"tarea_id": tarea, "perfil_version": fila["version"]}
-
-
-TEXTO_SUELTAS = "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir."
 
 
 @router.post("/api/matches/{oferta_id}/puntuar", status_code=202, dependencies=[Depends(exigir_csrf)])
 def puntuar_ahora(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    """«Puntuar ahora» (RF-8.5e): puntúa solo esa oferta. Funciona con el tope del día alcanzado y con una
-    tanda en marcha; tiene su propio límite de sueltas al día (RF-8.5f)."""
+    """«Puntuar ahora» (RF-8.5e): puntúa solo esa oferta. Funciona con una tanda en marcha; gasta del
+    presupuesto del día (RF-10.9): sin presupuesto, 429 `presupuesto`."""
     a = ajustes()
     with sesion_de(request.app.state.engine, usuaria_id) as s:
         fila = perfiles.vigente(s)
@@ -101,13 +98,12 @@ def puntuar_ahora(oferta_id: int, request: Request, usuaria_id: int = Depends(us
             raise HTTPException(status_code=409, detail="Aún no tienes un perfil: sube un CV primero.")
         if not repo_ofertas.visible(s, oferta_id):
             raise HTTPException(status_code=404, detail="No existe esa oferta")
-        if oferta_id in repo.puntuadas_de(s, fila["version"], oferta_id) or tareas.sin_terminar(
+        if oferta_id in repo.puntuadas_de(s, huella_compatibilidad(perfiles.perfil_modelo(fila)),
+                                          oferta_id) or tareas.sin_terminar(
                 s, "puntuar_una", oferta_id):
             raise HTTPException(status_code=409, detail="Esa oferta ya tiene nota o se está puntuando.")
-        if tareas.sueltas_hoy(s, usuaria_id) >= a.max_sueltas_dia:
-            raise HTTPException(status_code=429, detail=TEXTO_SUELTAS)
-        tarea = tareas.encolar(s, usuaria_id, "puntuar_una", oferta_id, a.tope_coste_puntuar_una,
-                               a.tope_reintentos_tarea)
+        tarea = presupuesto.encolar(s, usuaria_id, "puntuar_una", oferta_id, a.tope_coste_puntuar_una,
+                                    a.tope_reintentos_tarea)
     return {"tarea_id": tarea}
 
 
@@ -120,14 +116,14 @@ def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
         vigente = perfiles.vigente(s)
         taxonomia = perfiles.perfil_modelo(vigente).taxonomia if vigente else None
         ids = repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia))
-        filas = repo.listado(s, ids)
-        sueltas = tareas.sueltas_hoy(s, usuaria_id)
+        huella = huella_compatibilidad(perfiles.perfil_modelo(vigente)) if vigente else None
+        filas = repo.listado(s, ids, huella)
     with sesion_sistema(request.app.state.engine) as s:
         repo_ofertas.marcar_fuente_desconocida(filas, s)
     salida = [{**f, "salario": _salario(f), "sin_puntuar": f["nota"] is None,
                "aviso_auditor": _aviso_auditor(f) if f["propia"] else None} for f in filas]
     return {"total": len(salida), "sin_puntuar": sum(1 for f in salida if f["sin_puntuar"]),
-            "sueltas_hoy": sueltas, "max_sueltas": ajustes().max_sueltas_dia, "recomendaciones": salida}
+            "recomendaciones": salida}
 
 
 @router.put("/api/descartes/{oferta_id}", dependencies=[Depends(exigir_csrf)])

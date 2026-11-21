@@ -160,9 +160,22 @@ def test_tras_editar_el_perfil_las_propias_se_repuntuan_con_la_version_nueva(
     (oid,) = _pegar(c, h, motor_app)
     _procesar_ofertas(motor_app, 1)
     assert worker.procesar_una(motor_app, ProveedorSimulado([_matches([oid])])) == "hecha"
-    cambio = {"campo": "genero_puestos", "dato": {"valor": "femenino"}}
+    cambio = {"campo": "experiencias", "indice": 0, "dato": {"puesto": "Camarera", "empresa": "Bar Luna"}}
     r = c.patch("/api/perfil/datos", headers=h, json=cambio)
     assert r.status_code == 201
     assert worker.procesar_una(motor_app, ProveedorSimulado([TAX])) == "hecha"  # clasificar_perfil
     assert worker.procesar_una(motor_app, ProveedorSimulado([_matches([oid])])) == "hecha"
     assert _notas(motor_migrador) == [(oid, 1, 85), (oid, 2, 85)]
+
+
+def test_un_cambio_que_no_afecta_a_la_compatibilidad_no_repuntua(app, motor_app, motor_migrador):
+    """RF-10.10c: corregir algo ajeno (el género de los puestos) no vuelve a puntuar ni a clasificar."""
+    c, h = _entrar(app)
+    _perfil_hecho(motor_app, _usuaria(motor_migrador))
+    (oid,) = _pegar(c, h, motor_app)
+    _procesar_ofertas(motor_app, 1)
+    assert worker.procesar_una(motor_app, ProveedorSimulado([_matches([oid])])) == "hecha"
+    cambio = {"campo": "genero_puestos", "dato": {"valor": "femenino"}}
+    assert c.patch("/api/perfil/datos", headers=h, json=cambio).status_code == 201
+    assert worker.procesar_una(motor_app, ProveedorSimulado([])) is None  # no hay tarea nueva
+    assert _notas(motor_migrador) == [(oid, 1, 85)]

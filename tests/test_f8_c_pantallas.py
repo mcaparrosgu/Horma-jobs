@@ -240,12 +240,11 @@ def test_ofertas_ya_no_tiene_boton_recomendar_ni_limite_de_sondeos():
     assert "MAX_PUNTUANDO" not in js and "sondeos" not in js
     assert 'id="avance"' in html and "barraAvance($(\"avance\"), \"Calculando la compatibilidad de las ofertas\")" in js  # noqa: E501
     textos = leer("textos.js")   # RF-10.2e: los textos, en un solo archivo
-    assert TEXTO_TOPE in textos and TEXTO_SUELTAS in textos
-    assert "TEXTOS.presupuesto" in js and "TEXTOS.sueltas" in js
+    assert TEXTO_TOPE in textos
+    assert "TEXTOS.presupuesto" in js and "sueltas" not in js
 
 
-TEXTO_TOPE = "Hoy ya hemos puntuado todo lo posible. Mañana seguimos con el resto."
-TEXTO_SUELTAS = "Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir."
+TEXTO_TOPE = "Hoy ya hemos trabajado todo lo posible para ti. Mañana seguimos."
 
 
 def test_al_cargar_con_una_tarea_activa_la_barra_retoma_su_valor_y_al_terminar_desaparece():

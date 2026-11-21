@@ -9,7 +9,7 @@ from horma import config
 from horma.web.main import crear_app
 
 ESTATICOS = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
-PAGINAS = {"/perfil": "perfil", "/cv-base": "cv-base", "/ofertas": "ofertas"}
+PAGINAS = {"/perfil": "perfil", "/ofertas": "ofertas"}
 PROHIBIDO = ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function")
 
 
@@ -70,7 +70,7 @@ def test_las_pestanas_son_las_tres_de_la_spec_010():
 
 
 def test_el_js_de_las_pantallas_pinta_solo_con_textcontent():
-    for nombre in ("comun", "perfil", "catalogo", "cv-base", "ofertas", "textos"):
+    for nombre in ("comun", "perfil", "catalogo", "ofertas", "textos"):
         js = leer(f"{nombre}.js")
         for malo in PROHIBIDO:
             assert malo not in js, f"{nombre}.js usa {malo}"
@@ -93,12 +93,6 @@ def test_perfil_enseña_origen_pendientes_y_la_gestion_de_cv():
     assert "FormData" in js                                               # subir un CV
     assert "/ver" in js and "iframe" in js and '"Ver"' in js              # ver el CV sin descargarlo
     assert 'id="visor"' in leer("perfil.html")
-
-
-def test_cv_base_se_genera_a_peticion_y_se_renombra():
-    js = leer("cv-base.js")
-    assert "/api/cv-base" in js and "POST" in js and "PATCH" in js
-    assert "desfasado" in js and "avisos" in js
 
 
 def test_ofertas_sigue_la_maqueta():

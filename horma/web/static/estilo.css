@@ -333,6 +333,14 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
 .solo-lector{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .ocultar-movil{ display: initial; }
 
+/* Perfil: a 1280 px, «Tu perfil» a la izquierda y lo demás a la derecha, a igual ancho (RF-10.5b). */
+.pantalla-perfil{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto) 1fr; gap: 0 1rem; align-items: start; }
+.pantalla-perfil > #mi-perfil{ grid-column: 1; grid-row: 1 / -1; }
+.pantalla-perfil > :not(#mi-perfil){ grid-column: 2; }
+@media (max-width: 900px){
+  .pantalla-perfil{ display: block; }
+}
+
 /* ── Móvil (< 900 px): menú arriba y tarjetas ── */
 @media (max-width: 900px){
   main{ padding: 0 var(--pad-page-m) 3rem; }
@@ -431,4 +439,16 @@ fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 @media (max-width: 900px){
   .grupos-dos{ grid-template-columns: 1fr; }
   .aviso-accion > .acciones-aviso > button{ flex: 1 1 10rem; }
+}
+
+/* ── Indicador de avance (RF-10.8): frase y % de la tarea en marcha, en la cabecera ── */
+.indicador-avance{
+  display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 12px; min-width: 0;
+  border: var(--bw) solid var(--line-strong); color: var(--ink); text-decoration: none; white-space: nowrap;
+  font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase;
+  letter-spacing: var(--ls-label); font-weight: 600;
+}
+.indicador-avance:hover{ background: var(--surface-2); }
+@media (max-width: 900px){
+  .indicador-avance{ padding: 0 8px; overflow: hidden; text-overflow: ellipsis; max-width: 11rem; }
 }

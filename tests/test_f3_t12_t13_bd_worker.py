@@ -143,8 +143,20 @@ def test_eliminar_un_cv_base_borra_sus_versiones_y_no_la_candidatura(motor_app, 
     assert c.cv_base_id is None
 
 
+@pytest.fixture
+def respaldo(monkeypatch):
+    """RF-10.3d: con el respaldo activo el worker pasa los CV base al flujo."""
+    from horma import config
+    monkeypatch.setenv("HORMA_CV_BASE_RESPALDO", "true")
+    config.ajustes.cache_clear()
+    yield
+    monkeypatch.undo()
+    config.ajustes.cache_clear()
+
+
 # --- T13: worker `candidatura` -----------------------------------------------------------------
-def test_candidatura_guarda_el_cv_base_elegido_con_motivo_cv_carta_trazas_y_preparacion(motor_app, bd_limpia):
+def test_candidatura_guarda_el_cv_base_elegido_con_motivo_cv_carta_trazas_y_preparacion(
+        motor_app, bd_limpia, respaldo):
     a, _ = _usuarias(motor_app)
     ids = _perfil_y_cv_base(motor_app, a, n_cv_base=2)
     cid = _candidatura(motor_app, a, _oferta(motor_app))
@@ -164,7 +176,17 @@ def test_candidatura_guarda_el_cv_base_elegido_con_motivo_cv_carta_trazas_y_prep
     assert f["problemas_juez"] == [] and len(prov.llamadas) == 3
 
 
-def test_candidatura_con_un_solo_cv_base_hace_3_llamadas(motor_app, bd_limpia):
+def test_candidatura_sin_respaldo_parte_del_maestro_aunque_haya_cv_base(motor_app, bd_limpia):
+    a, _ = _usuarias(motor_app)
+    _perfil_y_cv_base(motor_app, a, n_cv_base=2)
+    cid = _candidatura(motor_app, a, _oferta(motor_app))
+    _encolar(motor_app, a, "candidatura", cid)
+    assert worker.procesar_una(motor_app, ProveedorSimulado(FELIZ)) == "hecha"
+    f = _fila(motor_app, a, cid)
+    assert f["cv_base_id"] is None and f["cv_base_motivo"] is None and f["preparacion"] == "lista"
+
+
+def test_candidatura_con_un_solo_cv_base_hace_3_llamadas(motor_app, bd_limpia, respaldo):
     a, _ = _usuarias(motor_app)
     [cv_base] = _perfil_y_cv_base(motor_app, a)
     cid = _candidatura(motor_app, a, _oferta(motor_app))
@@ -174,7 +196,7 @@ def test_candidatura_con_un_solo_cv_base_hace_3_llamadas(motor_app, bd_limpia):
     assert _fila(motor_app, a, cid)["cv_base_id"] == cv_base
 
 
-def test_candidatura_ignora_los_cv_base_rechazados_y_los_de_otra_usuaria(motor_app, bd_limpia):
+def test_candidatura_ignora_los_cv_base_rechazados_y_los_de_otra_usuaria(motor_app, bd_limpia, respaldo):
     a, b = _usuarias(motor_app)
     _perfil_y_cv_base(motor_app, b)
     [bueno] = _perfil_y_cv_base(motor_app, a)
@@ -188,9 +210,23 @@ def test_candidatura_ignora_los_cv_base_rechazados_y_los_de_otra_usuaria(motor_a
     assert _fila(motor_app, a, cid)["cv_base_id"] == bueno
 
 
-def test_candidatura_sin_cv_base_valido_deja_preparacion_error_con_motivo(motor_app, bd_limpia):
+def test_candidatura_sin_cv_base_se_prepara_con_el_maestro(motor_app, bd_limpia):
     a, _ = _usuarias(motor_app)
     _perfil_y_cv_base(motor_app, a, n_cv_base=0)
+    cid = _candidatura(motor_app, a, _oferta(motor_app))
+    _encolar(motor_app, a, "candidatura", cid, tope_reintentos=1)
+    prov = ProveedorSimulado(FELIZ)
+    assert worker.procesar_una(motor_app, prov) == "hecha" and len(prov.llamadas) == 3
+    assert _fila(motor_app, a, cid)["preparacion"] == "lista"
+
+
+def test_con_respaldo_y_solo_cv_base_rechazados_deja_preparacion_error_con_motivo(
+        motor_app, bd_limpia, respaldo):
+    a, _ = _usuarias(motor_app)
+    _perfil_y_cv_base(motor_app, a, n_cv_base=0)
+    with sesion_de(motor_app, a) as s:
+        s.execute(text("insert into cv_base (usuaria_id, perfil_version, nombre, estado, motivo_error) "
+                       "values (:u, 1, 'CV malo', 'rechazado', 'x')"), {"u": a})
     cid = _candidatura(motor_app, a, _oferta(motor_app))
     _encolar(motor_app, a, "candidatura", cid, tope_reintentos=1)
     assert worker.procesar_una(motor_app, ProveedorSimulado([])) == "error"

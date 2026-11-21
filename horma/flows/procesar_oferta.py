@@ -1,15 +1,21 @@
 """Flujo procesar_oferta (RF-1.4): extraer → verificar_origen → auditar → comprobar_empresa →
 clasificar → componer. Sin bucle y sin acceso a la base de datos: recibe el estado y lo devuelve.
 
+Con `HORMA_OFERTA_UN_AGENTE` (RF-10.10) una sola llamada, `analizador-oferta`, sustituye a las tres:
+analizar → verificar_origen → comprobar_empresa → componer.
+
 Estado de entrada: {"texto": str, "fuente"?: str, "url"?: str, "repetida"?: bool}.
 Estado de salida: además, "oferta" (Oferta completa) y "origenes" ([[campo, línea], ...]).
 """
+from horma.agents.analizador_oferta.agent import AnalizadorOferta
+from horma.agents.analizador_oferta.schemas import TextoOferta as TextoAnalizador
 from horma.agents.auditor_oferta.agent import AuditorOferta
 from horma.agents.auditor_oferta.schemas import EntradaAuditor, SalidaAuditor
 from horma.agents.clasificador_oferta.agent import ClasificadorOferta
 from horma.agents.clasificador_oferta.schemas import EntradaClasificador
 from horma.agents.extractor_oferta.agent import ExtractorOferta
 from horma.agents.extractor_oferta.schemas import TextoOferta
+from horma.config import ajustes
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
 from horma.schemas.oferta import Auditoria, Oferta, OfertaExtraida
@@ -31,13 +37,28 @@ def _rango(oferta: OfertaExtraida) -> str | None:
 
 
 def crear(proveedor: Proveedor | None = None,
-          resolver: Resolvedor | None = dominio.resuelve) -> PlainFlow:
-    """`resolver=None` no comprueba el DNS (consola en simulado y evals)."""
+          resolver: Resolvedor | None = dominio.resuelve,
+          un_agente: bool | None = None) -> PlainFlow:
+    """`resolver=None` no comprueba el DNS (consola en simulado y evals). `un_agente=None` lee el
+    ajuste `HORMA_OFERTA_UN_AGENTE`."""
+    if un_agente is None:
+        un_agente = ajustes().horma_oferta_un_agente
 
     def extraer(e: dict) -> dict:
         bruta = ExtractorOferta.run(TextoOferta(texto=e["texto"], fuente=e.get("fuente"),
                                                 url=e.get("url")), proveedor=proveedor)
         e["extraida_bruta"] = bruta.model_dump(mode="json")
+        return e
+
+    def analizar(e: dict) -> dict:
+        r = AnalizadorOferta.run(TextoAnalizador(texto=e["texto"], fuente=e.get("fuente"),
+                                                 url=e.get("url")), proveedor=proveedor)
+        e["extraida_bruta"] = r.oferta.model_dump(mode="json")
+        e["taxonomia_modelo"] = r.taxonomia.model_dump(mode="json")
+        e["auditoria_modelo"] = {
+            "generica": r.generica, "fraude": r.fraude, "senales_fraude": r.senales_fraude,
+            "dominio_empresa": r.dominio_empresa,
+            "instrucciones_embebidas": r.oferta.instrucciones_embebidas}
         return e
 
     def verificar_origen(e: dict) -> dict:
@@ -101,6 +122,13 @@ def crear(proveedor: Proveedor | None = None,
         e["oferta"] = oferta.model_dump(mode="json")
         return e
 
+    if un_agente:
+        pasos = {"analizar": analizar, "verificar_origen": verificar_origen,
+                 "comprobar_empresa": comprobar_empresa, "componer": componer}
+        aristas = {"analizar": "verificar_origen", "verificar_origen": "comprobar_empresa",
+                   "comprobar_empresa": "componer"}
+        return PlainFlow("procesar_oferta", pasos=pasos, aristas=aristas, inicio="analizar",
+                         finales={"componer"})
     pasos = {"extraer": extraer, "verificar_origen": verificar_origen, "auditar": auditar,
              "comprobar_empresa": comprobar_empresa, "clasificar": clasificar, "componer": componer}
     aristas = {"extraer": "verificar_origen", "verificar_origen": "auditar",
