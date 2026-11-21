@@ -58,7 +58,7 @@ stale_after: null
   - **Test (simulado):** «baja por enfermedad 2019-2020» → periodo cubierto sin texto y fuera del maestro;
     voluntariado en el maestro con su cita; un puesto con un dato que no está en el perfil se descarta; una
     subida nueva no pisa los puestos marcados por ella.
-- [ ] T10 — Evals de `perfil` con modelo real.
+- [x] T10 — Evals de `perfil` con modelo real. *(firmada por Mar el 21-nov)*
   - **Qué se hace:** casos nuevos (voluntariado, baja médica, cuidados, puestos esperados en castellano e
     inglés); avisar del gasto antes.
   - **Test:** evals de `perfil` en umbral; ningún rasgo personal en el perfil ni en los puestos.
@@ -91,7 +91,7 @@ stale_after: null
 ### Bloque F · Cierre
 - [x] T18 — Coherencia: `specs/index.md`, README, `system.md` si cambia algún RT; en la spec 002, RF-2.8 y
   RF-2.11; en la 007, RF-7.5; en la 008, RF-8.4, marcados como cambiados por la 009.
-- [ ] T19 — Prueba manual de Mar.
-  - **Estado (21-nov):** `docs/plan-pruebas-009a.md` escrito; falta que Mar lo recorra y firme.
+- [x] T19 — Prueba manual de Mar. *(firmada por Mar el 21-nov)*
+  - **Estado (21-nov):** plan recorrido por Mar y firmado.
   - **Qué se hace:** `docs/plan-pruebas-009a.md` (gitignorado) con los criterios de aceptación de 9a; avisar
     del gasto antes; Mar los recorre y firma.
