@@ -58,7 +58,7 @@ jobs:
         run: uv run pytest -q
       - name: Evals en simulado (prueban el harness y los umbrales de evals/umbrales.json; NO miden el modelo)
         run: |
-          for set in ofertas fuentes perfil cv-base recomendacion respuestas red-teaming; do
+          for set in ofertas fuentes perfil recomendacion red-teaming; do
             uv run horma eval correr "$set" --simulado
           done
           uv run horma eval correr cv --simulado --flujo plain
@@ -120,7 +120,7 @@ jobs:
       - name: Evals con el modelo real (tope de 1 USD por set)
         if: steps.cambios.outputs.relevante == 'true'
         run: |
-          for set in ofertas fuentes perfil cv-base respuestas red-teaming; do
+          for set in ofertas fuentes perfil red-teaming; do
             uv run horma eval correr "$set" --tope-coste 1.0
           done
           uv run horma eval correr cv --tope-coste 1.0 --flujo langgraph

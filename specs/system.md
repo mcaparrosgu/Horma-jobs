@@ -18,7 +18,7 @@ lo que vale siempre. Los principios y las líneas rojas están en la [constituci
 ## Visión
 Una sola aplicación. Los agentes son código Python dentro de la web desde la fase 0, se prueban
 uno a uno desde la consola `horma` y la orquestación está escrita para que LangGraph la sustituya
-en la fase 4 sin tocar ningún agente (hecho: `LangGraphFlow` para `candidatura`, elegido con `HORMA_FLOW_IMPL`).
+en la fase 4 sin tocar ningún agente (hecho: `LangGraphFlow` para `candidatura`, elegido con `HORMA_FLOW_IMPL`, que vale `langgraph` por defecto desde la spec 010; `PlainFlow` queda como referencia en la suite, RT-12).
 
 ## Arquitectura
 Paquete `horma/` con tres puntos de entrada que llaman a los mismos flujos y agentes: consola,
@@ -26,14 +26,14 @@ API (FastAPI) y worker.
 
 | Módulo | Contiene | Regla |
 |---|---|---|
-| `horma/schemas/` | Modelos Pydantic del contrato | Única fuente de verdad; las tablas se generan desde aquí |
+| `horma/schemas/` | Modelos Pydantic del contrato | Única fuente de verdad de los datos que viajan; las tablas están en las migraciones (SQL) |
 | `horma/agents/<nombre>/` | `prompt.md`, `schemas.py` (entrada y salida), `agent.py` con `run()` | Sin estado, sin E/S, sin llamar a otros agentes |
-| `horma/tools/` | Código determinista (`verificar_trazabilidad`, `medir_ats`, `buscar_ofertas`, `convertir_cv`, `generar_pdf`) | Funciones puras con tests unitarios |
+| `horma/tools/` | Código determinista (`verificar_trazabilidad`, `medir_ats`, `buscar_ofertas`, `convertir_cv`, `generar_pdf`) | Funciones con tests unitarios; las que usan la red son `descargar`, `leer_pagina`, `greenhouse` y `dominio` (DNS) |
 | `horma/flows/` | Interfaz `Flow` (con `pausas` y `reanudar`), `PlainFlow` y `LangGraphFlow` (`grafo.py`, único módulo que importa `langgraph`) | Toda la composición de agentes vive aquí |
 | `horma/llm/` | Puerta única `completar(agente, prompt, entrada, esquema_salida)` | Único módulo que importa el SDK de Anthropic |
 | `horma/cli.py` | Consola Typer | Sin lógica propia: mismo código que la API. Nunca abre la BD: lo que necesita persistir pasa por la API |
 | `horma/ingesta.py` | Ingestor de fuentes | Sin credenciales de BD: entrega las ofertas por `POST /ofertas` con una clave de API de alcance `ingesta` |
-| `horma/web/` | FastAPI por capas (routers, servicios, repositorios), cola en Postgres, worker, HTML/CSS/JS planos | Solo la API y el worker leen y escriben en Postgres |
+| `horma/web/` | FastAPI por capas (routers, servicios, repositorios), cola en Postgres, worker, HTML/CSS/JS planos | Solo la API y el worker leen y escriben en Postgres. Los routers llaman solo a servicios (nunca a repositorios ni a la cola: contrato de import-linter) y solo los servicios encolan tareas (RF-10.11) |
 | `evals/` | Fixtures con resultado esperado y umbral por agente | Se ejecutan desde la consola y en CI |
 
 Los flujos reciben el estado y lo devuelven; los agentes solo hablan con la puerta única.
@@ -41,8 +41,8 @@ Cada agente declara un modelo (`pequeno` para extraer y clasificar, `mayor` para
 y puntuar); la puerta lo traduce al modelo real.
 
 ## Contrato de esquemas
-Siete esquemas Pydantic en `horma/schemas/` y una tabla `origen` aparte, referenciada por cada
-dato. Cambiar un `prompt.md` no toca código; cambiar un esquema es un cambio de contrato.
+Diez módulos de esquemas Pydantic en `horma/schemas/` (los siete de la tabla más `taxonomia`, `filtros`, `estilo` y `origen`) y una tabla `origen` aparte, referenciada por cada
+dato. Las tablas de la base de datos están escritas en SQL (migraciones de Alembic), no se generan desde los esquemas. Cambiar un `prompt.md` no toca código; cambiar un esquema es un cambio de contrato.
 
 | Esquema | Qué representa | Entra en |
 |---|---|---|
@@ -96,6 +96,8 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 
 - **Fase 5 (correcciones del profesor, construida):** lo que edita la usuaria en el perfil manda sobre los CV subidos (CV maestro). Las ofertas que ella añade (texto o URL, leída con Apify; portales vetados en `horma/assets/portales_vetados.json`) son privadas: solo las ve quien las añadió, por RLS, y entran en Recomendadas con la marca «Añadida por ti». `validar_cv` y `muletillas_ia` son código, sin modelo; el juez revisa además coherencia y que no suene a IA. El agente `analizador_estilo` crea una guía de estilo una sola vez (más botón) que siguen los redactores. Fuentes nuevas con adaptadores de ingesta (Basic auth, detalle, `cada_horas`, atribución visible, borrado de caducadas): Himalayas y Jobicy aptas; Remotive, Adzuna e InfoJobs inactivas. `evals-reales` solo corre a mano hasta el lanzamiento.
 
+- **Simplificación (fase 10, spec 010):** agentes en uso por defecto, 9: `analizador-oferta` (una llamada por oferta en lugar de `extractor-oferta`, `clasificador-oferta` y `auditor-oferta`, que quedan registrados como reserva con `HORMA_OFERTA_UN_AGENTE=false`), `auditor-fuentes`, `extractor-perfil`, `clasificador-postulante`, `matcher`, `redactor-cv`, `redactor-carta`, `juez-candidatura` y `analizador-estilo`. **Aparcados** (código conservado, sin uso ni evals en la CI): `clasificador-respuesta` y `generador-cv-base`. Presupuesto único de 1 USD por usuaria y día; la compatibilidad se guarda con una huella del perfil y no se repite si no cambia. Alertas de gasto: más de 5 USD al día o más de un 50 % de llamadas fallidas en la última hora (con al menos 10). Los routers solo hablan con servicios y qué tarea lanza a cuál está en una tabla (`ENCADENADOS`, en el worker).
+
 ## Fases
 | Fase | Feature | Agentes que entran | Puerta de salida |
 |---|---|---|---|
@@ -105,6 +107,8 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 | 3 | `003-candidatura` | `redactor-cv`, `redactor-carta`, `juez-candidatura`, `clasificador-respuesta` (retirados en el bloque H: `juez-cv`, `juez-carta`, `selector-cv-base`) | Errores sembrados rechazados al 100 %; flujo paso a paso en consola |
 | 4 | `004-langgraph-salida` | ninguno (cambia `clasificador-respuesta`: añade la línea de art. 9) | Misma suite en verde con `LangGraphFlow`; umbrales bloqueantes en CI (`evals-reales`, a mano desde la fase 5); red-teaming al 100 %; revisión de líneas rojas firmada |
 | 5 | `005-correcciones-profesor` | `analizador_estilo` (cambian `extractor-perfil`, `juez-candidatura`, `generador-cv-base` y los redactores) | Evals `perfil`, `cv`, `cv-base` y `estilo` en umbral |
+| 6-9 | `006` a `009` (rediseño, ajustes de pantalla, portada de ofertas, CV maestro y entrevista) | `analizador-estilo` sin cambios; ver [`index.md`](./index.md) | Ver cada spec |
+| 10 | `010-simplificacion` | `analizador-oferta` (sustituye a tres en el flujo); aparcados `clasificador-respuesta` y `generador-cv-base` | Evals `ofertas` y `red-teaming` en umbral con `analizador-oferta`; suite verde; prueba manual de Mar por bloque |
 
 Las fases no tienen fechas: se pasa de una a otra cuando se cumple su puerta. Si hace falta
 recortar, se recortan pantallas, nunca agentes ni evals.

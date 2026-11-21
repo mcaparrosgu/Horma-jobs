@@ -13,7 +13,7 @@ from horma.agents.generador_cv_base.schemas import (
 )
 from horma.agents.matcher.agent import Matcher
 from horma.agents.matcher.schemas import EntradaMatcher, OfertaCandidata, SalidaMatcher
-from horma.agents.registry import AGENTES
+from horma.agents.registry import AGENTES, APARCADOS
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.oferta import Auditoria, Oferta
 from horma.schemas.perfil import Perfil
@@ -80,7 +80,7 @@ def test_generador_cv_base_devuelve_contenido_y_traza():
 
 def test_prompt_del_generador_exige_traza_ats_y_no_inventar():
     p = GeneradorCvBase.prompt()
-    assert AGENTES["generador-cv-base"] is GeneradorCvBase and GeneradorCvBase.modelo == "mayor"
+    assert APARCADOS["generador-cv-base"] is GeneradorCvBase and GeneradorCvBase.modelo == "mayor"
     assert "traza" in p and "ATS" in p and "errores_previos" in p and "no fiable" in p
 
 

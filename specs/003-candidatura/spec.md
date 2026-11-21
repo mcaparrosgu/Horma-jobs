@@ -42,19 +42,19 @@ requisitos transversales (RT-xx) están en [system.md](../system.md) y las respu
   documento DEBERÁ redactarse como máximo 2 veces y el juez DEBERÁ llamarse una sola vez: de 3 a 5
   llamadas al modelo por candidatura. El flujo DEBERÁ terminar en `lista` si no queda ningún aviso o
   en `pendiente_de_ti` si queda alguno; en los dos casos la candidatura queda en `borrador`.
-- **RF-3.1b** `elegir_cv_base` DEBERÁ elegir con código, sin llamar al modelo, el CV base de la
+- **RF-3.1b** *(sustituido por la spec 010, RF-10.3)* `elegir_cv_base` DEBERÁ elegir con código, sin llamar al modelo, el CV base de la
   usuaria más adecuado para la oferta: entre los suyos no rechazados, primero el que coincide en
   familia y sector, después en familia, después en sector y, si no coincide ninguno, el más
   reciente; a igualdad, el más reciente. DEBERÁ anotar el motivo en una frase. La usuaria NO lo
   elige (P9, P14). SI no tiene ninguno válido, ENTONCES el flujo DEBERÁ terminar en error sin
   redactar. El redactor parte también del CV maestro, que siempre está al día, así que no hay aviso
   de CV base desfasado.
-- **RF-3.2** `redactor-cv` DEBERÁ adaptar el CV base a la oferta aplicando la regla de los huecos:
+- **RF-3.2** *(sustituido por la spec 010, RF-10.3)* `redactor-cv` DEBERÁ adaptar el CV base a la oferta aplicando la regla de los huecos:
   cambia qué se muestra y cómo se cuenta, nunca fechas, cargos, empresas ni titulaciones. Lo que la
   oferta pide y el perfil no tiene DEBERÁ ir a `huecos` con una propuesta para la usuaria, nunca al
   CV. Cada frase DEBERÁ llevar en la traza el fragmento literal del que sale. En la vuelta recibe
   los errores, los problemas y las palabras que le toca corregir.
-- **RF-3.3** `comprobar` (código) DEBERÁ pasar `verificar_trazabilidad` al CV y a la carta: fechas,
+- **RF-3.3** *(sustituido por la spec 010, RF-10.3)* `comprobar` (código) DEBERÁ pasar `verificar_trazabilidad` al CV y a la carta: fechas,
   cargos, empresas y titulaciones idénticos a los de las fuentes y cada entrada de la traza apuntando
   a un fragmento real. Las fuentes del CV son el CV maestro y el CV base elegido (origen «usuaria» si
   ella lo editó, P9); las de la carta, también la oferta. DEBERÁ buscar además rasgos personales en
@@ -85,13 +85,13 @@ requisitos transversales (RT-xx) están en [system.md](../system.md) y las respu
   entrevista`. Desde cualquier estado la usuaria DEBERÁ poder pasarla a `cerrada` con un motivo
   (`rechazo`, `descartada` o `retirada`); `cerrada` es final (P8). Cualquier otra transición DEBERÁ
   rechazarse. Cada transición DEBERÁ quedar en el historial con su fecha.
-- **RF-3.7b** CUANDO la usuaria pulse «Preparar candidatura» en una oferta recomendada, el sistema
+- **RF-3.7b** *(sustituido por la spec 010, RF-10.3)* CUANDO la usuaria pulse «Preparar candidatura» en una oferta recomendada, el sistema
   DEBERÁ crear la candidatura y lanzar su preparación sin pedirle que elija CV base. SI no tiene
   ningún CV base válido, ENTONCES DEBERÁ pedirle que genere uno primero. NO DEBERÁ haber dos
   candidaturas no cerradas para la misma oferta. SI la oferta ya tuvo una candidatura cerrada,
   ENTONCES DEBERÁ avisar de que ya se preparó (con su fecha y motivo de cierre) y solo crear otra si
   la usuaria lo confirma.
-- **RF-3.8** MIENTRAS la candidatura esté en `borrador`, la usuaria DEBERÁ ver el CV y la carta
+- **RF-3.8** *(sustituido en parte por la spec 010, RF-10.3)* MIENTRAS la candidatura esté en `borrador`, la usuaria DEBERÁ ver el CV y la carta
   adaptados y una sola lista «Revisa esto» con los huecos (con su propuesta) y los avisos, cada
   aviso junto a la frase que señala. El CV base elegido, su motivo y la cobertura ATS DEBERÁN ir
   plegados en «Detalles». DEBERÁ poder editar el CV y la carta a mano o descartar la candidatura
@@ -108,7 +108,7 @@ requisitos transversales (RT-xx) están en [system.md](../system.md) y las respu
   texto corto) es opcional (P3).
 - **RF-3.8c** MIENTRAS una candidatura no esté `aprobada` por su dueña, el sistema NO DEBERÁ marcarla
   como enviada, servir sus PDF ni exponerla a terceros (RT-10).
-- **RF-3.8d** CUANDO se edite un CV base (RF-2.9e) o se vuelva a una versión anterior, el sistema
+- **RF-3.8d** *(sustituido por la spec 010, RF-10.3)* CUANDO se edite un CV base (RF-2.9e) o se vuelva a una versión anterior, el sistema
   DEBERÁ guardar antes la versión actual (texto, nombre, fecha y origen: edición o restauración) en
   su historial. La usuaria DEBERÁ poder ver ese historial, con lo añadido y lo quitado marcado entre
   cada versión y la siguiente, y volver a cualquier versión, de modo que ningún texto se pierda. Solo

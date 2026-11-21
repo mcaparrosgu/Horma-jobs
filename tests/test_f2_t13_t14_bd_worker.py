@@ -254,29 +254,7 @@ def test_clasificar_perfil_rellena_la_taxonomia_de_la_version_copiada(motor_app,
                                          (2, "hecha", "ventas_comercial", "intermedio")]
 
 
-def test_generar_cv_base_guarda_los_verificados_y_deja_el_motivo_de_los_rechazados(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    pid = _perfilar_hecho(motor_app, a)
-    with sesion_de(motor_app, a) as s:  # dos destinos: taxonomía y una familia marcada
-        s.execute(text("update preferencias set familias = '{hosteleria_restauracion,ventas_comercial}'"))
-    _encolar(motor_app, a, "generar_cv_base", pid)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([BUENO, MALO, MALO])) == "hecha"
-    with sesion_de(motor_app, a) as s:
-        filas = s.execute(text("select estado, familia, contenido, motivo_error, perfil_version "
-                               "from cv_base order by id")).all()
-    assert [f.estado for f in filas] == ["hecho", "rechazado"]
-    assert filas[0].contenido.startswith("## Experiencia") and filas[0].perfil_version == 1
-    assert filas[1].familia == "ventas_comercial" and filas[1].motivo_error and filas[1].contenido == ""
-
-
-def test_generar_cv_base_con_el_perfil_aun_pendiente_falla(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    pid, _ = _perfil_pendiente(motor_app, a)
-    _encolar(motor_app, a, "generar_cv_base", pid, tope_reintentos=1)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([])) == "error"
-    with sesion_de(motor_app, a) as s:
-        fila = s.execute(text("select estado, motivo_error from cv_base")).one()
-    assert fila.estado == "error" and "no está listo" in fila.motivo_error
+# La tarea `generar_cv_base` se aparcó (RF-10.11d, S6): su flujo se prueba en test_f2_t08_t10_flujos.
 
 
 def _match(i, nota=80):

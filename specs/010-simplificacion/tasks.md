@@ -90,18 +90,18 @@ stale_after: null
     huella a las filas de hoy.
 - [x] T22 — Precios oficiales del modelo.
   - **Test:** `config.py` sin «ESTIMADOS» y con la fecha de consulta.
-- [ ] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR. *(pasos en `docs/plan-pruebas-010.md`; navegador de S3-S5 comprobado por Claude el 21-nov)*
+- [x] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR. *(pasos en `docs/plan-pruebas-010.md`; navegador de S3-S5 comprobado por Claude el 21-nov)*
 
 ### S6 · Orden interno (RF-10.11)
-- [ ] T24 — Solo los servicios encolan; routers sin repositorios; contrato de import-linter.
+- [x] T24 — Solo los servicios encolan; routers sin repositorios; contrato de import-linter.
   - **Test:** `lint-imports` falla hoy y pasa al final; la suite sigue verde.
-- [ ] T25 — Tabla `ENCADENADOS` en el worker.
+- [x] T25 — Tabla `ENCADENADOS` en el worker.
   - **Test:** los encadenados de hoy siguen pasando (perfilar → estilo y puntuar_propias; procesar_oferta →
     puntuar_propias; clasificar_perfil → puntuar_propias).
-- [ ] T26 — Aparcar `clasificador-respuesta` y `generador-cv-base`; borrar `extraer_oferta`; `langgraph` por
+- [x] T26 — Aparcar `clasificador-respuesta` y `generador-cv-base`; borrar `extraer_oferta`; `langgraph` por
   defecto.
   - **Test:** no se pueden encolar desde la web; la CI no corre sus sets; sin `HORMA_FLOW_IMPL`, `candidatura`
     usa LangGraph.
-- [ ] T27 — Coherencia: `system.md`, `specs/index.md`, README; en las specs 002, 003, 005, 008 y 009, los
+- [x] T27 — Coherencia: `system.md`, `specs/index.md`, README; en las specs 002, 003, 005, 008 y 009, los
   requisitos de «Requisitos que sustituye» marcados como sustituidos por la 010.
 - [ ] T28 — Cierre de S6: suite verde y PR.

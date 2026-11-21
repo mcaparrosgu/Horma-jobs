@@ -4,7 +4,7 @@ import pytest
 
 from horma.flows.base import ErrorDePaso, Flow
 from horma.flows.clasificar_respuesta import crear as crear_clasificar
-from horma.flows.registry import FLUJOS, IMPLEMENTACIONES, RESULTADO, crear_flujo
+from horma.flows.registry import APARCADOS, FLUJOS, IMPLEMENTACIONES, RESULTADO, crear_flujo
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.candidatura import TEXTOS_ERROR, TEXTOS_PROBLEMA, EstadoCandidatura
 from horma.schemas.oferta import Auditoria, Oferta
@@ -88,7 +88,7 @@ def _agente(prov, i):
 # --- T26: registro, interfaz y camino feliz ----------------------------------------------------
 def test_el_flujo_esta_en_el_registro():
     assert "candidatura" in FLUJOS and RESULTADO["candidatura"] == "preparacion"
-    assert "clasificar_respuesta" in FLUJOS and RESULTADO["clasificar_respuesta"] == "propuesta"
+    assert "clasificar_respuesta" in APARCADOS and "clasificar_respuesta" not in FLUJOS  # RF-10.11d
 
 
 def test_cumple_la_interfaz_flow_y_tiene_los_pasos_del_plan():

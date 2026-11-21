@@ -8,12 +8,7 @@ from horma.tools.validar_url import validar_url
 from horma.web import limites
 from horma.web.auth import claves
 from horma.web.auth.sesion import exigir_admin, exigir_csrf, usuaria_actual
-from horma.web.db import sesion_de, sesion_sistema
-from horma.web.queue import worker
-from horma.web.repositories import importaciones
-from horma.web.repositories import ofertas as repo
 from horma.web.services import ofertas as servicio
-from horma.web.services import presupuesto
 
 router = APIRouter()
 
@@ -54,7 +49,7 @@ def crear(datos: NuevaOferta, request: Request, response: Response):
     if not r["nueva"]:
         response.status_code = 200
     elif ajustes().horma_flujo_en_linea:  # solo desarrollo: sin cola ni worker aparte
-        r["estado"] = "procesada" if worker.procesar_una(engine) == "hecha" else "pendiente"
+        r["estado"] = "procesada" if servicio.procesar_en_linea(engine) == "hecha" else "pendiente"
     return r
 
 
@@ -68,57 +63,42 @@ def crear_desde_url(datos: NuevaUrl, request: Request, usuaria_id: int = Depends
     exigir_csrf(request, usuaria_id)
     if (motivo := validar_url(datos.url)) is not None:
         raise HTTPException(status_code=422, detail=motivo)
-    a = ajustes()
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        importacion = importaciones.crear(s, usuaria_id, datos.url.strip())
-        presupuesto.encolar(s, usuaria_id, "leer_url", importacion, a.tope_coste_tarea, 1)  # sin reintentos
+    importacion = servicio.pedir_lectura_url(request.app.state.engine, usuaria_id, datos.url)
     return {"id": importacion, "estado": "pendiente"}
 
 
 @router.get("/ofertas/url/{importacion_id}")
 def estado_de_la_url(importacion_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """En qué punto va la lectura de una URL (solo su dueña la ve)."""
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        fila = importaciones.fila(s, importacion_id)
+    fila = servicio.estado_lectura_url(request.app.state.engine, usuaria_id, importacion_id)
     if fila is None:
         raise HTTPException(status_code=404, detail="No existe esa lectura")
-    return {k: fila[k] for k in ("id", "estado", "motivo", "oferta_id")}
+    return fila
 
 
 @router.get("/api/ofertas/total", dependencies=[Depends(exigir_admin)])
 def total(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Cuántas ofertas hay en el catálogo (todas, no solo las listadas), por estado."""
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        por_estado = repo.por_estado(s)
+    por_estado = servicio.por_estado(request.app.state.engine, usuaria_id)
     return {"total": sum(por_estado.values()), "por_estado": por_estado}
 
 
 @router.get("/api/ofertas", dependencies=[Depends(exigir_admin)])
 def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """El catálogo común con su auditoría y su taxonomía (RF-8.2c: solo administradoras)."""
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        filas = repo.listar(s)
-    with sesion_sistema(request.app.state.engine) as s:
-        return repo.marcar_fuente_desconocida(filas, s)
+    return servicio.catalogo(request.app.state.engine, usuaria_id)
 
 
 @router.get("/api/ofertas/propias")
 def propias(request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Las ofertas que la usuaria ha añadido, con el avance de su análisis (RF-8.2c, RF-8.7)."""
-    engine = request.app.state.engine
-    with sesion_de(engine, usuaria_id) as s:
-        filas = repo.propias(s, usuaria_id)
-    with sesion_sistema(engine) as s:  # `procesar_oferta` y `fuentes` son del sistema
-        repo.marcar_fuente_desconocida(filas, s)
-        avance = repo.progreso_de_analisis(s, [f["id"] for f in filas])
-    return [{**f, "progreso": avance.get(f["id"])} for f in filas]
+    return servicio.propias(request.app.state.engine, usuaria_id)
 
 
 @router.get("/api/ofertas/{oferta_id}/original")
 def original(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """La oferta tal como entró (RF-8.3). La RLS hace que una propia ajena no exista: 404."""
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        fila = repo.original(s, oferta_id)
+    fila = servicio.original(request.app.state.engine, usuaria_id, oferta_id)
     if fila is None:
         raise HTTPException(status_code=404, detail="No existe esa oferta")
     return fila

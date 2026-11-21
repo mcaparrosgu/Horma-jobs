@@ -25,9 +25,9 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
 ## Requisitos (EARS)
 
 ### Landing y entrada (RF-8.1)
-- **RF-8.1** CUANDO alguien sin sesión abra `/`, Horma DEBERÁ mostrar la landing (P6), con la cabecera de la
+- **RF-8.1** *(sustituido por la spec 010, RF-10.1)* CUANDO alguien sin sesión abra `/`, Horma DEBERÁ mostrar la landing (P6), con la cabecera de la
   marca y, arriba a la derecha, «Crear cuenta» (botón primario) y «Entrar» (botón de texto). Sustituye a RF-6.3e.
-- **RF-8.1b** La landing DEBERÁ decir lo que Horma hace hoy, sin prometer nada más (P9). Texto propuesto (Mar lo
+- **RF-8.1b** *(sustituido por la spec 010, RF-10.1)* La landing DEBERÁ decir lo que Horma hace hoy, sin prometer nada más (P9). Texto propuesto (Mar lo
   corrige al firmar):
   - **h1:** «Ofertas que encajan contigo, y tu CV listo para cada una.»
   - **Entradilla:** «Horma busca ofertas de empleo, te dice cuáles encajan con tu experiencia y por qué, y
@@ -44,12 +44,12 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
     5. «Tú decides» — «Sigues cada candidatura de borrador a entrevista. Nada sale sin tu aprobación.»
   - **Cómo empezar** (tres pasos): «Crea tu cuenta con Google» · «Sube tu CV» · «Mira tus ofertas
     recomendadas». Debajo, otra vez «Crear cuenta».
-- **RF-8.1c** «Crear cuenta» y «Entrar» DEBERÁN llevar a `/entrar`: marca, h1 «Entra en Horma», la frase «Usa tu
+- **RF-8.1c** *(sustituido por la spec 010, RF-10.1)* «Crear cuenta» y «Entrar» DEBERÁN llevar a `/entrar`: marca, h1 «Entra en Horma», la frase «Usa tu
   cuenta de Google. Si es la primera vez, se crea tu cuenta.» y el botón primario «Continuar con Google».
-- **RF-8.1d** CUANDO alguien con sesión abra `/` o `/entrar`, o vuelva de Google, Horma DEBERÁ llevarla a
+- **RF-8.1d** *(sustituido por la spec 010, RF-10.1)* CUANDO alguien con sesión abra `/` o `/entrar`, o vuelva de Google, Horma DEBERÁ llevarla a
   Recomendadas; SI aún no tiene perfil, a Perfil (P6). La marca «Horma» de la cabecera común DEBERÁ llevar a
   Recomendadas.
-- **RF-8.1e** Las pestañas de la usuaria DEBERÁN ser cinco: Perfil · CV base · Añadir oferta · Recomendadas ·
+- **RF-8.1e** *(sustituido por la spec 010, RF-10.1)* Las pestañas de la usuaria DEBERÁN ser cinco: Perfil · CV base · Añadir oferta · Recomendadas ·
   Candidaturas, más «Admin» para las administradoras (RF-7.7). Sustituye a RF-6.3b. En móvil, la rejilla se
   ajusta al número de pestañas (RF-6.3c).
 
@@ -104,20 +104,20 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
   - CUANDO la usuaria guarde «Qué buscas», sin esperar a la hora.
 
   Sustituye a RF-2.15c y RF-6.5f en lo del botón; cambiar la vista sigue sin llamar al modelo.
-- **RF-8.5b** Horma NO DEBERÁ gastar más de **0,50 USD al día** (día natural, hora de Madrid) por usuaria en
+- **RF-8.5b** *(sustituido por la spec 010, RF-10.8)* Horma NO DEBERÁ gastar más de **0,50 USD al día** (día natural, hora de Madrid) por usuaria en
   puntuar el catálogo. Cada puntuación tiene como tope lo que quede del día. CUANDO se llegue al tope, la pantalla
   DEBERÁ decir: «Hoy ya hemos puntuado todo lo posible. Mañana seguimos con el resto.» Las ofertas sin nota se
   siguen viendo como «Sin puntuar».
-- **RF-8.5c** Las ofertas propias se siguen puntuando al añadirlas (RF-5.3d), también con el tope alcanzado:
+- **RF-8.5c** *(sustituido por la spec 010, RF-10.8)* Las ofertas propias se siguen puntuando al añadirlas (RF-5.3d), también con el tope alcanzado:
   la usuaria las ha pedido una a una. Su gasto sí cuenta en el total del día.
 - **RF-8.5d** Las ofertas descartadas (RF-8.6) NO DEBERÁN puntuarse.
-- **RF-8.5e** El detalle de una oferta sin nota DEBERÁ tener «Puntuar ahora» (P10), que puntúa solo esa oferta
+- **RF-8.5e** *(sustituido por la spec 010, RF-10.9)* El detalle de una oferta sin nota DEBERÁ tener «Puntuar ahora» (P10), que puntúa solo esa oferta
   al momento y enseña su nota y su explicación al terminar (sustituye a la invitación a pulsar «Recomendar» de
   RF-6.5d). Funciona siempre, también con el tope de RF-8.5b alcanzado o con una tanda en marcha, hasta
   **30 ofertas sueltas al día** por usuaria (unos 0,015 USD cada una). Su gasto cuenta en el total del día.
-- **RF-8.5f** CUANDO la usuaria llegue a las 30 sueltas del día, «Puntuar ahora» DEBERÁ desactivarse con el texto
+- **RF-8.5f** *(sustituido por la spec 010, RF-10.9)* CUANDO la usuaria llegue a las 30 sueltas del día, «Puntuar ahora» DEBERÁ desactivarse con el texto
   «Has puntuado 30 ofertas sueltas hoy. Mañana puedes seguir.»
-- **RF-8.5g** El tope de 0,50 USD y el de 30 sueltas son provisionales (P11): la gestión del gasto por usuaria se
+- **RF-8.5g** *(sustituido por la spec 010, RF-10.9)* El tope de 0,50 USD y el de 30 sueltas son provisionales (P11): la gestión del gasto por usuaria se
   decidirá más adelante.
 
 ### Estado de candidatura y descartar (RF-8.6)

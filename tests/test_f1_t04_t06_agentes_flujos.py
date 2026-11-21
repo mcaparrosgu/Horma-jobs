@@ -11,6 +11,7 @@ from horma.agents.registry import AGENTES
 from horma.flows.base import ErrorDePaso
 from horma.flows.calificar_fuente import crear as crear_calificar
 from horma.flows.procesar_oferta import crear as crear_procesar
+from horma.flows.registry import APARCADOS as FLUJOS_APARCADOS
 from horma.flows.registry import FLUJOS
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.fuente import CalificacionFuente
@@ -168,8 +169,8 @@ def test_sin_condiciones_no_es_apta_y_no_llama_al_modelo():
 
 def test_registro_de_flujos():
     assert set(FLUJOS) == {"procesar_oferta", "calificar_fuente", "perfilar", "clasificar_perfil",
-                           "generar_cv_base", "recomendar", "candidatura",
-                           "clasificar_respuesta", "analizar_estilo"}
+                           "recomendar", "candidatura", "analizar_estilo"}
+    assert set(FLUJOS_APARCADOS) == {"generar_cv_base", "clasificar_respuesta"}  # RF-10.11d
 
 
 # --- S5 · T19: un solo agente (RF-10.10) -------------------------------------------------------

@@ -4,8 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from horma.web.auth.sesion import usuaria_actual
-from horma.web.db import sesion_de
-from horma.web.repositories import tareas
+from horma.web.services import tareas
 
 router = APIRouter()
 
@@ -26,8 +25,7 @@ def _url(t: dict) -> str | None:
 @router.get("/api/tareas/activas")
 def activas(request: Request, usuaria_id: int = Depends(usuaria_actual),
             tipo: Annotated[list[str] | None, Query()] = None):
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        filas = tareas.activas(s, usuaria_id, tipo)
+    filas = tareas.activas(request.app.state.engine, usuaria_id, tipo)
     salida = []
     for t in filas:
         url = _url(t)
@@ -38,8 +36,7 @@ def activas(request: Request, usuaria_id: int = Depends(usuaria_actual),
 
 @router.get("/api/tareas/{tarea_id}")
 def una(tarea_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        fila = tareas.una(s, tarea_id)
+    fila = tareas.una(request.app.state.engine, usuaria_id, tarea_id)
     if fila is None:
         raise HTTPException(status_code=404, detail="No existe esa tarea")
     return fila

@@ -17,7 +17,7 @@ from horma.agents.redactor_carta.agent import RedactorCarta
 from horma.agents.redactor_carta.schemas import EntradaRedactorCarta, SalidaRedactorCarta
 from horma.agents.redactor_cv.agent import RedactorCv
 from horma.agents.redactor_cv.schemas import EntradaRedactorCv, SalidaRedactorCv
-from horma.agents.registry import AGENTES
+from horma.agents.registry import AGENTES, APARCADOS
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.oferta import Auditoria, Oferta
 from horma.schemas.taxonomia import Taxonomia
@@ -35,7 +35,7 @@ AGENTES_F3 = (RedactorCv, RedactorCarta, JuezCandidatura, ClasificadorRespuesta)
 # --- registro y contrato «independence» (RT-01, RT-13) -----------------------------------------
 @pytest.mark.parametrize("agente", AGENTES_F3)
 def test_agentes_registrados_y_en_el_contrato_independence(agente):
-    assert AGENTES[agente.nombre] is agente
+    assert (APARCADOS if agente is ClasificadorRespuesta else AGENTES)[agente.nombre] is agente  # RF-10.11d
     contratos = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))[
         "tool"]["importlinter"]["contracts"]
     independence = next(c for c in contratos if c["type"] == "independence")

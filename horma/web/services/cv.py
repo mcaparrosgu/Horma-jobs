@@ -99,3 +99,34 @@ def eliminar(engine: Engine, usuaria_id: int, cv_id: int) -> bool:
 def _borrar(destino: Path, escrito: bool) -> None:
     if escrito:
         destino.unlink(missing_ok=True)
+
+
+def listar(engine: Engine, usuaria_id: int) -> list[dict]:
+    with sesion_de(engine, usuaria_id) as s:
+        return repo.listar(s)
+
+
+def renombrar(engine: Engine, usuaria_id: int, cv_id: int, nombre: str) -> bool:
+    """False si no existe ese CV; `NombreRepetido` si ya hay otro con ese nombre."""
+    with sesion_de(engine, usuaria_id) as s:
+        if repo.uno(s, cv_id) is None:
+            return False
+        if repo.nombre_en_uso(s, nombre, excepto_cv=cv_id):
+            raise NombreRepetido(nombre)
+        repo.renombrar(s, cv_id, nombre)
+    return True
+
+
+def marcar_escrito_por_ella(engine: Engine, usuaria_id: int, cv_id: int, valor: bool) -> bool:
+    with sesion_de(engine, usuaria_id) as s:
+        return repo.marcar_escrito_por_ella(s, cv_id, valor)
+
+
+def archivo(engine: Engine, usuaria_id: int, cv_id: int) -> tuple[dict, Path] | None:
+    """El CV y la ruta de su archivo, si existe y es de la usuaria (RLS)."""
+    with sesion_de(engine, usuaria_id) as s:
+        cv = repo.uno(s, cv_id)
+    if not cv:
+        return None
+    ruta = carpeta() / cv["ruta"]
+    return (cv, ruta) if ruta.is_file() else None

@@ -10,8 +10,8 @@ from horma.config import ajustes
 from horma.schemas.fuente import Fuente
 from horma.web.auth import claves
 from horma.web.auth.sesion import exigir_admin, exigir_admin_con_csrf, exigir_csrf, usuaria_actual
-from horma.web.queue import worker
 from horma.web.services import ingesta as servicio
+from horma.web.services import ofertas as servicio_ofertas
 
 router = APIRouter()
 ESTATICOS = Path(__file__).resolve().parent.parent / "static"
@@ -123,7 +123,7 @@ def pedir_calificacion(datos: PedirCalificacion, request: Request):
     engine = request.app.state.engine
     r = servicio.pedir_calificacion(engine, datos.url)
     if ajustes().horma_flujo_en_linea:  # solo desarrollo
-        worker.procesar_una(engine)
+        servicio_ofertas.procesar_en_linea(engine)
     return r
 
 

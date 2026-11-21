@@ -256,6 +256,7 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 - Entrevista por tandas (P8); audio y valoración en la 9b (P9).
 - Diseños de CV y el CV estético (fase 11).
 - Plan de perfeccionamiento del `matcher`: sigue siendo obligatorio antes de usuarias reales.
+- Prueba con cinco personas: las cinco las hace Mar (21-nov), con perfiles y casos distintos; no hay usuarias externas en esa prueba. Coincide con RF-4.8 y P8 de la spec 004.
 - Otras formas de entrar además de Google (tocan la constitución).
 
 ## Supuestos
