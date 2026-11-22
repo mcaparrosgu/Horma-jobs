@@ -16,9 +16,9 @@ stale_after: null
 | Bloques | Rama y PR | Prueba de Mar |
 |---|---|---|
 | S0-S1 | Fusionados (PR #27 y #28) | Firmada (21-nov) |
-| S2-S5 | Fusionados juntos (PR #29) | Pendiente en S2-S4 (T12, T15, T18); el paso 2.3 se hizo el 21-nov y dio lugar a S7 |
+| S2-S5 | Fusionados juntos (PR #29) | Hechas (21-nov); la prueba 2.3 dio lugar a S7 |
 | S6 | Fusionado (PR #30) | — (no tiene pantalla) |
-| S7 | Fusionado (PR #31) | Cerrada por Mar (22-nov); falta el repaso a 390 px |
+| S7 | Fusionado (PR #31) | Cerrada por Mar (22-nov); el repaso a 390 px lo hará Mar más adelante, fuera de esta fase |
 
 ## Forma de trabajo
 - **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción, con Sonnet. Un fallo de eval poco
@@ -63,7 +63,7 @@ stale_after: null
   - **Test:** `crear` sin CV base no da 409; una candidatura con `cv_base_id` recalcula avisos con él.
 - [x] T11 — Quitar `/cv-base` (si T09 pasa) o dejar el respaldo (si no).
   - **Test:** `/cv-base` → 308 a `/perfil`; los endpoints de CV base dan 404; las tablas siguen.
-- [ ] T12 — Cierre de S2: prueba manual de Mar (usuaria nueva: sube CV y prepara candidatura) y PR. *(PR hecho: #29; falta la prueba)*
+- [x] T12 — Cierre de S2: prueba manual de Mar (usuaria nueva: sube CV y prepara candidatura) y PR. *(PR #29; prueba hecha por Mar el 21-nov)*
 
 ### S3 · Avance y subida (RF-10.8, RF-10.5 subida)
 - [x] T13 — Indicador de avance en la guía y en la cabecera. *(retirado en S7, T32: el avance va en su pantalla)*
@@ -72,7 +72,7 @@ stale_after: null
   - **Navegador:** cabecera con indicador a 1280 y 390 px, en claro y en oscuro.
 - [x] T14 — Subida al elegir el archivo. *(«Carta» no se sube hasta S4)*
   - **Test:** el `change` sube con `clase=fuente`; no hay botón «Subir CV» en el estado vacío.
-- [ ] T15 — Cierre de S3: prueba manual de Mar y PR. *(PR hecho: #29; falta la prueba)*
+- [x] T15 — Cierre de S3: prueba manual de Mar y PR. *(PR #29; prueba hecha por Mar el 21-nov)*
 
 ### S4 · Perfil en una pantalla (RF-10.4, RF-10.5)
 - [x] T16 — `GET /api/perfil/cv.pdf`.
@@ -82,7 +82,7 @@ stale_after: null
   - **Test:** orden de RF-10.5b; cada elemento de «Por resolver» con dos acciones; `estetico` nuevo → 422; un
     estético antiguo se lista.
   - **Navegador:** Perfil vacío y lleno a 1280 y 390 px, en claro y en oscuro.
-- [ ] T18 — Cierre de S4: prueba manual de Mar y PR. *(PR hecho: #29; falta la prueba)*
+- [x] T18 — Cierre de S4: prueba manual de Mar y PR. *(PR #29; prueba hecha por Mar el 21-nov)*
 
 ### S5 · Ahorro (RF-10.9, RF-10.10, RF-10.11c)
 - [x] T19 — `analizador-oferta` y `procesar_oferta` con una llamada; evals. *(21-nov: prompt afinado; evals reales `ofertas` 8 de 8 y `red-teaming` sin fallos nuevos; ajuste en `true`)*

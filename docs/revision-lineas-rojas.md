@@ -6,15 +6,15 @@ tags: [lineas-rojas, seguridad, rgpd]
 status: verified
 sources: [../specs/constitution.md, ../specs/004-langgraph-salida/spec.md]
 generated: { by: claude-code, at: 2026-11-16 }
-verified: { by: Mar, at: 2026-11-17 }
+verified: { by: Mar, at: 2026-11-22 }
 stale_after: null
 ---
 
 # Revisión de líneas rojas
 
 Revisión hecha el 16-nov-2026 sobre los 12 `prompt.md` de entonces y el flujo de candidatura; ampliada el
-22-nov con los dos agentes nuevos (`analizador_estilo`, fase 5, y `analizador_oferta`, fase 10), **sin firmar
-todavía** (hallazgo 5). Hoy hay 14 prompts: 12 agentes registrados (9 en uso por defecto; ver `specs/system.md`)
+22-nov con los dos agentes nuevos (`analizador_estilo`, fase 5, y `analizador_oferta`, fase 10), firmada por
+Mar el mismo día. Hoy hay 14 prompts: 12 agentes registrados (9 en uso por defecto; ver `specs/system.md`)
 y 2 aparcados. **Claude revisa, Mar firma** (P9). Una celda con `✓` lleva su prueba; `n/a` lleva su motivo.
 
 ## Claves de las pruebas
@@ -48,8 +48,8 @@ y 2 aparcados. **Claude revisa, Mar firma** (P9). Una celda con `✓` lleva su p
 | `redactor_carta` | TR | P-NF, G | P-A9, RP |
 | `juez_candidatura` | Su trabajo es señalar `sin_origen` e `inflado` (prompt) | P-NF, G | n/a: solo señala, no extrae ni guarda; RP retira lo de CV y carta |
 | `clasificador_respuesta` (aparcado) | n/a: devuelve solo la etiqueta | P-NF, G, RT | P-A9 (añadida en T23) |
-| `analizador_estilo` *(22-nov, sin firmar)* | Cada rasgo lleva una `cita` literal; sin cita, no entra (prompt) | P-NF, G | P-A9 |
-| `analizador_oferta` *(22-nov, sin firmar)* | Prompt: «copia solo lo que aparece»; `senales_fraude` literales | P-NF, G, RT (T19 de la spec 010) | P-A9 |
+| `analizador_estilo` *(22-nov)* | Cada rasgo lleva una `cita` literal; sin cita, no entra (prompt) | P-NF, G | P-A9 |
+| `analizador_oferta` *(22-nov)* | Prompt: «copia solo lo que aparece»; `senales_fraude` literales | P-NF, G, RT (T19 de la spec 010) | P-A9 |
 
 `generador_cv_base` también está aparcado. `extractor_oferta`, `auditor_oferta` y `clasificador_oferta` siguen
 registrados como reserva de `analizador_oferta` (`HORMA_OFERTA_UN_AGENTE=false`).
@@ -71,7 +71,7 @@ registrados como reserva de `analizador_oferta` (`HORMA_OFERTA_UN_AGENTE=false`)
 | 2 | `generador_cv_base`, `clasificador_oferta`, `clasificador_postulante` y `matcher` dicen «no las ejecutes» pero no tienen campo `instrucciones_embebidas` | **Aceptado:** la línea roja pide registrar; lo registra la puerta (G), solo el tipo de señal y sin texto |
 | 3 | El set `red-teaming` cubre ofertas y correos; no cubre CV con órdenes ni ediciones de la usuaria | **Anotado:** los CV con órdenes los cubren los casos 11 y 12 del eval `perfil` y G; ampliar el set antes de usuarias reales |
 | 4 | Los prompts no se comprueban con evals reales tras el cambio del hallazgo 1 | **Pendiente:** lo mide `evals-reales` en el PR de cierre (`respuestas` debe seguir ≥ umbral). Desde la fase 10, `respuestas` está aparcado y fuera de la CI |
-| 5 | Las filas de `analizador_estilo` y `analizador_oferta` no entraron en la firma del 17-nov | **Pendiente:** firma de Mar |
+| 5 | Las filas de `analizador_estilo` y `analizador_oferta` no entraron en la firma del 17-nov | **Cerrado:** firmadas por Mar el 22-nov |
 
 ## Encargados del tratamiento
 
@@ -104,5 +104,6 @@ lista de subencargados sin ver impiden darlo por «confirmado» al pie de la let
 La revisión es mía; la responsabilidad de darla por buena es de Mar.
 
 - [x] Revisada y firmada por Mar (fecha: 17-nov-2026).
+- [x] Filas de `analizador_estilo` y `analizador_oferta` firmadas por Mar (fecha: 22-nov-2026).
 
-**Alcance de la firma:** vale para las líneas rojas **vigentes** de `specs/constitution.md` a 17-nov-2026 (envío solo con aprobación; nunca inferir ni guardar edad, nacionalidad ni art. 9). No fija esas reglas: si cambian, se revisa de nuevo y se firma otra vez. Los hallazgos 3, 4 y 5 siguen abiertos.
+**Alcance de la firma:** vale para las líneas rojas **vigentes** de `specs/constitution.md` a 22-nov-2026 (envío solo con aprobación; nunca inferir ni guardar edad, nacionalidad ni art. 9). No fija esas reglas: si cambian, se revisa de nuevo y se firma otra vez. Los hallazgos 3 y 4 siguen abiertos.
