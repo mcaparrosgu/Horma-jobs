@@ -4,7 +4,14 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> Estado (19-nov-2026): fases 0 a 5 construidas y fusionadas en `main`. Fase 6 (rediseño visual 2c de todas las pantallas): construida y probada por Mar (20-nov); en PR contra `main`. La prueba manual de la fase 5 está hecha (19-nov); solo falta enviar el correo a Greenhouse (20-nov). El despliegue es local por ahora y Vercel, más adelante (T19, cerrada). Jobicy y Himalayas están activadas en local y probadas (19-nov); el resto de fuentes nuevas espera las indicaciones del profesor. Antes de abrir a usuarias reales, el plan del `matcher`. Fase 5: el perfil manda sobre los CV subidos, ofertas propias por texto o URL (privadas, sin duplicados), validación de CV, guía de estilo y fuentes nuevas (Himalayas y Jobicy aptas y activas; Remotive, Adzuna, Greenhouse e InfoJobs inactivas). En `/ingesta` cada fuente tiene Activar/Desactivar y un intervalo mínimo entre ejecuciones (`cada_horas`) que se ve y se edita desde la web.
+> **Estado (22-nov-2026):** fases 0 a 9a fusionadas en `main`. Fase 10 (simplificación): S1-S5 fusionadas,
+> S6 en PR #30 y S7 cerrada por Mar, en PR #31 (encima de #30). Despliegue local con Docker Compose; Vercel, más adelante.
+> Antes de usuarias reales, el plan del `matcher`. El detalle de cada fase está en
+> [`specs/index.md`](./specs/index.md).
+
+**Recorrido de la usuaria:** Landing → Perfil (sube su CV) → Ofertas (compatibilidad 0-100) → Candidatura
+(CV y carta que aprueba y descarga). Tres pestañas: Ofertas · Candidaturas · Perfil, más Admin. Horma gasta
+como mucho 1 USD al día por usuaria (provisional, RF-10.9).
 
 ## Cómo trabajamos (SDD)
 
@@ -28,14 +35,14 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 2. **Perfil y recomendación** (`002-perfil-recomendacion`)
 3. **Candidatura y seguimiento** (`003-candidatura`)
 4. **LangGraph, calidad y salida** (`004-langgraph-salida`)
-5. **Correcciones del profesor** (`005-correcciones-profesor`, construida, fusionada y probada por Mar el 19-nov)
-6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`, construida y probada por Mar el 20-nov)
-7. **Ajustes de pantalla** (`007-ajustes-pantalla`, spec firmada el 20-nov; cerrada el 20-nov: evals reales y pruebas manuales firmadas por Mar)
-8. **Portada y ofertas** (`008-portada-ofertas`, construida el 20-nov, T01-T21; prueba manual firmada por Mar el 21-nov; RF-8.5 provisional)
-9. **CV maestro y entrevista** (`009-cv-maestro-entrevista`, en dos partes; spec, plan y tareas de 9a firmados el 21-nov; 9a cerrada y firmada por Mar el 21-nov (T01-T19); 9b, después de la simplificación y solo con texto)
-10. **Simplificación** (`010-simplificacion`, spec, plan y tareas firmados por Mar el 21-nov; bloques S1-S6, un PR por bloque)
+5. **Correcciones del profesor** (`005-correcciones-profesor`)
+6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`)
+7. **Ajustes de pantalla** (`007-ajustes-pantalla`)
+8. **Portada y ofertas** (`008-portada-ofertas`)
+9. **CV maestro y entrevista** (`009-cv-maestro-entrevista`; 9a hecha, 9b pendiente)
+10. **Simplificación** (`010-simplificacion`; sustituye requisitos de las specs 002, 003, 005, 008 y 009)
 
-Cada fase se cierra con sus evals en verde.
+Cada fase se cierra con sus evals en verde. Estado de cada una: [`specs/index.md`](./specs/index.md).
 
 ## Añadir un feature
 
@@ -90,19 +97,20 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 3: candidatura y seguimiento
 
-1. `uv run alembic upgrade head` aplica las migraciones (la 0019 añade `ofertas.modalidad`; la 0021, los puestos y términos excluidos, `ofertas.titulo_norm`, los avisos vistos y la longitud del CV); antes, la 0006 (candidaturas, historial y versiones de CV base).
-2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide confirmar); el worker parte del CV maestro y
-   redacta CV y carta. En `/candidaturas` las ves por estado: revisas, editas, apruebas, descargas
-   los PDF y sigues el proceso (enviada, entrevista, cerrada).
+1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0022`).
+2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide
+   confirmar); el worker parte del CV maestro, sin CV base (RF-10.3), y redacta CV y carta. En `/candidaturas`
+   las ves por estado: revisas, editas, apruebas, descargas los PDF y sigues el proceso (enviada, entrevista,
+   cerrada).
 3. Para probarlo sin web: `horma flujo correr candidatura` (ver Consola).
 4. Puerta de salida: `horma eval correr cv` con el modelo real (tope de 1 USD, solo de construcción).
 
 ### Fase 4 (completa; despliegue local ahora, Vercel después): pausa, calidad y salida
 1. `uv run alembic upgrade head` aplica la migración 0008 (PDF guardados, señales de entrada, alertas y las
    tablas donde LangGraph guarda la pausa).
-2. `HORMA_FLOW_IMPL=langgraph` en `.env` activa el flujo con pausa: el worker prepara CV y carta y se para
-   antes de `entregar`; al aprobar se reanuda y los PDF quedan fijos. Con `plain` (valor por defecto del
-   código) todo funciona como en la fase 3, y los PDF se generan al descargar.
+2. `HORMA_FLOW_IMPL` vale `langgraph` por defecto (RF-10.11b): el worker prepara CV y carta y se para antes de
+   `entregar`; al aprobar se reanuda y los PDF quedan fijos. Con `plain` todo funciona como en la fase 3 y los
+   PDF se generan al descargar; se conserva como referencia en los tests.
 3. Web instalable (PWA): manifest, iconos y `/sw.js` (guarda solo `/static/*`, nunca `/api/*`) y una
    página «Sin conexión». `/salud` responde sin datos.
 4. Límites de ritmo por minuto en `.env`: `LIMITE_LOGIN_POR_MINUTO` (por IP), `LIMITE_CV_POR_MINUTO` y

@@ -107,6 +107,7 @@ label:not(.casilla){ display: block; margin-bottom: 0.4rem; }
 label input:not([type="checkbox"]), label select{ display: block; width: 100%; margin-top: 6px; }
 label.casilla{ display: flex; align-items: center; gap: 10px; min-height: var(--tap); font-weight: 400; margin: 0; }
 label.casilla input{ width: auto; margin: 0; }
+label.casilla input[type="checkbox"], label.casilla input[type="radio"]{ width: 22px; height: 22px; }   /* cuadradas, no recortadas */
 input[type="checkbox"], input[type="radio"]{ width: 22px; height: 22px; flex: none; accent-color: var(--accent-text); }
 input.corto{ width: 7rem; }
 label input.corto{ width: 7rem; }
@@ -201,7 +202,7 @@ details[open] > summary::after, [aria-expanded="true"] > .chevron::after, .chevr
 .tono-3{ --tono: 320; } .tono-4{ --tono: 100; } .tono-5{ --tono: 10; }
 .nota{ display: flex; align-items: center; gap: 12px; }
 .nota .numero{ font-family: var(--f-mono); font-size: var(--fs-num); font-weight: var(--fw-num); line-height: 1; }
-.barra-compat{ position: relative; flex: 1 1 auto; min-width: 60px; height: var(--bar-h); background: var(--bar-track); }
+.barra-compat{ position: relative; flex: 1 1 auto; min-width: 60px; height: var(--bar-h); background: var(--bar-track); outline: var(--bw) solid var(--line-strong); outline-offset: -1px; }
 .barra-compat > span{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
 .titulo-oferta{ font-family: var(--f-head); font-size: var(--fs-title); font-weight: var(--fw-head); letter-spacing: var(--ls-head); color: var(--ink); }
 a.titulo-oferta:hover{ color: var(--muted); }
@@ -233,7 +234,7 @@ button.ayuda:hover{ background: var(--surface-2); filter: none; color: var(--ink
 fieldset.grupo{ border: var(--bw) solid var(--panel-border); padding: 0.6rem 1rem 0.9rem; min-width: 0; margin: 0; }
 fieldset.grupo legend{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); padding: 0 0.4rem; display: flex; gap: 0.5rem; align-items: center; }
 .casillas{ display: grid; gap: 0; margin-top: 0.4rem; }
-fieldset.grupo > .casillas{ max-height: 18rem; overflow-y: auto; }  /* cajas del mismo alto aunque haya 30 países */
+fieldset.grupo > .casillas{ max-height: 18rem; overflow-y: auto; padding: 0 6px 0 4px; }  /* cajas del mismo alto aunque haya 30 países */
 .casillas label.casilla span{ overflow-wrap: anywhere; }
 details.grupo{ position: relative; }
 details.grupo > summary{ background: var(--surface); border: var(--bw) solid var(--line-strong); padding: 0 12px; min-height: var(--tap); text-transform: none; }
@@ -282,7 +283,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 
 /* ── Barra de avance (RF-6.4, RF-8.7): trabajo en marcha, con el porcentaje en texto ── */
 .barra-avance{ display: grid; gap: 6px; margin: 0 0 1rem; }
-.barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); }
+.barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); outline: var(--bw) solid var(--line-strong); outline-offset: -1px; }
 .barra-avance .relleno{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
 .barra-avance .texto{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); }
 .barra-avance.indeterminada .relleno{ width: 35%; }
@@ -296,6 +297,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .cv-hoja .cv-nombre{ font-family: var(--f-head); font-size: 1.5rem; margin: 0 0 0.5rem; }
 .cv-hoja .cv-seccion{ font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: var(--ls-label); text-transform: uppercase; margin: 1.25rem 0 0.5rem; padding-bottom: 0.25rem; border-bottom: var(--bw) solid var(--ink); }
 .cv-hoja .cv-linea{ margin: 0.35rem 0; }
+.carta-hoja .cv-linea{ margin: 0 0 0.75rem; line-height: 1.6; }
 .cv-hoja .cv-detalle{ display: block; color: var(--muted); font-size: 0.92rem; }
 .cv-hoja .cv-lista{ margin: 0.25rem 0 0.25rem 1.1rem; padding: 0; }
 .cv-texto{ white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 0.9rem; margin: 0.5rem 0 0; }
@@ -312,10 +314,10 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .columna-cerrada > summary{ min-height: var(--tap); box-sizing: border-box; line-height: 1.15; padding-top: calc(var(--tap) - 1.15em - 6px - var(--bw)); padding-bottom: 6px; margin-top: calc(var(--tap) * -1 + 1.15em + 6px + var(--bw)); margin-bottom: 0.5rem; align-items: flex-end; border-bottom: var(--bw) solid var(--line-strong); }
 .columna-cerrada > summary{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--muted); }
 .panel .lista > li:last-child, .panel .lista-editorial > li:last-child{ border-bottom: 0; }
-.panel > .subtitulo:first-child{ margin-top: 0; }
+.panel > .subtitulo:first-child, .panel > h2:first-child{ margin-top: 0; }
 .panel .lista > li:first-child, .panel .lista-editorial > li:first-child{ padding-top: 0; }
 .lista-editorial > li.tarjeta{ margin: 0; }
-.tablero{ display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; align-items: start; }
+.tablero{ display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1rem; align-items: start; }   /* las 6 columnas, incluida Cerrada, en una fila */
 .columna{ min-width: 0; }
 .columna > h2{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--muted); margin: 0 0 0.5rem; padding-bottom: 6px; border-bottom: var(--bw) solid var(--line-strong); }
 .columna-cerrada .lista{ margin-top: 0.6rem; }
@@ -334,11 +336,14 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
 .ocultar-movil{ display: initial; }
 
 /* Perfil: a 1280 px, «Tu perfil» a la izquierda y lo demás a la derecha, a igual ancho (RF-10.5b). */
-.pantalla-perfil{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto) 1fr; gap: 0 1rem; align-items: start; }
-.pantalla-perfil > #mi-perfil{ grid-column: 1; grid-row: 1 / -1; }
-.pantalla-perfil > :not(#mi-perfil){ grid-column: 2; }
+.pantalla-perfil{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1rem; align-items: start; }
+.pantalla-perfil > .col-izq, .pantalla-perfil > .col-der{ min-width: 0; }
+#subir-otro .fila{ align-items: end; }
 @media (max-width: 900px){
-  .pantalla-perfil{ display: block; }
+  /* una columna: Subir archivo, Tu perfil, Tu CV completo, Por resolver, Documentos subidos, Cómo escribes */
+  .pantalla-perfil{ display: flex; flex-direction: column; }
+  .pantalla-perfil > .col-izq, .pantalla-perfil > .col-der{ display: contents; }
+  #subir-otro{ order: 1; } #mi-perfil{ order: 2; } #maestro{ order: 3; } #pendientes{ order: 4; } #cvs-subidos{ order: 5; } #estilo{ order: 6; }
 }
 
 /* ── Móvil (< 900 px): menú arriba y tarjetas ── */
@@ -419,7 +424,6 @@ ol.pasos > li::before{ content: counter(paso); display: inline-grid; place-items
 .aviso-accion.aviso-longitud > .acciones-aviso > button{ flex: 1 1 14rem; max-width: 20rem; }
 
 /* «Qué buscas»: Puestos y Términos excluidos en dos columnas del mismo alto. */
-.grupos-dos{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; align-items: stretch; }
 fieldset.grupo.grupo-puestos{ display: flex; flex-direction: column; }
 fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 .casilla-puesto .dato-puesto{ display: block; color: var(--muted); font-size: 0.85rem; }
@@ -437,18 +441,23 @@ fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 .cv-hoja .cv-seccion.con-editar > button{ flex: none; min-height: var(--tap); text-transform: none; letter-spacing: normal; }
 
 @media (max-width: 900px){
-  .grupos-dos{ grid-template-columns: 1fr; }
   .aviso-accion > .acciones-aviso > button{ flex: 1 1 10rem; }
 }
 
-/* ── Indicador de avance (RF-10.8): frase y % de la tarea en marcha, en la cabecera ── */
-.indicador-avance{
-  display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 12px; min-width: 0;
-  border: var(--bw) solid var(--line-strong); color: var(--ink); text-decoration: none; white-space: nowrap;
-  font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase;
-  letter-spacing: var(--ls-label); font-weight: 600;
-}
-.indicador-avance:hover{ background: var(--surface-2); }
+
+/* S7 · simetría de «Qué buscas»: mismo espacio entre todos los grupos (RF-6.4b) */
+#que-buscas > .suave{ margin-bottom: 16px; }
+/* Rejilla de 12: fila 1 = Puestos · Sector · Condiciones (4+4+4); fila 2 = los otros cuatro grupos (3 cada uno);
+   después Términos excluidos y el botón. Un solo `gap`, sin márgenes sueltos. */
+#formulario-busca{ display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+#formulario-busca > fieldset.grupo, #grupos > fieldset.grupo{ margin: 0; }
+#grupos{ display: contents; }
+#grupo-puestos{ grid-column: span 4; order: 1; }
+#grupos > [data-grupo="sectores"]{ grid-column: span 4; order: 2; }
+#formulario-busca > fieldset.grupo.panel{ grid-column: span 4; order: 3; grid-template-columns: 1fr; align-content: start; }
+#grupos > fieldset.grupo:not([data-grupo="sectores"]){ grid-column: span 3; order: 4; }
+#grupo-excluidos{ grid-column: 1 / -1; order: 5; }
+#formulario-busca > .fila{ grid-column: 1 / -1; order: 6; margin: 0; }
 @media (max-width: 900px){
-  .indicador-avance{ padding: 0 8px; overflow: hidden; text-overflow: ellipsis; max-width: 11rem; }
+  #formulario-busca #grupo-puestos, #formulario-busca #grupos > fieldset.grupo, #formulario-busca > fieldset.grupo.panel{ grid-column: 1 / -1; }
 }

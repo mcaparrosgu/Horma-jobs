@@ -11,7 +11,7 @@ from horma.schemas.candidatura import TEXTO_AVISO_OFERTA, Aviso
 
 RAIZ = Path(__file__).resolve().parent.parent
 ADVERSARIA = json.loads((RAIZ / "evals/cv/ofertas/camarera-adversaria.json").read_text(encoding="utf-8"))
-AVISO = {"documento": "oferta", "frase": None, "mensaje": TEXTO_AVISO_OFERTA}
+AVISO = {"documento": "oferta", "frase": None, "mensaje": TEXTO_AVISO_OFERTA, "tipo": "revisa"}
 
 
 def _correr(impl, oferta):

@@ -65,3 +65,27 @@ def avisos_perfil(perfil: Perfil, cv_maestro: str = "",
 def aviso_de_hueco(h: Hueco) -> Aviso:
     """Un hueco se da por visto igual que un aviso; su huella es su propia clave (sus fechas)."""
     return Aviso(h.clave, _hash(h.clave), h.texto, "hueco")
+
+
+TITULOS_GRUPO = {
+    "hueco": "Huecos en tu trayectoria", "sin_descripcion": "Experiencias sin descripción",
+    "sin_cifras": "Experiencias sin cifras", "sin_contacto": "CV sin correo ni teléfono",
+}
+
+
+def agrupar_avisos(avisos: list[dict]) -> list[dict]:
+    """Junta los avisos de una misma regla en uno solo con sus elementos debajo (RF-10.13). Cada aviso es
+    `{clave, huella, texto, seccion}`; los de clave con prefijo (`sin_cifras:`…) y los huecos se agrupan, el
+    resto (`largo`, `sin_resumen`) queda tal cual. Un grupo de un solo elemento se ve como un aviso suelto."""
+    grupos: dict[str, list[dict]] = {}
+    for a in avisos:
+        regla = "hueco" if a["seccion"] == "hueco" else a["clave"].split(":")[0]
+        grupos.setdefault(regla, []).append(a)
+    salida = []
+    for regla, lista in grupos.items():
+        if regla not in TITULOS_GRUPO or len(lista) == 1:
+            salida.extend({**a, "regla": regla, "elementos": [a]} for a in lista)
+        else:
+            salida.append({"clave": regla, "huella": "", "texto": TITULOS_GRUPO[regla],
+                           "seccion": lista[0]["seccion"], "regla": regla, "elementos": lista})
+    return salida

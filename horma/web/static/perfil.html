@@ -37,12 +37,7 @@
     </section>
 
     <div id="pantalla" class="pantalla-perfil" hidden>
-      <details id="pendientes" class="panel-desplegado" hidden>
-        <summary>Por resolver <span id="n-pendientes" class="estado"></span></summary>
-        <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti. Ninguno es obligatorio.</p>
-        <ul id="lista-pendientes" class="lista-editorial"></ul>
-      </details>
-
+      <div class="col-izq">
       <section id="mi-perfil" class="panel" aria-labelledby="t-perfil">
         <h2 id="t-perfil" class="etiqueta-mono">Tu perfil <span id="version" class="estado"></span></h2>
         <div id="datos" hidden>
@@ -50,6 +45,27 @@
           <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y las candidaturas y compatibilidades anteriores quedan «desfasados».</p>
           <div id="perfil"></div>
         </div>
+      </section>
+      </div>
+      <div class="col-der">
+      <section id="subir-otro" class="panel" aria-labelledby="t-subir">
+        <h2 id="t-subir" class="etiqueta-mono">Subir archivo</h2>
+        <p class="suave">¿Tienes un CV distinto para cada sector? Sube todos: Horma los junta en un solo perfil y adapta cada candidatura a su oferta. Las cartas le enseñan cómo escribes.</p>
+        <p class="suave">Formatos admitidos: <strong>PDF, DOCX o Markdown (.md)</strong>. Máximo 5 MB por archivo.</p>
+        <form id="subir-doc" class="fila">
+          <label>Clase
+            <select id="clase-doc">
+              <option value="fuente" selected>CV</option>
+              <option value="carta">Carta</option>
+            </select>
+          </label>
+          <label class="archivo">Archivo
+            <span class="selector-archivo">
+              <span class="boton" aria-hidden="true">Subir archivo</span>
+            </span>
+            <input id="archivo-doc" class="solo-lector" type="file" accept=".pdf,.docx,.md,.markdown">
+          </label>
+        </form>
       </section>
 
       <section id="maestro" class="panel" aria-labelledby="t-maestro" hidden>
@@ -62,25 +78,22 @@
         </div>
       </section>
 
-      <details id="cvs-subidos" class="panel-desplegado seccion-plegable">
+      <details id="pendientes" class="panel-desplegado" hidden>
+        <summary>Por resolver <span id="n-pendientes" class="estado"></span></summary>
+        <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti. Ninguno es obligatorio.</p>
+        <ul id="lista-pendientes" class="lista-editorial"></ul>
+        <details id="avisos" class="seccion-plegable" hidden>
+          <summary>Avisos <span id="n-avisos" class="estado"></span></summary>
+          <p class="suave">Te dicen qué mejorar. Si algo está bien como está, pulsa «Dar por visto».</p>
+          <ul id="lista-avisos" class="lista-editorial"></ul>
+        </details>
+      </details>
+
+      <details id="cvs-subidos" class="panel-desplegado seccion-plegable" open>
         <summary>Documentos subidos <span id="n-cvs" class="estado">0</span></summary>
         <p class="suave">Tus CV y cartas. Horma saca de ellos tu perfil y tu manera de escribir.</p>
         <ul id="cvs" class="lista-editorial"></ul>
         <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún documento.</p>
-        <form id="subir-doc" class="fila editor">
-          <label>Clase
-            <select id="clase-doc">
-              <option value="fuente" selected>CV</option>
-              <option value="carta">Carta</option>
-            </select>
-          </label>
-          <label class="archivo">Archivo
-            <span class="selector-archivo">
-              <span class="boton secundario" aria-hidden="true">Subir</span>
-            </span>
-            <input id="archivo-doc" class="solo-lector" type="file" accept=".pdf,.docx,.md,.markdown">
-          </label>
-        </form>
       </details>
 
       <details id="estilo" class="panel-desplegado" hidden>
@@ -93,6 +106,7 @@
           <button id="estilo-reanalizar" class="secundario" type="button">Volver a analizar mi estilo</button>
         </div>
       </details>
+      </div>
     </div>
   </main>
   <dialog id="visor" class="ventana alta" aria-label="Vista del CV">

@@ -54,10 +54,6 @@ docs/plan-pruebas-fase3.md
 docs/plan-pruebas-fase4.md
 docs/plan-pruebas-fase5.md
 
-# Brief de diseño del frontend (documento de trabajo, nunca se publica)
-docs/brief-frontend.md
-docs/prompt-claude-design-muestra.md
-
 # Diseños y material de diseño (documentos de trabajo, nunca se publican)
 diseños/
 # Ideas de mejora de Mar (documento de trabajo, nunca se publica)
@@ -68,5 +64,4 @@ docs/comparativas.md
 
 # En docs/ solo entra documentación técnica (ver AGENTS.md): lo demás se ignora por defecto
 docs/*
-!docs/init-prompt.md
 !docs/revision-lineas-rojas.md

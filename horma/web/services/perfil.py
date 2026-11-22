@@ -10,7 +10,7 @@ from sqlalchemy import Engine
 
 from horma.config import ajustes
 from horma.schemas.perfil import Perfil, PeriodoCubierto
-from horma.tools.avisos_perfil import aviso_de_hueco, avisos_perfil
+from horma.tools.avisos_perfil import agrupar_avisos, aviso_de_hueco, avisos_perfil
 from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.tools.detectar_huecos import detectar_huecos
 from horma.tools.generar_pdf import generar_pdf
@@ -161,6 +161,11 @@ def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
                 p[campo][indice] = _con_origen(dato)
         elif campo in UNICOS:
             p[campo] = None if dato is None else _con_origen(dato)
+        elif campo == "nombre":   # su nombre, tal como sale en el encabezado de «Tu CV completo»
+            valor = str((dato or {}).get("valor") or "").strip()
+            if not valor:
+                raise DatoNoValido("Escribe tu nombre.")
+            p["nombre"] = valor
         elif campo == "genero_puestos":
             valor = (dato or {}).get("valor")
             if valor not in ("femenino", "masculino"):
@@ -208,7 +213,7 @@ def avisos(engine: Engine, usuaria_id: int) -> dict:
         fila = perfiles.vigente(s)
         longitud = perfiles.longitud_cv(s)
         if fila is None:
-            return {"huecos": [], "avisos": [], "total": 0, "longitud": longitud}
+            return {"huecos": [], "avisos": [], "grupos": [], "total": 0, "longitud": longitud}
         perfil = perfiles.perfil_modelo(fila)
         textos = {c["cv_id"]: c["texto"] for c in perfiles.cvs_fuente(s)}
         vistos = perfiles.avisos_vistos(s)
@@ -221,7 +226,8 @@ def avisos(engine: Engine, usuaria_id: int) -> dict:
         return [{"clave": a.clave, "huella": a.huella, "texto": a.texto, "seccion": a.seccion}
                 for a in lista if vistos.get(a.clave) != a.huella]
     h, a = visibles(huecos), visibles(por_reglas)
-    return {"huecos": h, "avisos": a, "total": len(h) + len(a), "longitud": longitud}
+    grupos = agrupar_avisos(h + a)
+    return {"huecos": h, "avisos": a, "grupos": grupos, "total": len(grupos), "longitud": longitud}
 
 
 def dar_por_visto(engine: Engine, usuaria_id: int, clave: str, huella: str) -> None:

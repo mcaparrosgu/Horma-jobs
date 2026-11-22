@@ -246,7 +246,7 @@ def test_editar_en_borrador_no_llama_al_modelo_y_recalcula_los_avisos(app, motor
     assert r.status_code == 200, r.text
     assert any(a["documento"] == "cv" and a["frase"] == "Dirigí un equipo de 30 personas"
                for a in r.json()["avisos"]) and r.json()["preparacion"] == "pendiente_de_ti"
-    assert all(set(a) == {"documento", "frase", "mensaje"} and ": " not in a["mensaje"][:12]
+    assert all(set(a) == {"documento", "frase", "mensaje", "tipo"} and ": " not in a["mensaje"][:12]
                for a in r.json()["avisos"])
     assert _fila(motor_app, u, cid)["cv_contenido"] == nuevo
     r = c.patch(f"/api/candidaturas/{cid}", headers=h, json={"cv_contenido": CV})
@@ -422,6 +422,15 @@ def test_desde_aprobada_salen_el_cv_y_la_carta_en_pdf(app, motor_app):
         assert r.status_code == 200 and r.headers["content-type"] == "application/pdf"
         assert "attachment" in r.headers["content-disposition"]
         assert texto in "".join(p.extract_text() for p in PdfReader(io.BytesIO(r.content)).pages)
+
+
+def test_los_pdf_se_descargan_con_el_puesto_y_la_empresa(app, motor_app):
+    """RF-10.4e: `cv-puesto-empresa.pdf` y `carta-puesto-empresa.pdf`."""
+    c, h, u, cb, oferta, cid = _escenario(app, motor_app)
+    c.post(f"/api/candidaturas/{cid}/aprobar", headers=h)
+    for cual in ("cv", "carta"):
+        r = c.get(f"/api/candidaturas/{cid}/{cual}.pdf")
+        assert r.headers["content-disposition"] == f'attachment; filename="{cual}-camarera-bar-luna.pdf"'
 
 
 def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_otro_documento_subido(app, motor_app):

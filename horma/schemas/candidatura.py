@@ -21,6 +21,7 @@ TipoEvento = Literal["transicion", "nota"]
 OrigenEvento = Literal["usuaria"]
 DocumentoRevisado = Literal["cv", "carta"]
 DocumentoAviso = Literal["cv", "carta", "oferta"]  # «oferta»: aviso de texto manipulado (RF-4.5b)
+TipoAviso = Literal["no_consta", "revisa", "dudoso"]  # los tres grupos de «Revisa esto» (RF-10.13)
 
 ESTADOS: tuple[str, ...] = get_args(Estado)
 CANALES: tuple[str, ...] = get_args(Canal)
@@ -60,6 +61,8 @@ class Aviso(BaseModel):
     documento: DocumentoAviso
     frase: str | None = Field(default=None, description="Frase del documento a la que se refiere.")
     mensaje: str = Field(min_length=1)
+    tipo: TipoAviso = Field(default="revisa",
+                            description="Grupo en el que se ve; las antiguas, sin él, van en «revisa».")
 
 
 TEXTO_AVISO_OFERTA = "Esta oferta contiene texto que intenta dar órdenes a la IA; no se ha obedecido."
@@ -92,20 +95,24 @@ TEXTOS_ERROR: dict[str, str] = {
     "muletilla": "Suena a texto genérico de IA («{dato}»); cuéntalo con un hecho tuyo.",
     "otro": "Hay algo que revisar aquí.",
 }
+# Frases sin origen o con un dato que no consta: van en «Dato dudoso» (RF-10.13); el resto, en «Revisa».
+CLAVES_DUDOSAS = frozenset({"sin_traza", "fragmento", "dato_nuevo", "fecha"})
 _RE_FRASE_FINAL = re.compile(r"frase «(.+)»\)?$")
 _RE_COMILLAS = re.compile(r"«(.+?)»")
 
 
 def aviso_de_problema(p: "Problema") -> Aviso:
     """El aviso de un problema del juez: el texto sale del tipo, no del motivo que escribió el modelo."""
-    return Aviso(documento=p.documento, frase=p.frase or None, mensaje=TEXTOS_PROBLEMA[p.tipo])
+    return Aviso(documento=p.documento, frase=p.frase or None, mensaje=TEXTOS_PROBLEMA[p.tipo],
+                 tipo="dudoso" if p.tipo == "sin_origen" else "revisa")
 
 
 def aviso_de_error(documento: str, error: str, contenido: str = "") -> Aviso:
     """El aviso de un error de `comprobar` (`verificar_trazabilidad`, `rasgos_personales`, `errores_ats`).
     Clasifica por la forma del mensaje de cada herramienta; lo que no reconoce da el texto genérico."""
     def aviso(clave: str, dato: str = "", frase: str | None = None) -> Aviso:
-        return Aviso(documento=documento, frase=frase, mensaje=TEXTOS_ERROR[clave].format(dato=dato))
+        return Aviso(documento=documento, frase=frase, mensaje=TEXTOS_ERROR[clave].format(dato=dato),
+                     tipo="dudoso" if clave in CLAVES_DUDOSAS else "revisa")
 
     if error.startswith("Fecha que no está en"):
         fecha = error.rsplit(": ", 1)[-1]

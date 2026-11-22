@@ -31,7 +31,8 @@ function cabecera() {
   const s = nodo("section");
   s.append(nodo("h2", c.oferta.titulo || "Oferta sin título"));
   s.append(nodo("p", c.oferta.empresa || "Empresa sin indicar", "suave"));
-  s.append(nodo("span", estadoVisible(c.estado, c.preparacion), "estado bien"));
+  const estado = estadoVisible(c.estado, c.preparacion);
+  if (estado !== "Preparando") s.append(nodo("span", estado, "estado bien"));   // mientras prepara, ya lo dice la barra
   if (c.estado === "cerrada" && c.motivo_cierre) s.append(nodo("span", `Motivo: ${MOTIVOS_CIERRE[c.motivo_cierre] || c.motivo_cierre}`, "estado apagado"));
   const fila = nodo("div", null, "fila");
   fila.append(boton("Ver oferta original", () => verOriginal(c.oferta.id), "secundario"));   // RF-8.3
@@ -40,27 +41,52 @@ function cabecera() {
 }
 
 // --- «Revisa esto»: una sola lista con lo que la oferta pide y no consta, y los avisos -----------------------------------
+// «Revisa esto» en tres grupos (RF-10.13): No consta en tu CV, Revisa y Dato dudoso. Un grupo vacío no sale, y sin
+// nada que revisar no hay panel. Las candidaturas antiguas, sin `tipo`, se ven en «Revisa».
+function grupoAvisos(titulo, hijos) {
+  const g = nodo("div", null, "grupo-avisos");
+  g.append(nodo("h4", titulo, "etiqueta-mono"));
+  const ul = nodo("ul", null, "lista");
+  ul.append(...hijos);
+  g.append(ul);
+  return g;
+}
+
+function avisoItem(a) {
+  const li = nodo("li", null, "tarjeta alerta");
+  li.append(nodo("strong", DOCUMENTOS[a.documento] || a.documento));
+  if (a.frase) li.append(nodo("blockquote", a.frase));
+  li.append(nodo("p", a.mensaje));
+  return li;
+}
+
 function revisaEsto() {
   const s = nodo("section", null, "panel");
   const hayAlgo = c.huecos.length > 0 || c.avisos.length > 0;
   if (!hayAlgo && c.preparacion !== "pendiente_de_ti") return s;
   s.append(nodo("h3", "Revisa esto", "subtitulo"));
-  const ul = nodo("ul", null, "lista");
-  for (const h of c.huecos) {
+  if (!hayAlgo) {
+    s.append(nodo("p", TEXTOS.revisaFalta, "tarjeta alerta"));
+    return s;
+  }
+  const de = (tipo) => c.avisos.filter((a) => (a.tipo || "revisa") === tipo);
+  if (c.huecos.length) {
     const li = nodo("li", null, "tarjeta");
-    li.append(nodo("strong", textoNoConsta(h.requisito)));
-    if (h.propuesta) li.append(nodo("p", h.propuesta, "suave"));
-    ul.append(li);
+    li.append(nodo("strong", textoNoConstaVarios(c.huecos.map((h) => h.requisito))));
+    const propuesta = c.huecos.find((h) => h.propuesta)?.propuesta;
+    if (propuesta) li.append(nodo("p", propuesta, "suave"));
+    if (c.huecos.length > 1) {   // la lista entera, sin recortar, para quien quiera verla
+      const d = nodo("details", null, "seccion-plegable");
+      d.append(nodo("summary", `Ver los ${c.huecos.length} requisitos`));
+      const todos = nodo("ul", null, "lista");
+      todos.append(...c.huecos.map((h) => nodo("li", h.requisito)));
+      d.append(todos);
+      li.append(d);
+    }
+    s.append(grupoAvisos("No consta en tu CV", [li]));
   }
-  for (const a of c.avisos) {
-    const li = nodo("li", null, "tarjeta alerta");
-    li.append(nodo("strong", DOCUMENTOS[a.documento] || a.documento));
-    if (a.frase) li.append(nodo("blockquote", a.frase));
-    li.append(nodo("p", a.mensaje));
-    ul.append(li);
-  }
-  if (!hayAlgo) ul.append(nodo("li", TEXTOS.revisaFalta, "tarjeta alerta"));
-  s.append(ul);
+  if (de("revisa").length) s.append(grupoAvisos("Revisa", de("revisa").map(avisoItem)));
+  if (de("dudoso").length) s.append(grupoAvisos("Dato dudoso", de("dudoso").map(avisoItem)));
   return s;
 }
 
@@ -68,7 +94,7 @@ function revisaEsto() {
 function documento(titulo, clave) {
   const s = nodo("section");
   s.append(nodo("h3", titulo, "subtitulo"));
-  const hoja = cvBonito(c[clave]);
+  const hoja = clave === "carta_contenido" ? cartaBonita(c[clave]) : cvBonito(c[clave]);
   s.append(hoja);
   if (c.estado === "borrador") {
     const acciones = nodo("div", null, "fila");
@@ -118,7 +144,7 @@ function descargas() {
   for (const [texto, ruta] of [["Descargar CV (PDF)", "cv.pdf"], ["Descargar carta (PDF)", "carta.pdf"]]) {
     const a = nodo("a", texto, "boton secundario");
     a.href = `/api/candidaturas/${ID}/${ruta}`;
-    a.setAttribute("download", ruta);
+    a.setAttribute("download", "");   // el nombre lo pone el servidor: tipo, puesto y empresa
     s.append(a);
   }
   return s;
@@ -130,7 +156,7 @@ async function aprobarYDescargar() {
   for (const ruta of ["cv.pdf", "carta.pdf"]) {
     const a = nodo("a");
     a.href = `/api/candidaturas/${ID}/${ruta}`;
-    a.setAttribute("download", ruta);
+    a.setAttribute("download", "");   // el nombre lo pone el servidor: tipo, puesto y empresa
     document.body.append(a);
     a.click();
     a.remove();
@@ -139,7 +165,7 @@ async function aprobarYDescargar() {
 
 function aprobar() {
   const s = nodo("section", null, "panel");
-  s.append(nodo("p", "Los avisos no te bloquean: al aprobar das por revisado lo que quede.", "suave"));
+  s.append(nodo("p", "Puedes aprobar aunque queden avisos: al aprobar, se dan por revisados.", "suave"));
   const fila = nodo("div", null, "fila");
   fila.append(boton("Aprobar y descargar", aprobarYDescargar));
   s.append(fila);

@@ -20,12 +20,18 @@ const MOTIVOS_PREGUNTA = [["descartada", "La descarto yo"], ["retirada", "La ret
 
 // Lo que la oferta pide y el perfil no tiene (RF-10.2c). «Hueco» queda para un periodo sin actividad.
 const textoNoConsta = (requisito) => `La oferta pide ${requisito} y no consta en tu perfil`;
-
-// Frase del indicador de avance de la cabecera (RF-10.8), según el tipo de tarea.
-const FRASES_AVANCE = {
-  perfilar: "Leyendo tu CV", clasificar_perfil: "Leyendo tu CV", analizar_estilo: "Analizando tu estilo",
-  recomendar: "Puntuando", puntuar_propias: "Puntuando", puntuar_una: "Puntuando",
-  leer_url: "Analizando la oferta", candidatura: "Preparando tu candidatura",
+// Los huecos de una oferta, en una sola línea corta (RF-10.13): como mucho 5, cada uno recortado, y «y N más».
+// «La oferta pide Python, SQL y AWS, y no constan en tu perfil». La lista entera va aparte, desplegable.
+const MAX_HUECOS_LINEA = 5;
+const MAX_LETRAS_HUECO = 48;
+const corto = (t) => (t.length > MAX_LETRAS_HUECO ? `${t.slice(0, MAX_LETRAS_HUECO - 1).replace(/[\s,;(]+$/, "")}…` : t);
+const textoNoConstaVarios = (requisitos) => {
+  if (requisitos.length < 2) return requisitos.length ? textoNoConsta(corto(requisitos[0])) : "";
+  const vistos = requisitos.slice(0, MAX_HUECOS_LINEA).map(corto);
+  const resto = requisitos.length - vistos.length;
+  const lista = resto > 0 ? `${vistos.join(", ")} y ${resto} más`
+    : `${vistos.slice(0, -1).join(", ")} y ${vistos[vistos.length - 1]}`;
+  return `La oferta pide ${lista}, y no constan en tu perfil`;
 };
 
 const TEXTOS = {
@@ -39,7 +45,7 @@ const TEXTOS = {
   correccionGuardada: "Corrección guardada. Gracias.",
   propuesta: (n) => ` (compatibilidad que propones: ${n})`,
   sinNota: "Esta oferta todavía no tiene compatibilidad. Horma la calculará sola; si la quieres ya, pulsa «Puntuar ahora».",
-  explicacionRetirada: "Se ha retirado la explicación porque no cumplía las reglas de Horma. La compatibilidad sigue siendo válida.",
+  explicacionRetirada: "No mostramos la explicación de esta oferta: mencionaba un dato personal (como tu edad, sexo, salud o religión) y Horma nunca los usa para recomendar. La compatibilidad solo tiene en cuenta tu experiencia, formación e idiomas, y sigue siendo válida.",
   desfasada: "Esta compatibilidad se calculó con una versión anterior de tu perfil.",
   eligeCv: "Horma prepara tu CV a partir de tu perfil.",
   presupuesto: "Hoy ya hemos trabajado todo lo posible para ti. Mañana seguimos.",

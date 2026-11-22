@@ -31,7 +31,7 @@ def test_la_guia_recoge_los_dos_avisos_nuevos():
 def test_los_avisos_existen_con_tokens_y_sin_colores_sueltos():
     css = leer("estilo.css")
     bloque = css[css.index("/* ── Fase 9a"):]
-    for clase in (".aviso-accion", ".acciones-aviso", ".aviso-longitud", ".grupos-dos", ".terminos",
+    for clase in (".aviso-accion", ".acciones-aviso", ".aviso-longitud", ".terminos",
                   ".con-editar"):
         assert clase in bloque, clase
     assert not re.search(r"#[0-9a-fA-F]{3,8}\b", bloque)
@@ -39,9 +39,10 @@ def test_los_avisos_existen_con_tokens_y_sin_colores_sueltos():
 
 
 # --- T15 · «Qué buscas» ---------------------------------------------------------------------------------
-def test_que_buscas_separa_area_puestos_y_terminos_excluidos():
+def test_que_buscas_separa_puestos_y_terminos_excluidos_sin_area():
     html, js, comun = leer("ofertas.html"), leer("ofertas.js"), leer("comun.js")
-    assert '["familias", "Área"]' in comun
+    assert '["familias", "Área"]' not in comun and '["sectores", "Sector"]' in comun
+    assert "nuevas.familias = []" in js   # el área ya no se elige: se vacía al guardar
     for id_ in ("casillas-puestos", "nuevo-puesto", "anadir-puesto", "lista-excluidos", "nuevo-excluido",
                 "anadir-excluido"):
         assert f'id="{id_}"' in html, id_
@@ -57,7 +58,7 @@ def test_ofertas_sin_palabras_prohibidas():
 # --- T16 · Perfil: orden y avisos -----------------------------------------------------------------------
 def test_perfil_muestra_los_bloques_en_el_orden_de_rf_9_5():
     html = leer("perfil.html")
-    orden = [html.index(x) for x in ('id="pendientes"', 'id="mi-perfil"', 'id="maestro"',
+    orden = [html.index(x) for x in ('id="mi-perfil"', 'id="maestro"', 'id="pendientes"',
                                      'id="cvs-subidos"', 'id="estilo"')]
     assert orden == sorted(orden)
     assert "Por resolver" in html and "Tu CV completo" in html
@@ -65,7 +66,7 @@ def test_perfil_muestra_los_bloques_en_el_orden_de_rf_9_5():
 
 def test_perfil_avisos_con_sus_acciones_y_otras_actividades():
     js = leer("perfil.js")
-    for texto in ("Añadir", "Corregir", "Está bien así", "Mantener la longitud",
+    for texto in ("Añadir", "Corregir", "Dar por visto", "Mantener la longitud",
                   "Que Horma lo sintetice", "Otras actividades", "/api/perfil/avisos",
                   "/api/perfil/avisos/visto", "/api/perfil/longitud"):
         assert texto in js, texto

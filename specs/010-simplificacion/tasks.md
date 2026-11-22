@@ -1,7 +1,7 @@
 ---
 type: tasks
 title: simplificacion — Desglose de tareas
-description: Tareas pequeñas y comprobables de la simplificación, por bloques S1-S6 (una rama y un PR por bloque). Cada una empieza con un test que falla; las de pantalla se comprueban a 1280 y 390 px, en claro y en oscuro.
+description: Tareas pequeñas y comprobables de la simplificación, por bloques S1-S7. Cada una empieza con un test que falla; las de pantalla se comprueban a 1280 y 390 px, en claro y en oscuro.
 tags: [tareas, simplificacion, frontend, flujos, costes, arquitectura]
 status: active
 sources: [./plan.md]
@@ -12,11 +12,19 @@ stale_after: null
 
 # simplificacion — Tareas
 
+## Estado (22-nov)
+| Bloques | Rama y PR | Prueba de Mar |
+|---|---|---|
+| S0-S1 | Fusionados (PR #27 y #28) | Firmada (21-nov) |
+| S2-S5 | Fusionados juntos (PR #29) | Pendiente en S2-S4 (T12, T15, T18); el paso 2.3 se hizo el 21-nov y dio lugar a S7 |
+| S6 | `simplificacion-s6`, PR #30 abierto | — (no tiene pantalla) |
+| S7 | `simplificacion-s7` (sobre S6), PR #31 abierto | Cerrada por Mar (22-nov); falta el repaso a 390 px |
+
 ## Forma de trabajo
-- **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción (S1-S6), con Sonnet. Un fallo de
-  eval poco claro se analiza con Opus.
-- **Ramas:** una por bloque desde `main` (`simplificacion-s1` … `simplificacion-s6`), cada una con su PR. Mar
-  prueba y firma cada bloque antes del siguiente. Dentro de un bloque, todas las tareas seguidas.
+- **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción, con Sonnet. Un fallo de eval poco
+  claro se analiza con Opus.
+- **Ramas:** una por bloque (`simplificacion-s1` … `simplificacion-s7`); S2-S5 se fusionaron en un solo PR.
+  Dentro de un bloque, todas las tareas seguidas.
 - **Gasto:** solo T09 (eval `cv`), T19 (evals `ofertas` y `red-teaming`) y las pruebas manuales llaman al modelo
   real: se avisa antes con la estimación.
 - **Tests:** `UV_NO_SYNC=1 uv run pytest`.
@@ -55,26 +63,26 @@ stale_after: null
   - **Test:** `crear` sin CV base no da 409; una candidatura con `cv_base_id` recalcula avisos con él.
 - [x] T11 — Quitar `/cv-base` (si T09 pasa) o dejar el respaldo (si no).
   - **Test:** `/cv-base` → 308 a `/perfil`; los endpoints de CV base dan 404; las tablas siguen.
-- [ ] T12 — Cierre de S2: prueba manual de Mar (usuaria nueva: sube CV y prepara candidatura) y PR. *(la prueba pasa al plan de pruebas de la fase 10)*
+- [ ] T12 — Cierre de S2: prueba manual de Mar (usuaria nueva: sube CV y prepara candidatura) y PR. *(PR hecho: #29; falta la prueba)*
 
 ### S3 · Avance y subida (RF-10.8, RF-10.5 subida)
-- [x] T13 — Indicador de avance en la guía y en la cabecera. *(navegador sin comprobar: 1280/390 px, claro/oscuro)*
+- [x] T13 — Indicador de avance en la guía y en la cabecera. *(retirado en S7, T32: el avance va en su pantalla)*
   - **Test:** `/api/tareas/activas` sin `tipo` da las tareas de la usuaria con su URL; otra usuaria no las ve;
     el indicador desaparece al terminar.
   - **Navegador:** cabecera con indicador a 1280 y 390 px, en claro y en oscuro.
 - [x] T14 — Subida al elegir el archivo. *(«Carta» no se sube hasta S4)*
   - **Test:** el `change` sube con `clase=fuente`; no hay botón «Subir CV» en el estado vacío.
-- [ ] T15 — Cierre de S3: prueba manual de Mar y PR.
+- [ ] T15 — Cierre de S3: prueba manual de Mar y PR. *(PR hecho: #29; falta la prueba)*
 
 ### S4 · Perfil en una pantalla (RF-10.4, RF-10.5)
 - [x] T16 — `GET /api/perfil/cv.pdf`.
   - **Test:** da `application/pdf` con el nombre y una experiencia del perfil; otra usuaria o sin perfil, 404.
 - [x] T17 — Perfil: estado vacío, cinco bloques, «Por resolver», una sola elección de longitud, clases «CV» y
-  «Carta». *(navegador sin comprobar: 1280/390 px, claro/oscuro)*
+  «Carta». *(Perfil revisado de nuevo en S7, T36)*
   - **Test:** orden de RF-10.5b; cada elemento de «Por resolver» con dos acciones; `estetico` nuevo → 422; un
     estético antiguo se lista.
   - **Navegador:** Perfil vacío y lleno a 1280 y 390 px, en claro y en oscuro.
-- [ ] T18 — Cierre de S4: prueba manual de Mar y PR.
+- [ ] T18 — Cierre de S4: prueba manual de Mar y PR. *(PR hecho: #29; falta la prueba)*
 
 ### S5 · Ahorro (RF-10.9, RF-10.10, RF-10.11c)
 - [x] T19 — `analizador-oferta` y `procesar_oferta` con una llamada; evals. *(21-nov: prompt afinado; evals reales `ofertas` 8 de 8 y `red-teaming` sin fallos nuevos; ajuste en `true`)*
@@ -104,4 +112,39 @@ stale_after: null
     usa LangGraph.
 - [x] T27 — Coherencia: `system.md`, `specs/index.md`, README; en las specs 002, 003, 005, 008 y 009, los
   requisitos de «Requisitos que sustituye» marcados como sustituidos por la 010.
-- [ ] T28 — Cierre de S6: suite verde y PR.
+- [ ] T28 — Cierre de S6: suite verde y PR. *(PR #30 abierto, sin fusionar)*
+
+### S7 · Correcciones tras la prueba (RF-10.3g, 10.4d, 10.5c, 10.6e, 10.8, 10.13, RF-6.4b)
+Rama `simplificacion-s7`, sobre `simplificacion-s6`. Sale de la prueba 2.3 de Mar (21-nov).
+- [x] T29 — Spec, plan y tareas de S7. *(Opus; firmadas por Mar el 21-nov)*
+- [x] T30 — «Por resolver» con el desplegable «Avisos»: «Corregir»/«Añadir» y «Dar por visto».
+  - **Test:** Perfil tiene `details` «Avisos» dentro de «Por resolver»; ningún texto dice «Está bien así».
+- [x] T31 — Avisos agrupados en tres grupos, en la candidatura y en Perfil.
+  - **Test:** 20 requisitos ausentes dan 1 aviso «No consta»; 4 experiencias sin cifras, 1 aviso con 4; «Dar por
+    visto» del grupo marca las 4; una candidatura antigua sin `tipo` se ve en «Revisa»; sin avisos, no hay panel.
+  - **Navegador:** Candidatura y Perfil a 1280 y 390 px, en claro y en oscuro.
+- [x] T32 — Una sola barra: fuera el indicador de la cabecera; barra con % en Perfil al leer el CV.
+  - **Test:** ninguna página pinta `.indicador-avance`; Perfil usa `barraAvance` con `tipo=perfilar`.
+- [x] T33 — Términos excluidos al final de «Qué buscas».
+  - **Test:** en `ofertas.html`, `grupo-excluidos` va después de «Condiciones» y antes de «Guardar y buscar».
+- [x] T34 — Diseño sobrio del PDF (CV y carta) y la carta como párrafos en «Ver».
+  - **Test:** el PDF se abre; su texto extraído trae nombre, secciones y fechas en orden; la carta sin
+    negritas; los PDF guardados de candidaturas antiguas se siguen sirviendo. Mar ve una muestra.
+- [x] T35 — Carta que suena humana. *Gasta: avisar antes (~0,7-1,2 USD).*
+  - **Qué se hace:** diagnóstico de la carta de la 2.3 (sin gasto); prompt reescrito con ejemplo; casos de carta
+    en `evals/cv`.
+  - **Test (simulado):** el prompt trae la estructura de RF-10.3g y el ejemplo cumple `verificar_trazabilidad`.
+    **Real:** eval `cv` en umbral y una candidatura que Mar lee.
+- [x] T36 — Repaso de simetría de todas las pantallas de la usuaria (lista del plan, S7).
+  - **Navegador:** Perfil (vacío, leyendo, lleno), Ofertas, Candidaturas y Candidatura a 1280 y 390 px, en claro
+    y en oscuro, mirando a propósito alineación y alturas.
+  - **Hecho (22-nov), a 1280 px y en oscuro:** Ofertas (fila Puestos · Sector · Condiciones, casillas cuadradas), Perfil
+    (columna derecha: Subir archivo, Tu CV completo, Por resolver, Documentos subidos, Cómo escribes), Candidaturas
+    (seis columnas en una fila) y Candidatura. **390 px:** no se pudo comprobar (la ventana de Chrome no baja de ancho); queda para el repaso página por página de Mar.
+  - **Cambios pedidos por Mar en el repaso:** se retira «Área» de Ofertas (se vacía al guardar y el CV ya no la
+    rellena); «Subir archivo» con formatos y peso; barras en verde lima; «Nombre» editable en Perfil (sale en «Tu CV
+    completo» y su PDF; el extractor lo pide); PDF de candidatura como `cv-puesto-empresa.pdf` y
+    `carta-puesto-empresa.pdf`; «No consta en tu CV» en una línea corta con la lista completa desplegable.
+- [x] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README) y prueba de Mar. *(cerrada por
+  Mar el 22-nov; PR #31)*
+  - **T35 en real:** eval `cv`, 31 casos (1,60 USD, parado por tope) y los casos 32 y 33 de carta en verde (0,25 USD).

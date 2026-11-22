@@ -118,6 +118,23 @@ async function cambiarPerfil(ruta, metodo, cuerpo) {
   await cargarPerfil();
 }
 
+// Su nombre: sale como título de «Tu CV completo» y de sus PDF. Sin nombre, «Añadir»; con él, «Modificar».
+function filaNombre(nombre) {
+  const fila = nodo("div", null, "fila");
+  fila.append(nodo(nombre ? "p" : "p", nombre || "Sin nombre: añádelo para que salga en tu CV completo.", nombre ? "dato" : "suave"));
+  const abrir = nodo("button", nombre ? "Modificar" : "Añadir nombre", "secundario");
+  abrir.type = "button";
+  abrir.addEventListener("click", () => {
+    abrir.hidden = true;
+    const f = formularioDato("nombre", { valor: nombre || "" },
+      (dato) => cambiarPerfil("/api/perfil/datos", "PATCH", { campo: "nombre", dato }),
+      () => { f.remove(); abrir.hidden = false; }, "Guardar", { solo: ["valor"] });
+    fila.after(f);
+  });
+  fila.append(abrir);
+  return fila;
+}
+
 function pregunta(p, i) {
   const li = nodo("li", null, "tarjeta");
   li.append(nodo("span", MOTIVOS[p.motivo] || p.motivo, "estado apagado"));
@@ -165,7 +182,7 @@ function pregunta(p, i) {
     });
     acciones.append(abrir);
   }
-  const descartar = nodo("button", "Está bien así", acciones.children.length ? "secundario" : null);
+  const descartar = nodo("button", "Dar por visto", acciones.children.length ? "secundario" : null);
   descartar.type = "button";
   descartar.addEventListener("click", () => responder(null));
   acciones.append(descartar);
@@ -254,9 +271,7 @@ function corregirAviso(a) {
   if (a.seccion === "hueco") return irASeccion("actividades", true);
   if (a.seccion === "resumen") return irASeccion("resumen", true);
   if (a.seccion === "experiencia") return irASeccion("experiencias");
-  const docs = $("cvs-subidos");   // lo que falta está en el CV original: se sube uno corregido
-  docs.open = true;
-  docs.scrollIntoView({ behavior: "smooth" });
+  $("subir-otro").scrollIntoView({ behavior: "smooth" });   // lo que falta está en el CV original: se sube uno corregido
 }
 
 async function pedirAvisos(ruta, cuerpo, mensaje) {
@@ -266,21 +281,35 @@ async function pedirAvisos(ruta, cuerpo, mensaje) {
   await cargarAvisos(perfilActual?.preguntas_pendientes || []);
 }
 
+// «Dar por visto» de un aviso agrupado marca todos sus elementos; si cambia la causa de uno, vuelve solo ese.
+async function verAviso(a) {
+  for (const x of a.elementos) {
+    const r = await api("/api/perfil/avisos/visto", { metodo: "PUT", cuerpo: { clave: x.clave, huella: x.huella } });
+    if (!r.ok) return avisar(r.motivo, true);
+  }
+  avisar("Hecho: no te lo volveremos a decir mientras no cambie.");
+  await cargarAvisos(perfilActual?.preguntas_pendientes || []);
+}
+
 const MENSAJE_LONGITUD = {
   mantener: "Hecho: al redactar un CV para una oferta, Horma conservará todas tus experiencias. Tu CV completo no cambia.",
   sintetizar: "Hecho: al redactar un CV para una oferta, Horma elegirá las experiencias que encajan. Tu CV completo no cambia.",
 };
 const elegirLongitud = (longitud) => pedirAvisos("/api/perfil/longitud", { longitud }, MENSAJE_LONGITUD[longitud]);
 
-const ETIQUETA_AVISO ={ hueco: "Hueco", largo: "CV largo", sin_resumen: "Sin resumen",
+const ETIQUETA_AVISO = { hueco: "Hueco", largo: "CV largo", sin_resumen: "Sin resumen",
                          sin_descripcion: "Sin descripción", sin_cifras: "Sin cifras", sin_contacto: "Sin contacto" };
 
 // Mismo diseño que las preguntas: etiqueta, titular y acciones (la primera, destacada).
 function avisoFila(a) {
   const li = nodo("li", null, "tarjeta aviso-accion");
-  const tipo = a.seccion === "hueco" ? "hueco" : a.clave.split(":")[0];
-  li.append(nodo("span", ETIQUETA_AVISO[tipo] || "Aviso", "estado apagado"));
+  li.append(nodo("span", ETIQUETA_AVISO[a.regla] || "Aviso", "estado apagado"));
   li.append(nodo("h3", a.texto));
+  if (a.elementos.length > 1) {   // aviso agrupado: sus elementos debajo (RF-10.13)
+    const ul = nodo("ul", null, "lista");
+    ul.append(...a.elementos.map((x) => nodo("li", x.texto, "suave")));
+    li.append(ul);
+  }
   const acciones = nodo("div", null, "fila acciones-aviso");
   const boton = (texto, alPulsar) => {
     const b = nodo("button", texto, acciones.children.length ? "secundario" : null);
@@ -294,8 +323,7 @@ function avisoFila(a) {
     boton("Que Horma lo sintetice", () => elegirLongitud("sintetizar"));
   } else {
     boton(a.seccion === "hueco" ? "Añadir" : "Corregir", () => corregirAviso(a));
-    boton("Está bien así", () => pedirAvisos("/api/perfil/avisos/visto", { clave: a.clave, huella: a.huella },
-                                             "Hecho: no te lo volveremos a decir mientras no cambie."));
+    boton("Dar por visto", () => verAviso(a));
   }
   li.append(acciones);
   return li;
@@ -304,8 +332,11 @@ function avisoFila(a) {
 // «Por resolver» reúne, en este orden, preguntas, huecos y avisos (RF-10.5c); se abre solo al aparecer alguno.
 async function cargarAvisos(preguntas) {
   const r = await api("/api/perfil/avisos");
-  const items = r.ok ? [...r.datos.huecos, ...r.datos.avisos] : [];
-  $("lista-pendientes").replaceChildren(...preguntas.map(pregunta), ...items.map(avisoFila));
+  const items = r.ok ? r.datos.grupos : [];
+  $("lista-pendientes").replaceChildren(...preguntas.map(pregunta));
+  $("lista-avisos").replaceChildren(...items.map(avisoFila));
+  $("avisos").hidden = !items.length;
+  $("n-avisos").textContent = String(items.length);
   const total = preguntas.length + items.length;
   $("pendientes").hidden = false;
   $("n-pendientes").textContent = String(total);
@@ -357,7 +388,9 @@ async function cargarPerfil() {
   const estado = $("estado-perfil");
   estado.replaceChildren();
   if (construyendo) {
-    estado.append(nodo("p", "Estamos leyendo tu CV para construir tu perfil. Esto puede tardar un minuto…", "estado apagado"));
+    const activas = await api("/api/tareas/activas?tipo=perfilar");   // una sola barra, con su % (RF-10.8)
+    const progreso = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0].progreso : 0;
+    barraAvance(estado, "Estamos leyendo tu CV").poner(progreso);
     temporizador = setTimeout(cargarPerfil, 3000);
   }
   if (error) estado.append(nodo("p", `No se pudo construir el perfil: ${error}`, "alerta"));
@@ -376,7 +409,7 @@ async function cargarPerfil() {
   $("version").textContent = `versión ${perfil.version}`;
   const cont = $("perfil");
   cont.replaceChildren();
-  if (perfil.nombre) cont.append(nodo("p", perfil.nombre, "dato"));
+  cont.append(filaNombre(perfil.nombre));
   if (perfil.genero_puestos) {
     const fila = nodo("div", null, "fila");
     fila.append(nodo("p", `Tus puestos se escriben en género ${perfil.genero_puestos}.`, "suave"));

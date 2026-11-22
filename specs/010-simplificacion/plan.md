@@ -1,7 +1,7 @@
 ---
 type: plan
 title: simplificacion — Plan técnico
-description: Archivos y cambios que cubren la spec 010 por bloques (S1-S6) — textos y menú, candidatura sin CV base, avance en la cabecera y subida directa, Perfil en una pantalla con PDF del CV completo, analizador-oferta y presupuesto diario único con caché de la compatibilidad, y orden interno.
+description: Archivos y cambios que cubren la spec 010 por bloques (S1-S7) — textos y menú, candidatura sin CV base, avance y subida directa, Perfil en una pantalla con PDF del CV completo, analizador-oferta y presupuesto diario único con caché de la compatibilidad, orden interno y las correcciones tras la prueba.
 tags: [plan, simplificacion, frontend, flujos, agentes, costes, arquitectura, migracion]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../008-portada-ofertas/plan.md, ../009-cv-maestro-entrevista/plan.md]
@@ -31,7 +31,7 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
 | RF-10.5 | `static/perfil.html`, `static/perfil.js`; `services/cv.py:19` |
 | RF-10.6 | `static/recomendadas.*` → `static/ofertas.*`; `static/anadir-oferta.*` → ventana en `ofertas.js` |
 | RF-10.7 | `textos.js` (`estadoVisible(estado, preparacion)`); `candidatura.js`, `candidaturas.js`, `ofertas.js` |
-| RF-10.8 | `static/comun.js` (cabecera); `routers/tareas.py:20` (`/api/tareas/activas` sin `tipo`) |
+| RF-10.8 | Desde S7: `barraAvance()` en la pantalla de cada tarea (`perfil.js` con `/api/tareas/activas?tipo=perfilar`); sin indicador en la cabecera |
 | RF-10.9 | `services/presupuesto.py` nuevo; `repositories/tareas.py:50` (`gasto_hoy`); `config.py` |
 | RF-10.10 | `agents/analizador_oferta/` nuevo; `flows/procesar_oferta.py`; migración `0022` (`matches.huella_perfil`) |
 | RF-10.11 | `services/*`; `routers/*`; `queue/worker.py` (tabla `ENCADENADOS`); `.importlinter`; `config.py:17-18,67` |
@@ -79,6 +79,8 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
 - **Si no pasa:** `HORMA_CV_BASE_RESPALDO=true`, la pantalla se queda escondida y se apunta en la spec.
 
 ## S3 · Avance en la cabecera y subida directa (RF-10.8, RF-10.5 subida)
+> El indicador de la cabecera se retiró en S7 (RF-10.8 reescrito): ver «Avance» en S7.
+
 - **API:** `GET /api/tareas/activas` sin `tipo` devuelve las tareas en marcha de la usuaria con `tipo`,
   `progreso` y la URL de su pantalla (`perfil`, `ofertas`, `candidaturas/{id}`).
 - **Cabecera:** `comun.js` añade el indicador «Indicador de avance» (nuevo en la guía): frase + %, enlace a la
@@ -91,8 +93,8 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
 ## S4 · Perfil en una pantalla (RF-10.4, RF-10.5)
 - **Pantalla:** `perfil.html` con los cinco bloques de RF-10.5b, dos columnas a 1280 px (rejilla de la guía).
   Sin perfil, solo «Sube tu CV».
-- **Por resolver:** junta `preguntas_pendientes` y `GET /api/perfil/avisos`. «Está bien así» =
-  `PUT /api/perfil/avisos/visto` (y, en una pregunta, la respuesta «Nada que añadir» que ya existe). La tarjeta
+- **Por resolver:** junta `preguntas_pendientes` y `GET /api/perfil/avisos`. «Dar por visto» (en S4 se llamó
+  «Está bien así»; S7 recuperó el nombre) = `PUT /api/perfil/avisos/visto` (y, en una pregunta, la respuesta «Nada que añadir» que ya existe). La tarjeta
   `#maestro-longitud` (`perfil.js:321-340`) se borra; queda la del aviso `largo` (`:281-284`).
 - **Tu CV completo:** «Ver» abre el CV maestro en la Ventana (`cvBonito`); «Descargar PDF» llama a
   `GET /api/perfil/cv.pdf`, que usa `generar_pdf(perfiles.cv_maestro)`. RLS por sesión; sin perfil, 404.
@@ -142,6 +144,39 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
   módulos de esquemas con tablas en SQL, herramientas con red (`descargar`, `leer_pagina`, `dominio`),
   alertas a 5 USD y 50 %, regla «solo los servicios encolan».
 
+## S7 · Correcciones tras la prueba (RF-10.3g, 10.4d, 10.5c, 10.6e, 10.8, 10.13, RF-6.4b)
+- **«Avisos» en Perfil (RF-10.5c):** se recupera el desplegable de `4fc7024^:static/perfil.html` dentro de «Por
+  resolver»; `perfil.js` (`avisoFila`, `cargarAvisos`) vuelve a «Dar por visto» (texto en `textos.js`). Backend
+  igual (`PUT /api/perfil/avisos/visto`).
+- **Avisos agrupados (RF-10.13):** `Aviso` (`schemas/candidatura.py`) gana `tipo` (`no_consta | revisa |
+  dudoso`, por defecto `revisa` para las antiguas); lo rellenan `componer` (`flows/candidatura.py`) y el
+  recálculo al editar (`services/candidaturas.py`). Los huecos de `ausentes_sin_origen` se juntan en uno.
+  `revisaEsto()` (`candidatura.js`) pinta los tres grupos y no pinta el panel vacío. En Perfil,
+  `tools/avisos_perfil.py` agrupa las claves con prefijo (`sin_cifras:`, `sin_descripcion:`, `sin_contacto:`)
+  y «Dar por visto» del grupo marca todas sus claves.
+- **Avance (RF-10.8):** fuera el indicador de `comun.js` y `.indicador-avance` de `estilo.css`; Perfil usa
+  `barraAvance()` mientras se lee el CV, con `/api/tareas/activas?tipo=perfilar`. Si nadie usa
+  `/api/tareas/activas` sin `tipo`, se quita esa variante.
+- **Qué buscas (RF-10.6e):** `#grupo-excluidos` pasa detrás de «Condiciones» en `ofertas.html`.
+- **PDF (RF-10.4d):** `tools/generar_pdf.py` (fpdf2) con Familjen Grotesk y DM Mono en TTF en
+  `assets/fuentes/` (OFL) y DejaVu de respaldo; parámetro `tipo="cv"|"carta"` desde `services/perfil.py`,
+  `flows/candidatura.py`, `services/candidaturas.py` y `cli.py`. En «Ver», la carta se pinta como párrafos
+  (`candidatura.js`), no con `cvBonito`.
+- **Carta (RF-10.3g):** diagnóstico de la carta de la prueba 2.3; `agents/redactor_carta/prompt.md` reescrito
+  con la estructura de RF-10.3g y un ejemplo inventado que cumple la traza; casos nuevos de carta en
+  `evals/cv/casos/`. RT-08 y `verificar_trazabilidad` no cambian.
+- **Simetría (RF-6.4b):** h2 dentro de `.panel` sin margen superior; un solo estilo de tarjeta en la columna
+  derecha de Perfil; tablero de Candidaturas sin columna huérfana a 1280 px; «Condiciones» y `.grupos` de
+  Ofertas con la misma línea base; «Sube tu CV» y `#subir-doc` alineados; botones de la candidatura sin
+  estirar y enlace de vuelta a 44 px. Comprobado a 1280 px, en claro y en oscuro; 390 px, pendiente (T36).
+- **Repaso del 22-nov (RF-10.4e, 10.5b, 10.5f, 10.6f):**
+  - Sin «Área»: `repositories/perfiles.py` (`GRUPOS_DEL_CV` sin `familias`) y `ofertas.js` (vacía `familias` al
+    guardar); Puestos · Sector · Condiciones en una fila (`ofertas.html`, `estilo.css`).
+  - Nombre editable: campo `nombre` en `services/perfil.py`, `perfil.html/js`; `extractor_perfil/prompt.md` lo pide.
+  - Descargas: `nombre_descarga()` en `services/candidaturas.py` (`cv-puesto-empresa.pdf`), usada por
+    `_descarga()` de `routers/candidaturas.py` en `Content-Disposition`.
+  - Perfil en el orden de RF-10.5b (`perfil.html`); barras en lima (`--bar-fill` en `tokens.css`).
+
 ## Datos
 - Migración `0022_simplificacion.py` (S5): `matches.huella_perfil` con relleno e índice
   `(usuaria_id, oferta_id, huella_perfil)`. Sin borrar tablas ni columnas.
@@ -169,3 +204,4 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
 ## Coste
 - S2: eval `cv` real, ~0,5-1 USD. S5: evals `ofertas` y `red-teaming`, ~1-2 USD. Prueba manual de cada bloque:
   céntimos (un CV y una candidatura). Se avisa siempre antes.
+- S7: eval `cv` real (~0,5-1 USD) y una candidatura de prueba (~0,2 USD), los dos en T35.

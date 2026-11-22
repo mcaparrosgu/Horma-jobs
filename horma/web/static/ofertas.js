@@ -594,6 +594,7 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   e.preventDefault();
   const nuevas = { ...guardadas };
   for (const [clave] of GRUPOS) nuevas[clave] = marcadas(document.querySelector(`[data-grupo="${clave}"]`));
+  nuevas.familias = [];   // el área ya no se elige: lo que hubiera guardado deja de filtrar
   nuevas.puestos = puestos.filter((p) => p.marcado).map((p) => p.valor);
   nuevas.excluidos = [...excluidos];
   nuevas.solo_remoto = $("solo-remoto").checked;

@@ -235,7 +235,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         `estado`: eso lo hace el servicio (RF-4.3c)."""
         titulo = Oferta.model_validate(e["oferta"]).titulo or "oferta"
         e["cv_pdf"] = generar_pdf(e["cv_contenido"], f"CV · {titulo}")
-        e["carta_pdf"] = generar_pdf(e["carta_contenido"], f"Carta de presentación · {titulo}")
+        e["carta_pdf"] = generar_pdf(e["carta_contenido"], f"Carta de presentación · {titulo}", "carta")
         return e
 
     pasos = {"elegir_cv_base": elegir, "redactar_cv": redactar_cv, "redactar_carta": redactar_carta,

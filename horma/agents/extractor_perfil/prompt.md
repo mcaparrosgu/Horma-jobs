@@ -48,6 +48,8 @@ Reglas:
   coincidan en él (p. ej. «Inglés B1» en uno y «nivel medio de inglés» en otro). En ese caso añade una
   entrada de `idiomas` por cada mención, cada una con su nivel y su cita literal; el código se
   encarga de preguntar el nivel. Los idiomas son los que más filtran ofertas: perder uno es grave.
+- `nombre`: el nombre y los apellidos de la persona tal como figuran en el encabezado del CV, sin título ni
+  datos de contacto. Si no aparece con claridad, déjalo vacío; no lo inventes.
 - `genero_puestos`: «femenino» o «masculino» solo si TODOS los puestos con marca de género de los CV
   (camarera, cocinero, enfermera…) están escritos en el mismo género. Si se mezclan o ninguno lo
   marca, déjalo vacío. NUNCA lo deduzcas del nombre ni de nada que no sea cómo están escritos los

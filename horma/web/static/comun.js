@@ -70,8 +70,6 @@ async function api(ruta, { metodo = "GET", cuerpo, formulario } = {}) {
       }).join("; ");
     } else motivo = `No se pudo completar la acción (error ${r.status}).`;
   }
-  // Un cambio hecho por la usuaria puede haber encolado un trabajo: el indicador lo recoge sin esperar.
-  if (r.ok && metodo !== "GET" && typeof avisarTareaNueva === "function") avisarTareaNueva();
   return { ok: r.ok, estado: r.status, datos, motivo };
 }
 
@@ -126,46 +124,7 @@ async function arrancar(activa) {
   });
   derecha.append(tema, salir);
   pintarPersona(persona);
-  indicadorActivo = true;
-  vigilarAvance();
   return yo;
-}
-
-// Indicador de avance de la cabecera (RF-10.8): frase y % de la tarea en marcha; lleva a su pantalla.
-// Pregunta cada 3 s solo mientras haya tareas; al terminar desaparece y deja de preguntar.
-let indicadorAvance = null;
-let esperaIndicador = null;
-function pintarIndicador(t) {
-  const hueco = $("derecha");
-  if (!hueco) return;
-  if (!indicadorAvance) {
-    indicadorAvance = nodo("a", null, "indicador-avance");
-    indicadorAvance.setAttribute("role", "status");
-    hueco.prepend(indicadorAvance);
-  }
-  const frase = (typeof FRASES_AVANCE !== "undefined" && FRASES_AVANCE[t.tipo]) || "Trabajando";
-  indicadorAvance.href = t.url;
-  indicadorAvance.textContent = `${frase} ${Math.max(0, Math.min(100, Math.round(Number(t.progreso) || 0)))} %`;
-}
-
-async function vigilarAvance() {
-  clearTimeout(esperaIndicador);
-  const r = await api("/api/tareas/activas");
-  const lista = r.ok && r.datos ? r.datos.tareas : [];
-  if (lista.length) {
-    pintarIndicador(lista[0]);
-    esperaIndicador = setTimeout(vigilarAvance, SONDEO_TAREA_MS);
-  } else if (indicadorAvance) {
-    indicadorAvance.remove();
-    indicadorAvance = null;
-  }
-  if (!r.ok && r.estado === 0) esperaIndicador = setTimeout(vigilarAvance, SONDEO_TAREA_MS);
-}
-
-// Las pantallas lo llaman al empezar un trabajo, para que el indicador aparezca sin esperar a otra carga.
-let indicadorActivo = false;
-function avisarTareaNueva() {
-  if (indicadorActivo) vigilarAvance();
 }
 
 // Cabecera de las pantallas de Admin (RF-6.3d): solo comprueba la sesión y enlaza «Salir». Sin sesión, a la landing.
@@ -384,6 +343,16 @@ function cvBonito(md) {
   return hoja;
 }
 
+// La carta se ve como carta (RF-10.4d): párrafos, sin negritas ni secciones. Cada línea con texto es un párrafo.
+function cartaBonita(md) {
+  const hoja = nodo("article", null, "cv-hoja carta-hoja");
+  for (const crudo of md.split("\n")) {
+    const linea = crudo.trim().replace(/^(?:#{1,6}|[-*+•])\s+/, "").replace(/[*_`]/g, "");
+    if (linea) hoja.append(nodo("p", linea, "cv-linea"));
+  }
+  return hoja;
+}
+
 function fecha(valor) {
   if (!valor) return "—";
   const d = new Date(valor);
@@ -444,7 +413,7 @@ function nombreOpcion(clave, valor) {
 
 // --- Casillas por grupo (Preferencias y barra de filtros de Recomendadas) ------------------------
 const GRUPOS = [
-  ["familias", "Área"], ["sectores", "Sector"], ["contratos", "Tipo de contrato"],
+  ["sectores", "Sector"], ["contratos", "Tipo de contrato"],
   ["niveles", "Nivel"], ["paises", "País"], ["idiomas", "Idiomas"],
 ];
 
