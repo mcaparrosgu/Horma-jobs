@@ -9,8 +9,8 @@
     "vinetas": "empiezan con verbo en pasado, sin punto final",
     "expresiones": [
       {
-        "rasgo": "abre con «Hola equipo»",
-        "cita": "Hola equipo,"
+        "rasgo": "abre con «Hola, equipo»",
+        "cita": "Hola, equipo:"
       }
     ],
     "evita": []

@@ -213,32 +213,32 @@ Recorrida por Claude en el navegador y la consola; K1, O4, P1, P2, P5 y N4 repet
 Lo demás de la pasada no se arregla aquí: los falsos «Dato dudoso», los recortes del extractor y «manejo de
 ordenador» como hueco van a la fase 13; el coste de editar el perfil, a la 12; «sin límite» en Admin, a la 14; los
 avisos de presupuesto, a la gestión del gasto. Ver [index.md](../index.md#lo-que-viene).
-- [ ] T63 — «Valenciano» en el CV maestro y en las ofertas.
+- [x] T63 — «Valenciano» en el CV maestro y en las ofertas.
   - **Qué se hace:** `componer_cv_maestro` escribe «Valenciano» si el idioma es `ca` y su `origen.fragmento` dice
     «valenci»; si no, «Catalán». `normalizar_oferta` añade «valenciano valencià» a `ca`.
   - **Test:** `ca` con fragmento «Valenciano: C1» da «Valenciano C1» en el maestro; con «Catalán: B2», «Catalán
     B2»; una oferta que pide valenciano no sale en «No consta» si el perfil tiene `ca`.
-- [ ] T64 — «No consta» sin duplicados ni texto interno (RF-10.13).
+- [x] T64 — «No consta» sin duplicados ni texto interno (RF-10.13).
   - **Qué se hace:** en `flows/candidatura.py`, los huecos del redactor y los de `medir_ats` se comparan por una
     clave normalizada (sin paréntesis, sin tildes, en minúsculas) y por inclusión; de los huecos del redactor se
     quita el paréntesis con texto interno (p. ej., «según la taxonomía»).
   - **Test:** «PMS (…según la taxonomía…)» y «pms» dan un solo «PMS»; ningún hueco contiene «taxonomía».
-- [ ] T65 — Barra y Perfil sin parpadeo (RF-10.8c, RF-10.14n).
+- [x] T65 — Barra y Perfil sin parpadeo (RF-10.8c, RF-10.14n).
   - **Qué se hace:** `perfil.js` conserva el nodo de la barra al repintar mientras la tarea siga activa (como T54)
     y no pinta «Sube tu CV» hasta tener la respuesta de `/api/perfil`.
   - **Test:** estático: la barra se crea una vez y se reutiliza; el estado vacío solo se pinta tras la respuesta.
     **Navegador:** subir un CV y ver la barra continua hasta «Listo», a 1280 y 390 px, en claro y en oscuro.
-- [ ] T66 — Saludos de la carta con la puntuación correcta (RF-3.6, lista cerrada).
+- [x] T66 — Saludos de la carta con la puntuación correcta (RF-3.6, lista cerrada).
   - **Qué se hace:** la lista de `verificar_trazabilidad.py`, el prompt de `redactor_carta` (lista y ejemplo) y los
     casos de `evals/cv` usan coma tras «Hola» y dos puntos al final: «Hola, equipo:», «Estimado equipo de
     selección:», «Estimados señores:», «Buenos días:». La comprobación sigue aceptando las formas antiguas, para no
     avisar en cartas ya guardadas. Despedidas, sin cambios. El nombre de la empresa en el saludo, en la fase 13.
   - **Test:** el prompt y sus ejemplos solo traen formas nuevas; una carta con «Hola, equipo:» pasa la comprobación.
     **Real:** el eval `cv` de T50.
-- [ ] T67 — El eval simulado informa 0 USD.
+- [x] T67 — El eval simulado informa 0 USD.
   - **Test:** `horma eval correr ofertas --simulado` da coste 0.
 - [ ] T50 — Cierre de S8. *Gasta: avisar antes.*
-  - **Qué se hace:** eval `cv` real (cierra T44 y T66; ~1,9-2,7 USD); prueba de cierre de Mar en
+  - **Qué se hace:** eval `cv` real (hecho el 22-nov: 33/33, 1,74 USD, aprobado; cierra T44 y T66); prueba de cierre de Mar en
     `docs/plan-pruebas-manuales.md` (subir y borrar CV, T59, T62-T66; ~0,3-0,6 USD); presupuesto diario de vuelta
     a 1 USD; suite verde; `index.md` al día; PR.
 

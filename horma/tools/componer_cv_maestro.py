@@ -15,6 +15,13 @@ _IDIOMAS = {
 }
 
 
+def _nombre_idioma(i) -> str:
+    """«Valenciano» si el CV lo dice así (T63); el esquema solo tiene `ca` para catalán y valenciano."""
+    if i.idioma == "ca" and "valenci" in i.origen.fragmento.casefold():
+        return "Valenciano"
+    return _IDIOMAS[i.idioma]
+
+
 def _linea(*partes: str | None) -> str:
     return " · ".join(p.strip() for p in partes if p and p.strip())
 
@@ -58,7 +65,7 @@ def componer_cv_maestro(perfil: Perfil) -> str:
     salida += _seccion("Formación", [
         _linea(f.titulo, f.centro, _periodo(f.inicio, f.fin)) for f in perfil.formacion])
     salida += _seccion("Idiomas", [
-        _linea(_IDIOMAS[i.idioma] + (f" {i.nivel.strip()}" if i.nivel and i.nivel.strip() else ""))
+        _linea(_nombre_idioma(i) + (f" {i.nivel.strip()}" if i.nivel and i.nivel.strip() else ""))
         for i in perfil.idiomas])
     salida += _seccion("Habilidades", [h.nombre.strip() for h in perfil.habilidades])
 

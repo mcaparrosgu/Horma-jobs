@@ -160,10 +160,10 @@ def test_redactor_carta_devuelve_su_esquema():
 
 
 def test_prompt_del_redactor_carta_prohibe_repetir_el_cv_y_usa_formulas_cerradas():
-    from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA
+    from horma.tools.verificar_trazabilidad import FORMULAS_ANTIGUAS, FORMULAS_CORTESIA
     p = " ".join(RedactorCarta.prompt().split())  # los saltos de línea del prompt no cuentan
     assert "no repitas el cv" in p.lower() and "traza" in p and "problemas_previos" in p
-    assert all(f in p for f in FORMULAS_CORTESIA)
+    assert all(f in p for f in FORMULAS_CORTESIA if f not in FORMULAS_ANTIGUAS)
     assert "oferta" in p and "sector" in p
 
 

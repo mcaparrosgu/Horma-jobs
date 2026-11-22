@@ -43,8 +43,8 @@ Formato: carpeta — qué es. **Estado.**
 - `010-simplificacion/` — 4 pantallas y 4 clics, candidatura sin CV base, un agente por oferta, 1 USD al día,
   orden interno y correcciones. Por bloques ([tasks.md](./010-simplificacion/tasks.md)):
   - **S1-S7: fusionadas** (PR #28 a #31) y probadas por Mar; el repaso a 390 px, más adelante.
-  - **S8 (correcciones de la pasada del 22-nov): construida** en `simplificacion-s8` (T38-T49, T54-T62), sin PR.
-    Faltan T63-T67 (correcciones finales), el eval `cv` real, la prueba de cierre de Mar y el PR (T50).
+  - **S8 (correcciones de la pasada del 22-nov): construida** en `simplificacion-s8` (T38-T49, T54-T67), sin PR.
+    El eval `cv` real pasó (22-nov, 33/33, 1,74 USD). Faltan la prueba de cierre de Mar y el PR (T50).
   - **S9 («Corregir explicación» amplía la información): spec firmada** el 22-nov; sin construir (T51-T53, T68).
   - **S10 (subir varios documentos a la vez): sin spec** (T69). Con ella se cierra la fase 10.
 

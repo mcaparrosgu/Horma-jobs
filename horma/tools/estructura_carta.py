@@ -18,7 +18,7 @@ def errores_estructura_carta(carta: str) -> list[str]:
     errores: list[str] = []
     formulas = {f.casefold() for f in FORMULAS_CORTESIA}
     parrafos = [p.strip() for p in re.split(r"\n\s*\n", carta.strip()) if p.strip()]
-    cuerpo = [p for p in parrafos if p.casefold().strip(" .,") not in {f.strip(" .,") for f in formulas}]
+    cuerpo = [p for p in parrafos if p.casefold().strip(" .,:") not in {f.strip(" .,:") for f in formulas}]
     if len(carta.split()) > MAX_PALABRAS:
         errores.append(f"La carta pasa de {MAX_PALABRAS} palabras: debe caber en una página.")
     if not 3 <= len(cuerpo) <= 6:   # los saludos cuentan como un párrafo suelto

@@ -21,8 +21,8 @@ Reglas:
   lo escribas.
 - Ajusta el registro al `sector`: más formal en administración, finanzas o servicios profesionales; más
   directo en hostelería, comercio o logística.
-- Saludo y despedida: usa SOLO fórmulas de esta lista cerrada, tal cual: «Estimado equipo de
-  selección,», «Estimados señores,», «Hola equipo,», «Buenos días,», «Un saludo», «Saludos
+- Saludo y despedida: usa SOLO fórmulas de esta lista cerrada, tal cual: «Hola, equipo:», «Estimado equipo de
+  selección:», «Estimados señores:», «Buenos días:», «Un saludo», «Saludos
   cordiales», «Cordialmente», «Atentamente», «Muchas gracias por su tiempo», «Gracias por su tiempo»,
   «Gracias por tu tiempo». Las fórmulas no necesitan traza.
 - No firmes con tu nombre: termina con una de las fórmulas de despedida.
@@ -51,7 +51,7 @@ Datos inventados, solo para mostrar la forma. Cada frase que no es fórmula llev
     "Camarera · Café Norte · 2019-2024\nAtendía a unos 80 clientes al día en sala y barra de Café Norte\nManejo de TPV y cierre de caja",
     "Camarera\nBar Luna\nAtención de mesas y barra\nManejo de TPV\nInglés B1"
   ],
-  "carta": "Hola equipo,\n\nMe interesa el puesto de camarera porque pide atención de mesas y barra. Es lo que hago cada día en Café Norte, donde atiendo a unos 80 clientes al día en sala y barra. También llevo el TPV y el cierre de caja.\n\nLa oferta pide inglés B1 y todavía no lo tengo acreditado.\n\nQuiero aprender cómo se trabaja en sala y barra con un equipo estable.\n\nUn saludo",
+  "carta": "Hola, equipo:\n\nMe interesa el puesto de camarera porque pide atención de mesas y barra. Es lo que hago cada día en Café Norte, donde atiendo a unos 80 clientes al día en sala y barra. También llevo el TPV y el cierre de caja.\n\nLa oferta pide inglés B1 y todavía no lo tengo acreditado.\n\nQuiero aprender cómo se trabaja en sala y barra con un equipo estable.\n\nUn saludo",
   "traza": [
     {
       "frase": "Me interesa el puesto de camarera porque pide atención de mesas y barra.",

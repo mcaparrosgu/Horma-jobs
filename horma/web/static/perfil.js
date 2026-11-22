@@ -433,11 +433,12 @@ async function cargarPerfil() {
   }
   const { perfil, construyendo, error, cv_maestro: maestro, creado_en: creadoEn } = r.datos;
   const estado = $("estado-perfil");
-  estado.replaceChildren();
   if (!construyendo && barraLectura) {
     barraLectura.quitar();
     barraLectura = null;
   }
+  // se quita todo menos la barra viva: vaciar el contenedor y recolocarla tras un `await` la hacía parpadear
+  for (const hijo of [...estado.children]) if (!(barraLectura && hijo === barraLectura.caja)) hijo.remove();
   if (construyendo) leyendo = true;
   else if (leyendo && perfil) {   // acaba de terminar: ahora sí el mensaje siguiente (RF-10.14n)
     leyendo = false;
@@ -448,7 +449,7 @@ async function cargarPerfil() {
     const progreso = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0].progreso : 0;
     // la misma barra en cada consulta: sigue rellenándose en vez de empezar de cero (RF-10.8c)
     if (!barraLectura) barraLectura = barraAvance(estado, "Estamos leyendo tu CV");
-    else estado.append(barraLectura.caja);
+    else if (barraLectura.caja.parentNode !== estado) estado.append(barraLectura.caja);
     barraLectura.poner(progreso);
     temporizador = setTimeout(cargarPerfil, 3000);
   }
