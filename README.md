@@ -5,7 +5,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
 > **Estado (22-nov-2026):** fases 0 a 9a fusionadas en `main`. Fase 10 (simplificación): S1-S5 fusionadas,
-> S6 en PR #30 y S7 cerrada por Mar, sin PR. Despliegue local con Docker Compose; Vercel, más adelante.
+> S6 en PR #30 y S7 cerrada por Mar, en PR #31 (encima de #30). Despliegue local con Docker Compose; Vercel, más adelante.
 > Antes de usuarias reales, el plan del `matcher`. El detalle de cada fase está en
 > [`specs/index.md`](./specs/index.md).
 

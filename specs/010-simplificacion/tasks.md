@@ -18,7 +18,7 @@ stale_after: null
 | S0-S1 | Fusionados (PR #27 y #28) | Firmada (21-nov) |
 | S2-S5 | Fusionados juntos (PR #29) | Pendiente en S2-S4 (T12, T15, T18); el paso 2.3 se hizo el 21-nov y dio lugar a S7 |
 | S6 | `simplificacion-s6`, PR #30 abierto | — (no tiene pantalla) |
-| S7 | `simplificacion-s7` (sobre S6), sin PR | Cerrada por Mar (22-nov); falta el repaso a 390 px |
+| S7 | `simplificacion-s7` (sobre S6), PR #31 abierto | Cerrada por Mar (22-nov); falta el repaso a 390 px |
 
 ## Forma de trabajo
 - **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción, con Sonnet. Un fallo de eval poco
@@ -146,5 +146,5 @@ Rama `simplificacion-s7`, sobre `simplificacion-s6`. Sale de la prueba 2.3 de Ma
     completo» y su PDF; el extractor lo pide); PDF de candidatura como `cv-puesto-empresa.pdf` y
     `carta-puesto-empresa.pdf`; «No consta en tu CV» en una línea corta con la lista completa desplegable.
 - [x] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README) y prueba de Mar. *(cerrada por
-  Mar el 22-nov; el PR, cuando ella lo pida)*
+  Mar el 22-nov; PR #31)*
   - **T35 en real:** eval `cv`, 31 casos (1,60 USD, parado por tope) y los casos 32 y 33 de carta en verde (0,25 USD).
