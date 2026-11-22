@@ -122,7 +122,7 @@ Rama `simplificacion-s7`. Sale de la prueba 2.3 de Mar (21-nov). Construcción c
 - [x] T34 — Diseño sobrio del PDF (CV y carta) y la carta como párrafos en «Ver».
   - **Test:** el PDF se abre; su texto extraído trae nombre, secciones y fechas en orden; la carta sin
     negritas; los PDF guardados de candidaturas antiguas se siguen sirviendo. Mar ve una muestra.
-- [~] T35 — Carta que suena humana. *Gasta: avisar antes (~0,7-1,2 USD).*
+- [x] T35 — Carta que suena humana. *Gasta: avisar antes (~0,7-1,2 USD).*
   - **Qué se hace:** diagnóstico de la carta de la 2.3 (sin gasto); prompt reescrito con ejemplo; casos de carta
     en `evals/cv`.
   - **Test (simulado):** el prompt trae la estructura de RF-10.3g y el ejemplo cumple `verificar_trazabilidad`.
@@ -132,10 +132,10 @@ Rama `simplificacion-s7`. Sale de la prueba 2.3 de Mar (21-nov). Construcción c
     y en oscuro, mirando a propósito alineación y alturas.
   - **Hecho (22-nov), a 1280 px y en oscuro:** Ofertas (fila Puestos · Sector · Condiciones, casillas cuadradas), Perfil
     (columna derecha: Subir archivo, Tu CV completo, Por resolver, Documentos subidos, Cómo escribes), Candidaturas
-    (seis columnas en una fila) y Candidatura. **Falta 390 px:** la ventana de Chrome no baja de ancho; lo ve Mar.
+    (seis columnas en una fila) y Candidatura. **390 px:** no se pudo comprobar (la ventana de Chrome no baja de ancho); queda para el repaso página por página de Mar.
   - **Cambios pedidos por Mar en el repaso:** se retira «Área» de Ofertas (se vacía al guardar y el CV ya no la
     rellena); «Subir archivo» con formatos y peso; barras en verde lima; «Nombre» editable en Perfil (sale en «Tu CV
     completo» y su PDF; el extractor lo pide); PDF de candidatura como `cv-puesto-empresa.pdf` y
     `carta-puesto-empresa.pdf`; «No consta en tu CV» en una línea corta con la lista completa desplegable.
-- [~] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README), prueba de Mar y PR si lo pide.
+- [x] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README), prueba de Mar y PR si lo pide.
   - **Estado (21-nov):** T30-T34 hechas y con tests. T35: prompt, ejemplo, `estructura_carta` y casos 32-33 hechos; eval `cv` real: 31 casos (1,60 USD, parado por tope) + casos 32 y 33 de carta pasan en real (0,25 USD). T36: Perfil y Ofertas a 1280 px en claro revisados (h2 de panel sin margen superior; «Qué buscas» con espacio igual); falta 390 px (la ventana no baja de ancho), oscuro, Candidaturas y Candidatura.
