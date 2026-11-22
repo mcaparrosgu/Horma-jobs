@@ -71,6 +71,15 @@ def test_plural_de_palabras_cortas():
     assert _huecos("Conocimientos de vino") == [] and _huecos("Atención de mesas", fuentes="Atención de mesa") == []
 
 
+def test_requisito_con_punto_y_coma_se_respalda_con_una_de_las_partes():
+    """Q5 (22-nov): el CV de la candidatura 19 tiene «Curso de sumillería básica» pero no la palabra «vino»."""
+    cv = "## Certificaciones\nCurso de sumillería básica (40 horas) · Asociación Valenciana de Sumilleres · 2017\n"
+    req = "Conocimientos de vino; se valorará formación en sumillería"
+    assert medir_ats(cv, _oferta(req), [cv])["ausentes_sin_origen"] == []
+    assert medir_ats(cv, _oferta("Conocimientos de cata; se valorará formación en cocina"), [cv])[
+        "ausentes_sin_origen"] == ["Conocimientos de cata; se valorará formación en cocina"]
+
+
 def test_a_o_b_se_respalda_con_una_de_las_dos():   # I5: «Manejo de A3ERP o Sage» con A3ERP en el CV
     fuentes = CV_IRENE + "\nEmito facturas con A3ERP y registro gastos en ContaPlus."
     assert _huecos("Manejo de A3ERP o Sage", "Manejo de ContaPlus o Sage", fuentes=fuentes) == []

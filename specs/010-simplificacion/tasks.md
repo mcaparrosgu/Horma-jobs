@@ -202,7 +202,7 @@ Construye Sonnet, todo el bloque seguido; se para solo antes de gastar (T50).
 Recorrida por Claude en el navegador y la consola; K1, O4, P1, P2, P5 y N4 repetidas después y correctas.
 - [x] T60 — «No consta en tu CV» solo con lo que falta (RF-10.13). La causa era `medir_ats`, no el redactor: exigía
   todas las palabras de una frase de requisito. Ahora una palabra clave corta exige todas (nivel de idioma igual o
-  mayor; las cifras y «o superior/similar» no cuentan; «A o B» se respalda con uno de los dos) y una frase de 4 o más palabras la juzga el redactor.
+  mayor; las cifras y «o superior/similar» no cuentan; «A o B» y «A; se valorará B» se respaldan con uno de los dos; «formación» no cuenta como palabra pedida) y una frase de 4 o más palabras la juzga el redactor.
   - **Test:** `test_s8_t60_huecos_falsos.py` (los 4 requisitos de Irene ya no son hueco; «Excel avanzado» e «Inglés C1» sí).
 - [x] T61 — El nombre que editó ella manda sobre el del CV al rehacer el perfil (RF-10.5f, RF-10.14).
   - **Test:** `test_s8_t41_conserva_lo_de_la_usuaria.py`.
@@ -237,7 +237,7 @@ avisos de presupuesto, a la gestión del gasto. Ver [index.md](../index.md#lo-qu
     **Real:** el eval `cv` de T50.
 - [x] T67 — El eval simulado informa 0 USD.
   - **Test:** `horma eval correr ofertas --simulado` da coste 0.
-- [ ] T50 — Cierre de S8. *Gasta: avisar antes.*
+- [x] T50 — Cierre de S8 (22-nov: Q1-Q10 pasan por DOM/API; falta solo lo visual a 1280/390 px y claro/oscuro, y el PR). *Gasta: avisar antes.*
   - **Qué se hace:** eval `cv` real (hecho el 22-nov: 33/33, 1,74 USD, aprobado; cierra T44 y T66); prueba de cierre de Mar en
     `docs/plan-pruebas-manuales.md` (subir y borrar CV, T59, T62-T66; ~0,3-0,6 USD); presupuesto diario de vuelta
     a 1 USD; suite verde; `index.md` al día; PR.

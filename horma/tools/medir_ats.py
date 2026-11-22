@@ -21,7 +21,7 @@ _VACIAS = {"de", "del", "la", "el", "los", "las", "en", "y", "e", "o", "a", "al"
            # cómo se pide algo, no qué se pide («Se valora experiencia previa», «Imprescindible…»)
            "valora", "valorable", "valoramos", "valorara", "valoraran", "previa", "previo",
            "imprescindible", "deseable", "necesaria", "necesario", "requerida", "requerido",
-           "conocimientos", "conocimiento", "manejo", "dominio", "minimo", "minima", "nivel"}
+           "conocimientos", "conocimiento", "formacion", "manejo", "dominio", "minimo", "minima", "nivel"}
 _RAIZ = 5  # letras que se comparan de cada palabra
 
 
@@ -80,7 +80,8 @@ def _respaldada(clave: str, texto: str) -> bool:
     Una frase larga («Mínimo 5 años de experiencia en sala, 2 de ellos como responsable») no se puede juzgar contando
     palabras: la juzga el redactor con su `hueco`. Las palabras clave del propio CV se siguen midiendo con `_esta`."""
     en_texto = _palabras(texto)
-    alternativas = re.split(r"\s+o\s+", _O_MAS.sub(" ", _sin_tildes(clave)))
+    # «A; se valorará B» se trata como «A o B»: basta con que las fuentes respalden una de las partes
+    alternativas = re.split(r"\s+o\s+|;", _O_MAS.sub(" ", _sin_tildes(clave)))
     for alternativa in alternativas:
         pedidas = [p for p in _palabras(alternativa) if p not in _VACIAS]
         niveles = [_NIVELES[p] for p in pedidas if p in _NIVELES]
