@@ -6,7 +6,7 @@ from horma.flows.base import ErrorDePaso, Flow
 from horma.flows.clasificar_respuesta import crear as crear_clasificar
 from horma.flows.registry import APARCADOS, FLUJOS, IMPLEMENTACIONES, RESULTADO, crear_flujo
 from horma.llm.simulado import ProveedorSimulado
-from horma.schemas.candidatura import TEXTOS_ERROR, TEXTOS_PROBLEMA, EstadoCandidatura
+from horma.schemas.candidatura import TEXTOS_FORMATO, TEXTOS_PROBLEMA, EstadoCandidatura
 from horma.schemas.oferta import Auditoria, Oferta
 from horma.schemas.taxonomia import Taxonomia
 
@@ -242,9 +242,8 @@ def test_el_formato_ats_deja_un_aviso_del_cv_en_llano():
     sin_cabecera = _cv("Camarera en Bar Sol, 2020-2023\nManejo de TPV")
     e, prov = _correr([sin_cabecera, CARTA, APROBADO, sin_cabecera, CARTA_2])
     assert len(prov.llamadas) == 5 and e["preparacion"] == "pendiente_de_ti"
-    formato = [a for a in e["avisos"] if a["mensaje"].startswith("Para que los filtros")]
+    formato = [a for a in e["avisos"] if a["mensaje"] == TEXTOS_FORMATO["no tiene encabezados"]]
     assert formato and formato[0]["documento"] == "cv" and "ATS" not in formato[0]["mensaje"]
-    assert TEXTOS_ERROR["formato"].split("{")[0] in formato[0]["mensaje"]
 
 
 def test_un_juez_que_no_aprueba_deja_pendiente_de_ti_y_el_flujo_no_toca_el_estado():

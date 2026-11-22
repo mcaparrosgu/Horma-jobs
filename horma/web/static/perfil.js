@@ -33,6 +33,7 @@ let maestroActual = "";
 let pendientesPrevias = 0;
 let temporizador = null;
 let leyendo = false;   // ya se enseñó la barra «Estamos leyendo tu CV»
+let barraLectura = null;   // esa barra, que se conserva entre consultas
 
 const CAMPOS_FECHA = ["inicio", "fin", "fecha"];
 const periodoVisto = (d) => [d.inicio, d.fin].filter(Boolean).map(fechaVista).join(" – ");
@@ -395,7 +396,7 @@ async function cargarAvisos(preguntas) {
 const SECCION_DEL_MAESTRO = { "Resumen": "resumen", "Experiencia": "experiencias", "Formación": "formacion",
                               "Idiomas": "idiomas", "Habilidades": "habilidades", "Proyectos": "proyectos",
                               "Certificaciones": "certificaciones", "Otras actividades": "actividades",
-                              "Otros": "otros" };
+                              "Información adicional": "otros", "Otros": "otros" };   // «Otros»: maestros viejos
 
 function pintarMaestro(perfil, maestro, creadoEn) {
   $("maestro").hidden = !maestro;
@@ -433,6 +434,10 @@ async function cargarPerfil() {
   const { perfil, construyendo, error, cv_maestro: maestro, creado_en: creadoEn } = r.datos;
   const estado = $("estado-perfil");
   estado.replaceChildren();
+  if (!construyendo && barraLectura) {
+    barraLectura.quitar();
+    barraLectura = null;
+  }
   if (construyendo) leyendo = true;
   else if (leyendo && perfil) {   // acaba de terminar: ahora sí el mensaje siguiente (RF-10.14n)
     leyendo = false;
@@ -441,7 +446,10 @@ async function cargarPerfil() {
   if (construyendo) {
     const activas = await api("/api/tareas/activas?tipo=perfilar");   // una sola barra, con su % (RF-10.8)
     const progreso = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0].progreso : 0;
-    barraAvance(estado, "Estamos leyendo tu CV").poner(progreso);
+    // la misma barra en cada consulta: sigue rellenándose en vez de empezar de cero (RF-10.8c)
+    if (!barraLectura) barraLectura = barraAvance(estado, "Estamos leyendo tu CV");
+    else estado.append(barraLectura.caja);
+    barraLectura.poner(progreso);
     temporizador = setTimeout(cargarPerfil, 3000);
   }
   if (error) estado.append(nodo("p", `No se pudo construir el perfil: ${error}`, "alerta"));

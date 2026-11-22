@@ -6,7 +6,7 @@ tags: [spec, simplificacion, ux, frontend, costes, arquitectura, agentes]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
 generated: { by: claude-code, at: 2026-11-21 }
-verified: { by: human, at: 2026-11-22 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) y S9 (RF-10.15 a 10.15e) firmadas el 22-nov
+verified: { by: human, at: 2026-11-22 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) y S9 (RF-10.15 a 10.15e) firmadas el 22-nov; RF-5.3i, 10.4e, 10.6i, 10.8c, 10.16 y 10.17 pedidos por Mar en la prueba del 22-nov
 stale_after: null
 ---
 
@@ -119,8 +119,10 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   tinta y gris. Todo es texto real, en el orden de lectura, sin tablas ni imágenes (RF-10.4b). La carta en
   PDF y en «Ver» DEBERÁ verse como carta: párrafos, sin negritas ni secciones. Las plantillas para elegir
   siguen en la fase 11.
-- **RF-10.4e** *(22-nov)* Los PDF de una candidatura aprobada DEBERÁN descargarse como `cv-puesto-empresa.pdf` y
-  `carta-puesto-empresa.pdf`; si ella quiere otro nombre, lo cambia a mano.
+- **RF-10.4e** *(22-nov, cambiado tras la prueba: I8)* Los PDF de una candidatura aprobada DEBERÁN descargarse
+  como `cv_nombre-apellidos_puesto_empresa.pdf` y `carta_nombre-apellidos_puesto_empresa.pdf`: la persona que
+  selecciona la encuentra por su nombre y ella ve al final para qué puesto y empresa es. Lo que no conste (p. ej.
+  el nombre) no sale; si ella quiere otro nombre, lo cambia a mano.
 
 ### Perfil en una pantalla (RF-10.5)
 - **RF-10.5** CUANDO la usuaria no tenga perfil, Perfil DEBERÁ mostrar solo «Sube tu CV» (entradilla y un
@@ -189,6 +191,9 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   candidatura… 40 %» en la candidatura, «Calculando la compatibilidad… 40 %» en Ofertas. La cabecera NO DEBERÁ
   mostrar ningún indicador: nunca se ven dos barras a la vez. Vuelve P8 de la 008 («sin aviso en la cabecera»).
 - **RF-10.8b** La barra DEBERÁ tener `role="status"` y no depender solo del color (RF-6.7e).
+- **RF-10.8c** *(prueba del 22-nov)* La barra DEBERÁ verse rellenándose en lima desde el primer momento: entre
+  un paso real del servidor y el siguiente avanza sola y despacio, hasta 20 puntos por delante del último paso
+  real, sin llegar nunca al 100 % antes de terminar. Al repintar la pantalla conserva su punto (no vuelve a 0).
 
 ### Gasto (RF-10.9)
 - **RF-10.9** Horma NO DEBERÁ gastar más de **1 USD al día** (día natural, hora de Madrid) por usuaria, en
@@ -330,6 +335,22 @@ Decisiones de Mar del 22-nov: revisar antes de que entre en el perfil; solo para
 - **RF-10.15e** El texto de ayuda de «Corregir explicación» DEBERÁ decir qué toca cada cosa: la nota y el motivo
   los revisa Mar y no cambian la compatibilidad; la información nueva solo se usa en las candidaturas nuevas de
   esa oferta; el perfil no cambia sin que ella lo confirme.
+
+### Correcciones de la prueba manual del 22-nov (RF-10.16, RF-10.17, RF-5.3i)
+- **RF-5.3i** *(H5)* Además de RF-5.3g, un texto pegado o leído por una usuaria sin ninguna palabra propia de
+  una oferta de empleo (puesto, contrato, salario, experiencia, empresa, se busca… o una cifra de sueldo; en
+  español o en inglés) DEBERÁ rechazarse con el mismo mensaje, sin analizarlo. Ante la duda deja pasar: rechazar
+  una oferta real es peor que analizar un texto que no lo es.
+- **RF-10.16a** *(I5)* El CV maestro DEBERÁ titular la sección «Otros» del perfil como «Información adicional», y
+  ningún título que escriba el propio maestro (Proyectos, Otras actividades…) DEBERÁ dar aviso de formato.
+- **RF-10.16b** *(I5)* Cada aviso de formato del CV DEBERÁ decir, en una frase en llano y sin «ATS» ni
+  «encabezado»: qué pasa, por qué importa («los programas con los que las empresas filtran los CV…») y cómo
+  arreglarlo.
+- **RF-10.17** *(I14)* En la candidatura enviada o en entrevista, los botones de respuesta DEBERÁN ir bajo el
+  título «Estado» e incluir «Me han contratado», que cierra la candidatura con el motivo «Contratada» y abre una
+  Ventana: «Nos alegramos mucho por ti, esperamos que no vuelvas por aquí.»
+- **RF-10.6i** *(H8)* `/ofertas#anadir` DEBERÁ abrir la ventana «Añadir oferta» también si ya se estaba en
+  Ofertas; al cerrarla se quita el `#anadir`.
 
 ## Bloques de construcción
 Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada bloque deja Horma funcionando.

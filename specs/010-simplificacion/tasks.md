@@ -202,3 +202,14 @@ Sonnet, todo el bloque seguido; se para solo antes de gastar (T44 y T50).
 - [ ] T53 — Preguntar y revisar en Perfil (RF-10.15c-d).
   - **Test:** «No» no toca `por_resolver`; «Sí» añade la propuesta; el perfil no cambia de versión hasta
     confirmarla; confirmar aplica «desfasadas». **Navegador:** Ofertas y Perfil a 1280 y 390 px, claro y oscuro.
+
+## Correcciones de la prueba manual del 22-nov (RF-5.3i, 10.4e, 10.6i, 10.8c, 10.16, 10.17)
+- [x] T54 — Barras que se rellenan en lima y conservan su punto al repintar (RF-10.8c).
+- [x] T55 — Filtro por vocabulario de empleo: la receta se rechaza sin analizarla (RF-5.3i).
+  - **Test:** `test_texto_largo_sin_vocabulario_de_empleo_se_rechaza`; las 177 ofertas guardadas y los casos de evals pasan.
+- [x] T56 — `/ofertas#anadir` abre la ventana también desde Ofertas (RF-10.6i). **Navegador:** comprobado.
+- [x] T57 — «Información adicional» y avisos de formato en llano (RF-10.16); migraciones 0026 (recompone maestros) y
+  0028 (reescribe avisos guardados).
+- [x] T58 — PDF `cv_nombre_puesto_empresa.pdf` (RF-10.4e).
+- [x] T59 — «Estado» y «Me han contratado» con su Ventana (RF-10.17); migración 0027.
+  - Pendiente: comprobación visual a 1280 y 390 px, claro y oscuro (la captura del navegador falló).

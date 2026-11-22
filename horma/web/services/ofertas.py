@@ -1,5 +1,6 @@
 """Servicio de ofertas: alta en el catálogo y encolado del flujo procesar_oferta (RF-1.3, RF-1.4)."""
 import re
+import unicodedata
 from datetime import datetime
 
 from sqlalchemy import Engine
@@ -28,12 +29,35 @@ MOTIVO_NO_OFERTA = ("Ese texto no parece una oferta de trabajo. Pega la oferta c
                     "lo que piden u ofrecen.")
 
 
+# Vocabulario de empleo (RF-5.3i): raíces sin tildes, en español y en inglés. Una oferta real usa varias;
+# una receta, un cuento o un correo personal, casi ninguna.
+_VOCABULARIO_EMPLEO = re.compile(
+    r"\b(ofert|emple|trabajo|trabajar en|puesto|vacante|contrat|salari|sueld|retribu|remuner|brut[oa]s|"
+    r"jornada|horari|turno|experiencia|requisit|requi|imprescindible|valorable|se valora|busca|"
+    r"necesita|incorpor|candidat|entrevista|funciones|responsabilidad|empresa|cargo|beneficios|"
+    r"teletrabajo|remoto|hibrid|presencial|curricul|cv|inscri|titulacion|freelance|autonom|publicad|"
+    r"job|role|position|hiring|salary|requirement|experience|responsibilit|apply|candidate|benefits|"
+    r"remote|full[- ]time|part[- ]time|skills)"
+    r"|\d\s?(k|€|euros)\b")   # una cifra de sueldo («35-40k», «1.200 €»)
+MIN_TERMINOS_EMPLEO = 1
+
+
+def _sin_tildes(texto: str) -> str:
+    t = unicodedata.normalize("NFD", texto)
+    return "".join(c for c in t if unicodedata.category(c) != "Mn").casefold()
+
+
 def parece_oferta(texto: str) -> bool:
-    """Filtro barato y sin modelo (RF-5.3g): sin etiquetas ni enlaces, ¿quedan 5 palabras y 25 letras?
-    No decide si es buena oferta; solo deja fuera lo que claramente no es texto de una oferta."""
+    """Filtro barato y sin modelo (RF-5.3g, RF-5.3i): sin etiquetas ni enlaces, ¿quedan 5 palabras y 25
+    letras, y alguna palabra propia de una oferta de empleo? No decide si es buena oferta; solo deja
+    fuera lo que claramente no es texto de una oferta (una receta, un cuento…). Ante la duda, deja pasar:
+    rechazar una oferta real es peor que analizar un texto que no lo es."""
     limpio = re.sub(r"<[^>]*>|https?://\S+", " ", texto or "")
     palabras = re.findall(r"[^\W\d_]{2,}", limpio)
-    return len(palabras) >= MIN_PALABRAS_OFERTA and sum(len(p) for p in palabras) >= MIN_LETRAS_OFERTA
+    if len(palabras) < MIN_PALABRAS_OFERTA or sum(len(p) for p in palabras) < MIN_LETRAS_OFERTA:
+        return False
+    terminos = {m.group(0).strip() for m in _VOCABULARIO_EMPLEO.finditer(_sin_tildes(limpio))}
+    return len(terminos) >= MIN_TERMINOS_EMPLEO
 
 
 def recibir(engine: Engine, texto: str, *, fuente: str | None = None, clave_id: int | None = None,

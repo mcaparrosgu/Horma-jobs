@@ -729,6 +729,12 @@ function abrirAnadir() {
 }
 $("abrir-anadir").addEventListener("click", abrirAnadir);
 $("anadir-cerrar").addEventListener("click", () => $("ventana-anadir").close());
+// «/ofertas#anadir» abre la ventana también si ya estaba en Ofertas (solo cambia el «#», no se recarga).
+window.addEventListener("hashchange", () => { if (location.hash === "#anadir") abrirAnadir(); });
+// Al cerrarla se quita el «#anadir», para que la misma dirección la vuelva a abrir.
+$("ventana-anadir").addEventListener("close", () => {
+  if (location.hash === "#anadir") history.replaceState(null, "", location.pathname + location.search);
+});
 
 $("formulario-texto").addEventListener("submit", async (e) => {
   e.preventDefault();

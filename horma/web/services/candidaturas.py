@@ -284,11 +284,14 @@ def _slug(texto: str | None, maximo: int = 40) -> str:
 
 
 def nombre_descarga(engine: Engine, usuaria_id: int, candidatura_id: int, cual: str) -> str:
-    """Nombre del PDF al descargarlo: tipo, puesto y empresa («cv-data-analyst-veeva-systems.pdf»).
-    Si luego quiere otro, lo cambia ella a mano."""
+    """Nombre del PDF al descargarlo (RF-10.4e): tipo, nombre de la usuaria, puesto y empresa, separados
+    por «_» («cv_mar-caparros_data-analyst_veeva-systems.pdf»). Así la persona que selecciona la
+    encuentra por su nombre y ella ve al final para qué puesto y empresa es. Lo que falte no sale."""
     with sesion_de(engine, usuaria_id) as s:
         c = repo.detalle(s, candidatura_id)
+        perfil = perfiles.vigente(s)
     if c is None:
         raise ErrorCandidatura(404, "No existe esa candidatura")
-    partes = [cual, _slug(c["oferta_titulo"]), _slug(c["oferta_empresa"])]
-    return "-".join(p for p in partes if p) + ".pdf"
+    nombre = ((perfil or {}).get("datos") or {}).get("nombre")
+    partes = [cual, _slug(nombre), _slug(c["oferta_titulo"]), _slug(c["oferta_empresa"])]
+    return "_".join(p for p in partes if p) + ".pdf"

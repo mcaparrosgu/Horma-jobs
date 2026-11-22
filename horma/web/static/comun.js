@@ -157,7 +157,13 @@ async function pintarPersona(persona) {
   }
 }
 
-// Barra de avance (RF-8.7): frase con el porcentaje y pista con `role="progressbar"`. Devuelve `poner(%)` y `quitar()`.
+// Barra de avance (RF-8.7): frase con el porcentaje y pista con `role="progressbar"`. Devuelve `poner(%)`,
+// `quitar()` y `caja` (para volver a colocarla sin perder su avance al repintar la pantalla).
+// El servidor avanza por pasos (cada paso puede tardar medio minuto); entre paso y paso la barra sigue
+// rellenándose despacio hacia el siguiente, sin llegar nunca a él ni al 100 % (RF-10.8c).
+const AVANCE_TICK_MS = 400;
+const AVANCE_HOLGURA = 20;   // cuánto puede adelantarse la barra al último paso real
+const AVANCE_RITMO = 0.02;   // fracción del hueco que recorre en cada tick (~20 s para casi llenarlo)
 function barraAvance(contenedor, texto, indeterminada = false) {
   const caja = nodo("div", null, "barra-avance");
   const frase = nodo("span", null, "texto");
@@ -170,11 +176,30 @@ function barraAvance(contenedor, texto, indeterminada = false) {
   pista.append(relleno);
   caja.append(frase, pista);
   contenedor.append(caja);
-  const poner = (p) => {
-    const v = Math.max(0, Math.min(100, Math.round(Number(p) || 0)));
+  let real = 0;
+  let mostrado = 0;
+  let reloj = null;
+  const pintar = () => {
+    const v = Math.max(0, Math.min(100, Math.round(mostrado)));
     frase.textContent = `${texto} · ${v} %`;
     pista.setAttribute("aria-valuenow", String(v));
-    relleno.style.width = `${v}%`;   // por CSSOM: la CSP no permite style= en el HTML
+    relleno.style.width = `${mostrado}%`;   // por CSSOM: la CSP no permite style= en el HTML
+  };
+  const quitar = () => {
+    clearInterval(reloj);
+    caja.remove();
+  };
+  const avanzarSolo = () => {
+    if (!caja.isConnected) return;   // la pantalla se está repintando: se retoma al volver a colocarla
+    const tope = Math.min(95, real + AVANCE_HOLGURA);
+    if (real >= 100 || mostrado >= tope) return;
+    mostrado += (tope - mostrado) * AVANCE_RITMO;
+    pintar();
+  };
+  const poner = (p) => {
+    real = Math.max(real, Math.max(0, Math.min(100, Number(p) || 0)));   // nunca baja
+    mostrado = real >= 100 ? 100 : Math.max(mostrado, real);
+    pintar();
   };
   if (indeterminada) {   // sin porcentaje: Horma trabaja y aún no sabe cuánto falta
     caja.classList.add("indeterminada");
@@ -182,9 +207,12 @@ function barraAvance(contenedor, texto, indeterminada = false) {
     pista.setAttribute("aria-busy", "true");
     frase.textContent = `${texto}…`;
   } else {
+    // un mínimo visible: la barra lima se ve desde el primer momento, no una pista vacía
+    mostrado = 2;
     poner(0);
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) reloj = setInterval(avanzarSolo, AVANCE_TICK_MS);
   }
-  return { poner, quitar: () => caja.remove() };
+  return { poner, quitar, caja };
 }
 
 // Sigue una tarea del servidor cada 3 s mientras esté en marcha, sin límite (RF-8.7f). `alAvanzar(progreso, tarea)`

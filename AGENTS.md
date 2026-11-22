@@ -15,6 +15,11 @@ están en `specs/system.md`.
 - Secretos: solo en `.env` (nunca se versiona). Las claves se documentan en `.env.example`.
 - Los artefactos de conocimiento usan el Open Knowledge Format (OKF): markdown + frontmatter YAML.
 - Idioma: toda la documentación y todo lo generado, en español de España.
+- Simple primero (constitución): antes de proponer un agente, una tabla, una pantalla o un paso nuevo,
+  comprueba si basta con código, con algo que ya existe o con quitar algo. Si propones añadir, di qué
+  opción más simple descartaste y por qué.
+- Documentación mínima, también en los documentos de trabajo: nada de documentos nuevos si cabe como
+  sección de uno existente; enlaza en vez de repetir; solo lo esencial.
 
 ## Reglas de arquitectura del producto (de specs/system.md)
 - Los agentes del producto son módulos Python: `prompt.md` + esquemas Pydantic de entrada y

@@ -23,7 +23,7 @@ def test_las_tres_secciones_pasan_con_su_cita_y_entran_en_el_maestro():
         "otros": [{"valor": "Carnet de conducir B", "origen": _o(1, "Carnet de conducir B")}]}})
     p = Perfil.model_validate(e["perfil"])
     assert p.proyectos[0].nombre.startswith("Carta digital") and p.otros[0].valor == "Carnet de conducir B"
-    assert "## Proyectos" in e["cv_maestro"] and "## Otros" in e["cv_maestro"]
+    assert "## Proyectos" in e["cv_maestro"] and "## Información adicional" in e["cv_maestro"]
 
 
 def test_un_proyecto_con_cita_inventada_va_a_pendientes():

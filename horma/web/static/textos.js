@@ -15,7 +15,7 @@ function estadoVisible(estado, preparacion) {
   return { enviada: "Enviada", entrevista: "Entrevista", cerrada: "Cerrada" }[estado] || estado;
 }
 
-const MOTIVOS_CIERRE = { rechazo: "Rechazo", descartada: "Descartada", retirada: "Retirada" };
+const MOTIVOS_CIERRE = { rechazo: "Rechazo", descartada: "Descartada", retirada: "Retirada", contratada: "Contratada" };
 const MOTIVOS_PREGUNTA = [["descartada", "La descarto yo"], ["retirada", "La retiro"]];
 
 // Lo que la oferta pide y el perfil no tiene (RF-10.2c). «Hueco» queda para un periodo sin actividad.
@@ -72,6 +72,7 @@ const TEXTOS = {
   fuenteDesconocida: "Fuente no reconocida por Horma",
   sinFuente: "Sin fuente indicada",
   anadirIntro: "Pega el texto de una oferta o la dirección de su página. Es solo tuya: nadie más la ve. Horma la analiza y calcula su compatibilidad con tu perfil, y aparece siempre en Ofertas, pase o no tus filtros. Si su puesto no está en «Qué buscas», se añade allí; puedes quitarlo cuando quieras.",
+  contratada: "Nos alegramos mucho por ti, esperamos que no vuelvas por aquí.",   // RF-10.17
   anadirOculta: "Oferta añadida. No la ves porque en «Qué buscas» tienes desmarcado «Incluir las ofertas que añado».",
   anadirPuesto: (t) => `Hemos añadido «${t}» a tus puestos de «Qué buscas». Puedes quitarlo cuando quieras.`,
   anadirUrl: "Para leerla, la dirección se envía a un servicio externo de lectura de páginas. LinkedIn, Indeed, Glassdoor e InfoJobs no se pueden leer: pega su texto.",

@@ -12,7 +12,10 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 
 _ENCABEZADOS_ATS = ("experiencia", "formacion", "educacion", "idiomas", "habilidades", "competencias",
-                    "perfil", "resumen", "certificaciones", "cursos", "contacto")
+                    "perfil", "resumen", "certificaciones", "cursos", "contacto",
+                    # secciones que el propio CV maestro escribe y que los filtros reconocen (RF-10.16a)
+                    "proyectos", "actividades", "voluntariado", "logros", "informacion adicional",
+                    "datos de interes", "otros datos")
 _VACIAS = {"de", "del", "la", "el", "los", "las", "en", "y", "e", "o", "a", "al", "con", "para",
            "un", "una", "por", "se", "su",
            # cómo se pide algo, no qué se pide («Se valora experiencia previa», «Imprescindible…»)

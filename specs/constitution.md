@@ -6,7 +6,7 @@ tags: [gobierno, sdd]
 status: draft
 sources: [https://claude.ai/artifact/XgsxiP5gLvaR34W8QeqDoj]
 generated: { by: claude-code, at: 2026-11-11 }
-verified: { by: human, at: 2026-11-14 }
+verified: { by: human, at: 2026-11-22 }
 stale_after: null
 ---
 
@@ -21,6 +21,8 @@ stale_after: null
   ejecutar uno a uno desde la consola.
 - Spec-anchored: spec de sistema para lo global y spec de feature para cada cambio.
 - Constitución mínima: solo principios y líneas rojas.
+- Simplicidad: arquitectura y procesos mínimos, como los haría una profesional muy experta: menos piezas,
+  menos agentes y menos llamadas. Cada pieza nueva se justifica por algo que lo que ya existe no resuelve.
 - Idioma: toda la documentación y todo lo generado, en español de España.
 
 ## Líneas rojas
