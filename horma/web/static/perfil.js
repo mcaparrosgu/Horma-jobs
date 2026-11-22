@@ -455,6 +455,17 @@ function tarjetaCv(c) {
   });
   marca.append(casilla, " Lo escribí yo");
   li.append(marca);
+  const esCv = c.clase === "fuente";
+  const cambiar = nodo("button", esCv ? "¿No es un CV? Cámbialo" : "¿No es una carta? Cámbialo", "secundario");
+  cambiar.type = "button";
+  cambiar.addEventListener("click", async () => {
+    const r = await api(`/api/cv/${c.id}/clase`, { metodo: "PATCH", cuerpo: { clase: esCv ? "carta" : "fuente" } });
+    if (!r.ok) return avisar(r.motivo, true);
+    avisar(esCv ? "Ahora es una carta." : "Ahora es un CV; se está rehaciendo tu perfil.");
+    await cargarCvs();
+    await cargarPerfil();
+    await cargarEstilo();
+  });
   const fila = nodo("div", null, "fila");
   const descargar = nodo("a", "Descargar", "boton secundario");
   descargar.href = `/api/cv/${c.id}/archivo`;
@@ -513,7 +524,7 @@ function tarjetaCv(c) {
     li.append(conf);
     no.focus();
   });
-  fila.append(descargar, renombrar, papelera);
+  fila.append(descargar, renombrar, cambiar, papelera);
   li.append(fila);
   return li;
 }
@@ -538,31 +549,58 @@ async function cargarCvs() {
   $("n-cvs").textContent = String(r.datos.length);
 }
 
-// Al elegir el archivo se sube sin otro clic (RF-10.5). Sin perfil, como CV; en «Documentos subidos», CV o Carta.
-async function subirDocumento(entrada, nombreVisible, clase) {
-  const archivo = entrada.files[0];
-  if (nombreVisible) nombreVisible.textContent = archivo ? archivo.name : "Ningún archivo seleccionado";
-  if (!archivo) return;
+// Al elegir el archivo se sube sin otro clic (RF-10.5). Horma detecta si es un CV o una carta (RF-10.14b);
+// si duda, pregunta y vuelve a subir con lo que ella elija.
+async function enviarDocumento(archivo, clase) {
   const datos = new FormData();
   datos.append("archivo", archivo);
-  datos.append("clase", clase);
+  if (clase) datos.append("clase", clase);
   datos.append("escrito_por_ella", "false");
-  entrada.disabled = true;
   avisar("Subiendo…");
   const r = await api("/api/cv", { metodo: "POST", formulario: datos });
-  entrada.disabled = false;
-  entrada.value = "";
-  if (nombreVisible) nombreVisible.textContent = "Ningún archivo seleccionado";
   if (!r.ok) return avisar(r.motivo, true);
-  avisar(clase === "carta" ? "Carta subida; Horma la usará para aprender cómo escribes."
-                           : "CV subido; se está construyendo tu perfil.");
+  if (r.datos.duda) return preguntarClase(archivo);
+  $("pregunta-clase").hidden = true;
+  avisar(r.datos.clase === "carta" ? "Carta subida; Horma la usará para aprender cómo escribes."
+                                   : "CV subido; se está construyendo tu perfil.");
   await cargarCvs();
   await cargarPerfil();
   await cargarEstilo();
 }
 
-$("archivo").addEventListener("change", () => subirDocumento($("archivo"), $("archivo-nombre"), "fuente"));
-$("archivo-doc").addEventListener("change", () => subirDocumento($("archivo-doc"), null, $("clase-doc").value));
+function preguntarClase(archivo) {
+  const caja = $("pregunta-clase");
+  const texto = nodo("p", TEXTOS.preguntaClase, null);
+  texto.id = "pregunta-clase-texto";
+  const fila = nodo("div", null, "fila");
+  for (const [clase, etiqueta] of [["fuente", "Es un CV"], ["carta", "Es una carta"]]) {
+    const b = nodo("button", etiqueta, "secundario");
+    b.type = "button";
+    b.addEventListener("click", () => { caja.hidden = true; enviarDocumento(archivo, clase); });
+    fila.append(b);
+  }
+  caja.replaceChildren(texto, fila);
+  caja.hidden = false;
+  avisar("");
+  fila.querySelector("button").focus();
+}
+
+async function subirDocumento(entrada, nombreVisible) {
+  const archivo = entrada.files[0];
+  if (nombreVisible) nombreVisible.textContent = archivo ? archivo.name : "Ningún archivo seleccionado";
+  if (!archivo) return;
+  entrada.disabled = true;
+  try {
+    await enviarDocumento(archivo, null);
+  } finally {
+    entrada.disabled = false;
+    entrada.value = "";
+    if (nombreVisible) nombreVisible.textContent = "Ningún archivo seleccionado";
+  }
+}
+
+$("archivo").addEventListener("change", () => subirDocumento($("archivo"), $("archivo-nombre")));
+$("archivo-doc").addEventListener("change", () => subirDocumento($("archivo-doc"), null));
 
 // --- Guía de estilo ---------------------------------------------------------------------------
 let estiloVisto = null;

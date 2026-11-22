@@ -68,7 +68,6 @@ def test_tu_cv_completo_tiene_ver_y_descargar_pdf_con_editar_por_seccion():
 
 def test_documentos_subidos_con_cv_y_carta_y_los_antiguos_como_documento():
     html, js = leer("perfil.html"), leer("perfil.js")
-    assert '<option value="fuente" selected>CV</option>' in html
-    assert '<option value="carta">Carta</option>' in html
+    assert 'id="clase-doc"' not in html   # la clase se detecta sola (RF-10.14b, S8)
     assert "estetico" not in html
-    assert '$("clase-doc").value' in js and '{ carta: "Carta", fuente: "CV" }[c.clase] || "Documento"' in js
+    assert '{ carta: "Carta", fuente: "CV" }[c.clase] || "Documento"' in js

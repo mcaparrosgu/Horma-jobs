@@ -2,7 +2,7 @@
 simplificación (RF-10.3e): las tablas se conservan."""
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
@@ -27,18 +27,37 @@ def _nombre(valor: str) -> str:
 
 
 @router.post("/api/cv", status_code=201, dependencies=[Depends(exigir_csrf), Depends(limite_subida_cv)])
-def subir(request: Request, archivo: Annotated[UploadFile, File()], nombre: str | None = Form(default=None),
-          clase: str = Form(default="fuente"), escrito_por_ella: bool = Form(default=False),
+def subir(request: Request, response: Response, archivo: Annotated[UploadFile, File()], nombre: str | None = Form(default=None),
+          clase: str | None = Form(default=None), escrito_por_ella: bool = Form(default=False),
           usuaria_id: int = Depends(usuaria_actual)):
     contenido = archivo.file.read(ajustes().max_cv_bytes + 1)
     try:
-        return servicio.subir(request.app.state.engine, usuaria_id, contenido=contenido,
-                              nombre_original=archivo.filename or "cv", nombre=nombre, clase=clase,
-                              escrito_por_ella=escrito_por_ella)
+        hecho = servicio.subir(request.app.state.engine, usuaria_id, contenido=contenido,
+                               nombre_original=archivo.filename or "cv", nombre=nombre, clase=clase,
+                               escrito_por_ella=escrito_por_ella)
+        if hecho.get("duda"):   # no se guarda nada: la pantalla pregunta y vuelve a subir (RF-10.14b)
+            response.status_code = 200
+        return hecho
     except servicio.ArchivoRechazado as e:
         raise HTTPException(status_code=e.estado, detail=e.motivo) from e
     except servicio.NombreRepetido as e:
         raise HTTPException(status_code=409, detail="Ya tienes un CV con ese nombre.") from e
+
+
+class Clase(BaseModel):
+    clase: str
+
+
+@router.patch("/api/cv/{cv_id}/clase", dependencies=[Depends(exigir_csrf)])
+def cambiar_clase(cv_id: int, datos: Clase, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """«¿No es un CV? Cámbialo» (RF-10.14b)."""
+    try:
+        hecho = servicio.cambiar_clase(request.app.state.engine, usuaria_id, cv_id, datos.clase)
+    except servicio.ArchivoRechazado as e:
+        raise HTTPException(status_code=e.estado, detail=e.motivo) from e
+    if hecho is None:
+        raise HTTPException(status_code=404, detail="No existe ese CV")
+    return hecho
 
 
 @router.get("/api/cv")

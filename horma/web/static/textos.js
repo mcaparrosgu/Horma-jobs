@@ -39,6 +39,7 @@ const TEXTOS = {
   sinCompatibilidad: "Sin compatibilidad",
   sinPerfil: "Sube tu CV para ver qué ofertas encajan contigo",
   sinPerfilBoton: "Subir mi CV",
+  preguntaClase: "No sabemos si este documento es un CV o una carta. ¿Cuál es?",   // RF-10.14b
   confirmarEliminarCv: "¿Eliminar este CV? Rehacemos tu perfil sin él. No se puede deshacer.",   // RF-10.14
   listaVaciaPorPuestos: "Ninguna oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta.",   // RF-10.14q
   anadidaPorTi: "Añadida por ti",
