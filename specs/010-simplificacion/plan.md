@@ -177,6 +177,46 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
     `_descarga()` de `routers/candidaturas.py` en `Content-Disposition`.
   - Perfil en el orden de RF-10.5b (`perfil.html`); barras en lima (`--bar-fill` en `tokens.css`).
 
+## S8 · Correcciones de la pasada del 22-nov (RF-10.14 a 10.14r)
+Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles v1-v7).
+- **Puestos con género (RF-10.14p):** `tools/normalizar_titulo.py` hoy da «jefe a de sala» para «Jefe/a de sala»
+  y no une «jefa» con «jefe». Quitar las marcas de género (`/a`, `/as`, `(a)`, `/o`) al normalizar, y en
+  `buscar_ofertas.frases()` y `repositories/ofertas.contar_por_puesto()` buscar también la variante femenina de
+  cada puesto (reglas cortas de terminación: `-o/-a`, `-e/-a` en «jefe», `-or/-ora`). `ofertas.titulo_norm` está
+  guardado: migración que lo recalcule.
+- **Resumen y titular por CV (RF-10.14d):** hoy `flows/perfilar.py` (`_UNICOS`) descarta el resumen combinado
+  porque su cita no está en un solo CV. `schemas/perfil.py` gana `resumenes` y `titulares` (lista con origen por
+  `cv_id`), y `resumen`/`titular` se quedan como el del CV más reciente (compatibilidad con lo que ya los lee:
+  `componer_cv_maestro`, `avisos_perfil`, `puestos_del_perfil`, `huella_perfil`). `extractor_perfil/prompt.md`
+  devuelve uno por CV. `redactor_cv` recibe todos y elige: si cambia su prompt, eval `cv` (avisar del gasto).
+- **Rehacer al borrar (RF-10.14):** `services/cv.eliminar()` encola `perfilar` con los CV que quedan, o deja a la
+  usuaria sin perfil vigente si no queda ninguno, sin borrar versiones a las que apunten candidaturas o
+  compatibilidades. **Riesgo encontrado:** hoy `perfilar` no conserva lo que la usuaria escribió (origen
+  `usuaria`, `services/perfil.py:39`); al rehacer (y también al subir un CV nuevo) hay que llevar esos datos a la
+  versión nueva. Test para los dos casos.
+- **CV o carta (RF-10.14b):** `tools/clasificar_documento.py`, código puro sobre el texto extraído (secciones y
+  fechas frente a saludo, párrafos y despedida), con «duda» si no está claro. Lo usa la subida en
+  `services/cv.py`; la clase se puede cambiar después (endpoint de cambiar clase; si pasa a CV, encola
+  `perfilar`).
+- **DOCX (RF-10.14c):** «Ver» sirve `cv_archivos.texto`; «Descargar original», el archivo con su tipo.
+- **Respuesta en Por resolver (RF-10.14e):** el servicio que guarda la respuesta devuelve qué campo cambió;
+  `perfil.js` lo enseña. En la pasada se guardó bien («Excel básico» en Habilidades); lo que seguía diciendo
+  «avanzado» era el curso en Certificaciones.
+- **Perfil (RF-10.14f-k):** `perfil.js` sin `#version` y con el mensaje nuevo (hoy, líneas 117 y 409);
+  certificaciones dentro de Formación; etiqueta del nombre; «Añadir» del hueco con la pregunta; fechas: se
+  guardan como hoy (AAAA-MM) y se convierten a MM-AAAA al pintar y al leer lo que escribe; «Corregir» por
+  experiencia en el aviso agrupado «Sin cifras» (`tools/avisos_perfil.py` ya trae los elementos).
+- **Cómo escribes (RF-10.14l):** listas en `perfil.js`; texto vacío de «Evitas»; etiqueta según `estilo.origen`.
+- **Ayuda «?» (RF-10.14m):** el componente de `ofertas.js` (`ayuda()`) pasa a `comun.js` y a la guía como
+  «Explicación plegable»; se usa en Perfil, Ofertas, Candidaturas y Candidatura. Textos en `textos.js`.
+- **Mensajes (RF-10.14n):** `perfil.js` pinta a la vez la barra (l. 393) y «CV subido; se está construyendo…»
+  (l. 557); se deja solo la barra. Revisar Ofertas y Candidatura.
+- **PDF (RF-10.14o):** `tools/generar_pdf.py`: no empezar sección si no caben título y dos líneas; no dejar una
+  línea sola. Test con el CV completo de la pasada (3 páginas, dos casi vacías).
+- **Lista vacía (RF-10.14q):** `ofertas.js`, cuando `todas` está vacío y hay puestos marcados.
+- **Ingesta atascada (RF-10.14r):** al reclamar una ejecución, `repositories/ingesta.py` cierra como error las que
+  lleven más de 30 min en curso (la 7, de Himalayas, lleva así desde el 22-nov a las 8:21).
+
 ## Datos
 - Migración `0022_simplificacion.py` (S5): `matches.huella_perfil` con relleno e índice
   `(usuaria_id, oferta_id, huella_perfil)`. Sin borrar tablas ni columnas.
@@ -205,3 +245,5 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
 - S2: eval `cv` real, ~0,5-1 USD. S5: evals `ofertas` y `red-teaming`, ~1-2 USD. Prueba manual de cada bloque:
   céntimos (un CV y una candidatura). Se avisa siempre antes.
 - S7: eval `cv` real (~0,5-1 USD) y una candidatura de prueba (~0,2 USD), los dos en T35.
+- S8: prueba manual (subir y borrar CV, ~0,3-0,6 USD). Si cambia el prompt de `redactor-cv` o `extractor-perfil`,
+  eval `cv` real (la última vez, ~1,9 USD): se avisa antes.
