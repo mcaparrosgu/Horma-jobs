@@ -60,6 +60,23 @@ def vigente_de(s: Session, usuaria_id: int) -> dict | None:
     return dict(fila) if fila else None
 
 
+def lo_de_la_usuaria(s: Session, usuaria_id: int) -> dict | None:
+    """Lo que ella escribió o corrigió en el perfil vigente (origen «usuaria»), más su nombre y el género de
+    sus puestos. Se lleva a la versión nueva cuando se rehace el perfil (RF-10.14)."""
+    fila = vigente_de(s, usuaria_id)
+    if fila is None:
+        return None
+    datos = perfil_modelo(fila).model_dump(mode="json")
+    suyo: dict = {c: [x for x in datos[c] if x["origen"]["fuente"] == "usuaria"]
+                  for c in ("experiencias", "formacion", "idiomas", "habilidades", "proyectos",
+                            "certificaciones", "actividades", "otros")}
+    for c in ("titular", "resumen"):
+        if datos[c] and datos[c]["origen"]["fuente"] == "usuaria":
+            suyo[c] = datos[c]
+    suyo["nombre"], suyo["genero_puestos"] = datos.get("nombre"), datos.get("genero_puestos")
+    return suyo
+
+
 def por_version(s: Session, version: int) -> dict | None:
     fila = s.execute(text("select * from perfiles where version = :v"), {"v": version}).mappings().first()
     return dict(fila) if fila else None

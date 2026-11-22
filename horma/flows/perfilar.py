@@ -1,7 +1,9 @@
 """Flujo perfilar (RF-2.1 a 2.8b): extraer → verificar_origen → quitar_sensibles → clasificar →
 preferencias_desde_cv → componer. Sin bucle y sin acceso a la base de datos.
 
-Estado de entrada: {"cvs": [{"cv_id": int, "nombre": str, "texto": str}, ...]}.
+Estado de entrada: {"cvs": [{"cv_id": int, "nombre": str, "texto": str}, ...]} y, si ya había un perfil,
+"de_usuaria": lo que ella escribió o corrigió en él (datos con origen «usuaria», nombre y género de los
+puestos), que `conservar_usuaria` lleva al perfil nuevo (RF-10.14).
 Estado de salida: además, "perfil" (Perfil, versión 1: la versión real la pone el worker),
 "cv_maestro" (Markdown) y "preferencias" (Preferencias con lo que sale del CV).
 
@@ -130,6 +132,35 @@ _VACIAS = (("experiencias", "No encuentro experiencia en tu CV. ¿Quieres añadi
            ("idiomas", "No encuentro idiomas en tu CV. ¿Quieres añadirlos?"))
 
 
+def _clave(x: dict, nombre: str, lugar: str | None) -> tuple:
+    return (_plano(str(x.get(nombre) or "")), _plano(str(x.get(lugar) or "")) if lugar else "")
+
+
+def conservar_usuaria(perfil: dict, de_usuaria: dict | None) -> None:
+    """Lo que escribió o corrigió la usuaria pasa al perfil nuevo y manda sobre lo que el CV dice de lo mismo
+    (mismo puesto y sitio, mismo título…). Lo suyo no se vuelve a comprobar contra un CV (RF-10.14)."""
+    if not de_usuaria:
+        return
+    lugares = {c: l for c, n, l in (("experiencias", "puesto", "empresa"), ("formacion", "titulo", "centro"),
+                                    ("certificaciones", "nombre", "entidad"))}
+    for campo, nombre, _ in (*_LISTAS, _ACTIVIDADES):
+        suyos = de_usuaria.get(campo) or []
+        if not suyos:
+            continue
+        lugar = lugares.get(campo)
+        claves = {_clave(x, nombre, lugar) for x in suyos}
+        perfil[campo] = [x for x in perfil[campo] if _clave(x, nombre, lugar) not in claves] + list(suyos)
+    for campo in _UNICOS:
+        if de_usuaria.get(campo):
+            perfil[campo] = de_usuaria[campo]
+    for campo in ("nombre", "genero_puestos"):
+        if de_usuaria.get(campo) and not perfil.get(campo):
+            perfil[campo] = de_usuaria[campo]
+        if campo == "genero_puestos" and perfil.get(campo):
+            perfil["preguntas_pendientes"] = [p for p in perfil["preguntas_pendientes"]
+                                              if p["campo"] != "genero_puestos"]
+
+
 def _perfil_vacio(perfil: dict, pendientes: list[dict]) -> list[dict]:
     """Un CV sin experiencia, formación ni idiomas no puede quedarse en silencio: se pregunta por cada
     sección, sin depender de que el modelo lo haga (RF-2.3)."""
@@ -216,6 +247,10 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                                    "Si falta algo de tu experiencia, escríbelo tú."))
         return e
 
+    def conservar(e: dict) -> dict:
+        conservar_usuaria(e["extraccion"]["perfil"], e.get("de_usuaria"))
+        return e
+
     def clasificar(e: dict) -> dict:
         perfil = Perfil.model_validate(e["extraccion"]["perfil"]).model_copy(
             update={"instrucciones_embebidas": []})
@@ -245,9 +280,10 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         return e
 
     pasos = {"extraer": extraer, "verificar_origen": verificar_origen,
-             "quitar_sensibles": quitar_sensibles, "clasificar": clasificar,
+             "quitar_sensibles": quitar_sensibles, "conservar_usuaria": conservar, "clasificar": clasificar,
              "preferencias_desde_cv": preferencias_desde_cv, "componer": componer}
     aristas = {"extraer": "verificar_origen", "verificar_origen": "quitar_sensibles",
-               "quitar_sensibles": "clasificar", "clasificar": "preferencias_desde_cv",
+               "quitar_sensibles": "conservar_usuaria", "conservar_usuaria": "clasificar",
+               "clasificar": "preferencias_desde_cv",
                "preferencias_desde_cv": "componer"}
     return PlainFlow("perfilar", pasos=pasos, aristas=aristas, inicio="extraer", finales={"componer"})

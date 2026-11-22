@@ -185,7 +185,8 @@ class _Perfilar:
         cvs = repo_perfiles.cvs_fuente(s)
         if not cvs:
             raise ValueError("la usuaria no tiene ningún CV para perfilar")
-        return {"cvs": cvs, "_version": fila["version"]}
+        return {"cvs": cvs, "_version": fila["version"],
+                "de_usuaria": repo_perfiles.lo_de_la_usuaria(s, tarea["usuaria_id"])}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         flujo = con_avance(perfilar.crear(proveedor=d.proveedor), d)
