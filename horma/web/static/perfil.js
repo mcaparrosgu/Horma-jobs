@@ -118,6 +118,23 @@ async function cambiarPerfil(ruta, metodo, cuerpo) {
   await cargarPerfil();
 }
 
+// Su nombre: sale como título de «Tu CV completo» y de sus PDF. Sin nombre, «Añadir»; con él, «Modificar».
+function filaNombre(nombre) {
+  const fila = nodo("div", null, "fila");
+  fila.append(nodo(nombre ? "p" : "p", nombre || "Sin nombre: añádelo para que salga en tu CV completo.", nombre ? "dato" : "suave"));
+  const abrir = nodo("button", nombre ? "Modificar" : "Añadir nombre", "secundario");
+  abrir.type = "button";
+  abrir.addEventListener("click", () => {
+    abrir.hidden = true;
+    const f = formularioDato("nombre", { valor: nombre || "" },
+      (dato) => cambiarPerfil("/api/perfil/datos", "PATCH", { campo: "nombre", dato }),
+      () => { f.remove(); abrir.hidden = false; }, "Guardar", { solo: ["valor"] });
+    fila.after(f);
+  });
+  fila.append(abrir);
+  return fila;
+}
+
 function pregunta(p, i) {
   const li = nodo("li", null, "tarjeta");
   li.append(nodo("span", MOTIVOS[p.motivo] || p.motivo, "estado apagado"));
@@ -392,7 +409,7 @@ async function cargarPerfil() {
   $("version").textContent = `versión ${perfil.version}`;
   const cont = $("perfil");
   cont.replaceChildren();
-  if (perfil.nombre) cont.append(nodo("p", perfil.nombre, "dato"));
+  cont.append(filaNombre(perfil.nombre));
   if (perfil.genero_puestos) {
     const fila = nodo("div", null, "fila");
     fila.append(nodo("p", `Tus puestos se escriben en género ${perfil.genero_puestos}.`, "suave"));

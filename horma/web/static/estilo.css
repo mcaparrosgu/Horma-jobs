@@ -107,6 +107,7 @@ label:not(.casilla){ display: block; margin-bottom: 0.4rem; }
 label input:not([type="checkbox"]), label select{ display: block; width: 100%; margin-top: 6px; }
 label.casilla{ display: flex; align-items: center; gap: 10px; min-height: var(--tap); font-weight: 400; margin: 0; }
 label.casilla input{ width: auto; margin: 0; }
+label.casilla input[type="checkbox"], label.casilla input[type="radio"]{ width: 22px; height: 22px; }   /* cuadradas, no recortadas */
 input[type="checkbox"], input[type="radio"]{ width: 22px; height: 22px; flex: none; accent-color: var(--accent-text); }
 input.corto{ width: 7rem; }
 label input.corto{ width: 7rem; }
@@ -201,7 +202,7 @@ details[open] > summary::after, [aria-expanded="true"] > .chevron::after, .chevr
 .tono-3{ --tono: 320; } .tono-4{ --tono: 100; } .tono-5{ --tono: 10; }
 .nota{ display: flex; align-items: center; gap: 12px; }
 .nota .numero{ font-family: var(--f-mono); font-size: var(--fs-num); font-weight: var(--fw-num); line-height: 1; }
-.barra-compat{ position: relative; flex: 1 1 auto; min-width: 60px; height: var(--bar-h); background: var(--bar-track); }
+.barra-compat{ position: relative; flex: 1 1 auto; min-width: 60px; height: var(--bar-h); background: var(--bar-track); outline: var(--bw) solid var(--line-strong); outline-offset: -1px; }
 .barra-compat > span{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
 .titulo-oferta{ font-family: var(--f-head); font-size: var(--fs-title); font-weight: var(--fw-head); letter-spacing: var(--ls-head); color: var(--ink); }
 a.titulo-oferta:hover{ color: var(--muted); }
@@ -233,7 +234,7 @@ button.ayuda:hover{ background: var(--surface-2); filter: none; color: var(--ink
 fieldset.grupo{ border: var(--bw) solid var(--panel-border); padding: 0.6rem 1rem 0.9rem; min-width: 0; margin: 0; }
 fieldset.grupo legend{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); padding: 0 0.4rem; display: flex; gap: 0.5rem; align-items: center; }
 .casillas{ display: grid; gap: 0; margin-top: 0.4rem; }
-fieldset.grupo > .casillas{ max-height: 18rem; overflow-y: auto; }  /* cajas del mismo alto aunque haya 30 países */
+fieldset.grupo > .casillas{ max-height: 18rem; overflow-y: auto; padding: 0 6px 0 4px; }  /* cajas del mismo alto aunque haya 30 países */
 .casillas label.casilla span{ overflow-wrap: anywhere; }
 details.grupo{ position: relative; }
 details.grupo > summary{ background: var(--surface); border: var(--bw) solid var(--line-strong); padding: 0 12px; min-height: var(--tap); text-transform: none; }
@@ -282,7 +283,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 
 /* ── Barra de avance (RF-6.4, RF-8.7): trabajo en marcha, con el porcentaje en texto ── */
 .barra-avance{ display: grid; gap: 6px; margin: 0 0 1rem; }
-.barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); }
+.barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); outline: var(--bw) solid var(--line-strong); outline-offset: -1px; }
 .barra-avance .relleno{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
 .barra-avance .texto{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); }
 .barra-avance.indeterminada .relleno{ width: 35%; }

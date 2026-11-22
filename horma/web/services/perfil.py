@@ -161,6 +161,11 @@ def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
                 p[campo][indice] = _con_origen(dato)
         elif campo in UNICOS:
             p[campo] = None if dato is None else _con_origen(dato)
+        elif campo == "nombre":   # su nombre, tal como sale en el encabezado de «Tu CV completo»
+            valor = str((dato or {}).get("valor") or "").strip()
+            if not valor:
+                raise DatoNoValido("Escribe tu nombre.")
+            p["nombre"] = valor
         elif campo == "genero_puestos":
             valor = (dato or {}).get("valor")
             if valor not in ("femenino", "masculino"):

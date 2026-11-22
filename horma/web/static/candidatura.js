@@ -31,7 +31,8 @@ function cabecera() {
   const s = nodo("section");
   s.append(nodo("h2", c.oferta.titulo || "Oferta sin título"));
   s.append(nodo("p", c.oferta.empresa || "Empresa sin indicar", "suave"));
-  s.append(nodo("span", estadoVisible(c.estado, c.preparacion), "estado bien"));
+  const estado = estadoVisible(c.estado, c.preparacion);
+  if (estado !== "Preparando") s.append(nodo("span", estado, "estado bien"));   // mientras prepara, ya lo dice la barra
   if (c.estado === "cerrada" && c.motivo_cierre) s.append(nodo("span", `Motivo: ${MOTIVOS_CIERRE[c.motivo_cierre] || c.motivo_cierre}`, "estado apagado"));
   const fila = nodo("div", null, "fila");
   fila.append(boton("Ver oferta original", () => verOriginal(c.oferta.id), "secundario"));   // RF-8.3
@@ -143,7 +144,7 @@ function descargas() {
   for (const [texto, ruta] of [["Descargar CV (PDF)", "cv.pdf"], ["Descargar carta (PDF)", "carta.pdf"]]) {
     const a = nodo("a", texto, "boton secundario");
     a.href = `/api/candidaturas/${ID}/${ruta}`;
-    a.setAttribute("download", ruta);
+    a.setAttribute("download", "");   // el nombre lo pone el servidor: tipo, puesto y empresa
     s.append(a);
   }
   return s;
@@ -155,7 +156,7 @@ async function aprobarYDescargar() {
   for (const ruta of ["cv.pdf", "carta.pdf"]) {
     const a = nodo("a");
     a.href = `/api/candidaturas/${ID}/${ruta}`;
-    a.setAttribute("download", ruta);
+    a.setAttribute("download", "");   // el nombre lo pone el servidor: tipo, puesto y empresa
     document.body.append(a);
     a.click();
     a.remove();
@@ -164,7 +165,7 @@ async function aprobarYDescargar() {
 
 function aprobar() {
   const s = nodo("section", null, "panel");
-  s.append(nodo("p", "Los avisos no te bloquean: al aprobar das por revisado lo que quede.", "suave"));
+  s.append(nodo("p", "Puedes aprobar aunque queden avisos: al aprobar, se dan por revisados.", "suave"));
   const fila = nodo("div", null, "fila");
   fila.append(boton("Aprobar y descargar", aprobarYDescargar));
   s.append(fila);

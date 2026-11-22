@@ -2,6 +2,8 @@
 dueña toca su candidatura (RLS «propia»: para las demás no existe). Ninguna operación llama al modelo
 salvo encolar `candidatura` (crear y reintentar)."""
 import logging
+import re
+import unicodedata
 from datetime import date
 
 from sqlalchemy import Engine
@@ -274,3 +276,19 @@ def documento_pdf(engine: Engine, usuaria_id: int, candidatura_id: int, cual: st
     texto = c["cv_contenido"] if cual == "cv" else c["carta_contenido"]
     titulo = f"{'CV' if cual == 'cv' else 'Carta de presentación'} · {c['oferta_titulo'] or 'oferta'}"
     return generar_pdf(texto, titulo, "cv" if cual == "cv" else "carta")
+
+
+def _slug(texto: str | None, maximo: int = 40) -> str:
+    plano = unicodedata.normalize("NFKD", texto or "").encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", "-", plano.lower()).strip("-")[:maximo].strip("-")
+
+
+def nombre_descarga(engine: Engine, usuaria_id: int, candidatura_id: int, cual: str) -> str:
+    """Nombre del PDF al descargarlo: tipo, puesto y empresa («cv-data-analyst-veeva-systems.pdf»).
+    Si luego quiere otro, lo cambia ella a mano."""
+    with sesion_de(engine, usuaria_id) as s:
+        c = repo.detalle(s, candidatura_id)
+    if c is None:
+        raise ErrorCandidatura(404, "No existe esa candidatura")
+    partes = [cual, _slug(c["oferta_titulo"]), _slug(c["oferta_empresa"])]
+    return "-".join(p for p in partes if p) + ".pdf"
