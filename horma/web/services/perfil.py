@@ -3,13 +3,17 @@
 plano con `clasificar_perfil` y los CV base y matches de versiones anteriores quedan desfasados, sin
 regenerarse solos."""
 from collections.abc import Callable
+from datetime import date
 
 from pydantic import ValidationError
 from sqlalchemy import Engine
 
 from horma.config import ajustes
 from horma.schemas.perfil import Perfil, PeriodoCubierto
+from horma.tools.avisos_perfil import aviso_de_hueco, avisos_perfil
 from horma.tools.componer_cv_maestro import componer_cv_maestro
+from horma.tools.detectar_huecos import detectar_huecos
+from horma.tools.generar_pdf import generar_pdf
 from horma.tools.huella_perfil import huella_clasificacion
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.web.db import sesion_de
@@ -165,3 +169,66 @@ def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
         else:
             raise DatoNoValido(f"El campo «{campo}» no se puede corregir.")
     return _nueva_version(engine, usuaria_id, cambio)
+
+
+def hay_perfil(engine: Engine, usuaria_id: int) -> bool:
+    with sesion_de(engine, usuaria_id) as s:
+        return perfiles.vigente(s) is not None
+
+
+def ver(engine: Engine, usuaria_id: int) -> dict:
+    with sesion_de(engine, usuaria_id) as s:
+        fila, ultima = perfiles.vigente(s), perfiles.ultima(s)
+        if fila is None:
+            return {"perfil": None, "origenes": [],
+                    "construyendo": bool(ultima) and ultima["estado"] == "pendiente",
+                    "error": ultima["motivo_error"] if ultima and ultima["estado"] == "error" else None}
+        return {"perfil": perfiles.perfil_modelo(fila).model_dump(mode="json"),
+                "cv_maestro": fila["cv_maestro"], "creado_en": fila["creado_en"],
+                "origenes": perfiles.origenes(s, fila["id"]),
+                "construyendo": ultima["version"] > fila["version"] and ultima["estado"] == "pendiente",
+                "error": ultima["motivo_error"] if ultima["version"] > fila["version"]
+                and ultima["estado"] == "error" else None}
+
+
+def cv_completo_pdf(engine: Engine, usuaria_id: int) -> bytes:
+    """PDF de «Tu CV completo» (RF-10.4): el CV maestro del perfil vigente, sin modelo."""
+    with sesion_de(engine, usuaria_id) as s:
+        fila = perfiles.vigente(s)
+        nombre = perfiles.perfil_modelo(fila).nombre if fila else None
+    if fila is None or not (fila["cv_maestro"] or "").strip():
+        raise SinPerfil
+    return generar_pdf(fila["cv_maestro"], f"CV completo · {nombre}" if nombre else "CV completo")
+
+
+def avisos(engine: Engine, usuaria_id: int) -> dict:
+    """Huecos y avisos por reglas del perfil vigente, sin los que ella dio por vistos (RF-9.1c, RF-9.2).
+    Se calculan al pedirlos; no se guardan."""
+    with sesion_de(engine, usuaria_id) as s:
+        fila = perfiles.vigente(s)
+        longitud = perfiles.longitud_cv(s)
+        if fila is None:
+            return {"huecos": [], "avisos": [], "total": 0, "longitud": longitud}
+        perfil = perfiles.perfil_modelo(fila)
+        textos = {c["cv_id"]: c["texto"] for c in perfiles.cvs_fuente(s)}
+        vistos = perfiles.avisos_vistos(s)
+        huecos = [aviso_de_hueco(h) for h in detectar_huecos(perfil, date.today())]
+        por_reglas = avisos_perfil(perfil, fila["cv_maestro"] or "", textos)
+    if longitud:  # elegir una longitud cuenta como dar por visto el aviso de CV largo (RF-9.2d)
+        por_reglas = [a for a in por_reglas if a.clave != "largo"]
+
+    def visibles(lista):
+        return [{"clave": a.clave, "huella": a.huella, "texto": a.texto, "seccion": a.seccion}
+                for a in lista if vistos.get(a.clave) != a.huella]
+    h, a = visibles(huecos), visibles(por_reglas)
+    return {"huecos": h, "avisos": a, "total": len(h) + len(a), "longitud": longitud}
+
+
+def dar_por_visto(engine: Engine, usuaria_id: int, clave: str, huella: str) -> None:
+    with sesion_de(engine, usuaria_id) as s:
+        perfiles.marcar_visto(s, usuaria_id, clave, huella)
+
+
+def elegir_longitud(engine: Engine, usuaria_id: int, longitud: str) -> None:
+    with sesion_de(engine, usuaria_id) as s:
+        perfiles.fijar_longitud(s, usuaria_id, longitud)

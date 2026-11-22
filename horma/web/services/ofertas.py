@@ -5,10 +5,10 @@ from datetime import datetime
 from sqlalchemy import Engine
 
 from horma.config import ajustes
-from horma.web.db import sesion_sistema
+from horma.web.db import sesion_de, sesion_sistema
+from horma.web.repositories import importaciones, tareas
 from horma.web.repositories import ingesta as repo_ingesta
 from horma.web.repositories import ofertas as repo
-from horma.web.repositories import tareas
 from horma.web.services import presupuesto
 
 TIPO_TAREA = "procesar_oferta"
@@ -84,3 +84,52 @@ def encolar_propias_aplazadas(engine: Engine) -> int:
             except presupuesto.SinPresupuesto:
                 continue
     return n
+
+
+def pedir_lectura_url(engine: Engine, usuaria_id: int, url: str) -> int:
+    """Encola la lectura de una URL de oferta, privada de la usuaria (RF-5.3f). Sin reintentos."""
+    a = ajustes()
+    with sesion_de(engine, usuaria_id) as s:
+        importacion = importaciones.crear(s, usuaria_id, url.strip())
+        presupuesto.encolar(s, usuaria_id, "leer_url", importacion, a.tope_coste_tarea, 1)
+    return importacion
+
+
+def estado_lectura_url(engine: Engine, usuaria_id: int, importacion_id: int) -> dict | None:
+    with sesion_de(engine, usuaria_id) as s:
+        fila = importaciones.fila(s, importacion_id)
+    return {k: fila[k] for k in ("id", "estado", "motivo", "oferta_id")} if fila else None
+
+
+def por_estado(engine: Engine, usuaria_id: int) -> dict:
+    with sesion_de(engine, usuaria_id) as s:
+        return repo.por_estado(s)
+
+
+def catalogo(engine: Engine, usuaria_id: int) -> list[dict]:
+    """El catálogo común con su auditoría y su taxonomía (RF-8.2c)."""
+    with sesion_de(engine, usuaria_id) as s:
+        filas = repo.listar(s)
+    with sesion_sistema(engine) as s:
+        return repo.marcar_fuente_desconocida(filas, s)
+
+
+def propias(engine: Engine, usuaria_id: int) -> list[dict]:
+    """Las ofertas que la usuaria ha añadido, con el avance de su análisis (RF-8.2c, RF-8.7)."""
+    with sesion_de(engine, usuaria_id) as s:
+        filas = repo.propias(s, usuaria_id)
+    with sesion_sistema(engine) as s:  # `procesar_oferta` y `fuentes` son del sistema
+        repo.marcar_fuente_desconocida(filas, s)
+        avance = repo.progreso_de_analisis(s, [f["id"] for f in filas])
+    return [{**f, "progreso": avance.get(f["id"])} for f in filas]
+
+
+def original(engine: Engine, usuaria_id: int, oferta_id: int) -> dict | None:
+    with sesion_de(engine, usuaria_id) as s:
+        return repo.original(s, oferta_id)
+
+
+def procesar_en_linea(engine: Engine) -> str | None:
+    """Solo desarrollo (`horma_flujo_en_linea`): procesa una tarea sin worker aparte."""
+    from horma.web.queue import worker  # aquí y no arriba: el worker importa este servicio
+    return worker.procesar_una(engine)

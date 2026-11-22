@@ -1,4 +1,5 @@
-"""Fase 5 · T07: regenerar un CV base a mano; la versión anterior queda en su historial (RF-5.1e)."""
+"""Fase 5 · T07: el flujo con destinos dados genera solo esos. Las tareas de generar y regenerar CV base
+se aparcaron en S6 (RF-10.11d); el flujo se conserva."""
 # ruff: noqa: F401, F811  (fixtures importadas de otro módulo)
 import pytest
 from sqlalchemy import text
@@ -29,60 +30,3 @@ def test_el_flujo_con_destinos_dados_genera_solo_esos():
     salida = generar_cv_base.crear(proveedor=prov).run(estado)
     assert [g["destino"]["familia"] for g in salida["cv_base"]["guardados"]] == ["hosteleria_restauracion"]
     assert len(prov.llamadas) == 1
-
-
-def _cv_base_generado(motor, u):
-    pid = _perfilar_hecho(motor, u)
-    _encolar(motor, u, "generar_cv_base", pid)
-    assert worker.procesar_una(motor, ProveedorSimulado([BUENO])) == "hecha"
-    with sesion_de(motor, u) as s:
-        return s.execute(text("select id from cv_base")).scalar_one()
-
-
-@pytest.mark.bd
-def test_regenerar_sustituye_el_contenido_y_deja_la_version_anterior_en_el_historial(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    cv_id = _cv_base_generado(motor_app, a)
-    _encolar(motor_app, a, "regenerar_cv_base", cv_id)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([NUEVO])) == "hecha"
-    with sesion_de(motor_app, a) as s:
-        filas = s.execute(text("select id, contenido, estado, motivo_error from cv_base")).all()
-        versiones = s.execute(text("select origen, contenido from cv_base_versiones")).all()
-        historial = perfiles.versiones_cv_base(s, cv_id)  # lo que ve la pantalla
-    assert [(f.id, f.estado) for f in filas] == [(cv_id, "hecho")]  # mismo CV, no uno nuevo
-    assert filas[0].contenido == NUEVO["contenido"]
-    assert [(v.origen, v.contenido) for v in versiones] == [("regeneracion", BUENO["contenido"])]
-    assert [v["origen"] for v in historial] == ["regeneracion"]
-
-
-@pytest.mark.bd
-def test_si_la_regeneracion_no_pasa_la_verificacion_el_cv_se_queda_como_estaba(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    cv_id = _cv_base_generado(motor_app, a)
-    _encolar(motor_app, a, "regenerar_cv_base", cv_id, tope_reintentos=1)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([MALO, MALO])) == "error"
-    with sesion_de(motor_app, a) as s:
-        fila = s.execute(text("select contenido, estado, motivo_error from cv_base")).one()
-        assert perfiles.versiones_cv_base(s, cv_id) == []
-    assert fila.contenido == BUENO["contenido"] and fila.estado == "hecho" and fila.motivo_error
-
-
-@pytest.mark.bd
-def test_regenerar_marca_el_cv_con_la_version_vigente_y_deja_de_estar_desfasado(motor_app, bd_limpia):
-    a, _ = _usuarias(motor_app)
-    cv_id = _cv_base_generado(motor_app, a)
-    with sesion_de(motor_app, a) as s:  # el perfil avanza (v2) y el CV cita un dato que ya no está
-        s.execute(text("update cv_base set traza = cast(:t as jsonb)"),
-                  {"t": '[{"frase": "x", "fragmento": "Dato que ya no existe"}]'})
-        s.execute(text("insert into perfiles (usuaria_id, version, estado, datos, cv_maestro) "
-                       "select usuaria_id, 2, 'hecha', datos, :m from perfiles where version = 1"),
-                  {"m": BUENO["contenido"]})
-        assert perfiles.listar_cv_base(s)[0]["desfasado"] is True
-    _encolar(motor_app, a, "regenerar_cv_base", cv_id)
-    assert worker.procesar_una(motor_app, ProveedorSimulado([NUEVO])) == "hecha"
-    with sesion_de(motor_app, a) as s:
-        cv = perfiles.listar_cv_base(s)[0]
-    assert cv["perfil_version"] == 2 and cv["desfasado"] is False
-
-
-# --- API: solo al pulsar el botón ---------------------------------------------------------------

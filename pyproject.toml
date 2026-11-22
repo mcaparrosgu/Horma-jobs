@@ -100,6 +100,13 @@ source_modules = ["horma.cli", "horma.ingesta"]
 forbidden_modules = ["horma.web", "sqlalchemy", "psycopg"]
 
 [[tool.importlinter.contracts]]
+name = "Los routers solo hablan con servicios: ni repositorios ni cola (RF-10.11)"
+type = "forbidden"
+source_modules = ["horma.web.routers"]
+forbidden_modules = ["horma.web.repositories", "horma.web.queue"]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
 name = "Solo horma.flows.grafo importa langgraph (RT-12)"
 type = "forbidden"
 source_modules = ["horma"]

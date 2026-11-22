@@ -5,14 +5,15 @@ from pathlib import Path
 
 import pytest
 
-from horma.agents.registry import AGENTES
+from horma.agents.registry import AGENTES, APARCADOS
 
+# Los aparcados (RF-10.11d) siguen vigilados: si se reactivan, ya cumplen las líneas rojas.
 PROMPTS = {n: (Path(__import__(a.__module__, fromlist=["x"]).__file__).parent / "prompt.md")
-           .read_text(encoding="utf-8") for n, a in AGENTES.items()}
+           .read_text(encoding="utf-8") for n, a in {**AGENTES, **APARCADOS}.items()}
 
 
-def test_estan_los_14_agentes_activos():
-    assert len(PROMPTS) == 14  # S5: +analizador-oferta; S6 aparca 2 y los 3 antiguos salen
+def test_estan_los_12_agentes_activos_y_los_2_aparcados():
+    assert len(AGENTES) == 12 and len(APARCADOS) == 2 and len(PROMPTS) == 14  # S5 +1; S6 aparca 2 (RF-10.11d)
 
 
 @pytest.mark.parametrize("nombre", sorted(PROMPTS))

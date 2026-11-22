@@ -324,3 +324,11 @@ def propias_sin_tarea(s: Session) -> list[tuple[int, int]]:
         "and not exists (select 1 from tareas t where t.tipo = 'procesar_oferta' and t.entidad_id = o.id) "
         "order by o.id")).all()
     return [(f[0], f[1]) for f in filas]
+
+
+def ids_recomendables_comunes(s: Session, limite: int) -> list[int]:
+    """Las ofertas recomendables y ya procesadas del catálogo común, las más recientes primero."""
+    return [f[0] for f in s.execute(text(
+        "select id from ofertas where estado = 'procesada' and recomendable "
+        "and usuaria_id is null order by fecha_publicacion desc nulls last, id desc limit :n"),
+        {"n": limite})]

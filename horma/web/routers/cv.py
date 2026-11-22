@@ -8,9 +8,7 @@ from pydantic import BaseModel, Field
 
 from horma.config import ajustes
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
-from horma.web.db import sesion_de
 from horma.web.limites import limite_subida_cv
-from horma.web.repositories import cv as repo
 from horma.web.services import cv as servicio
 
 router = APIRouter()
@@ -45,19 +43,17 @@ def subir(request: Request, archivo: Annotated[UploadFile, File()], nombre: str 
 
 @router.get("/api/cv")
 def listar(request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        return repo.listar(s)
+    return servicio.listar(request.app.state.engine, usuaria_id)
 
 
 @router.patch("/api/cv/{cv_id}", dependencies=[Depends(exigir_csrf)])
 def renombrar(cv_id: int, datos: Nombre, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     nombre = _nombre(datos.nombre)
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        if repo.uno(s, cv_id) is None:
+    try:
+        if not servicio.renombrar(request.app.state.engine, usuaria_id, cv_id, nombre):
             raise HTTPException(status_code=404, detail="No existe ese CV")
-        if repo.nombre_en_uso(s, nombre, excepto_cv=cv_id):
-            raise HTTPException(status_code=409, detail="Ya tienes un CV con ese nombre.")
-        repo.renombrar(s, cv_id, nombre)
+    except servicio.NombreRepetido as e:
+        raise HTTPException(status_code=409, detail="Ya tienes un CV con ese nombre.") from e
     return {"id": cv_id, "nombre": nombre}
 
 
@@ -65,9 +61,9 @@ def renombrar(cv_id: int, datos: Nombre, request: Request, usuaria_id: int = Dep
 def marcar_escrito_por_ella(cv_id: int, datos: EscritoPorElla, request: Request,
                             usuaria_id: int = Depends(usuaria_actual)):
     """«Lo escribí yo»: los documentos así marcados pesan más en la guía de estilo (RF-5.6b)."""
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        if not repo.marcar_escrito_por_ella(s, cv_id, datos.escrito_por_ella):
-            raise HTTPException(status_code=404, detail="No existe ese CV")
+    motor = request.app.state.engine
+    if not servicio.marcar_escrito_por_ella(motor, usuaria_id, cv_id, datos.escrito_por_ella):
+        raise HTTPException(status_code=404, detail="No existe ese CV")
     return {"id": cv_id, "escrito_por_ella": datos.escrito_por_ella}
 
 
@@ -81,22 +77,20 @@ def eliminar(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_act
 @router.get("/api/cv/{cv_id}/archivo")
 def descargar(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """Solo la dueña (RLS): para las demás, el CV no existe."""
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        cv = repo.uno(s, cv_id)
-    ruta = servicio.carpeta() / cv["ruta"] if cv else None
-    if not cv or not ruta.is_file():
+    hallado = servicio.archivo(request.app.state.engine, usuaria_id, cv_id)
+    if hallado is None:
         raise HTTPException(status_code=404, detail="No existe ese CV")
+    cv, ruta = hallado
     return FileResponse(ruta, media_type=servicio.MEDIA[cv["tipo"]], filename=cv["nombre_original"])
 
 
 @router.get("/api/cv/{cv_id}/ver")
 def ver(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """El CV en línea, para el visor de la página (RF-2.1c). Solo la dueña (RLS)."""
-    with sesion_de(request.app.state.engine, usuaria_id) as s:
-        cv = repo.uno(s, cv_id)
-    ruta = servicio.carpeta() / cv["ruta"] if cv else None
-    if not cv or not ruta.is_file():
+    hallado = servicio.archivo(request.app.state.engine, usuaria_id, cv_id)
+    if hallado is None:
         raise HTTPException(status_code=404, detail="No existe ese CV")
+    cv, ruta = hallado
     if cv["tipo"] == "docx":
         raise HTTPException(status_code=415, detail="Los DOCX no se pueden ver en el navegador: descárgalo.")
     medio = "application/pdf" if cv["tipo"] == "pdf" else "text/plain; charset=utf-8"

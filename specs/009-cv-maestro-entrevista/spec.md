@@ -85,7 +85,7 @@ Esta spec modifica:
 - **RF-9.3f** El tope diario de puntuación (RF-8.5b) no cambia: ampliar la búsqueda no amplía el gasto.
 
 ### CV maestro visible (RF-9.4)
-- **RF-9.4** «Tu CV maestro» DEBERÁ enseñar el CV maestro de la última versión del perfil con formato
+- **RF-9.4** *(sustituido en parte por la spec 010, RF-10.4)* «Tu CV maestro» DEBERÁ enseñar el CV maestro de la última versión del perfil con formato
   (títulos, listas, párrafos), su fecha y su número de versión (P12), y la frase «Es el texto del que Horma saca
   tus CV y cartas. Se cambia desde Mi perfil.»
 - **RF-9.4b** Cada sección DEBERÁ tener «Editar», que lleva a esa sección de Mi perfil. El texto NO DEBERÁ
@@ -94,7 +94,7 @@ Esta spec modifica:
   Se muestra sin interpretar HTML (RF-8.3b).
 
 ### Perfil en 9a (RF-9.5)
-- **RF-9.5** Perfil DEBERÁ mostrar sus bloques en este orden (sustituye a RF-7.5):
+- **RF-9.5** *(sustituido por la spec 010, RF-10.5b)* Perfil DEBERÁ mostrar sus bloques en este orden (sustituye a RF-7.5):
   1. Tus CV, abierto;
   2. Mi perfil, abierto;
   3. Preguntas pendientes y avisos, desplegable, con el número en el título; abierto CUANDO haya alguno.
@@ -163,13 +163,13 @@ Esta spec modifica:
   usuaria no los cuenta en su respuesta (RT-08).
 
 ### Respuestas (RF-9.8)
-- **RF-9.8** Cada pregunta DEBERÁ poder responderse **por escrito** (hasta **5.000 caracteres**, unas 750
+- **RF-9.8** *(sustituido en parte por la spec 010, RF-10.12)* Cada pregunta DEBERÁ poder responderse **por escrito** (hasta **5.000 caracteres**, unas 750
   palabras) o **por audio** (hasta **5 minutos**), o saltarse para luego (P4, P18). El texto siempre está
   disponible.
 - **RF-9.8h** Junto a cada pregunta DEBERÁ verse la guía «Lo ideal: 1-2 minutos, como en una entrevista real.»
   Al llegar al tope, Horma DEBERÁ parar la grabación o no admitir más texto y decirlo: «Has llegado al máximo.
   En una entrevista real, intenta no pasar de 2 minutos.» (P18).
-- **RF-9.8b** El audio DEBERÁ pasarse a texto con Whisper libre en el worker de Horma, sin enviarlo a terceros
+- **RF-9.8b** *(sustituido por la spec 010, RF-10.12)* El audio DEBERÁ pasarse a texto con Whisper libre en el worker de Horma, sin enviarlo a terceros
   (P5). La usuaria DEBERÁ ver el texto y poder corregirlo antes de guardar. El audio NO DEBERÁ guardarse: se
   borra al transcribirlo, también si falla. Tope de **30 minutos de audio al día** por usuaria.
 - **RF-9.8c** Las respuestas DEBERÁN guardarse aparte del perfil, por usuaria (RLS), con origen «entrevista» y
@@ -185,14 +185,14 @@ Esta spec modifica:
   actualiza el perfil y crea una versión nueva (RF-2.4).
 
 ### Valoración para entrenar (RF-9.9)
-- **RF-9.9** CUANDO la usuaria termine la entrevista inicial o un seguimiento, el `valorador_entrevista`
+- **RF-9.9** *(sustituido por la spec 010, RF-10.12)* CUANDO la usuaria termine la entrevista inicial o un seguimiento, el `valorador_entrevista`
   DEBERÁ dar, en una llamada, una valoración corta de cada respuesta: qué funciona y cómo mejorarla
   (situación, acción, resultado), en segunda persona y en 2-3 frases (P16).
-- **RF-9.9d** SI una respuesta pasa de unas **300 palabras** (unos 2 minutos hablando), la valoración
+- **RF-9.9d** *(sustituido por la spec 010, RF-10.12)* SI una respuesta pasa de unas **300 palabras** (unos 2 minutos hablando), la valoración
   DEBERÁ recomendar acortarla para una entrevista real y decir qué dejar (P18).
-- **RF-9.9b** La valoración NO DEBERÁ juzgar a la persona ni mencionar rasgos personales (RT-09): valora la
+- **RF-9.9b** *(sustituido por la spec 010, RF-10.12)* La valoración NO DEBERÁ juzgar a la persona ni mencionar rasgos personales (RT-09): valora la
   respuesta como respuesta de entrevista.
-- **RF-9.9c** La usuaria DEBERÁ poder reescribir la respuesta desde su valoración; la nueva sustituye a la
+- **RF-9.9c** *(sustituido por la spec 010, RF-10.12)* La usuaria DEBERÁ poder reescribir la respuesta desde su valoración; la nueva sustituye a la
   anterior. Reescribir no pide otra valoración.
 
 ### Las respuestas en CV, carta y estilo (RF-9.10)
@@ -211,7 +211,7 @@ Esta spec modifica:
   conserva todas las experiencias; con «Que Horma lo sintetice» elige las que encajan con la oferta.
 
 ### «Tu entrevista» en Perfil (RF-9.11)
-- **RF-9.11** «Tu entrevista» DEBERÁ sustituir al bloque 3 de RF-9.5 (P8), con el número de preguntas sin
+- **RF-9.11** *(sustituido por la spec 010, RF-10.12b)* «Tu entrevista» DEBERÁ sustituir al bloque 3 de RF-9.5 (P8), con el número de preguntas sin
   responder en el título; abierto CUANDO haya alguna. Reúne, en este orden: datos que faltan (RF-2.3), avisos
   (RF-9.2, RF-9.7d) y las preguntas de la entrevista por partes, con su avance («4 de 11»). Una a una; se puede
   dejar a medias y seguir luego.

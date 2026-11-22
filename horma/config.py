@@ -76,7 +76,7 @@ class Ajustes(BaseSettings):
     horma_oferta_un_agente: bool = True
 
     # Fase 4: implementación del flujo `candidatura` ("plain" o "langgraph")
-    horma_flow_impl: str = "plain"
+    horma_flow_impl: str = "langgraph"
 
     # Fase 4 · Alertas (RF-4.7b). Sin `SMTP_HOST` solo hay pantalla y log.
     alerta_gasto_dia_usd: float = 5.0
