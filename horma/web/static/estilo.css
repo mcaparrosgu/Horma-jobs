@@ -248,6 +248,10 @@ details.grupo > .casillas{
 .barra-contador{ justify-content: flex-start; gap: 12px; }
 .barra-contador .derecha{ margin-left: auto; }
 .contador{ margin: 0; font-size: 20px; font-weight: 600; }
+/* Aviso «Oferta descartada. Deshacer»: ocupa el sitio de la oferta y destaca con la barra de acento. */
+.tabla-ofertas tr.fila-descarte > td{ padding: 16px 16px 16px 20px; background: var(--surface-2); border-left: 6px solid var(--accent-text) !important; }
+.fila-descarte .fila{ align-items: center; gap: 12px; flex-wrap: wrap; }
+.fila-descarte strong{ flex: 1 1 14rem; min-width: 0; overflow-wrap: anywhere; }
 
 /* ── Tabla de Recomendadas (escritorio) ── */
 .tabla-ofertas{ width: 100%; border-collapse: collapse; table-layout: fixed; }
