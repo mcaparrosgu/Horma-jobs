@@ -4,6 +4,8 @@ Código puro y determinista: el mismo perfil da siempre el mismo texto. El perfi
 y el maestro se deriva de él, así lo que la usuaria edita o borra se refleja en el maestro y la
 trazabilidad de los CV adaptados sigue funcionando (RF-5.1b). No escribe rasgos personales: solo usa
 los datos del perfil con encabezados fijos, y las secciones vacías no salen."""
+import re
+
 from horma.schemas.perfil import Perfil
 
 _IDIOMAS = {
@@ -17,9 +19,20 @@ def _linea(*partes: str | None) -> str:
     return " · ".join(p.strip() for p in partes if p and p.strip())
 
 
+def _fecha(valor: str | None) -> str | None:
+    """«2021-03» → «03-2021» (MM-AAAA); «2021», «actual» y lo que no sea AAAA-MM se dejan como están."""
+    if not valor:
+        return None
+    v = valor.strip()
+    m = re.fullmatch(r"((?:19|20)\d{2})-(\d{2})", v)
+    return f"{m.group(2)}-{m.group(1)}" if m else v
+
+
 def _periodo(inicio: str | None, fin: str | None) -> str | None:
+    inicio, fin = _fecha(inicio), _fecha(fin)
     if inicio and fin:
-        return f"{inicio.strip()}-{fin.strip()}"
+        # con meses (03-2021) el guion largo evita «03-2021-09-2023»; con solo años se queda «2021-2024»
+        return f"{inicio} – {fin}" if "-" in inicio + fin else f"{inicio}-{fin}"
     return inicio or fin
 
 
@@ -51,11 +64,11 @@ def componer_cv_maestro(perfil: Perfil) -> str:
 
     proyectos: list[str] = []
     for p in perfil.proyectos:
-        proyectos.append(_linea(p.nombre, p.fecha))
+        proyectos.append(_linea(p.nombre, _fecha(p.fecha)))
         if p.descripcion and p.descripcion.strip():
             proyectos.append(p.descripcion.strip())
     salida += _seccion("Proyectos", proyectos)
-    salida += _seccion("Certificaciones", [_linea(c.nombre, c.entidad, c.fecha)
+    salida += _seccion("Certificaciones", [_linea(c.nombre, c.entidad, _fecha(c.fecha))
                                            for c in perfil.certificaciones])
     salida += _seccion("Otras actividades", [
         _linea(a.descripcion, _periodo(a.inicio, a.fin)) for a in perfil.actividades])

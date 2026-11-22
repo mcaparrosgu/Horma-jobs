@@ -5,7 +5,7 @@ Código puro. Devuelve los errores en llano (vacío si no hay ninguno):
   mínimo baja a `FRACCION_MAESTRO` (60 %) de sus palabras cuando el maestro es corto: un CV no puede
   tener más contenido que el perfil del que sale, y una usuaria con poca experiencia no queda bloqueada;
 - al menos un encabezado `## Experiencia` o `## Formación`;
-- periodos `AAAA` o `AAAA-MM` con fin ≥ inicio (el fin puede ser «actual», «presente» u «hoy»);
+- periodos `AAAA`, `AAAA-MM` o `MM-AAAA` con fin ≥ inicio (el fin puede ser «actual», «presente» u «hoy»);
   los meses van de 01 a 12."""
 import re
 import unicodedata
@@ -14,7 +14,7 @@ CV_PALABRAS_MIN = 250
 CV_PALABRAS_MAX = 1000
 FRACCION_MAESTRO = 0.6
 
-_FECHA = r"(?:19|20)\d{2}(?:-\d{2})?"
+_FECHA = r"(?:\d{2}-(?:19|20)\d{2}|(?:19|20)\d{2}(?:-\d{2})?)"
 _PERIODO = re.compile(rf"(?<![\d-])({_FECHA})\s*[-–—]\s*({_FECHA}|actual|presente|hoy)(?![\d-])",
                       re.IGNORECASE)
 _SECCION = re.compile(r"^#{1,6}\s*(experiencia|formacion)\b", re.MULTILINE)
@@ -25,12 +25,15 @@ def _sin_acentos(texto: str) -> str:
 
 
 def _clave(fecha: str) -> tuple[int, int]:
-    anio, _, mes = fecha.partition("-")
-    return int(anio), int(mes or 1)
+    a, _, b = fecha.partition("-")
+    if len(a) == 2:   # MM-AAAA
+        return int(b), int(a)
+    return int(a), int(b or 1)
 
 
 def _mes_valido(fecha: str) -> bool:
-    mes = fecha.partition("-")[2]
+    a, _, b = fecha.partition("-")
+    mes = a if len(a) == 2 else b
     return not mes or 1 <= int(mes) <= 12
 
 
