@@ -95,9 +95,11 @@ def cerrar(candidatura_id: int, datos: Cierre, request: Request, usuaria_id: int
 
 
 def _descarga(cual: Literal["cv", "carta"], candidatura_id: int, request: Request, usuaria_id: int):
+    """El nombre lleva el puesto y la empresa (RF-10.4e); si quiere otro, lo cambia ella a mano."""
     pdf = _llamar(servicio.documento_pdf, request, usuaria_id, candidatura_id, cual)
+    nombre = _llamar(servicio.nombre_descarga, request, usuaria_id, candidatura_id, cual)
     return Response(pdf, media_type="application/pdf",
-                    headers={"Content-Disposition": f'attachment; filename="{cual}.pdf"'})
+                    headers={"Content-Disposition": f'attachment; filename="{nombre}"'})
 
 
 @router.get("/api/candidaturas/{candidatura_id}/cv.pdf")

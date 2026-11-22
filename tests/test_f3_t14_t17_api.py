@@ -424,6 +424,15 @@ def test_desde_aprobada_salen_el_cv_y_la_carta_en_pdf(app, motor_app):
         assert texto in "".join(p.extract_text() for p in PdfReader(io.BytesIO(r.content)).pages)
 
 
+def test_los_pdf_se_descargan_con_el_puesto_y_la_empresa(app, motor_app):
+    """RF-10.4e: `cv-puesto-empresa.pdf` y `carta-puesto-empresa.pdf`."""
+    c, h, u, cb, oferta, cid = _escenario(app, motor_app)
+    c.post(f"/api/candidaturas/{cid}/aprobar", headers=h)
+    for cual in ("cv", "carta"):
+        r = c.get(f"/api/candidaturas/{cid}/{cual}.pdf")
+        assert r.headers["content-disposition"] == f'attachment; filename="{cual}-camarera-bar-luna.pdf"'
+
+
 def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_otro_documento_subido(app, motor_app):
     c, h, u, cb, oferta, cid = _escenario(app, motor_app)
     c.post("/api/cv", headers=h, files={"archivo": ("b.md", b"# Mi CV bonito")}, data={"clase": "carta"})

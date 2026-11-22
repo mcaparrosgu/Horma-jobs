@@ -1,4 +1,5 @@
 """S6 · Orden interno (RF-10.11): contrato de imports, tabla ENCADENADOS y lo aparcado."""
+import os
 import shutil
 import subprocess
 import sys
@@ -13,7 +14,9 @@ def test_los_routers_no_importan_repositorios_ni_la_cola():
     """T24: el contrato de import-linter (en pyproject.toml) se cumple."""
     exe = shutil.which("lint-imports", path=str(Path(sys.executable).parent))
     assert exe, "lint-imports no está instalado en el entorno"
-    r = subprocess.run([exe], capture_output=True, text=True, cwd=Path(__file__).resolve().parent.parent)
+    # utf-8 explícito: en Windows la consola usa cp1252 y no puede leer la salida de lint-imports.
+    r = subprocess.run([exe], capture_output=True, text=True, encoding="utf-8", errors="replace",
+                       env={**os.environ, "PYTHONUTF8": "1"}, cwd=Path(__file__).resolve().parent.parent)
     assert r.returncode == 0, r.stdout[-800:]
     assert "Los routers solo hablan con servicios" in r.stdout
 
