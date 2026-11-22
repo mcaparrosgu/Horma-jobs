@@ -45,7 +45,7 @@ const TEXTOS = {
   correccionGuardada: "Corrección guardada. Gracias.",
   propuesta: (n) => ` (compatibilidad que propones: ${n})`,
   sinNota: "Esta oferta todavía no tiene compatibilidad. Horma la calculará sola; si la quieres ya, pulsa «Puntuar ahora».",
-  explicacionRetirada: "Se ha retirado la explicación porque no cumplía las reglas de Horma. La compatibilidad sigue siendo válida.",
+  explicacionRetirada: "No mostramos la explicación de esta oferta: mencionaba un dato personal (como tu edad, sexo, salud o religión) y Horma nunca los usa para recomendar. La compatibilidad solo tiene en cuenta tu experiencia, formación e idiomas, y sigue siendo válida.",
   desfasada: "Esta compatibilidad se calculó con una versión anterior de tu perfil.",
   eligeCv: "Horma prepara tu CV a partir de tu perfil.",
   presupuesto: "Hoy ya hemos trabajado todo lo posible para ti. Mañana seguimos.",
