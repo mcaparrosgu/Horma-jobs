@@ -127,8 +127,15 @@ Rama `simplificacion-s7`. Sale de la prueba 2.3 de Mar (21-nov). Construcción c
     en `evals/cv`.
   - **Test (simulado):** el prompt trae la estructura de RF-10.3g y el ejemplo cumple `verificar_trazabilidad`.
     **Real:** eval `cv` en umbral y una candidatura que Mar lee.
-- [ ] T36 — Repaso de simetría de todas las pantallas de la usuaria (lista del plan, S7).
+- [x] T36 — Repaso de simetría de todas las pantallas de la usuaria (lista del plan, S7).
   - **Navegador:** Perfil (vacío, leyendo, lleno), Ofertas, Candidaturas y Candidatura a 1280 y 390 px, en claro
     y en oscuro, mirando a propósito alineación y alturas.
-- [ ] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README), prueba de Mar y PR si lo pide.
+  - **Hecho (22-nov), a 1280 px y en oscuro:** Ofertas (fila Puestos · Sector · Condiciones, casillas cuadradas), Perfil
+    (columna derecha: Subir archivo, Tu CV completo, Por resolver, Documentos subidos, Cómo escribes), Candidaturas
+    (seis columnas en una fila) y Candidatura. **Falta 390 px:** la ventana de Chrome no baja de ancho; lo ve Mar.
+  - **Cambios pedidos por Mar en el repaso:** se retira «Área» de Ofertas (se vacía al guardar y el CV ya no la
+    rellena); «Subir archivo» con formatos y peso; barras en verde lima; «Nombre» editable en Perfil (sale en «Tu CV
+    completo» y su PDF; el extractor lo pide); PDF de candidatura como `cv-puesto-empresa.pdf` y
+    `carta-puesto-empresa.pdf`; «No consta en tu CV» en una línea corta con la lista completa desplegable.
+- [~] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README), prueba de Mar y PR si lo pide.
   - **Estado (21-nov):** T30-T34 hechas y con tests. T35: prompt, ejemplo, `estructura_carta` y casos 32-33 hechos; eval `cv` real: 31 casos (1,60 USD, parado por tope) + casos 32 y 33 de carta pasan en real (0,25 USD). T36: Perfil y Ofertas a 1280 px en claro revisados (h2 de panel sin margen superior; «Qué buscas» con espacio igual); falta 390 px (la ventana no baja de ancho), oscuro, Candidaturas y Candidatura.

@@ -133,8 +133,12 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   «Responder», y debajo un desplegable **«Avisos (n)»** con los huecos (RF-9.1) y los avisos (RF-9.2), agrupados
   según RF-10.13. Cada aviso DEBERÁ tener dos acciones: la que lo resuelve («Corregir» o «Añadir») y «Dar por
   visto», como antes de la 010. Lo visto no vuelve mientras no cambie su causa (RF-9.2c).
+- **RF-10.5f** *(22-nov)* Perfil DEBERÁ dejar añadir o modificar el **nombre** de la usuaria, que encabeza «Tu CV
+  completo» y su PDF. «Subir archivo» DEBERÁ decir los formatos admitidos (PDF, DOCX, Markdown) y el peso máximo.
 - **RF-10.5d** La elección de longitud del CV DEBERÁ aparecer en un solo sitio: en el aviso de CV largo de
   «Por resolver» (RF-9.2d).
+- **RF-10.4e** *(22-nov)* Los PDF de una candidatura aprobada DEBERÁN descargarse como `cv-puesto-empresa.pdf` y
+  `carta-puesto-empresa.pdf`; si ella quiere otro nombre, lo cambia a mano.
 - **RF-10.5e** Al subir un documento, las clases DEBERÁN ser dos: «CV» (por defecto) y «Carta». La clase
   «estético» se retira (P10); los ya subidos siguen en «Documentos subidos». Ningún documento subido se
   modifica.
@@ -149,6 +153,9 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
 - **RF-10.6d** «Puntuar ahora» se queda en el detalle de una oferta sin compatibilidad (RF-8.5e), dentro del
   presupuesto del día (RF-10.9), sin límite propio de sueltas. Los avisos de gasto DEBERÁN verse solo CUANDO se
   haya llegado al presupuesto; entonces «Puntuar ahora» se desactiva con el aviso de RF-10.9c.
+- **RF-10.6f** *(22-nov)* «Qué buscas» DEBERÁ ir sin «Área»: Puestos sugeridos, Sector y Condiciones en la primera
+  fila; Tipo de contrato, Nivel, País e Idiomas en la segunda; después Términos excluidos. Al guardar, el área se
+  vacía y el CV deja de rellenarla.
 - **RF-10.6e** *(S7)* En «Qué buscas», los términos excluidos DEBERÁN ser lo último, justo antes de «Guardar y
   buscar». «Puestos sugeridos» ocupa todo el ancho.
 
