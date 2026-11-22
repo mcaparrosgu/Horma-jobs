@@ -169,7 +169,7 @@ def conservar_usuaria(perfil: dict, de_usuaria: dict | None) -> None:
         if de_usuaria.get(campo):
             perfil[campo] = de_usuaria[campo]
     for campo in ("nombre", "genero_puestos"):
-        if de_usuaria.get(campo) and not perfil.get(campo):
+        if de_usuaria.get(campo):   # el nombre que ella editó manda sobre el del CV (RF-10.5f, RF-10.14)
             perfil[campo] = de_usuaria[campo]
         if campo == "genero_puestos" and perfil.get(campo):
             perfil["preguntas_pendientes"] = [p for p in perfil["preguntas_pendientes"]

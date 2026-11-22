@@ -513,7 +513,7 @@ function otrosResumenes(resumenes) {
 }
 
 // --- CV subidos -----------------------------------------------------------------------------
-function tarjetaCv(c) {
+function tarjetaCv(c, _i, todos) {
   const li = nodo("li", null, "tarjeta");
   li.append(nodo("span", { carta: "Carta", fuente: "CV" }[c.clase] || "Documento", "estado apagado"));
   const titulo = nodo("h3", c.nombre);
@@ -575,8 +575,9 @@ function tarjetaCv(c) {
   fila.append(ver);
   const papelera = nodo("button", null, "secundario icono");
   papelera.type = "button";
-  papelera.title = "Eliminar CV";
-  papelera.setAttribute("aria-label", `Eliminar el CV ${c.nombre}`);
+  const ultimoCv = esCv && todos.filter((x) => x.clase === "fuente").length === 1;   // su borrado deja sin perfil
+  papelera.title = esCv ? "Eliminar CV" : "Eliminar carta";
+  papelera.setAttribute("aria-label", `${esCv ? "Eliminar el CV" : "Eliminar la carta"} ${c.nombre}`);
   papelera.append(iconoPapelera());
   papelera.addEventListener("click", () => {
     fila.hidden = true;
@@ -589,11 +590,12 @@ function tarjetaCv(c) {
     si.addEventListener("click", async () => {
       const r = await api(`/api/cv/${c.id}`, { metodo: "DELETE" });
       if (!r.ok) return avisar(r.motivo, true);
-      avisar("CV eliminado.");
+      avisar(!esCv ? TEXTOS.cartaEliminada : ultimoCv ? TEXTOS.ultimoCvEliminado : TEXTOS.cvEliminado);
       await cargarCvs();
       await cargarPerfil();   // el perfil se rehace con los CV que quedan (RF-10.14)
     });
-    conf.append(nodo("span", TEXTOS.confirmarEliminarCv), si, no);
+    conf.append(nodo("span", !esCv ? TEXTOS.confirmarEliminarCarta : ultimoCv ? TEXTOS.confirmarEliminarUltimoCv
+      : TEXTOS.confirmarEliminarCv), si, no);
     li.append(conf);
     no.focus();
   });

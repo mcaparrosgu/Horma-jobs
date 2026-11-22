@@ -54,6 +54,11 @@ const TEXTOS = {
   resumenesPorCv: "Horma guarda el resumen de cada CV. Tu CV completo usa el del más reciente; al redactar un CV para una oferta, elige el que mejor encaja.",   // RF-10.14d
   preguntaClase: "No sabemos si este documento es un CV o una carta. ¿Cuál es?",   // RF-10.14b
   confirmarEliminarCv: "¿Eliminar este CV? Rehacemos tu perfil sin él. No se puede deshacer.",   // RF-10.14
+  confirmarEliminarUltimoCv: "¿Eliminar tu único CV? Borramos tu perfil y vuelves a «Sube tu CV». No se puede deshacer.",   // RF-10.14
+  confirmarEliminarCarta: "¿Eliminar esta carta? No se puede deshacer.",
+  cvEliminado: "CV eliminado.",
+  ultimoCvEliminado: "CV eliminado. Se ha borrado tu perfil: sube un CV para crearlo de nuevo.",
+  cartaEliminada: "Carta eliminada.",
   listaVaciaPorPuestos: "Ninguna oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta.",   // RF-10.14q
   anadidaPorTi: "Añadida por ti",
   corregirNota: "Compatibilidad que te parece justa (opcional)",

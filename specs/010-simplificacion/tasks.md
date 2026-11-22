@@ -19,7 +19,7 @@ stale_after: null
 | S2-S5 | Fusionados juntos (PR #29) | Hechas (21-nov); la prueba 2.3 dio lugar a S7 |
 | S6 | Fusionado (PR #30) | — (no tiene pantalla) |
 | S7 | Fusionado (PR #31) | Cerrada por Mar (22-nov); el repaso a 390 px lo hará Mar más adelante, fuera de esta fase |
-| S8 | Construida (T39-T49) en `simplificacion-s8`, sin PR; cierre T50 pendiente de la prueba de Mar | Pasada J-P recorrida por Claude el 22-nov (P5 sin probar; fallos en [Hallazgos](#hallazgos-de-la-pasada-j-p-22-nov)); falta la prueba y la firma de Mar |
+| S8 | Construida (T39-T49) en `simplificacion-s8`, sin PR; cierre T50 pendiente de la prueba de Mar | Pasada J-P recorrida por Claude el 22-nov (K1, O4, P1, P2 y P5 repetidas y correctas); fallos corregidos (T60-T62), pendiente decidir el coste de editar el perfil ([Hallazgos](#hallazgos-de-la-pasada-j-p-22-nov)); falta la prueba y la firma de Mar |
 
 ## Forma de trabajo
 - **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción, con Sonnet. Un fallo de eval poco
@@ -215,14 +215,21 @@ Sonnet, todo el bloque seguido; se para solo antes de gastar (T44 y T50).
   - Pendiente: comprobación visual a 1280 y 390 px, claro y oscuro (la captura del navegador falló).
 
 ## Hallazgos de la pasada J-P (22-nov)
-Recorrida por Claude en el navegador y la consola (bloques J a P; K1, O4 y P5 sin probar). Sin tarea todavía: se
-deciden con Mar antes de tocar la spec.
-- **«No consta en tu CV» falso (RF-10.13):** los `huecos` que devuelve `redactor-cv` incluyen requisitos que el
-  perfil sí tiene (inglés B2, CoverManager, sumillería, +5 años en sala), y la carta los usa como propios.
-- **Rehacer el perfil pierde el nombre editado por ella (RF-10.14):** vuelve el del CV. Las experiencias y
-  habilidades escritas por ella sí se conservan.
-- **Coste de editar el perfil:** una edición o eliminar un CV crea versión y recalcula las compatibilidades de sus
-  ofertas (~0,1 USD); una de esas tareas falló por «tope de coste» y el día pasó de 1 USD.
-- **Redacción al eliminar:** el diálogo y «CV eliminado.» no distinguen carta ni último CV.
-- **Menores:** el aviso de presupuesto solo sale si hay ofertas sin puntuar; «Puntuar ahora» se desactiva al
-  pulsarlo; `arbeitnow` muestra «sin límite» de intervalo; el eval simulado informa un coste de 0,0021 USD.
+Recorrida por Claude en el navegador y la consola (bloques J a P; K1, O4 y P5 sin probar).
+- [x] T60 — «No consta en tu CV» solo con lo que falta (RF-10.13). La causa era `medir_ats`, no el redactor: exigía
+  todas las palabras de una frase de requisito. Ahora una palabra clave corta exige todas (nivel de idioma igual o
+  mayor; las cifras y «o superior/similar» no cuentan) y una frase de 4 o más palabras la juzga el redactor.
+  - **Test:** `test_s8_t60_huecos_falsos.py` (los 4 requisitos de Irene ya no son hueco; «Excel avanzado» e «Inglés C1» sí).
+- [x] T61 — El nombre que editó ella manda sobre el del CV al rehacer el perfil (RF-10.5f, RF-10.14).
+  - **Test:** `test_s8_t41_conserva_lo_de_la_usuaria.py`.
+- [x] T62 — Eliminar una carta o el último CV lo dice en su idioma (RF-10.14): diálogo, etiqueta y aviso.
+  - **Test:** `test_s8_t42_borrar_cv_rehace_perfil.py`. **Navegador:** sin comprobar.
+- **Por decidir con Mar — coste de editar el perfil:** una edición de experiencia, formación o titular, o eliminar un
+  CV, crea versión y recalcula las compatibilidades de sus ofertas (~0,1 USD). Cumple RF-10.9, RF-10.10c y
+  RF-5.3d; una de esas tareas falló por «tope de coste» (0,085 > 0,052 que quedaban) y el día pasó de 1 USD, que es
+  el comportamiento previsto del tope (RF-10.9b). Falta decidir si se avisa antes o se recalcula solo a petición.
+- **Repetición K1, O4, P1, P2, P5 y N4 (22-nov, noche):** todas pasan; el nombre editado se conserva al rehacer el perfil.
+  Hallazgos nuevos, sin tarea: el CV maestro escribe «Catalán» donde el CV decía «Valenciano» (el idioma se guarda como
+  `ca`), y la barra «Estamos leyendo tu CV» desaparece un instante al repintarse.
+- **Menores sin tocar:** el aviso de presupuesto solo sale si hay ofertas sin puntuar; «Puntuar ahora» se desactiva
+  al pulsarlo; `arbeitnow` muestra «sin límite» de intervalo; el eval simulado informa un coste de 0,0021 USD.

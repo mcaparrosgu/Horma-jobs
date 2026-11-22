@@ -26,7 +26,7 @@ def test_f1_las_palabras_de_cortesia_del_requisito_no_cuentan_como_hueco():
 
 
 def test_f1_lo_que_si_falta_sigue_siendo_hueco():
-    requisito = "Se valora experiencia previa como cocinero en restaurante"
+    requisito = "Se valora experiencia previa como cocinero"
     m = medir_ats(CV_CAMARERA, _oferta(requisito), CV_CAMARERA)
     assert m["ausentes_sin_origen"] == [requisito]
     m = medir_ats(CV_CAMARERA, _oferta("Imprescindible carné de manipulador"), CV_CAMARERA)

@@ -43,6 +43,16 @@ def test_lo_suyo_manda_sobre_lo_que_dice_el_cv_de_lo_mismo():
     assert [x.descripcion for x in p.experiencias] == ["Corregida por mí"]
 
 
+def test_el_nombre_que_edito_ella_manda_sobre_el_del_cv():   # T61 (N4, P11)
+    p = _correr({"nombre": "Irene Navarro", "genero_puestos": "femenino"},
+                {"nombre": "Irene Navarro Soler", "experiencias": []})
+    assert p.nombre == "Irene Navarro" and p.genero_puestos == "femenino"
+
+
+def test_sin_nombre_suyo_se_usa_el_del_cv():
+    assert _correr({"habilidades": []}, {"nombre": "Irene Navarro Soler", "experiencias": []}).nombre == "Irene Navarro Soler"
+
+
 def test_sin_nada_suyo_el_flujo_es_el_de_siempre():
     p = _correr(None, {"experiencias": []})
     assert p.experiencias == []

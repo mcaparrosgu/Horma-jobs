@@ -105,3 +105,13 @@ def test_la_confirmacion_trae_el_texto_nuevo():
     js = (ESTATICOS / "perfil.js").read_text(encoding="utf-8")
     assert "¿Eliminar este CV? Rehacemos tu perfil sin él. No se puede deshacer." in textos
     assert "TEXTOS.confirmarEliminarCv" in js and "ya construido no cambia" not in js
+
+
+def test_eliminar_una_carta_o_el_ultimo_cv_se_dice_en_su_idioma():   # T62: el diálogo y el aviso no valen para todo
+    textos = (ESTATICOS / "textos.js").read_text(encoding="utf-8")
+    js = (ESTATICOS / "perfil.js").read_text(encoding="utf-8")
+    assert "¿Eliminar esta carta? No se puede deshacer." in textos and 'cartaEliminada: "Carta eliminada."' in textos
+    assert "Borramos tu perfil" in textos and "Se ha borrado tu perfil" in textos
+    for clave in ("confirmarEliminarCarta", "confirmarEliminarUltimoCv", "cartaEliminada", "ultimoCvEliminado"):
+        assert f"TEXTOS.{clave}" in js
+    assert 'avisar("CV eliminado.")' not in js and "Eliminar la carta" in js
