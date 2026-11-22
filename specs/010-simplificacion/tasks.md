@@ -254,6 +254,32 @@ Rama `simplificacion-s9`, desde `main` con S8 fusionada.
     confirmarla; confirmar aplica «desfasadas». **Navegador:** Ofertas y Perfil a 1280 y 390 px, claro y oscuro.
 - [ ] T68 — Cierre de S9: prueba de Mar (~0,2 USD), suite verde, `index.md` al día y PR.
 
-### S10 · Subir varios documentos a la vez (RF-10.18) — sin spec
-Rama `simplificacion-s10`. Con S10 se cierra la fase 10.
-- [ ] T69 — Aclaraciones, spec, plan y tareas de S10. *(Opus; firma de Mar)*
+### S10 · Subir varios documentos a la vez (RF-10.18 a 10.18i) — pendiente de firma de Mar
+Rama `simplificacion-s10`, desde `simplificacion-s8`. Con S10 se cierra la fase 10. Construye Sonnet, todo el
+bloque seguido; no gasta hasta T75.
+- [x] T69 — Aclaraciones, spec, plan y tareas de S10. *(siete decisiones de Mar del 23-nov; el texto espera su firma)*
+  - **Test:** Mar los lee y los firma (`verified`).
+- [ ] T70 — `subir_lote` y `POST /api/cv/lote`: hasta 5, válidos guardados y fallidos con motivo (RF-10.18, 10.18b, 10.18c).
+  - **Test:** tres archivos válidos dan tres filas; con uno de formato no admitido, uno de más peso y uno ilegible,
+    se guardan los válidos y `fallidos` trae nombre y motivo de cada uno; 6 archivos → 422 con el texto de
+    RF-10.18b y ninguna fila; un lote de uno funciona; otra usuaria no ve los documentos.
+- [ ] T71 — Repetidos por contenido (RF-10.18d).
+  - **Test:** dos archivos idénticos en el lote dan una fila y un `repetido`; uno idéntico a otro ya subido (con
+    otro nombre) no se guarda ni encola `perfilar`; mismo nombre y contenido distinto sigue la regla de hoy.
+- [ ] T72 — Un solo `perfilar` por lote y archivos guardados sin presupuesto (RF-10.18f, 10.18g).
+  - **Test:** tres CV y una carta encolan una tarea `perfilar` y reservan una versión; solo cartas, ninguna; con
+    el presupuesto agotado, las filas y los archivos quedan guardados, la respuesta dice `perfil: "aplazado"` y
+    `rehacer_aplazados` encola al volver a haberlo; subir un solo CV sin presupuesto también lo guarda.
+- [ ] T73 — Dudosos: una sola pregunta al final (RF-10.18e).
+  - **Test:** con dos claros y dos dudosos, la primera llamada guarda dos, devuelve los dos dudosos y no encola;
+    la segunda, con `clases`, guarda los dos y encola un único `perfilar`; cerrar la pregunta encola con los
+    claros y no guarda los dudosos; estático: `#pregunta-clase` pinta un `select` «CV / Carta» por dudoso y un
+    solo «Continuar».
+- [ ] T74 — Pantalla: selector múltiple en «Sube tu CV» y «Subir archivo», una barra y un mensaje (RF-10.18, 10.18h, 10.18i).
+  - **Test:** estático: los dos `input[type=file]` llevan `multiple` y los dos textos dicen «hasta 5 archivos»;
+    `perfil.js` envía todos los archivos en una llamada, crea la barra una vez («Leyendo N archivos») y la
+    reutiliza; el resultado sale en un solo mensaje; textos en `textos.js`; test de palabras prohibidas en verde.
+  - **Navegador:** Perfil vacío y lleno, con lote, pregunta y mensaje final, a 1280 y 390 px, en claro y en
+    oscuro, mirando alineación del selector y de la pregunta (RF-6.4b). Si no se puede comprobar, se dice.
+- [ ] T75 — Cierre de S10: prueba de Mar (~0,1-0,3 USD: un lote con CV, carta, repetido y fallido), suite verde,
+  `index.md` al día y PR. *Gasta: avisar antes.* Con este PR se cierra la fase 10.

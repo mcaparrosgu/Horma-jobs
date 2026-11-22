@@ -34,6 +34,7 @@ Rutas relativas a `horma/`. Las líneas citadas son de `main` en `382f935`.
 | RF-10.8 | Desde S7: `barraAvance()` en la pantalla de cada tarea (`perfil.js` con `/api/tareas/activas?tipo=perfilar`); sin indicador en la cabecera |
 | RF-10.9 | `services/presupuesto.py` nuevo; `repositories/tareas.py:50` (`gasto_hoy`); `config.py` |
 | RF-10.10 | `agents/analizador_oferta/` nuevo; `flows/procesar_oferta.py`; migración `0022` (`matches.huella_perfil`) |
+| RF-10.18 | `routers/cv.py` (`POST /api/cv/lote`); `services/cv.py` (`subir_lote`); `static/perfil.html`, `perfil.js`, `textos.js` |
 | RF-10.11 | `services/*`; `routers/*`; `queue/worker.py` (tabla `ENCADENADOS`); `.importlinter`; `config.py:17-18,67` |
 
 ## S1 · Palabras y menú (RF-10.1, 10.2, 10.6, 10.7)
@@ -239,6 +240,42 @@ Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles 
 - **Tests:** la información llega al redactor en una candidatura nueva y no en una anterior; «No» no toca
   `por_resolver`; «Sí» añade la propuesta y el perfil no cambia de versión hasta confirmarla.
 
+## S10 · Subir varios documentos a la vez (RF-10.18 a 10.18i) — pendiente de firma
+Sin agente, sin prompt y sin migración. Opción más simple descartada: subir los archivos uno a uno desde la
+pantalla con el `POST /api/cv` de hoy; rehace el perfil una vez por archivo (hasta 5 × 0,50 USD de tope).
+- **API:** `POST /api/cv/lote` (`routers/cv.py`), con `archivos: list[UploadFile]` y `clases` opcional (una por
+  archivo, solo en la respuesta a la pregunta). Más de 5 → 422 con el texto de RF-10.18b, sin guardar nada. Cuenta
+  como una subida para `limite_subida_cv`. Las dos pantallas usan solo este endpoint; `POST /api/cv` se quita si
+  nadie más lo llama.
+- **Servicio:** `services/cv.subir_lote()` reutiliza por archivo las comprobaciones de `subir()` (`_tipo`, peso,
+  `convertir_cv`, `clasificar_documento`) y recoge cada `ArchivoRechazado` como fallido en vez de cortar. Devuelve
+  `{subidos, repetidos, fallidos, dudosos, perfil: "en_marcha" | "aplazado" | "pendiente_de_respuesta" | null}`.
+  Un nombre ya usado por otro documento distinto sigue la regla de hoy (`NombreRepetido`) y va a `fallidos`.
+- **Repetidos (RF-10.18d):** por contenido. Dentro del lote, por `sha256`; contra los ya subidos, se comparan
+  los de igual `tamano` leyendo su archivo. Sin columna nueva.
+- **Un solo `perfilar` (RF-10.18f):** todos los archivos se guardan en una transacción y, si hay algún CV nuevo,
+  un único `perfiles.nueva_version` + `presupuesto.encolar("perfilar")` al final. Las cartas llaman una vez a
+  `servicio_estilo.encolar_si_no_hay_guia`.
+- **Sin presupuesto (RF-10.18g):** como `_rehacer_perfil`: se captura `SinPresupuesto`, la versión queda reservada
+  y la recoge `rehacer_aplazados` (ya existe). Cambia lo de hoy: `subir()` borraba el archivo y daba 429.
+- **Dudosos (RF-10.18e):** como hoy, un dudoso no se guarda: la pantalla conserva el archivo, pinta una sola
+  pregunta (`#pregunta-clase` con un `select` «CV / Carta» por archivo y «Continuar») y vuelve a llamar al lote con
+  `clases`. Con dudosos pendientes, la primera llamada guarda los claros y **no** encola; el `perfilar` único sale
+  de la segunda llamada, que también se hace al cerrar la pregunta (sin los dudosos). Si ella se va de la página
+  sin responder, los claros quedan guardados y su perfil por rehacer: usar la versión reservada que recoge
+  `rehacer_aplazados`, sin que llegue a rehacerse dos veces. Detalle a decidir al construir, tras leer
+  `perfiles_aplazados()`.
+- **Pantalla:** `perfil.html`: `multiple` en `#archivo` y `#archivo-doc` y «hasta 5 archivos» en los dos textos.
+  `perfil.js`: `subirDocumento` envía `entrada.files` entero; comprueba el máximo antes de enviar; un solo mensaje
+  de resultado (RF-10.18i); la barra de `barraAvance()` se crea al empezar con «Leyendo N archivos» y se conserva
+  el nodo (como T65) durante la subida, la pregunta y el `perfilar`. Textos en `textos.js`. Sin componente nuevo
+  en la guía: `select` y Ventana ya están.
+- **Tests:** lote mixto (dos CV, carta, repetido, formato malo) → tres filas, una tarea `perfilar`; 6 archivos →
+  nada guardado; repetido de uno ya subido; dudoso → una pregunta y `perfilar` solo tras la respuesta; sin
+  presupuesto → filas guardadas, versión aplazada y `rehacer_aplazados` la encola; otra usuaria no ve nada (RLS).
+- **Riesgo (bajo):** 5 CV más los ya subidos en un solo `perfilar` pueden acercarse al tope de 0,50 USD; se mide en
+  la prueba de cierre y, si no cabe, se trae a Mar antes de tocar el tope.
+
 ## Datos
 - Migración `0022_simplificacion.py` (S5): `matches.huella_perfil` con relleno e índice
   `(usuaria_id, oferta_id, huella_perfil)`. Sin borrar tablas ni columnas.
@@ -269,3 +306,4 @@ Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles 
 - S7: eval `cv` real (~0,5-1 USD) y una candidatura de prueba (~0,2 USD), los dos en T35.
 - S8: prueba manual (subir y borrar CV, ~0,3-0,6 USD). Si cambia el prompt de `redactor-cv` o `extractor-perfil`,
   eval `cv` real (la última vez, ~1,9 USD): se avisa antes.
+- S10: construir, 0 (tests simulados). Prueba manual, ~0,1-0,3 USD (un lote = un `perfilar`). Sin eval.
