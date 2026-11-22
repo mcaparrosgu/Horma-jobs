@@ -60,7 +60,7 @@
       "titulo": "Asesor/a Contable y Fiscal",
       "puesto": "Asesor contable",
       "casa": true,
-      "propuesta": false
+      "propuesta": true
     },
     {
       "titulo": "Camarera",
@@ -552,7 +552,7 @@
       "titulo": "Mozo/a de almacén",
       "puesto": "Mozo de almacén",
       "casa": true,
-      "propuesta": false
+      "propuesta": true
     },
     {
       "titulo": "Mozo/a de almacén",

@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
-from horma.tools.normalizar_titulo import normalizar_titulo
+from horma.tools.normalizar_titulo import normalizar_titulo, variantes_genero
 
 
 @dataclass(frozen=True)
@@ -48,7 +48,7 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
         normalizados = [n for n in dict.fromkeys(normalizar_titulo(t) for t in terminos) if n]
         if not normalizados:
             return None
-        p[nombre] = [f"% {n} %" for n in normalizados]
+        p[nombre] = [f"% {v} %" for n in normalizados for v in variantes_genero(n)]
         return f"((' ' || coalesce(titulo_norm, '') || ' ') LIKE ANY(CAST(:{nombre} AS text[])))"
 
     casa_puesto = frases("puestos", prefs.puestos)
