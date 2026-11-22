@@ -193,3 +193,12 @@ Sonnet, todo el bloque seguido; se para solo antes de gastar (T44 y T50).
     la herramienta lo permite (si no, se dice).
 - [ ] T50 — Cierre de S8: suite verde, coherencia (spec, `index.md`, README), plan de pruebas de S8 en
   `docs/plan-pruebas-manuales.md` y PR. *Prueba de Mar: subir y borrar CV (~0,3-0,6 USD).*
+
+## S9 · «Corregir explicación» amplía la información (RF-10.15) — firmada el 22-nov
+- [ ] T51 — Campo «Información nueva sobre ti» y ayuda (RF-10.15, 10.15e).
+  - **Test:** `POST /api/matches/{id}/correccion` guarda `informacion`; sin ella sigue valiendo; otra usuaria, 404.
+- [ ] T52 — La información llega a las candidaturas nuevas (RF-10.15b). *Si cambia el prompt: eval `cv`, avisar.*
+  - **Test (simulado):** el redactor recibe la información en una candidatura nueva y no en una ya preparada.
+- [ ] T53 — Preguntar y revisar en Perfil (RF-10.15c-d).
+  - **Test:** «No» no toca `por_resolver`; «Sí» añade la propuesta; el perfil no cambia de versión hasta
+    confirmarla; confirmar aplica «desfasadas». **Navegador:** Ofertas y Perfil a 1280 y 390 px, claro y oscuro.

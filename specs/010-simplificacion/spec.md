@@ -6,7 +6,7 @@ tags: [spec, simplificacion, ux, frontend, costes, arquitectura, agentes]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
 generated: { by: claude-code, at: 2026-11-21 }
-verified: { by: human, at: 2026-11-22 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) firmada el 22-nov
+verified: { by: human, at: 2026-11-22 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) y S9 (RF-10.15 a 10.15e) firmadas el 22-nov
 stale_after: null
 ---
 
@@ -305,6 +305,25 @@ y E6.
 - **RF-10.14r** Una ejecución de ingesta que lleve más de 30 minutos «en curso» DEBERÁ cerrarse sola como error,
   con el motivo «Se cortó sin terminar».
 
+### «Corregir explicación» que amplía la información (RF-10.15, S9 — firmada por Mar el 22-nov)
+Decisiones de Mar del 22-nov: revisar antes de que entre en el perfil; solo para candidaturas nuevas.
+
+- **RF-10.15** El formulario de «Corregir explicación» DEBERÁ tener, además de la nota y el motivo, un campo
+  opcional «Información nueva sobre ti» («Algo que no consta en tu CV y que Horma puede usar en esta oferta»).
+  Se guarda junto a la corrección de esa oferta, con origen «usuaria». No llama al modelo.
+- **RF-10.15b** CUANDO se prepare una candidatura **nueva** para esa oferta, el redactor DEBERÁ recibir esa
+  información y poder usarla en el CV y la carta de esa candidatura, solo tal como ella la escribió: Horma NO
+  DEBERÁ ampliarla ni deducir nada de ella. Las candidaturas ya preparadas NO cambian.
+- **RF-10.15c** Tras enviar la corrección con información, DEBERÁ preguntar: «¿Guardarla también en tu perfil
+  para futuras candidaturas?», con «Sí, revisarla» y «No, solo para esta oferta».
+- **RF-10.15d** CON «Sí, revisarla», la información DEBERÁ aparecer en «Por resolver» de Perfil como propuesta
+  pendiente, que ella puede editar, colocar (experiencia, habilidades, formación u otra) o descartar. NADA DEBERÁ
+  entrar en el perfil hasta que ella la confirme. Al confirmar se aplica RF-10.14m (compatibilidades y
+  candidaturas anteriores quedan «desfasadas»). CON «No», solo se usa en esa oferta.
+- **RF-10.15e** El texto de ayuda de «Corregir explicación» DEBERÁ decir qué toca cada cosa: la nota y el motivo
+  los revisa Mar y no cambian la compatibilidad; la información nueva solo se usa en las candidaturas nuevas de
+  esa oferta; el perfil no cambia sin que ella lo confirme.
+
 ## Bloques de construcción
 Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada bloque deja Horma funcionando.
 
@@ -318,6 +337,7 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 | S6 · Orden interno | RF-10.11 (salvo c) | 0 |
 | S7 · Correcciones tras la prueba | RF-10.3g, RF-10.4d-e, RF-10.5c, RF-10.5f, RF-10.6e-f, RF-10.8, RF-10.13, RF-6.4b | ~0,7-1,2 USD (eval `cv` y una candidatura) |
 | S8 · Correcciones de la pasada del 22-nov | RF-10.14 a RF-10.14r | ~0,3-0,6 USD (subir y borrar CV en la prueba; eval `cv` si cambia el redactor) |
+| S9 · «Corregir explicación» amplía la información | RF-10.15 a RF-10.15e | ~0,2 USD (una candidatura de prueba); eval `cv` si cambia el prompt del redactor |
 
 ## Criterios de aceptación
 - Una usuaria nueva entra con Google, sube su CV y, sin pasar por ninguna otra pantalla, ve sus ofertas con
@@ -344,6 +364,9 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 - *(S8)* Con dos CV, borrar uno deja el perfil sin sus datos y con las correcciones de ella; borrar el último
   devuelve a «Sube tu CV». Una carta subida se reconoce sola como carta. Con dos CV, el perfil conserva los dos
   resúmenes. «Jefe de sala» encuentra «Jefe/a de sala». Ninguna pantalla enseña «versión N» ni fechas AAAA-MM.
+- *(S9)* Una corrección con información nueva se usa en la candidatura nueva de esa oferta y no en las ya
+  hechas; con «Sí, revisarla» aparece en «Por resolver» y el perfil no cambia hasta confirmarla; con «No», no
+  aparece en Perfil.
 - Todo comprobado a 1280 y 390 px, en claro y en oscuro (RF-6.4b).
 
 ## Requisitos que sustituye

@@ -217,6 +217,22 @@ Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles 
 - **Ingesta atascada (RF-10.14r):** al reclamar una ejecución, `repositories/ingesta.py` cierra como error las que
   lleven más de 30 min en curso (la 7, de Himalayas, lleva así desde el 22-nov a las 8:21).
 
+## S9 · «Corregir explicación» amplía la información (RF-10.15 a 10.15e) — firmada el 22-nov
+- **Guardar (RF-10.15):** `Correccion` (`routers/recomendaciones.py`) gana `informacion` (opcional, máx. 1000);
+  va dentro del JSON de `matches.correccion`, sin migración. `ofertas.js` añade el campo y el texto de ayuda
+  (RF-10.15e, en `textos.js`).
+- **Usar en candidaturas nuevas (RF-10.15b):** `services/candidaturas.crear` lee `informacion` de la corrección de
+  esa oferta y la pasa al flujo `candidatura` como dato aparte (`informacion_usuaria`, origen «usuaria»);
+  `redactor_cv` y `redactor_carta` la reciben y su prompt dice que solo se usa tal cual. No se guarda en el
+  perfil. Las candidaturas existentes no se recalculan. Si cambia el prompt, eval `cv` (avisar del gasto).
+- **Preguntar y revisar (RF-10.15c-d):** tras enviar, `ofertas.js` pregunta; «Sí, revisarla» llama a un endpoint
+  nuevo que añade la propuesta a `por_resolver` del perfil vigente (sin versión nueva, sin modelo). Perfil la
+  enseña en «Por resolver» con el flujo de `services/perfil.responder` (editar, colocar o descartar); solo al
+  confirmar se crea la versión y se aplican las «desfasadas». Detalle de dónde se guarda la propuesta: a decidir
+  al construir, tras leer cómo se guarda hoy `por_resolver`.
+- **Tests:** la información llega al redactor en una candidatura nueva y no en una anterior; «No» no toca
+  `por_resolver`; «Sí» añade la propuesta y el perfil no cambia de versión hasta confirmarla.
+
 ## Datos
 - Migración `0022_simplificacion.py` (S5): `matches.huella_perfil` con relleno e índice
   `(usuaria_id, oferta_id, huella_perfil)`. Sin borrar tablas ni columnas.
