@@ -47,7 +47,7 @@ Formato: carpeta — qué es. **Estado.**
     El eval `cv` real pasó (22-nov, 33/33, 1,74 USD) y la prueba de cierre Q pasó por DOM/API (T50). Faltan lo visual
     (1280/390 px, claro/oscuro) que mira Mar y el PR.
   - **S9 («Corregir explicación» amplía la información): spec firmada** el 22-nov; sin construir (T51-T53, T68).
-  - **S10 (subir varios documentos a la vez): spec escrita** (RF-10.18, T69), pendiente de firma de Mar; sin
+  - **S10 (subir varios documentos a la vez): spec firmada** el 23-nov (RF-10.18, T69); sin
     construir (T70-T75). Con ella se cierra la fase 10.
 
 ## Lo que viene, en este orden

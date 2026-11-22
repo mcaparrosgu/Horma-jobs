@@ -352,7 +352,7 @@ Decisiones de Mar del 22-nov: revisar antes de que entre en el perfil; solo para
 - **RF-10.6i** *(H8)* `/ofertas#anadir` DEBERÁ abrir la ventana «Añadir oferta» también si ya se estaba en
   Ofertas; al cerrarla se quita el `#anadir`.
 
-### Subir varios documentos a la vez (RF-10.18, S10 — pendiente de firma de Mar)
+### Subir varios documentos a la vez (RF-10.18, S10 — firmada el 23-nov)
 Decisiones de Mar del 23-nov: máximo 5; se suben los válidos; una sola pregunta al final para los dudosos; un solo
 perfil rehecho por lote; sin presupuesto, se guardan; una barra; los repetidos se ignoran; vale en las dos pantallas.
 

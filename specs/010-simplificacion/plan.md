@@ -240,7 +240,7 @@ Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles 
 - **Tests:** la información llega al redactor en una candidatura nueva y no en una anterior; «No» no toca
   `por_resolver`; «Sí» añade la propuesta y el perfil no cambia de versión hasta confirmarla.
 
-## S10 · Subir varios documentos a la vez (RF-10.18 a 10.18i) — pendiente de firma
+## S10 · Subir varios documentos a la vez (RF-10.18 a 10.18i) — firmada el 23-nov
 Sin agente, sin prompt y sin migración. Opción más simple descartada: subir los archivos uno a uno desde la
 pantalla con el `POST /api/cv` de hoy; rehace el perfil una vez por archivo (hasta 5 × 0,50 USD de tope).
 - **API:** `POST /api/cv/lote` (`routers/cv.py`), con `archivos: list[UploadFile]` y `clases` opcional (una por

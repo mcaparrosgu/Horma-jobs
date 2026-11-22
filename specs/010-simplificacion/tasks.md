@@ -254,7 +254,7 @@ Rama `simplificacion-s9`, desde `main` con S8 fusionada.
     confirmarla; confirmar aplica «desfasadas». **Navegador:** Ofertas y Perfil a 1280 y 390 px, claro y oscuro.
 - [ ] T68 — Cierre de S9: prueba de Mar (~0,2 USD), suite verde, `index.md` al día y PR.
 
-### S10 · Subir varios documentos a la vez (RF-10.18 a 10.18i) — pendiente de firma de Mar
+### S10 · Subir varios documentos a la vez (RF-10.18 a 10.18i) — firmada el 23-nov
 Rama `simplificacion-s10`, desde `simplificacion-s8`. Con S10 se cierra la fase 10. Construye Sonnet, todo el
 bloque seguido; no gasta hasta T75.
 - [x] T69 — Aclaraciones, spec, plan y tareas de S10. *(siete decisiones de Mar del 23-nov; el texto espera su firma)*
