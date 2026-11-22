@@ -4,8 +4,8 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> **Estado (22-nov-2026):** fases 0 a 9a y la 10 (simplificación, S1-S7) fusionadas en `main`. Falta la prueba
-> manual de Mar de S2-S4 y el repaso a 390 px. Despliegue local con Docker Compose; Vercel, más adelante.
+> **Estado (22-nov-2026):** fases 0 a 9a y la 10 (simplificación, S1-S7) fusionadas en `main` y cerradas.
+> Despliegue local con Docker Compose; Vercel, más adelante.
 > Antes de usuarias reales, el plan del `matcher`. El detalle de cada fase está en
 > [`specs/index.md`](./specs/index.md).
 
