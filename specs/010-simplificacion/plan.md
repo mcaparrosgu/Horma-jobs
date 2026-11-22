@@ -1,7 +1,7 @@
 ---
 type: plan
 title: simplificacion — Plan técnico
-description: Archivos y cambios que cubren la spec 010 por bloques (S1-S7) — textos y menú, candidatura sin CV base, avance y subida directa, Perfil en una pantalla con PDF del CV completo, analizador-oferta y presupuesto diario único con caché de la compatibilidad, orden interno y las correcciones tras la prueba.
+description: Archivos y cambios que cubren la spec 010 por bloques (S1-S10) — textos y menú, candidatura sin CV base, avance y subida directa, Perfil en una pantalla con PDF del CV completo, analizador-oferta y presupuesto diario único con caché de la compatibilidad, orden interno y las correcciones tras la prueba.
 tags: [plan, simplificacion, frontend, flujos, agentes, costes, arquitectura, migracion]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../008-portada-ofertas/plan.md, ../009-cv-maestro-entrevista/plan.md]
@@ -216,15 +216,21 @@ Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles 
 - **Lista vacía (RF-10.14q):** `ofertas.js`, cuando `todas` está vacío y hay puestos marcados.
 - **Ingesta atascada (RF-10.14r):** al reclamar una ejecución, `repositories/ingesta.py` cierra como error las que
   lleven más de 30 min en curso (la 7, de Himalayas, lleva así desde el 22-nov a las 8:21).
+- **Correcciones finales (T63-T67, cruce del 22-nov):** «Valenciano» desde `origen.fragmento` en
+  `componer_cv_maestro` y sinónimos en `normalizar_oferta`; huecos sin duplicados ni texto interno en
+  `flows/candidatura.py`; barra y estado vacío sin parpadeo en `perfil.js`; saludos «Hola, equipo:» en la lista de
+  `verificar_trazabilidad.py`, el prompt de `redactor_carta` y `evals/cv` (las formas antiguas se siguen aceptando
+  al comprobar); coste 0 en el eval simulado. El eval `cv` real de T50 cubre T44 y T66.
 
 ## S9 · «Corregir explicación» amplía la información (RF-10.15 a 10.15e) — firmada el 22-nov
 - **Guardar (RF-10.15):** `Correccion` (`routers/recomendaciones.py`) gana `informacion` (opcional, máx. 1000);
   va dentro del JSON de `matches.correccion`, sin migración. `ofertas.js` añade el campo y el texto de ayuda
   (RF-10.15e, en `textos.js`).
 - **Usar en candidaturas nuevas (RF-10.15b):** `services/candidaturas.crear` lee `informacion` de la corrección de
-  esa oferta y la pasa al flujo `candidatura` como dato aparte (`informacion_usuaria`, origen «usuaria»);
-  `redactor_cv` y `redactor_carta` la reciben y su prompt dice que solo se usa tal cual. No se guarda en el
-  perfil. Las candidaturas existentes no se recalculan. Si cambia el prompt, eval `cv` (avisar del gasto).
+  esa oferta y el flujo `candidatura` la añade a las fuentes como una sección más al final del CV maestro
+  («Información que añadiste para esta oferta», origen «usuaria»). La reciben `redactor_cv`, `redactor_carta`, el
+  juez y la trazabilidad, que impide ampliarla: cada dato tiene que estar en las fuentes. **Los prompts no cambian**
+  (decisión del 22-nov): sin eval. No se guarda en el perfil. Las candidaturas existentes no se recalculan.
 - **Preguntar y revisar (RF-10.15c-d):** tras enviar, `ofertas.js` pregunta; «Sí, revisarla» llama a un endpoint
   nuevo que añade la propuesta a `por_resolver` del perfil vigente (sin versión nueva, sin modelo). Perfil la
   enseña en «Por resolver» con el flujo de `services/perfil.responder` (editar, colocar o descartar); solo al

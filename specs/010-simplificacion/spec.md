@@ -118,7 +118,7 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   empresa» en negrita y las fechas a la derecha; las habilidades en una línea; la tipografía de la marca, en
   tinta y gris. Todo es texto real, en el orden de lectura, sin tablas ni imágenes (RF-10.4b). La carta en
   PDF y en «Ver» DEBERÁ verse como carta: párrafos, sin negritas ni secciones. Las plantillas para elegir
-  siguen en la fase 11.
+  siguen en la fase 13 (calidad de CV y carta).
 - **RF-10.4e** *(22-nov, cambiado tras la prueba: I8)* Los PDF de una candidatura aprobada DEBERÁN descargarse
   como `cv_nombre-apellidos_puesto_empresa.pdf` y `carta_nombre-apellidos_puesto_empresa.pdf`: la persona que
   selecciona la encuentra por su nombre y ella ve al final para qué puesto y empresa es. Lo que no conste (p. ej.
@@ -364,8 +364,9 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 | S5 · Ahorro | RF-10.9, RF-10.10, RF-10.11c | ~1-2 USD (evals `ofertas` y `red-teaming`) |
 | S6 · Orden interno | RF-10.11 (salvo c) | 0 |
 | S7 · Correcciones tras la prueba | RF-10.3g, RF-10.4d-e, RF-10.5c, RF-10.5f, RF-10.6e-f, RF-10.8, RF-10.13, RF-6.4b | ~0,7-1,2 USD (eval `cv` y una candidatura) |
-| S8 · Correcciones de la pasada del 22-nov | RF-10.14 a RF-10.14r | ~0,3-0,6 USD (subir y borrar CV en la prueba; eval `cv` si cambia el redactor) |
-| S9 · «Corregir explicación» amplía la información | RF-10.15 a RF-10.15e | ~0,2 USD (una candidatura de prueba); eval `cv` si cambia el prompt del redactor |
+| S8 · Correcciones de la pasada del 22-nov | RF-10.14 a RF-10.14r, RF-10.16, RF-10.17 | ~2,2-3,3 USD (eval `cv` y subir y borrar CV en la prueba) |
+| S9 · «Corregir explicación» amplía la información | RF-10.15 a RF-10.15e | ~0,2 USD (una candidatura de prueba); sin eval: los prompts no cambian |
+| S10 · Subir varios documentos a la vez | RF-10.18 (por escribir) | Por estimar en su spec |
 
 ## Criterios de aceptación
 - Una usuaria nueva entra con Google, sube su CV y, sin pasar por ninguna otra pantalla, ve sus ofertas con
@@ -413,7 +414,7 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
   volver a firmar las líneas rojas.
 - Puntuar al acabar de leer el CV (P5).
 - Entrevista por tandas (P8); audio y valoración en la 9b (P9).
-- Plantillas de CV para elegir y el CV estético (fase 11). El diseño sobrio único de RF-10.4d sí entra (S7).
+- Plantillas de CV para elegir y el CV estético (fase 13). El diseño sobrio único de RF-10.4d sí entra (S7).
 - Plan de perfeccionamiento del `matcher`: sigue siendo obligatorio antes de usuarias reales.
 - Prueba con cinco personas: las cinco las hace Mar (21-nov), con perfiles y casos distintos; no hay usuarias externas en esa prueba. Coincide con RF-4.8 y P8 de la spec 004.
 - Otras formas de entrar además de Google (tocan la constitución).

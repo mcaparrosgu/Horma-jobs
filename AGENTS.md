@@ -70,7 +70,8 @@ Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementació
   tablas cortas, sin repetir lo que ya dice otro documento (enlázalo), sin relleno ni narración de la
   conversación, y con el estado real (qué está hecho y qué no).
 - Ante la duda de si un documento es técnico, no lo subas y pregunta.
-- Al cambiar el estado de algo, actualiza en el mismo cambio spec, README e `index.md`.
+- El estado de cada fase vive solo en `specs/index.md`; los `tasks.md` llevan las casillas y el README enlaza.
+  Al cambiar el estado de algo, actualiza en el mismo cambio `index.md` y las casillas.
 
 ## Estructura
 - `specs/`                 artefactos SDD (OKF)
