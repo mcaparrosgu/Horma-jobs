@@ -151,7 +151,7 @@ Rama `simplificacion-s7`, sobre `simplificacion-s6`. Sale de la prueba 2.3 de Ma
   - **T35 en real:** eval `cv`, 31 casos (1,60 USD, parado por tope) y los casos 32 y 33 de carta en verde (0,25 USD).
 
 ### S8 · Correcciones de la pasada del 22-nov (RF-10.14 a 10.14r)
-Rama `simplificacion-s8`, desde `main`. Sale de la pasada completa de Mar (22-nov, apuntes C1-G1). Construye
+Rama `simplificacion-s8`, desde `simplificacion-s8-spec` (o desde `main` si ese PR ya se fusionó). Sale de la pasada completa de Mar (22-nov, apuntes C1-G1). Construye
 Sonnet, todo el bloque seguido; se para solo antes de gastar (T44 y T50).
 - [x] T38 — Spec, plan y tareas de S8. *(Opus; firmadas por Mar el 22-nov)*
 - [ ] T39 — Puestos con género (RF-10.14p).
