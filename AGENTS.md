@@ -20,6 +20,10 @@ están en `specs/system.md`.
   opción más simple descartaste y por qué.
 - Documentación mínima, también en los documentos de trabajo: nada de documentos nuevos si cabe como
   sección de uno existente; enlaza en vez de repetir; solo lo esencial.
+- Comunicación eficiente: empieza por la respuesta o el resultado; sin preámbulos ni recapitulaciones;
+  frases cortas y listas breves; explica el porqué en una o dos líneas. Los informes y documentos
+  sintetizan: conclusiones y decisiones primero, evidencia mínima, sin repetir lo que ya está en otro
+  documento. La brevedad no oculta riesgos, costes ni cosas irreversibles: se avisan siempre.
 
 ## Reglas de arquitectura del producto (de specs/system.md)
 - Los agentes del producto son módulos Python: `prompt.md` + esquemas Pydantic de entrada y
