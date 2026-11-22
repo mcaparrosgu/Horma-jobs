@@ -28,7 +28,8 @@ FP Hostelería · IES Mar · 2016-2018
 TPV
 Atención al cliente
 """
-CARTA = "# Hola equipo de Hotel Sol\n\nMe interesa el puesto porque llevo seis años en sala.\n\nUn saludo\nAna\n"
+CARTA = ("# Hola equipo de Hotel Sol\n\nMe interesa el puesto porque llevo seis años en sala.\n\n"
+         "Un saludo\nAna\n")
 
 
 def texto(pdf: bytes) -> str:
@@ -37,8 +38,9 @@ def texto(pdf: bytes) -> str:
 
 def test_el_cv_sale_con_nombre_secciones_y_fechas_en_orden():
     t = texto(generar_pdf(CV, "CV"))
-    orden = [t.index(x) for x in ("Ana Pérez García", "Camarera y atención", "EXPERIENCIA", "Camarera · Hotel Mar",
-                                  "2018-2022", "ene 2022 - actualidad", "FORMACIÓN", "2016-2018", "HABILIDADES")]
+    esperado = ("Ana Pérez García", "Camarera y atención", "EXPERIENCIA", "Camarera · Hotel Mar", "2018-2022",
+                "ene 2022 - actualidad", "FORMACIÓN", "2016-2018", "HABILIDADES")
+    orden = [t.index(x) for x in esperado]
     assert orden == sorted(orden)
     assert "TPV · Atención al cliente" in t          # habilidades en una línea
     assert "**" not in t and "##" not in t
@@ -61,13 +63,14 @@ def test_usa_la_tipografia_de_la_marca_y_no_lleva_imagenes():
 def test_ver_pinta_la_carta_como_parrafos():
     comun = (ESTATICOS / "comun.js").read_text(encoding="utf-8")
     assert "function cartaBonita" in comun and "innerHTML" not in comun
-    assert 'clave === "carta_contenido" ? cartaBonita' in (ESTATICOS / "candidatura.js").read_text(encoding="utf-8")
+    candidatura = (ESTATICOS / "candidatura.js").read_text(encoding="utf-8")
+    assert 'clave === "carta_contenido" ? cartaBonita' in candidatura
 
 
 def test_las_fuentes_de_la_marca_estan_con_su_licencia():
     f = Path(__file__).parent.parent / "horma" / "assets" / "fuentes"
-    for n in ("FamiljenGrotesk-Regular.ttf", "FamiljenGrotesk-Bold.ttf", "DMMono-Regular.ttf", "DMMono-Medium.ttf",
-              "OFL.txt"):
+    for n in ("FamiljenGrotesk-Regular.ttf", "FamiljenGrotesk-Bold.ttf", "DMMono-Regular.ttf",
+              "DMMono-Medium.ttf", "OFL.txt"):
         assert (f / n).exists(), n
 
 

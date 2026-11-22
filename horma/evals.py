@@ -330,7 +330,8 @@ class EsperadoCv(BaseModel):
                                           "su puesto va condensado en una línea (RF-10.3b).")
     conservadas: list[str] = Field(
         default_factory=list, description="Flujo con longitud «mantener»: viñetas que deben seguir en el CV.")
-    carta: bool = Field(default=False, description="Flujo: la carta sigue la forma de RF-10.3g y su traza vale.")
+    carta: bool = Field(default=False,
+                        description="Flujo: la carta sigue la forma de RF-10.3g y su traza vale.")
     motivo: str = Field(default="", description="Para quien revise el caso.")
 
 
@@ -455,7 +456,8 @@ def _comparar_cv(o: dict, esperado: dict) -> list[str]:
         fallos.append("longitud")
     if esperado.get("carta") and (
             errores_estructura_carta(o["carta"])
-            or verificar_trazabilidad(o["carta"], o["carta_traza"], [o["maestro"], o["base"], o["cv"], o["oferta_texto"]],
+            or verificar_trazabilidad(o["carta"], o["carta_traza"],
+                                      [o["maestro"], o["base"], o["cv"], o["oferta_texto"]],
                                       formulas_cortesia=FORMULAS_CORTESIA, por_frase=True)):
         fallos.append("carta")
     adversaria = bool(esperado["instrucciones_embebidas"])

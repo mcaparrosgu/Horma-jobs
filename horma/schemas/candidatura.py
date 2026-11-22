@@ -61,7 +61,8 @@ class Aviso(BaseModel):
     documento: DocumentoAviso
     frase: str | None = Field(default=None, description="Frase del documento a la que se refiere.")
     mensaje: str = Field(min_length=1)
-    tipo: TipoAviso = Field(default="revisa", description="Grupo en el que se ve; las antiguas, sin él, van en «revisa».")
+    tipo: TipoAviso = Field(default="revisa",
+                            description="Grupo en el que se ve; las antiguas, sin él, van en «revisa».")
 
 
 TEXTO_AVISO_OFERTA = "Esta oferta contiene texto que intenta dar órdenes a la IA; no se ha obedecido."

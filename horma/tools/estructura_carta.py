@@ -9,8 +9,8 @@ from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, frases
 MAX_PALABRAS = 330
 MAX_PALABRAS_FRASE = 32
 CLICHES = ("mejor carta de presentación", "gran motivación", "ganas de aprender", "apasionad", "proactiv",
-           "empresa líder", "empresa de referencia", "es un honor", "perfil idóneo", "no dudaré", "me complace",
-           "equipo de primer nivel", "me dirijo a ustedes", "quedo a su disposición")
+           "empresa líder", "empresa de referencia", "es un honor", "perfil idóneo", "no dudaré",
+           "me complace", "equipo de primer nivel", "me dirijo a ustedes", "quedo a su disposición")
 _FIN_DE_FRASE = re.compile(r"(?<=[.!?])\s+")
 
 
@@ -26,7 +26,8 @@ def errores_estructura_carta(carta: str) -> list[str]:
     for frase in (f for linea in frases(carta) for f in _FIN_DE_FRASE.split(linea)):
         if len(frase.split()) > MAX_PALABRAS_FRASE:
             errores.append(f"Frase demasiado larga: «{frase[:60]}…»")
-    if re.search(r"^\s*(?:[-*+•]|\d+[.)])\s", carta, re.MULTILINE) or "**" in carta or re.search(r"^#", carta, re.M):
+    if (re.search(r"^\s*(?:[-*+•]|\d+[.)])\s", carta, re.MULTILINE) or "**" in carta
+            or re.search(r"^#", carta, re.M)):
         errores.append("La carta no lleva listas, negritas ni encabezados: solo párrafos.")
     bajo = carta.casefold()
     errores += [f"Cliché: «{c}»." for c in CLICHES if c in bajo]

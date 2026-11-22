@@ -34,7 +34,8 @@ def test_dos_columnas_a_1280_y_una_a_390():
 def test_columna_derecha_subir_archivo_primero_y_luego_cv_completo_documentos_y_como_escribes():
     html = leer("perfil.html")
     der = html.split('class="col-der"')[1]
-    orden = [der.index(x) for x in ('id="subir-otro"', 'id="maestro"', 'id="pendientes"', 'id="cvs-subidos"', 'id="estilo"')]
+    bloques = ('id="subir-otro"', 'id="maestro"', 'id="pendientes"', 'id="cvs-subidos"', 'id="estilo"')
+    orden = [der.index(x) for x in bloques]
     assert orden == sorted(orden) and ">Subir archivo<" in html
     assert 'id="subir-doc"' in der.split('id="maestro"')[0]
 

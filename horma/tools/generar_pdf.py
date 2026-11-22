@@ -1,10 +1,10 @@
 """Convierte un Markdown sencillo en PDF (RF-3.8b, RF-10.4d). Código puro: devuelve bytes, no toca el disco
 salvo para leer las fuentes incluidas.
 
-Dos diseños sobrios, con la tipografía de la marca (Familjen Grotesk y DM Mono, licencia OFL) y todo en texto real,
-sin tablas ni imágenes (RF-10.4b):
-- `tipo="cv"`: nombre grande, titular debajo en gris, secciones en mayúsculas con una línea fina, «puesto · empresa»
-  en negrita con las fechas a la derecha, habilidades e idiomas en una línea.
+Dos diseños sobrios, con la tipografía de la marca (Familjen Grotesk y DM Mono, licencia OFL) y todo en
+texto real, sin tablas ni imágenes (RF-10.4b):
+- `tipo="cv"`: nombre grande, titular debajo en gris, secciones en mayúsculas con una línea fina,
+  «puesto · empresa» en negrita con las fechas a la derecha, habilidades e idiomas en una línea.
 - `tipo="carta"`: solo párrafos, sin negritas ni secciones.
 
 Usa `fpdf2` (Python puro). Si faltan las fuentes de la marca, cae a DejaVu Sans, que cubre Unicode."""
@@ -18,8 +18,8 @@ _MARCAS = re.compile(r"\*\*|__|`")
 _ENCABEZADO = re.compile(r"^\s*(#{1,6})\s+(.*)$")
 _VINETA = re.compile(r"^\s*[-*+•]\s+(.*)$")
 _NEGRITA_ENTERA = re.compile(r"^\s*\*\*(.+)\*\*\s*$")
-_MESES = re.compile(r"\b(ene|feb|mar|abr|may|jun|jul|ago|sep|sept|oct|nov|dic|enero|febrero|marzo|abril|mayo|junio|"
-                    r"julio|agosto|septiembre|octubre|noviembre|diciembre|actualidad|presente|actual|hoy)\b\.?",
+_MESES = re.compile(r"\b(ene|feb|mar|abr|may|jun|jul|ago|sep|sept|oct|nov|dic|"
+                    r"enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|actualidad|presente|actual|hoy)\b\.?",
                     re.IGNORECASE)
 _EN_UNA_LINEA = {"habilidades", "idiomas"}
 
@@ -63,8 +63,9 @@ def generar_pdf(markdown: str, titulo: str, tipo: str = "cv") -> bytes:
     pdf.add_page()
     ancho = pdf.w - pdf.l_margin - pdf.r_margin
 
-    def escribir(contenido: str, familia: str, estilo: str, tamano: float, color=_TINTA, interlineado: float = 1.45,
-                 sangria: float = 0, antes: float = 0, despues: float = 0, alinear: str = "L") -> None:
+    def escribir(contenido: str, familia: str, estilo: str, tamano: float, color=_TINTA,
+                 interlineado: float = 1.45, sangria: float = 0, antes: float = 0, despues: float = 0,
+                 alinear: str = "L") -> None:
         pdf.ln(antes)
         pdf.set_font(familia, estilo, tamano)
         pdf.set_text_color(*color)
@@ -125,8 +126,8 @@ def _cv(markdown: str, pdf: FPDF, ancho: float, texto: str, etiqueta: str, escri
             continue
         if seccion in _EN_UNA_LINEA:
             m = _VINETA.match(linea)
-            pendiente.extend(p for p in (x.strip() for x in re.split(r"\s·\s|,\s", _limpio(m.group(1) if m else linea)))
-                             if p)
+            trozos = re.split(r"\s·\s|,\s", _limpio(m.group(1) if m else linea))
+            pendiente.extend(p for p in (x.strip() for x in trozos) if p)
             continue
         if nombre_visto and not seccion and not titular_visto:   # el titular, bajo el nombre y en gris
             titular_visto = True

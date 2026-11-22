@@ -86,6 +86,6 @@ def agrupar_avisos(avisos: list[dict]) -> list[dict]:
         if regla not in TITULOS_GRUPO or len(lista) == 1:
             salida.extend({**a, "regla": regla, "elementos": [a]} for a in lista)
         else:
-            salida.append({"clave": regla, "huella": "", "texto": TITULOS_GRUPO[regla], "seccion": lista[0]["seccion"],
-                           "regla": regla, "elementos": lista})
+            salida.append({"clave": regla, "huella": "", "texto": TITULOS_GRUPO[regla],
+                           "seccion": lista[0]["seccion"], "regla": regla, "elementos": lista})
     return salida

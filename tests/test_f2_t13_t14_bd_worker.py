@@ -198,7 +198,8 @@ def test_las_preferencias_que_escribio_la_usuaria_no_se_pisan(motor_app, bd_limp
     with sesion_de(motor_app, a) as s:
         prefs = s.execute(text("select familias, sectores, origen from preferencias")).one()
     assert prefs.familias == ["ventas_comercial"] and prefs.sectores == ["hosteleria_turismo"]
-    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv"}   # lo antiguo no se toca
+    # lo antiguo no se toca
+    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv"}
 
 
 def test_perfilar_sin_cv_falla_con_motivo(motor_app, bd_limpia):
