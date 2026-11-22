@@ -172,7 +172,7 @@ stale_after: null
     - coherencia entre pantallas;
     - recorrido completo de una candidatura en móvil.
 
-    Los hallazgos van a un informe gitignorado, `docs/revision-ux-006.md`, con su gravedad y su
+    Los hallazgos van a un informe gitignorado, `docs/revision-ux-006.md` (borrado el 22-nov, ya resuelto), con su gravedad y su
     arreglo. Lo que encaje en esta spec (aspecto, textos de ayuda, orden) se corrige. Lo que cambie
     funciones o flujos se propone a Mar y, con su OK, va a una spec nueva.
   - **Test:** el informe existe, cada hallazgo está corregido o tiene la decisión de Mar, y los tests

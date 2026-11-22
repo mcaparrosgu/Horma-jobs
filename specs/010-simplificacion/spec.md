@@ -1,7 +1,7 @@
 ---
 type: spec
 title: simplificacion — Spec funcional
-description: Requisitos de la simplificación de Horma en notación EARS — recorrido de 4 pantallas y 4 clics, ocho conceptos, tres pestañas, candidatura sin CV base, «Tu CV completo» en PDF, bandeja «Por resolver», un agente por oferta, caché de la compatibilidad, presupuesto diario único, orden interno y las correcciones tras la prueba (S7: avance en su pantalla, avisos agrupados, carta, PDF del CV, simetría) — y la lista de requisitos anteriores que sustituye.
+description: Requisitos de la simplificación de Horma en notación EARS — recorrido de 4 pantallas y 4 clics, ocho conceptos, tres pestañas, candidatura sin CV base, «Tu CV completo» en PDF, bandeja «Por resolver», un agente por oferta, caché de la compatibilidad, presupuesto diario único, orden interno y las correcciones tras la prueba (S7: avance en su pantalla, avisos agrupados, carta, PDF del CV, simetría y el repaso del 22-nov) — y la lista de requisitos anteriores que sustituye.
 tags: [spec, simplificacion, ux, frontend, costes, arquitectura, agentes]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
@@ -34,8 +34,10 @@ Ofertas, que es adonde lleva Horma cuando el perfil está listo.
 
 ```
 Landing ──Google──> Ofertas ◄──► Candidaturas ◄──► Perfil
-                      │               │               ├─ Por resolver
+                      │               │               ├─ Tu perfil (por secciones)
+                      │               │               ├─ Subir archivo
                       │               │               ├─ Tu CV completo (ver · PDF)
+                      │               │               ├─ Por resolver (con «Avisos»)
                       │               │               ├─ Documentos subidos
                       │               │               └─ Cómo escribes
                       ├─ Qué buscas (plegable)
@@ -117,6 +119,8 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   tinta y gris. Todo es texto real, en el orden de lectura, sin tablas ni imágenes (RF-10.4b). La carta en
   PDF y en «Ver» DEBERÁ verse como carta: párrafos, sin negritas ni secciones. Las plantillas para elegir
   siguen en la fase 11.
+- **RF-10.4e** *(22-nov)* Los PDF de una candidatura aprobada DEBERÁN descargarse como `cv-puesto-empresa.pdf` y
+  `carta-puesto-empresa.pdf`; si ella quiere otro nombre, lo cambia a mano.
 
 ### Perfil en una pantalla (RF-10.5)
 - **RF-10.5** CUANDO la usuaria no tenga perfil, Perfil DEBERÁ mostrar solo «Sube tu CV» (entradilla y un
@@ -133,15 +137,13 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   «Responder», y debajo un desplegable **«Avisos (n)»** con los huecos (RF-9.1) y los avisos (RF-9.2), agrupados
   según RF-10.13. Cada aviso DEBERÁ tener dos acciones: la que lo resuelve («Corregir» o «Añadir») y «Dar por
   visto», como antes de la 010. Lo visto no vuelve mientras no cambie su causa (RF-9.2c).
-- **RF-10.5f** *(22-nov)* Perfil DEBERÁ dejar añadir o modificar el **nombre** de la usuaria, que encabeza «Tu CV
-  completo» y su PDF. «Subir archivo» DEBERÁ decir los formatos admitidos (PDF, DOCX, Markdown) y el peso máximo.
 - **RF-10.5d** La elección de longitud del CV DEBERÁ aparecer en un solo sitio: en el aviso de CV largo de
   «Por resolver» (RF-9.2d).
-- **RF-10.4e** *(22-nov)* Los PDF de una candidatura aprobada DEBERÁN descargarse como `cv-puesto-empresa.pdf` y
-  `carta-puesto-empresa.pdf`; si ella quiere otro nombre, lo cambia a mano.
 - **RF-10.5e** Al subir un documento, las clases DEBERÁN ser dos: «CV» (por defecto) y «Carta». La clase
   «estético» se retira (P10); los ya subidos siguen en «Documentos subidos». Ningún documento subido se
   modifica.
+- **RF-10.5f** *(22-nov)* Perfil DEBERÁ dejar añadir o modificar el **nombre** de la usuaria, que encabeza «Tu CV
+  completo» y su PDF. «Subir archivo» DEBERÁ decir los formatos admitidos (PDF, DOCX, Markdown) y el peso máximo.
 
 ### Ofertas (RF-10.6)
 - **RF-10.6** «Recomendadas» DEBERÁ llamarse **Ofertas** (`/ofertas`), con el contenido de la fase 8
@@ -153,11 +155,11 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
 - **RF-10.6d** «Puntuar ahora» se queda en el detalle de una oferta sin compatibilidad (RF-8.5e), dentro del
   presupuesto del día (RF-10.9), sin límite propio de sueltas. Los avisos de gasto DEBERÁN verse solo CUANDO se
   haya llegado al presupuesto; entonces «Puntuar ahora» se desactiva con el aviso de RF-10.9c.
+- **RF-10.6e** *(S7)* En «Qué buscas», los términos excluidos DEBERÁN ser lo último, justo antes de «Guardar y
+  buscar».
 - **RF-10.6f** *(22-nov)* «Qué buscas» DEBERÁ ir sin «Área»: Puestos sugeridos, Sector y Condiciones en la primera
   fila; Tipo de contrato, Nivel, País e Idiomas en la segunda; después Términos excluidos. Al guardar, el área se
   vacía y el CV deja de rellenarla.
-- **RF-10.6e** *(S7)* En «Qué buscas», los términos excluidos DEBERÁN ser lo último, justo antes de «Guardar y
-  buscar». «Puestos sugeridos» ocupa todo el ancho.
 
 ### Candidatura (RF-10.7)
 - **RF-10.7** La usuaria DEBERÁ ver un solo estado por candidatura, que junta `estado` y `preparacion`:
@@ -251,7 +253,7 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 | S4 · Perfil en una pantalla | RF-10.4, RF-10.5 | 0 |
 | S5 · Ahorro | RF-10.9, RF-10.10, RF-10.11c | ~1-2 USD (evals `ofertas` y `red-teaming`) |
 | S6 · Orden interno | RF-10.11 (salvo c) | 0 |
-| S7 · Correcciones tras la prueba | RF-10.3g, RF-10.4d, RF-10.5c, RF-10.6e, RF-10.8, RF-10.13, RF-6.4b | ~0,7-1,2 USD (eval `cv` y una candidatura) |
+| S7 · Correcciones tras la prueba | RF-10.3g, RF-10.4d-e, RF-10.5c, RF-10.5f, RF-10.6e-f, RF-10.8, RF-10.13, RF-6.4b | ~0,7-1,2 USD (eval `cv` y una candidatura) |
 
 ## Criterios de aceptación
 - Una usuaria nueva entra con Google, sube su CV y, sin pasar por ninguna otra pantalla, ve sus ofertas con
@@ -268,7 +270,8 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 - En Perfil, «Por resolver» tiene el desplegable «Avisos» con «Corregir» y «Dar por visto».
 - El PDF del CV tiene el diseño de RF-10.4d y su texto extraído sale en orden; la carta se ve como carta.
 - La carta de una candidatura real sigue la estructura de RF-10.3g y pasa el eval `cv`.
-- En «Qué buscas», los términos excluidos son lo último.
+- En «Qué buscas» no hay «Área» y los términos excluidos son lo último.
+- Los PDF de una candidatura aprobada se llaman `cv-puesto-empresa.pdf` y `carta-puesto-empresa.pdf`.
 - Con 1 USD gastado hoy, no se encola ninguna tarea y se ve el aviso de RF-10.9c.
 - Una oferta nueva hace 1 llamada al modelo (Admin › Costes). Corregir una errata en el resumen del perfil no
   vuelve a puntuar.
