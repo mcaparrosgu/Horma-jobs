@@ -505,10 +505,11 @@ function tarjetaCv(c) {
     si.addEventListener("click", async () => {
       const r = await api(`/api/cv/${c.id}`, { metodo: "DELETE" });
       if (!r.ok) return avisar(r.motivo, true);
-      avisar("CV eliminado. Tu perfil ya construido no cambia.");
+      avisar("CV eliminado.");
       await cargarCvs();
+      await cargarPerfil();   // el perfil se rehace con los CV que quedan (RF-10.14)
     });
-    conf.append(nodo("span", "¿Eliminar este CV? No se puede deshacer."), si, no);
+    conf.append(nodo("span", TEXTOS.confirmarEliminarCv), si, no);
     li.append(conf);
     no.focus();
   });

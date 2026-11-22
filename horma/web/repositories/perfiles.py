@@ -118,7 +118,7 @@ def guardar_perfil(s: Session, usuaria_id: int, perfil_id: int, perfil: Perfil,
         "update perfiles set datos = cast(:d as jsonb), cv_maestro = coalesce(:m, cv_maestro), "
         "preguntas_pendientes = cast(:p as jsonb), instrucciones_embebidas = cast(:i as jsonb), "
         "sector = :sector, familia = :familia, nivel = :nivel, stack = cast(:stack as jsonb), "
-        "estado = 'hecha', motivo_error = null where id = :id"),
+        "estado = 'hecha', motivo_error = null where id = :id and estado <> 'retirado'"),
         {"id": perfil_id, "d": _j(datos), "m": cv_maestro,
          "p": _j([p.model_dump(mode="json") for p in perfil.preguntas_pendientes]),
          "i": _j(perfil.instrucciones_embebidas), "sector": tax.sector if tax else None,
@@ -133,8 +133,21 @@ def guardar_perfil(s: Session, usuaria_id: int, perfil_id: int, perfil: Perfil,
 
 
 def marcar_error_perfil(s: Session, perfil_id: int, motivo: str) -> None:
-    s.execute(text("update perfiles set estado = 'error', motivo_error = :m where id = :i"),
+    s.execute(text("update perfiles set estado = 'error', motivo_error = :m where id = :i "
+                   "and estado <> 'retirado'"),
               {"i": perfil_id, "m": motivo[:500]})
+
+
+def retirar_todos(s: Session) -> None:
+    """Sin ningún CV, la usuaria se queda sin perfil vigente. Las versiones se conservan: las candidaturas y
+    las compatibilidades ya hechas apuntan a ellas (RF-10.14)."""
+    s.execute(text("update perfiles set estado = 'retirado' where estado in ('hecha', 'pendiente')"))
+
+
+def aplazados(s: Session) -> list[tuple[int, int]]:
+    """(usuaria, versión) de las versiones reservadas que esperan su `perfilar` porque no había presupuesto
+    (RF-10.14). Solo en modo sistema."""
+    return [(f[0], f[1]) for f in s.execute(text("select usuaria_id, perfil_id from perfiles_aplazados()")).all()]
 
 
 def nueva_version(s: Session, usuaria_id: int) -> tuple[int, int]:

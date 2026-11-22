@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 
 from horma.config import ajustes
 from horma.tools.convertir_cv import ArchivoNoValido, convertir_cv
-from horma.web.db import sesion_de
+from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import cv as repo
 from horma.web.repositories import perfiles
 from horma.web.services import estilo as servicio_estilo
@@ -86,14 +86,46 @@ def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original:
 
 
 def eliminar(engine: Engine, usuaria_id: int, cv_id: int) -> bool:
-    """Quita el CV (fila y texto) y, ya confirmado, su archivo. El perfil ya construido no cambia."""
+    """Quita el CV (fila y texto) y, ya confirmado, su archivo. Si era uno de los CV de los que sale el perfil,
+    el perfil se rehace con los que quedan; sin ninguno, la usuaria vuelve a «Sube tu CV» (RF-10.14).
+    Las candidaturas ya hechas no se tocan. Rehacer gasta del presupuesto del día: sin él, el CV se borra y
+    el perfil se rehace en cuanto vuelva a haberlo (`rehacer_aplazados`)."""
+    a = ajustes()
     with sesion_de(engine, usuaria_id) as s:
         cv = repo.uno(s, cv_id)
         if cv is None:
             return False
         repo.eliminar(s, cv_id)
+        if cv["clase"] == "fuente":
+            if not perfiles.cvs_fuente(s):
+                perfiles.retirar_todos(s)
+            else:
+                perfil_id, _ = perfiles.nueva_version(s, usuaria_id)
+                try:
+                    presupuesto.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
+                                        a.tope_reintentos_tarea)
+                except presupuesto.SinPresupuesto:
+                    pass   # la versión queda reservada y la recoge `rehacer_aplazados`
     (carpeta() / cv["ruta"]).unlink(missing_ok=True)
     return True
+
+
+def rehacer_aplazados(engine: Engine) -> int:
+    """Encola el `perfilar` de las versiones que quedaron sin presupuesto, de cada usuaria que ya lo tenga
+    (RF-10.14). Lo llama el worker de vez en cuando."""
+    a = ajustes()
+    n = 0
+    with sesion_sistema(engine) as s:
+        aplazados = perfiles.aplazados(s)
+    for usuaria_id, perfil_id in aplazados:
+        with sesion_de(engine, usuaria_id) as s:
+            try:
+                presupuesto.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
+                                    a.tope_reintentos_tarea)
+                n += 1
+            except presupuesto.SinPresupuesto:
+                continue
+    return n
 
 
 def _borrar(destino: Path, escrito: bool) -> None:

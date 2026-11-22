@@ -57,6 +57,7 @@ from horma.web.repositories import matches as repo_matches
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles as repo_perfiles
 from horma.web.repositories import tareas as repo_tareas
+from horma.web.services import cv as servicio_cv
 from horma.web.services import estilo as servicio_estilo
 from horma.web.services import ofertas as servicio_ofertas
 from horma.web.services import presupuesto
@@ -477,8 +478,9 @@ def comprobar_aplazadas(engine: Engine, ultima: float | None, ahora: float) -> f
         return ultima
     try:
         servicio_ofertas.encolar_propias_aplazadas(engine)
+        servicio_cv.rehacer_aplazados(engine)
     except Exception as e:  # noqa: BLE001
-        log.error("No se pudieron encolar las ofertas aplazadas (%s)", type(e).__name__)
+        log.error("No se pudieron encolar las tareas aplazadas (%s)", type(e).__name__)
     return ahora
 
 
