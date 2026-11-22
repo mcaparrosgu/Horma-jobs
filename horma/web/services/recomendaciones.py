@@ -4,6 +4,7 @@ import json
 from sqlalchemy import Engine
 
 from horma.config import ajustes
+from horma.schemas.perfil import CAMPO_PROPUESTA, PreguntaPendiente
 from horma.tools.buscar_ofertas import buscar_ofertas
 from horma.tools.huella_perfil import huella_compatibilidad
 from horma.web.db import sesion_de, sesion_sistema
@@ -116,6 +117,28 @@ def corregir(engine: Engine, usuaria_id: int, oferta_id: int, correccion: dict) 
             raise SinNota
         repo.guardar_correccion(s, oferta_id, m["perfil_version"],
                                 json.dumps(correccion, ensure_ascii=False))
+
+
+PREGUNTA_PROPUESTA = "Añadiste esta información en una oferta. ¿La guardas también en tu perfil?"
+
+
+def proponer_al_perfil(engine: Engine, usuaria_id: int, oferta_id: int) -> None:
+    """«Sí, revisarla» (RF-10.15d): la información de la corrección queda en «Por resolver» del perfil vigente
+    como propuesta (campo `propuesta`, con el texto en `opciones`). Sin versión nueva y sin modelo: no entra
+    en el perfil hasta que ella la confirme con `services.perfil.responder`. Repetirla no la duplica."""
+    with sesion_de(engine, usuaria_id) as s:
+        informacion = repo.informacion_de(s, oferta_id)
+        if informacion is None:
+            raise SinNota
+        fila = perfiles.vigente(s)
+        if fila is None:
+            raise SinPerfil
+        pendientes = list(fila["preguntas_pendientes"] or [])
+        if any(p["campo"] == CAMPO_PROPUESTA and p.get("opciones") == [informacion] for p in pendientes):
+            return
+        nueva = PreguntaPendiente(campo=CAMPO_PROPUESTA, motivo="falta", pregunta=PREGUNTA_PROPUESTA,
+                                  opciones=[informacion])
+        perfiles.guardar_pendientes(s, fila["id"], [*pendientes, nueva.model_dump(mode="json")])
 
 
 def exportar(engine: Engine, usuaria_id: int, oferta_id: int) -> dict:

@@ -234,8 +234,18 @@ Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles 
 - **Preguntar y revisar (RF-10.15c-d):** tras enviar, `ofertas.js` pregunta; «Sí, revisarla» llama a un endpoint
   nuevo que añade la propuesta a `por_resolver` del perfil vigente (sin versión nueva, sin modelo). Perfil la
   enseña en «Por resolver» con el flujo de `services/perfil.responder` (editar, colocar o descartar); solo al
-  confirmar se crea la versión y se aplican las «desfasadas». Detalle de dónde se guarda la propuesta: a decidir
-  al construir, tras leer cómo se guarda hoy `por_resolver`.
+  confirmar se crea la versión y se aplican las «desfasadas».
+- **Decidido al construir:**
+  - La información viaja con la candidatura: migración `0029` (`candidaturas.informacion`), que se rellena al
+    crearla. Así una ya preparada no cambia, «Volver a preparar» usa la misma y, al editarla, los avisos se
+    recalculan con las mismas fuentes. Se toma de la última corrección de esa oferta, aunque la compatibilidad se
+    haya recalculado después.
+  - La sección se añade con `maestro_con_informacion()` (`flows/candidatura.py`), no al CV maestro guardado.
+  - La propuesta es un pendiente más de `perfiles.preguntas_pendientes` (`campo` = `propuesta`, texto en
+    `opciones`), sin cambiar el esquema que ve el modelo. Endpoint: `POST /api/matches/{id}/informacion/perfil`.
+    Se confirma con `POST /api/perfil/respuestas` más `campo` (experiencias, habilidades, formacion u otros);
+    descartarla la quita sin crear versión. Al rehacer el perfil (subir o borrar un CV) las propuestas se conservan.
+  - El motivo de la corrección sigue siendo obligatorio. La ayuda dice «el equipo de Horma», no «Mar» (RF-10.2d).
 - **Tests:** la información llega al redactor en una candidatura nueva y no en una anterior; «No» no toca
   `por_resolver`; «Sí» añade la propuesta y el perfil no cambia de versión hasta confirmarla.
 

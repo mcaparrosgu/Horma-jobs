@@ -156,6 +156,9 @@ def conservar_usuaria(perfil: dict, de_usuaria: dict | None) -> None:
     (mismo puesto y sitio, mismo título…). Lo suyo no se vuelve a comprobar contra un CV (RF-10.14)."""
     if not de_usuaria:
         return
+    # Las propuestas que aún no ha confirmado siguen pendientes en la versión nueva (RF-10.15d).
+    perfil["preguntas_pendientes"] = [*perfil["preguntas_pendientes"],
+                                      *(de_usuaria.get("propuestas") or [])]
     lugares = {c: lugar for c, _, lugar in (("experiencias", "puesto", "empresa"), ("formacion", "titulo", "centro"),
                                     ("certificaciones", "nombre", "entidad"))}
     for campo, nombre, _ in (*_LISTAS, _ACTIVIDADES):

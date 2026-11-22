@@ -108,6 +108,11 @@ class PeriodoCubierto(BaseModel):
     fin: str = Field(pattern=_FECHA)
 
 
+# Pendiente con `campo` = «propuesta»: información que ella escribió en una oferta (va en `opciones`) y aún no
+# ha confirmado (RF-10.15d). Lo crea solo el código; el esquema que ve el modelo no cambia.
+CAMPO_PROPUESTA = "propuesta"
+
+
 class PreguntaPendiente(BaseModel):
     """Lo que falta, es ambiguo o se contradice entre CV: se le pregunta a la usuaria."""
 
