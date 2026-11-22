@@ -19,7 +19,7 @@ stale_after: null
 | S2-S5 | Fusionados juntos (PR #29) | Hechas (21-nov); la prueba 2.3 dio lugar a S7 |
 | S6 | Fusionado (PR #30) | — (no tiene pantalla) |
 | S7 | Fusionado (PR #31) | Cerrada por Mar (22-nov); el repaso a 390 px lo hará Mar más adelante, fuera de esta fase |
-| S8 | Construida (T39-T49) en `simplificacion-s8`, sin PR; cierre T50 pendiente de la prueba de Mar | Pendiente (plan P1-P12) |
+| S8 | Construida (T39-T49) en `simplificacion-s8`, sin PR; cierre T50 pendiente de la prueba de Mar | Pasada J-P recorrida por Claude el 22-nov (P5 sin probar; fallos en [Hallazgos](#hallazgos-de-la-pasada-j-p-22-nov)); falta la prueba y la firma de Mar |
 
 ## Forma de trabajo
 - **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción, con Sonnet. Un fallo de eval poco
@@ -213,3 +213,16 @@ Sonnet, todo el bloque seguido; se para solo antes de gastar (T44 y T50).
 - [x] T58 — PDF `cv_nombre_puesto_empresa.pdf` (RF-10.4e).
 - [x] T59 — «Estado» y «Me han contratado» con su Ventana (RF-10.17); migración 0027.
   - Pendiente: comprobación visual a 1280 y 390 px, claro y oscuro (la captura del navegador falló).
+
+## Hallazgos de la pasada J-P (22-nov)
+Recorrida por Claude en el navegador y la consola (bloques J a P; K1, O4 y P5 sin probar). Sin tarea todavía: se
+deciden con Mar antes de tocar la spec.
+- **«No consta en tu CV» falso (RF-10.13):** los `huecos` que devuelve `redactor-cv` incluyen requisitos que el
+  perfil sí tiene (inglés B2, CoverManager, sumillería, +5 años en sala), y la carta los usa como propios.
+- **Rehacer el perfil pierde el nombre editado por ella (RF-10.14):** vuelve el del CV. Las experiencias y
+  habilidades escritas por ella sí se conservan.
+- **Coste de editar el perfil:** una edición o eliminar un CV crea versión y recalcula las compatibilidades de sus
+  ofertas (~0,1 USD); una de esas tareas falló por «tope de coste» y el día pasó de 1 USD.
+- **Redacción al eliminar:** el diálogo y «CV eliminado.» no distinguen carta ni último CV.
+- **Menores:** el aviso de presupuesto solo sale si hay ofertas sin puntuar; «Puntuar ahora» se desactiva al
+  pulsarlo; `arbeitnow` muestra «sin límite» de intervalo; el eval simulado informa un coste de 0,0021 USD.
