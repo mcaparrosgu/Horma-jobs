@@ -74,6 +74,14 @@ function revisaEsto() {
     li.append(nodo("strong", textoNoConstaVarios(c.huecos.map((h) => h.requisito))));
     const propuesta = c.huecos.find((h) => h.propuesta)?.propuesta;
     if (propuesta) li.append(nodo("p", propuesta, "suave"));
+    if (c.huecos.length > 1) {   // la lista entera, sin recortar, para quien quiera verla
+      const d = nodo("details", null, "seccion-plegable");
+      d.append(nodo("summary", `Ver los ${c.huecos.length} requisitos`));
+      const todos = nodo("ul", null, "lista");
+      todos.append(...c.huecos.map((h) => nodo("li", h.requisito)));
+      d.append(todos);
+      li.append(d);
+    }
     s.append(grupoAvisos("No consta en tu CV", [li]));
   }
   if (de("revisa").length) s.append(grupoAvisos("Revisa", de("revisa").map(avisoItem)));

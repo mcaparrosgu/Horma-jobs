@@ -121,15 +121,14 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
 ### Perfil en una pantalla (RF-10.5)
 - **RF-10.5** CUANDO la usuaria no tenga perfil, Perfil DEBERÁ mostrar solo «Sube tu CV» (entradilla y un
   botón de elegir archivo). Al elegir el archivo, DEBERÁ subirse sin otro clic, como CV de perfil.
-- **RF-10.5b** Con perfil, Perfil DEBERÁ mostrar, en este orden (sustituye a RF-9.5):
-  1. **Por resolver (n)**, abierto CUANDO haya algo;
-  2. **Tu perfil**, por secciones plegables con su número («Experiencia (4)») y «Añadir»;
-  3. **Tu CV completo** (RF-10.4);
-  4. **Documentos subidos (n)**, plegado, con «Subir»;
-  5. **Cómo escribes**, plegado.
+- **RF-10.5b** Con perfil, Perfil DEBERÁ mostrar *(orden cambiado el 22-nov)*:
+  - **Izquierda** (a 1280 px): **Tu perfil**, por secciones plegables con su número («Experiencia (4)») y «Añadir».
+  - **Derecha**, en este orden: 1. **Subir archivo** (botón claro, clase CV o Carta; varios CV, uno por sector,
+    se juntan en un solo perfil); 2. **Tu CV completo** (RF-10.4); 3. **Por resolver (n)**, abierto CUANDO haya
+    algo; 4. **Documentos subidos (n)**, abierto, solo la lista; 5. **Cómo escribes**, plegado.
 
-  A 1280 px, Tu perfil va a la izquierda y lo demás a la derecha, en dos columnas de igual ancho; a 390 px,
-  una columna con «Por resolver» arriba (RF-6.4b).
+  A 1280 px, dos columnas de igual ancho; a 390 px, una columna: Subir archivo, Tu perfil, Tu CV completo,
+  Por resolver, Documentos subidos, Cómo escribes (RF-6.4b).
 - **RF-10.5c** *(reescrito en S7)* «Por resolver» DEBERÁ reunir arriba las preguntas pendientes (RF-2.3), con
   «Responder», y debajo un desplegable **«Avisos (n)»** con los huecos (RF-9.1) y los avisos (RF-9.2), agrupados
   según RF-10.13. Cada aviso DEBERÁ tener dos acciones: la que lo resuelve («Corregir» o «Añadir») y «Dar por

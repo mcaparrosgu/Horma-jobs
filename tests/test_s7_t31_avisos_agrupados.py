@@ -22,15 +22,17 @@ def test_frase_sin_origen_y_dato_nuevo_son_dato_dudoso_y_el_resto_revisa():
 
 def _node(codigo: str) -> str:
     textos = (ESTATICOS / "textos.js").read_text(encoding="utf-8")
-    r = subprocess.run(["node", "-e", textos + "\n" + codigo], capture_output=True, text=True, check=True)
+    r = subprocess.run(["node", "-e", textos + "\n" + codigo], capture_output=True, text=True, encoding="utf-8", check=True)
     return r.stdout.strip()
 
 
 def test_veinte_requisitos_ausentes_dan_una_sola_linea_no_consta():
     reqs = [f"R{i}" for i in range(20)]
     linea = json.loads(_node(f"console.log(JSON.stringify(textoNoConstaVarios({json.dumps(reqs)})))"))
-    assert linea.count("\n") == 0 and linea.startswith("La oferta pide R0, R1") and "R18 y R19" in linea
-    assert "no constan en tu perfil" in linea
+    assert linea.count(chr(10)) == 0 and linea.startswith("La oferta pide R0, R1") and "R4 y 15 más" in linea
+    assert "R5" not in linea and "no constan en tu perfil" in linea
+    largo = json.loads(_node('console.log(JSON.stringify(textoNoConstaVarios(["a" + "b".repeat(100), "c"])))'))
+    assert "…" in largo and len(largo) < 100
 
 
 def test_la_pantalla_pinta_tres_grupos_y_no_el_panel_vacio():

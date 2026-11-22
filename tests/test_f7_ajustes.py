@@ -158,7 +158,7 @@ def test_el_set_recomendacion_mide_la_segunda_persona():
 # --- T08-T09 · Perfil ------------------------------------------------------------------------------
 def test_perfil_en_el_orden_de_p3_con_el_texto_de_p4():
     html = leer("perfil.html")
-    orden = [html.index(x) for x in ('id="pendientes"', 'id="t-perfil"', 'id="estilo"')]
+    orden = [html.index(x) for x in ('id="t-perfil"', 'id="pendientes"', 'id="estilo"')]
     assert orden == sorted(orden)
     assert 'id="pendientes" class="panel-desplegado"' in html and "<details id=\"estilo\"" in html
     assert 'id="estilo" class="panel-desplegado" hidden>' in html

@@ -254,9 +254,7 @@ function corregirAviso(a) {
   if (a.seccion === "hueco") return irASeccion("actividades", true);
   if (a.seccion === "resumen") return irASeccion("resumen", true);
   if (a.seccion === "experiencia") return irASeccion("experiencias");
-  const docs = $("cvs-subidos");   // lo que falta está en el CV original: se sube uno corregido
-  docs.open = true;
-  docs.scrollIntoView({ behavior: "smooth" });
+  $("subir-otro").scrollIntoView({ behavior: "smooth" });   // lo que falta está en el CV original: se sube uno corregido
 }
 
 async function pedirAvisos(ruta, cuerpo, mensaje) {

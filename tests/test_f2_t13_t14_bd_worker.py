@@ -183,8 +183,8 @@ def test_perfilar_guarda_version_origenes_y_preferencias_del_cv(motor_app, bd_li
     assert p.familia == "hosteleria_restauracion" and p.datos["experiencias"][0]["puesto"] == "Camarera"
     assert dict(origenes) == {"experiencias.0": "Camarera en Bar Sol, 2020-2023",
                               "idiomas.0": "Inglés B2"}
-    assert prefs.familias == ["hosteleria_restauracion"] and prefs.idiomas == ["en"]
-    assert prefs.origen["familias"] == "cv"
+    assert prefs.familias == [] and prefs.idiomas == ["en"]   # el área ya no se rellena desde el CV
+    assert "familias" not in prefs.origen
     assert t.estado == "hecha" and float(t.coste_acumulado) > 0
 
 
@@ -198,7 +198,7 @@ def test_las_preferencias_que_escribio_la_usuaria_no_se_pisan(motor_app, bd_limp
     with sesion_de(motor_app, a) as s:
         prefs = s.execute(text("select familias, sectores, origen from preferencias")).one()
     assert prefs.familias == ["ventas_comercial"] and prefs.sectores == ["hosteleria_turismo"]
-    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv"}
+    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv"}   # lo antiguo no se toca
 
 
 def test_perfilar_sin_cv_falla_con_motivo(motor_app, bd_limpia):

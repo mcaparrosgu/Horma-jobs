@@ -39,9 +39,10 @@ def test_los_avisos_existen_con_tokens_y_sin_colores_sueltos():
 
 
 # --- T15 · «Qué buscas» ---------------------------------------------------------------------------------
-def test_que_buscas_separa_area_puestos_y_terminos_excluidos():
+def test_que_buscas_separa_puestos_y_terminos_excluidos_sin_area():
     html, js, comun = leer("ofertas.html"), leer("ofertas.js"), leer("comun.js")
-    assert '["familias", "Área"]' in comun
+    assert '["familias", "Área"]' not in comun and '["sectores", "Sector"]' in comun
+    assert "nuevas.familias = []" in js   # el área ya no se elige: se vacía al guardar
     for id_ in ("casillas-puestos", "nuevo-puesto", "anadir-puesto", "lista-excluidos", "nuevo-excluido",
                 "anadir-excluido"):
         assert f'id="{id_}"' in html, id_
@@ -57,7 +58,7 @@ def test_ofertas_sin_palabras_prohibidas():
 # --- T16 · Perfil: orden y avisos -----------------------------------------------------------------------
 def test_perfil_muestra_los_bloques_en_el_orden_de_rf_9_5():
     html = leer("perfil.html")
-    orden = [html.index(x) for x in ('id="pendientes"', 'id="mi-perfil"', 'id="maestro"',
+    orden = [html.index(x) for x in ('id="mi-perfil"', 'id="maestro"', 'id="pendientes"',
                                      'id="cvs-subidos"', 'id="estilo"')]
     assert orden == sorted(orden)
     assert "Por resolver" in html and "Tu CV completo" in html

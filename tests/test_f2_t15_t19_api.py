@@ -377,11 +377,11 @@ def test_las_preferencias_del_cv_llegan_marcadas_y_las_de_ella_no_se_pisan(app, 
     u = _usuaria_id(motor_app, "google-A")
     with sesion_de(motor_app, u) as s:
         perfiles.aplicar_preferencias_del_cv(s, u, perfiles.Preferencias(
-            familias=["hosteleria_restauracion"], origen={"familias": "cv"}))
+            sectores=["hosteleria_turismo"], origen={"sectores": "cv"}))
     p = c.get("/api/preferencias").json()
-    assert p["familias"] == ["hosteleria_restauracion"] and p["origen"]["familias"] == "cv"
-    c.put("/api/preferencias", headers=h, json={**p, "familias": ["ventas_comercial"]})
-    assert c.get("/api/preferencias").json()["origen"]["familias"] == "usuaria"
+    assert p["sectores"] == ["hosteleria_turismo"] and p["origen"]["sectores"] == "cv"
+    c.put("/api/preferencias", headers=h, json={**p, "sectores": ["tecnologia"]})
+    assert c.get("/api/preferencias").json()["origen"]["sectores"] == "usuaria"
 
 
 def test_preferencias_invalidas_se_rechazan(app):
@@ -551,7 +551,7 @@ def test_de_la_subida_al_perfil_y_la_recomendacion_con_el_worker(app, motor_app)
         "cv_maestro": "# Ana\nCamarera en Bar Sol, 2020-2023"}
     assert worker.procesar_una(motor_app, ProveedorSimulado([extraccion, TAX])) == "hecha"
     assert c.get("/api/perfil").json()["perfil"]["experiencias"][0]["puesto"] == "Camarera"
-    assert c.get("/api/preferencias").json()["familias"] == ["hosteleria_restauracion"]
+    assert c.get("/api/preferencias").json()["familias"] == []   # el área ya no se rellena desde el CV
     oferta = _oferta(motor_app, titulo="Camarera de sala")
     assert c.post("/api/recomendar", headers=h).json()["tarea_id"]
     match = {"oferta_id": oferta, "nota": 88, "condiciones": "alto", "cita_perfil": "Camarera en Bar Sol",

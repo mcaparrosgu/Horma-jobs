@@ -13,7 +13,7 @@ from horma.tools.cv_base_afectado import lineas_cambiadas
 from horma.tools.visibilidad_cv import clave_experiencia, nombre_experiencia
 
 _j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
-GRUPOS_DEL_CV = ("familias", "puestos", "sectores", "idiomas")
+GRUPOS_DEL_CV = ("puestos", "sectores", "idiomas")   # el área ya no se rellena ni se elige
 _COLUMNAS_PREFS = ("familias", "puestos", "puestos_sugeridos", "excluidos", "sectores", "contratos",
                    "niveles", "paises", "idiomas", "solo_remoto",
                    "solo_salario", "sueldo_minimo", "orden", "rango_min", "rango_max", "origen")

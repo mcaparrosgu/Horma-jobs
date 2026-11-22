@@ -413,7 +413,7 @@ function nombreOpcion(clave, valor) {
 
 // --- Casillas por grupo (Preferencias y barra de filtros de Recomendadas) ------------------------
 const GRUPOS = [
-  ["familias", "Área"], ["sectores", "Sector"], ["contratos", "Tipo de contrato"],
+  ["sectores", "Sector"], ["contratos", "Tipo de contrato"],
   ["niveles", "Nivel"], ["paises", "País"], ["idiomas", "Idiomas"],
 ];
 

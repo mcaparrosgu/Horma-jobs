@@ -316,7 +316,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .panel > .subtitulo:first-child, .panel > h2:first-child{ margin-top: 0; }
 .panel .lista > li:first-child, .panel .lista-editorial > li:first-child{ padding-top: 0; }
 .lista-editorial > li.tarjeta{ margin: 0; }
-.tablero{ display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; align-items: start; }
+.tablero{ display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1rem; align-items: start; }   /* las 6 columnas, incluida Cerrada, en una fila */
 .columna{ min-width: 0; }
 .columna > h2{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--muted); margin: 0 0 0.5rem; padding-bottom: 6px; border-bottom: var(--bw) solid var(--line-strong); }
 .columna-cerrada .lista{ margin-top: 0.6rem; }
@@ -335,11 +335,14 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
 .ocultar-movil{ display: initial; }
 
 /* Perfil: a 1280 px, «Tu perfil» a la izquierda y lo demás a la derecha, a igual ancho (RF-10.5b). */
-.pantalla-perfil{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto) 1fr; gap: 0 1rem; align-items: start; }
-.pantalla-perfil > #mi-perfil{ grid-column: 1; grid-row: 1 / -1; }
-.pantalla-perfil > :not(#mi-perfil){ grid-column: 2; }
+.pantalla-perfil{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1rem; align-items: start; }
+.pantalla-perfil > .col-izq, .pantalla-perfil > .col-der{ min-width: 0; }
+#subir-otro .fila{ align-items: end; }
 @media (max-width: 900px){
-  .pantalla-perfil{ display: block; }
+  /* una columna: Subir archivo, Tu perfil, Tu CV completo, Por resolver, Documentos subidos, Cómo escribes */
+  .pantalla-perfil{ display: flex; flex-direction: column; }
+  .pantalla-perfil > .col-izq, .pantalla-perfil > .col-der{ display: contents; }
+  #subir-otro{ order: 1; } #mi-perfil{ order: 2; } #maestro{ order: 3; } #pendientes{ order: 4; } #cvs-subidos{ order: 5; } #estilo{ order: 6; }
 }
 
 /* ── Móvil (< 900 px): menú arriba y tarjetas ── */
@@ -442,5 +445,18 @@ fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 
 
 /* S7 · simetría de «Qué buscas»: mismo espacio entre todos los grupos (RF-6.4b) */
-#formulario-busca > fieldset.grupo{ margin: 0 0 16px; }
 #que-buscas > .suave{ margin-bottom: 16px; }
+/* Rejilla de 12: fila 1 = Puestos · Sector · Condiciones (4+4+4); fila 2 = los otros cuatro grupos (3 cada uno);
+   después Términos excluidos y el botón. Un solo `gap`, sin márgenes sueltos. */
+#formulario-busca{ display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+#formulario-busca > fieldset.grupo, #grupos > fieldset.grupo{ margin: 0; }
+#grupos{ display: contents; }
+#grupo-puestos{ grid-column: span 4; order: 1; }
+#grupos > [data-grupo="sectores"]{ grid-column: span 4; order: 2; }
+#formulario-busca > fieldset.grupo.panel{ grid-column: span 4; order: 3; grid-template-columns: 1fr; align-content: start; }
+#grupos > fieldset.grupo:not([data-grupo="sectores"]){ grid-column: span 3; order: 4; }
+#grupo-excluidos{ grid-column: 1 / -1; order: 5; }
+#formulario-busca > .fila{ grid-column: 1 / -1; order: 6; margin: 0; }
+@media (max-width: 900px){
+  #formulario-busca #grupo-puestos, #formulario-busca #grupos > fieldset.grupo, #formulario-busca > fieldset.grupo.panel{ grid-column: 1 / -1; }
+}
