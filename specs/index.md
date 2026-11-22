@@ -41,7 +41,7 @@ Formato: carpeta — qué es. **Estado.**
   (PR #26) y firmada el 21-nov. 9b sin plan:** se hará solo con texto (RF-10.12).
 - `010-simplificacion/` — 4 pantallas y 4 clics, candidatura sin CV base, un agente por oferta, 1 USD al día,
   orden interno y correcciones tras la prueba (S1-S7). **S1-S7 fusionadas (PR #28 a #31; S7 cerrada por Mar el
-  22-nov). Cerrada: pruebas de Mar hechas; el repaso a 390 px, más adelante.** **S8 (correcciones de la pasada del 22-nov): spec, plan y tareas firmados el 22-nov; por construir.** Detalle en
+  22-nov). Cerrada: pruebas de Mar hechas; el repaso a 390 px, más adelante.** **S8 (correcciones de la pasada del 22-nov): construida (T39-T49) en la rama `simplificacion-s8`, sin PR; falta la prueba de Mar.** Detalle en
   [tasks.md](./010-simplificacion/tasks.md#estado-22-nov).
 
 ## Lo que viene (sin spec todavía)
