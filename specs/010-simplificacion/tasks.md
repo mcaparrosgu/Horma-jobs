@@ -17,8 +17,8 @@ stale_after: null
 |---|---|---|
 | S0-S1 | Fusionados (PR #27 y #28) | Firmada (21-nov) |
 | S2-S5 | Fusionados juntos (PR #29) | Pendiente en S2-S4 (T12, T15, T18); el paso 2.3 se hizo el 21-nov y dio lugar a S7 |
-| S6 | `simplificacion-s6`, PR #30 abierto | — (no tiene pantalla) |
-| S7 | `simplificacion-s7` (sobre S6), PR #31 abierto | Cerrada por Mar (22-nov); falta el repaso a 390 px |
+| S6 | Fusionado (PR #30) | — (no tiene pantalla) |
+| S7 | Fusionado (PR #31) | Cerrada por Mar (22-nov); falta el repaso a 390 px |
 
 ## Forma de trabajo
 - **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción, con Sonnet. Un fallo de eval poco
@@ -112,7 +112,7 @@ stale_after: null
     usa LangGraph.
 - [x] T27 — Coherencia: `system.md`, `specs/index.md`, README; en las specs 002, 003, 005, 008 y 009, los
   requisitos de «Requisitos que sustituye» marcados como sustituidos por la 010.
-- [ ] T28 — Cierre de S6: suite verde y PR. *(PR #30 abierto, sin fusionar)*
+- [x] T28 — Cierre de S6: suite verde y PR. *(PR #30, fusionado el 22-nov)*
 
 ### S7 · Correcciones tras la prueba (RF-10.3g, 10.4d, 10.5c, 10.6e, 10.8, 10.13, RF-6.4b)
 Rama `simplificacion-s7`, sobre `simplificacion-s6`. Sale de la prueba 2.3 de Mar (21-nov).
@@ -146,5 +146,5 @@ Rama `simplificacion-s7`, sobre `simplificacion-s6`. Sale de la prueba 2.3 de Ma
     completo» y su PDF; el extractor lo pide); PDF de candidatura como `cv-puesto-empresa.pdf` y
     `carta-puesto-empresa.pdf`; «No consta en tu CV» en una línea corta con la lista completa desplegable.
 - [x] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README) y prueba de Mar. *(cerrada por
-  Mar el 22-nov; PR #31)*
+  Mar el 22-nov; PR #31, fusionado el 22-nov)*
   - **T35 en real:** eval `cv`, 31 casos (1,60 USD, parado por tope) y los casos 32 y 33 de carta en verde (0,25 USD).

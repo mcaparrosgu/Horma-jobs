@@ -40,8 +40,8 @@ Formato: carpeta — qué es. **Estado.**
 - `009-cv-maestro-entrevista/` — 9a (huecos, avisos, puestos sugeridos) y 9b (entrevista). **9a fusionada
   (PR #26) y firmada el 21-nov. 9b sin plan:** se hará solo con texto (RF-10.12).
 - `010-simplificacion/` — 4 pantallas y 4 clics, candidatura sin CV base, un agente por oferta, 1 USD al día,
-  orden interno y correcciones tras la prueba (S1-S7). **S1-S5 fusionadas (PR #28 y #29); S6 en PR #30, abierto;
-  S7 cerrada por Mar el 22-nov, en PR #31 (encima de #30). Faltan las pruebas de Mar de S2-S4 y el repaso a 390 px.** Detalle en
+  orden interno y correcciones tras la prueba (S1-S7). **S1-S7 fusionadas (PR #28 a #31; S7 cerrada por Mar el
+  22-nov). Faltan las pruebas de Mar de S2-S4 y el repaso a 390 px.** Detalle en
   [tasks.md](./010-simplificacion/tasks.md#estado-22-nov).
 
 ## Lo que viene (sin spec todavía)
