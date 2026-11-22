@@ -130,8 +130,9 @@ function estadoDe(o) {
   return o.candidatura ? "candidatura" : "nuevas";
 }
 
+// Las propias solo llegan si ella las incluye, y entonces se ven siempre (RF-10.6g).
 function enRango(o) {
-  return o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
+  return o.propia || o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
 }
 
 function fechaOrden(o) {
@@ -577,6 +578,7 @@ function pintarQueBuscas() {
                   { origen: (guardadas.origen || {})[clave] })));
   $("solo-remoto").checked = guardadas.solo_remoto;
   $("solo-salario").checked = guardadas.solo_salario;
+  $("incluir-propias").checked = guardadas.incluir_propias !== false;
   $("sueldo-minimo").value = guardadas.sueldo_minimo === null ? "" : guardadas.sueldo_minimo;
   const vacio = GRUPOS.every(([clave]) => !(guardadas[clave] || []).length) && !puestos.length;
   $("que-buscas").open = vacio || location.hash === "#que-buscas";   // abierto si aún no hay nada guardado
@@ -591,6 +593,7 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   nuevas.excluidos = [...excluidos];
   nuevas.solo_remoto = $("solo-remoto").checked;
   nuevas.solo_salario = $("solo-salario").checked;
+  nuevas.incluir_propias = $("incluir-propias").checked;
   const sueldo = $("sueldo-minimo").value.trim();
   nuevas.sueldo_minimo = sueldo === "" ? null : Number(sueldo);
   $("guardar-busca").disabled = true;
@@ -690,10 +693,31 @@ async function sondearAnadidas() {
       e.pct = x.progreso || 0;
       if (e.pct >= 100 && ((nueva && !nueva.sin_puntuar) || !puntuando)) e.fin = true;
     }
-    if ([...lote.values()].every((e) => e.fin)) lote = new Map();
+    if ([...lote.values()].every((e) => e.fin)) {
+      const ocultas = [...lote.keys()].some((id) => !todas.some((o) => o.id === id));
+      lote = new Map();
+      await traerPuestosNuevos();
+      if (ocultas) avisar(TEXTOS.anadirOculta);
+    }
   }
   pintarBarraAnadidas();
   if (lote.size) sondeoAnadidas = setTimeout(sondearAnadidas, SONDEO_MS);
+}
+
+// RF-10.6h: el puesto de la oferta añadida ya está en sus preferencias; se suma a las casillas sin tocar
+// lo que ella esté cambiando en «Qué buscas».
+async function traerPuestosNuevos() {
+  const r = await api("/api/preferencias");
+  if (!r.ok) return;
+  const nuevos = r.datos.puestos.filter((t) => !(guardadas.puestos || []).includes(t));
+  guardadas.puestos = r.datos.puestos;
+  guardadas.origen = r.datos.origen;
+  for (const t of nuevos) {
+    if (!puestos.some((p) => p.valor === t)) puestos.push({ valor: t, dato: null, n: 0, marcado: true });
+  }
+  if (!nuevos.length) return;
+  pintarPuestos();
+  avisar(TEXTOS.anadirPuesto(nuevos.join("», «")));
 }
 
 function abrirAnadir() {

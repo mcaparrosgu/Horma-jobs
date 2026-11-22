@@ -160,6 +160,13 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
 - **RF-10.6f** *(22-nov)* «Qué buscas» DEBERÁ ir sin «Área»: Puestos sugeridos, Sector y Condiciones en la primera
   fila; Tipo de contrato, Nivel, País e Idiomas en la segunda; después Términos excluidos. Al guardar, el área se
   vacía y el CV deja de rellenarla.
+- **RF-10.6g** *(22-nov, sustituye a RF-7.1f)* «Condiciones» DEBERÁ tener la casilla «Incluir las ofertas que
+  añado», marcada por defecto. Marcada, las ofertas que añade la usuaria DEBERÁN verse siempre, pasen o no
+  «Qué buscas» y el rango de compatibilidad; desmarcada, NO DEBERÁN verse. SI una oferta añadida queda oculta
+  por la casilla, al terminar su análisis Horma DEBERÁ decirlo.
+- **RF-10.6h** *(22-nov)* CUANDO se analiza una oferta añadida cuyo título no cubre ninguno de los puestos
+  marcados, ese título DEBERÁ añadirse a los puestos de «Qué buscas», con un aviso; ella puede quitarlo como
+  cualquier otro. Con la lista de puestos vacía NO DEBERÁ añadirse (empezaría a filtrar).
 
 ### Candidatura (RF-10.7)
 - **RF-10.7** La usuaria DEBERÁ ver un solo estado por candidatura, que junta `estado` y `preparacion`:

@@ -236,6 +236,10 @@ def dueña(s: Session, oferta_id: int) -> int | None:
                      {"i": oferta_id}).scalar_one_or_none()
 
 
+def titulo(s: Session, oferta_id: int) -> str | None:
+    return s.execute(text("select titulo from ofertas where id=:i"), {"i": oferta_id}).scalar_one_or_none()
+
+
 def hay_propias(s: Session) -> bool:
     """¿La usuaria de la sesión tiene ofertas propias ya procesadas? (la RLS deja ver solo las suyas)"""
     return s.execute(text("select 1 from ofertas where usuaria_id is not null and estado = 'procesada' "

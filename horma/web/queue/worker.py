@@ -124,9 +124,13 @@ def _encolar_puntuar_propias(s, usuaria_id: int) -> None:
 
 
 def _propia_procesada(s, tarea: dict) -> None:
-    """Una oferta propia recién analizada se puntúa sola (RF-5.3d)."""
+    """Una oferta propia recién analizada se puntúa sola (RF-5.3d) y su puesto entra en «Qué buscas» si no
+    estaba (RF-10.6h). Las preferencias solo se ven con la sesión de ella (RLS): otra transacción."""
     if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
         _encolar_puntuar_propias(s, usuaria)
+        titulo = repo_ofertas.titulo(s, tarea["entidad_id"])
+        with sesion_de(s.get_bind(), usuaria) as su:
+            repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo)
 
 
 def _puntuar_si_hay_propias(s, tarea: dict) -> None:

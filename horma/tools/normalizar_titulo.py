@@ -70,3 +70,10 @@ def normalizar_titulo(titulo: str | None) -> str:
     t = "".join(c for c in t if not unicodedata.combining(c)).casefold()
     palabras = re.sub(r"[^a-z0-9+#]+", " ", t).split()
     return " ".join(_singular(p) for p in palabras)
+
+
+def casa_con_puestos(titulo: str | None, puestos: list[str]) -> bool:
+    """¿Algún puesto (o su forma de género) aparece como frase en el título? La misma regla que el filtro
+    de `buscar_ofertas`, en Python."""
+    t = f" {normalizar_titulo(titulo)} "
+    return any(f" {v} " in t for p in puestos for v in variantes_genero(normalizar_titulo(p)))

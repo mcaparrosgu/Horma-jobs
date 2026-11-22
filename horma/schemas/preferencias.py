@@ -46,6 +46,7 @@ class Preferencias(BaseModel):
     solo_remoto: bool = False
     solo_salario: bool = False
     sueldo_minimo: float | None = Field(default=None, ge=0, description="Euros brutos al año.")
+    incluir_propias: bool = Field(default=True, description="Las que añade ella se ven siempre (RF-10.6g).")
     orden: Literal["recientes", "compatibles"] = "compatibles"
     rango_min: int = Field(default=40, ge=0, le=100)
     rango_max: int = Field(default=100, ge=0, le=100)

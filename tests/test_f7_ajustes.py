@@ -235,10 +235,11 @@ def test_lugar_une_modalidad_y_municipio():
 def test_cada_casilla_de_condiciones_va_con_su_ayuda_en_su_celda():
     html = leer("ofertas.html")
     bloques = html.split('<div class="casilla-con-ayuda">')[1:]
-    assert len(bloques) == 2
+    assert len(bloques) == 3
     celdas = [b.split("</div>")[0] for b in bloques]
     assert 'id="solo-remoto"' in celdas[0] and "Solo ofertas 100 % en remoto." in celdas[0]
     assert 'id="solo-salario"' in celdas[1] and "Solo ofertas que dicen cuánto pagan." in celdas[1]
+    assert 'id="incluir-propias"' in celdas[2] and "Se ven siempre" in celdas[2]   # RF-10.6g
     assert ".casilla-con-ayuda" in leer("estilo.css") and "p.ayuda" in leer("estilo.css")
 
 

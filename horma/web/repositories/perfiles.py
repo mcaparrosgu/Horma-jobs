@@ -6,17 +6,19 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from horma.schemas.perfil import Perfil
-from horma.schemas.preferencias import Preferencias
+from horma.schemas.preferencias import MAX_LARGO_TERMINO, MAX_TERMINOS, Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.comparar_versiones import comparar_versiones
 from horma.tools.cv_base_afectado import lineas_cambiadas
+from horma.tools.normalizar_titulo import casa_con_puestos
 from horma.tools.visibilidad_cv import clave_experiencia, nombre_experiencia
 
 _j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
 GRUPOS_DEL_CV = ("puestos", "sectores", "idiomas")   # el área ya no se rellena ni se elige
 _COLUMNAS_PREFS = ("familias", "puestos", "puestos_sugeridos", "excluidos", "sectores", "contratos",
                    "niveles", "paises", "idiomas", "solo_remoto",
-                   "solo_salario", "sueldo_minimo", "orden", "rango_min", "rango_max", "origen")
+                   "solo_salario", "sueldo_minimo", "incluir_propias", "orden", "rango_min", "rango_max",
+                   "origen")
 
 
 # --- CV ----------------------------------------------------------------------------------------
@@ -215,6 +217,20 @@ def aplicar_puestos_del_cv(s: Session, usuaria_id: int, sugeridos: list[dict]) -
         else:
             actual.origen.pop("puestos", None)
     guardar_preferencias(s, usuaria_id, actual)
+
+
+def anadir_puesto_de_oferta(s: Session, usuaria_id: int, titulo: str | None) -> bool:
+    """RF-10.6h: el título de una oferta que ella añade entra en sus puestos marcados si ninguno lo cubre.
+    Con la lista vacía no se añade: un puesto empezaría a filtrar lo que hoy se ve todo."""
+    titulo = " ".join((titulo or "").split())[:MAX_LARGO_TERMINO]
+    actual = preferencias(s)
+    if (not titulo or not actual.puestos or len(actual.puestos) >= MAX_TERMINOS
+            or casa_con_puestos(titulo, actual.puestos)):
+        return False
+    actual.puestos = [*actual.puestos, titulo]
+    actual.origen["puestos"] = "usuaria"   # lo ha traído ella: el CV ya no lo pisa
+    guardar_preferencias(s, usuaria_id, actual)
+    return True
 
 
 # --- avisos vistos y longitud del CV (RF-9.2c, RF-9.2d) -----------------------------------------
