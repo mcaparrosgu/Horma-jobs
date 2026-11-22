@@ -112,7 +112,19 @@ def crear_ejecucion(s: Session, fuente_id: int, limite: int, en_curso: bool = Fa
          "c": en_curso}).mappings().one())
 
 
+MINUTOS_ATASCADA = 30
+
+
+def cerrar_atascadas(s: Session) -> int:
+    """Cierra como error las ejecuciones que llevan más de 30 min «en curso» (RF-10.14r)."""
+    return s.execute(text(
+        "update ejecuciones_ingesta set estado='error', motivo_error='Se cortó sin terminar', "
+        "terminada_en=now() where estado='en_curso' "
+        "and iniciada_en < now() - make_interval(mins => :m)"), {"m": MINUTOS_ATASCADA}).rowcount
+
+
 def reclamar_ejecucion(s: Session) -> dict | None:
+    cerrar_atascadas(s)
     fila = s.execute(text(
         f"update ejecuciones_ingesta set estado='en_curso', iniciada_en=now() where id = ("
         "select id from ejecuciones_ingesta where estado='pendiente' order by id "

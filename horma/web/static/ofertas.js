@@ -438,6 +438,8 @@ function pintarLista() {
   if (abiertas === null) abiertas = new Set(lista.slice(0, 1).map((o) => o.id));   // la primera, abierta
   $("filas").replaceChildren(...lista.flatMap(filaOferta));
   $("vacio").hidden = lista.length > 0;
+  // RF-10.14q: si los puestos marcados dejan la lista sin nada, se dice por qué y qué hacer.
+  $("vacio").textContent = !todas.length && puestos.some((p) => p.marcado) ? TEXTOS.listaVaciaPorPuestos : "Ninguna oferta cumple estos filtros.";
   $("tabla").hidden = lista.length === 0;
   const pendientes = todas.filter((o) => o.sin_puntuar && !o.descartada).length;
   const n = lista.length === 1 ? "1 oferta" : `${lista.length} ofertas`;

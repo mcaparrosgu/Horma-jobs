@@ -39,6 +39,7 @@ const TEXTOS = {
   sinCompatibilidad: "Sin compatibilidad",
   sinPerfil: "Sube tu CV para ver qué ofertas encajan contigo",
   sinPerfilBoton: "Subir mi CV",
+  listaVaciaPorPuestos: "Ninguna oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta.",   // RF-10.14q
   anadidaPorTi: "Añadida por ti",
   corregirNota: "Compatibilidad que te parece justa (opcional)",
   correccionRango: "La compatibilidad va de 0 a 100 y el motivo no puede estar vacío.",
