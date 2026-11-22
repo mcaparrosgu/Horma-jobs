@@ -218,7 +218,7 @@ Sonnet, todo el bloque seguido; se para solo antes de gastar (T44 y T50).
 Recorrida por Claude en el navegador y la consola (bloques J a P; K1, O4 y P5 sin probar).
 - [x] T60 — «No consta en tu CV» solo con lo que falta (RF-10.13). La causa era `medir_ats`, no el redactor: exigía
   todas las palabras de una frase de requisito. Ahora una palabra clave corta exige todas (nivel de idioma igual o
-  mayor; las cifras y «o superior/similar» no cuentan) y una frase de 4 o más palabras la juzga el redactor.
+  mayor; las cifras y «o superior/similar» no cuentan; «A o B» se respalda con uno de los dos) y una frase de 4 o más palabras la juzga el redactor.
   - **Test:** `test_s8_t60_huecos_falsos.py` (los 4 requisitos de Irene ya no son hueco; «Excel avanzado» e «Inglés C1» sí).
 - [x] T61 — El nombre que editó ella manda sobre el del CV al rehacer el perfil (RF-10.5f, RF-10.14).
   - **Test:** `test_s8_t41_conserva_lo_de_la_usuaria.py`.

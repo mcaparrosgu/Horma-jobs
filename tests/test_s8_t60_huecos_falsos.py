@@ -69,3 +69,9 @@ def test_el_nivel_de_idioma_pide_igual_o_mayor():
 
 def test_plural_de_palabras_cortas():
     assert _huecos("Conocimientos de vino") == [] and _huecos("Atención de mesas", fuentes="Atención de mesa") == []
+
+
+def test_a_o_b_se_respalda_con_una_de_las_dos():   # I5: «Manejo de A3ERP o Sage» con A3ERP en el CV
+    fuentes = CV_IRENE + "\nEmito facturas con A3ERP y registro gastos en ContaPlus."
+    assert _huecos("Manejo de A3ERP o Sage", "Manejo de ContaPlus o Sage", fuentes=fuentes) == []
+    assert _huecos("Manejo de Sage o SAP", fuentes=fuentes) == ["Manejo de Sage o SAP"]

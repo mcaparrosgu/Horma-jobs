@@ -76,19 +76,22 @@ FRASE_LARGA = 4  # palabras con contenido a partir de las cuales un requisito es
 def _respaldada(clave: str, texto: str) -> bool:
     """¿Respaldan las fuentes este requisito? Solo para decidir qué «no consta» (RF-10.13): un falso aviso es peor
     que uno que falta, porque la carta usa como propio lo que el aviso niega. Una palabra clave corta exige todas
-    sus palabras (con nivel de idioma igual o mayor; las cifras no cuentan). Una frase larga («Mínimo 5 años de
-    experiencia en sala, 2 de ellos como responsable») no se puede juzgar contando palabras: la juzga el redactor
-    con su `hueco`. Las palabras clave del propio CV se siguen midiendo con `_esta`."""
-    limpia = _O_MAS.sub(" ", _sin_tildes(clave))
-    pedidas = [p for p in _palabras(limpia) if p not in _VACIAS]
-    niveles = [_NIVELES[p] for p in pedidas if p in _NIVELES]
-    distintivas = [p for p in pedidas if p not in _NIVELES and not p.isdigit()]
-    if len(distintivas) >= FRASE_LARGA:
-        return True
+    sus palabras (con nivel de idioma igual o mayor; las cifras no cuentan). «A o B» se respalda con una de las dos.
+    Una frase larga («Mínimo 5 años de experiencia en sala, 2 de ellos como responsable») no se puede juzgar contando
+    palabras: la juzga el redactor con su `hueco`. Las palabras clave del propio CV se siguen midiendo con `_esta`."""
     en_texto = _palabras(texto)
-    if niveles and max([_NIVELES.get(w, 0) for w in en_texto], default=0) < max(niveles):
-        return False
-    return all(any(_coincide(w, p) for w in en_texto) for p in distintivas)
+    alternativas = re.split(r"\s+o\s+", _O_MAS.sub(" ", _sin_tildes(clave)))
+    for alternativa in alternativas:
+        pedidas = [p for p in _palabras(alternativa) if p not in _VACIAS]
+        niveles = [_NIVELES[p] for p in pedidas if p in _NIVELES]
+        distintivas = [p for p in pedidas if p not in _NIVELES and not p.isdigit()]
+        if len(distintivas) >= FRASE_LARGA:
+            return True
+        if niveles and max([_NIVELES.get(w, 0) for w in en_texto], default=0) < max(niveles):
+            continue
+        if all(any(_coincide(w, p) for w in en_texto) for p in distintivas):
+            return True
+    return False
 
 
 def _campo(obj, nombre: str, defecto=None):
