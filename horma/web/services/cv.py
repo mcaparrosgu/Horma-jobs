@@ -189,6 +189,17 @@ def marcar_escrito_por_ella(engine: Engine, usuaria_id: int, cv_id: int, valor: 
         return repo.marcar_escrito_por_ella(s, cv_id, valor)
 
 
+AVISO_DOCX = ("Así se lee tu documento; el diseño original del Word no se puede mostrar aquí.")
+
+
+def texto(engine: Engine, usuaria_id: int, cv_id: int) -> dict | None:
+    """El texto con el que Horma lee un documento, para «Ver» un DOCX (RF-10.14c). Solo la dueña (RLS)."""
+    with sesion_de(engine, usuaria_id) as s:
+        if repo.uno(s, cv_id) is None:
+            return None
+        return {"texto": repo.texto(s, cv_id) or "", "aviso": AVISO_DOCX}
+
+
 def archivo(engine: Engine, usuaria_id: int, cv_id: int) -> tuple[dict, Path] | None:
     """El CV y la ruta de su archivo, si existe y es de la usuaria (RLS)."""
     with sesion_de(engine, usuaria_id) as s:

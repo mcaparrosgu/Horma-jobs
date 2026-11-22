@@ -25,6 +25,7 @@ from horma.schemas.taxonomia import Taxonomia
 from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.tools.puestos_del_perfil import puestos_del_perfil
 from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.resumenes_cv import resumen_de, titular_de
 
 # (campo del perfil, atributo con el nombre del dato, atributos de texto opcionales)
 _LISTAS = (
@@ -136,12 +137,26 @@ def _clave(x: dict, nombre: str, lugar: str | None) -> tuple:
     return (_plano(str(x.get(nombre) or "")), _plano(str(x.get(lugar) or "")) if lugar else "")
 
 
+def resumenes_por_cv(perfil: dict, cvs: list[dict]) -> None:
+    """El titular y el resumen de cada CV, tal como están escritos y con su origen; ninguno se pierde al juntar
+    CV. `titular` y `resumen` quedan como los del CV más reciente que los tenga (RF-10.14d)."""
+    for lista, unico, extraer in (("titulares", "titular", titular_de), ("resumenes", "resumen", resumen_de)):
+        datos = []
+        for c in cvs:
+            texto = extraer(c["texto"])
+            if texto and not rasgos_personales(texto):
+                datos.append({"valor": texto, "origen": {"fuente": "cv", "cv_id": c["cv_id"], "fragmento": texto}})
+        perfil[lista] = datos
+        if datos:
+            perfil[unico] = datos[-1]
+
+
 def conservar_usuaria(perfil: dict, de_usuaria: dict | None) -> None:
     """Lo que escribió o corrigió la usuaria pasa al perfil nuevo y manda sobre lo que el CV dice de lo mismo
     (mismo puesto y sitio, mismo título…). Lo suyo no se vuelve a comprobar contra un CV (RF-10.14)."""
     if not de_usuaria:
         return
-    lugares = {c: l for c, n, l in (("experiencias", "puesto", "empresa"), ("formacion", "titulo", "centro"),
+    lugares = {c: lugar for c, _, lugar in (("experiencias", "puesto", "empresa"), ("formacion", "titulo", "centro"),
                                     ("certificaciones", "nombre", "entidad"))}
     for campo, nombre, _ in (*_LISTAS, _ACTIVIDADES):
         suyos = de_usuaria.get(campo) or []
@@ -248,6 +263,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         return e
 
     def conservar(e: dict) -> dict:
+        resumenes_por_cv(e["extraccion"]["perfil"], e["cvs"])
         conservar_usuaria(e["extraccion"]["perfil"], e.get("de_usuaria"))
         return e
 

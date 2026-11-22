@@ -130,6 +130,10 @@ class Perfil(BaseModel):
                     "Lo fija ella o sale de su CV; nunca se deduce del nombre.")
     titular: DatoTexto | None = None
     resumen: DatoTexto | None = None
+    resumenes: list[DatoTexto] = Field(
+        default_factory=list, description="El resumen de cada CV, tal como está escrito. Lo rellena el código.")
+    titulares: list[DatoTexto] = Field(
+        default_factory=list, description="El titular de cada CV, tal como está escrito. Lo rellena el código.")
     experiencias: list[Experiencia] = Field(default_factory=list)
     formacion: list[Formacion] = Field(default_factory=list)
     idiomas: list[IdiomaPerfil] = Field(default_factory=list)

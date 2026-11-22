@@ -103,6 +103,15 @@ def descargar(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_ac
     return FileResponse(ruta, media_type=servicio.MEDIA[cv["tipo"]], filename=cv["nombre_original"])
 
 
+@router.get("/api/cv/{cv_id}/texto")
+def texto(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """El texto de un documento con el aviso de que es una lectura, no su diseño (RF-10.14c): «Ver» de un DOCX."""
+    hallado = servicio.texto(request.app.state.engine, usuaria_id, cv_id)
+    if hallado is None:
+        raise HTTPException(status_code=404, detail="No existe ese CV")
+    return hallado
+
+
 @router.get("/api/cv/{cv_id}/ver")
 def ver(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
     """El CV en línea, para el visor de la página (RF-2.1c). Solo la dueña (RLS)."""
@@ -110,7 +119,5 @@ def ver(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual))
     if hallado is None:
         raise HTTPException(status_code=404, detail="No existe ese CV")
     cv, ruta = hallado
-    if cv["tipo"] == "docx":
-        raise HTTPException(status_code=415, detail="Los DOCX no se pueden ver en el navegador: descárgalo.")
     medio = "application/pdf" if cv["tipo"] == "pdf" else "text/plain; charset=utf-8"
     return FileResponse(ruta, media_type=medio, content_disposition_type="inline")

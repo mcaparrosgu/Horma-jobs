@@ -353,6 +353,77 @@ function cartaBonita(md) {
   return hoja;
 }
 
+// --- Explicación plegable: ayuda «?» con globo propio, clic o foco, Escape y clic fuera (RF-6.7b, RF-10.14m) ---
+function cerrarAyudas(salvo = null) {
+  for (const b of document.querySelectorAll("button.ayuda[aria-expanded='true']")) {
+    if (b === salvo) continue;
+    b.setAttribute("aria-expanded", "false");
+    document.getElementById(b.getAttribute("aria-describedby")).hidden = true;
+  }
+}
+document.addEventListener("click", (e) => cerrarAyudas(e.target.closest("button.ayuda")));
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const abierta = document.querySelector("button.ayuda[aria-expanded='true']");
+  cerrarAyudas();
+  if (abierta) abierta.focus();
+});
+
+function ayuda(nombre, texto, i) {
+  const q = nodo("button", "?", "ayuda");
+  q.type = "button";
+  q.setAttribute("aria-label", `Qué significa «${nombre}»`);
+  q.setAttribute("aria-expanded", "false");
+  const globo = nodo("span", texto, "ayuda-globo");
+  globo.id = `ayuda-${i}`;
+  globo.hidden = true;
+  q.setAttribute("aria-describedby", globo.id);
+  q.addEventListener("click", () => {
+    const abrir = globo.hidden;
+    globo.hidden = !abrir;
+    q.setAttribute("aria-expanded", String(abrir));
+  });
+  q.addEventListener("focusout", (e) => {
+    if (!globo.contains(e.relatedTarget)) {
+      globo.hidden = true;
+      q.setAttribute("aria-expanded", "false");
+    }
+  });
+  return [q, globo];
+}
+
+// Cada párrafo marcado con `data-explicacion` pasa a ser una ayuda «?» junto al título de su bloque. El texto sale de
+// `TEXTOS.explicaciones[clave]` o, si no está, del propio párrafo. `data-explicacion-en` fija el título (selector).
+function montarExplicaciones() {
+  document.querySelectorAll("[data-explicacion]").forEach((p, i) => {
+    const clave = p.dataset.explicacion;
+    const texto = (typeof TEXTOS !== "undefined" && TEXTOS.explicaciones?.[clave]) || p.textContent.trim();
+    let ancla = p.dataset.explicacionEn ? document.querySelector(p.dataset.explicacionEn) : p.previousElementSibling;
+    if (ancla && !ancla.matches("h1, h2, h3, summary")) ancla = ancla.querySelector("h1, h2, h3, summary");
+    if (!ancla || !texto) return;
+    const envoltorio = document.createElement("span");
+    envoltorio.className = "explicacion";
+    const nombre = (ancla.childNodes[0]?.textContent || "").trim() || "este bloque";
+    envoltorio.append(...ayuda(nombre, texto, `e${i}`));
+    ancla.append(envoltorio);
+    p.remove();
+  });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", montarExplicaciones);
+else montarExplicaciones();
+
+// Fechas de un periodo (RF-10.14j): se guardan como AAAA o AAAA-MM y se ven y se escriben como MM-AAAA (o AAAA).
+function fechaVista(valor) {
+  const m = /^(\d{4})-(\d{1,2})$/.exec(String(valor || "").trim());
+  return m ? `${m[2].padStart(2, "0")}-${m[1]}` : String(valor || "");
+}
+
+function fechaGuardada(valor) {
+  const t = String(valor || "").trim();
+  const m = /^(\d{1,2})[-/](\d{4})$/.exec(t);
+  return m ? `${m[2]}-${m[1].padStart(2, "0")}` : t;
+}
+
 function fecha(valor) {
   if (!valor) return "—";
   const d = new Date(valor);

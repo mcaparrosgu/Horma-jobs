@@ -3,6 +3,7 @@
 el resultado.
 
 Estado de entrada: {"usuaria_id": int, "perfil_version": int, "oferta": Oferta, "cv_maestro": str,
+"otros_resumenes": [str] (opcional: los resúmenes de los demás CV, RF-10.14d),
 "cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...]
 (opcional), "guia_estilo": GuiaEstilo | None (opcional, RF-5.6e), "longitud_cv": "mantener" | "sintetizar" |
 None (opcional, RF-10.3b)}
@@ -91,7 +92,8 @@ def _como_problemas(errores: list[str]) -> list[Problema]:
 CLAVES_INTERNAS = frozenset({
     "errores_cv", "errores_carta", "errores_formato", "palabras_sugeridas", "ausentes_sin_origen",
     "huecos_redactor", "rehacer", "cv_base_contenido", "cv_maestro", "cvs_base", "oferta", "usuaria_id",
-    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo", "longitud_cv"})
+    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo", "longitud_cv",
+    "otros_resumenes"})
 
 
 CLAVES_ESTADO = frozenset(EstadoCandidatura.model_fields) | CLAVES_INTERNAS
@@ -130,6 +132,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         e["redacciones_cv"] += 1
         r = RedactorCv.run(EntradaRedactorCv(
             cv_base=e["cv_base_contenido"], cv_maestro=e["cv_maestro"], longitud=e.get("longitud_cv"),
+            otros_resumenes=e.get("otros_resumenes") or [],
             oferta=Oferta.model_validate(e["oferta"]),
             errores_previos=[*e["errores_cv"], *e["errores_formato"]],
             problemas_previos=[Problema.model_validate(p) for p in e["problemas_juez"]
@@ -159,7 +162,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         longitud, secciones, fechas y ATS del CV."""
         validar(e)
         oferta = Oferta.model_validate(e["oferta"])
-        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"]) if x]
+        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"], *(e.get("otros_resumenes") or [])) if x]
         e["errores_cv"] = [
             *verificar_trazabilidad(e["cv_contenido"], e["cv_traza"], fuentes_cv),
             *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])],

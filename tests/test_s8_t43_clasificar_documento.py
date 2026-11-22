@@ -1,3 +1,4 @@
+# ruff: noqa: F811
 """S8, T43: detectar CV o carta con reglas (RF-10.14b)."""
 from pathlib import Path
 

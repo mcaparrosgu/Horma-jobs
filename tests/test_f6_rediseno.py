@@ -253,7 +253,7 @@ def test_ofertas_fila_desplegable_con_acciones():  # T09
 
 
 def test_ofertas_movil_mas_filtros_y_ayuda_como_globo():  # T10
-    css, js, html = leer("estilo.css"), leer("ofertas.js"), leer("ofertas.html")
+    css, js, html = leer("estilo.css"), leer("ofertas.js") + leer("comun.js"), leer("ofertas.html")
     assert re.search(r"@media \(max-width: 900px\)\s*\{[^@]*\.tabla-ofertas[^@]*attr\(data-", css, re.S)
     assert "Qué significa" in js and "aria-describedby" in js and "Escape" in js and "ayuda-globo" in js
     assert ".title" not in js and 'title="' not in html

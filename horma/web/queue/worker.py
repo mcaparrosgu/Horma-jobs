@@ -177,6 +177,13 @@ def _perfil_de_la_tarea(s, tarea: dict, *, hecha: bool = False) -> dict:
     return fila
 
 
+def _otros_resumenes(fila: dict) -> list[str]:
+    """Los resúmenes de los demás CV (el del maestro ya va en `cv_maestro`), para que el redactor elija (RF-10.14d)."""
+    perfil = repo_perfiles.perfil_modelo(fila)
+    usado = perfil.resumen.valor.strip() if perfil.resumen else None
+    return [r.valor.strip() for r in perfil.resumenes if r.valor.strip() != usado]
+
+
 class _Perfilar:
     """Lee todos los CV de la usuaria y rellena la versión reservada: perfil, orígenes y las
     preferencias que salen del CV."""
@@ -330,6 +337,7 @@ class _Candidatura:
         guia = repo_estilo.guia(s)
         return {"usuaria_id": tarea["usuaria_id"], "perfil_version": perfil["version"],
                 "oferta": oferta.model_dump(mode="json"), "cv_maestro": perfil["cv_maestro"],
+                "otros_resumenes": _otros_resumenes(perfil),
                 "cvs_base": (repo_candidaturas.cv_base_para_flujo(s)
                              if ajustes().horma_cv_base_respaldo else []),
                 "longitud_cv": repo_perfiles.longitud_cv(s),

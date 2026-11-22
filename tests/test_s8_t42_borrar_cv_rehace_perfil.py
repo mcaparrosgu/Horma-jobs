@@ -5,7 +5,6 @@ import pytest
 from sqlalchemy import text
 
 from horma.llm.simulado import ProveedorSimulado
-from horma.schemas.perfil import Perfil
 from horma.web.db import sesion_de
 from horma.web.queue import worker
 from horma.web.repositories import cv as repo_cv

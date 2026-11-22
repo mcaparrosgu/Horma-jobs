@@ -1,23 +1,23 @@
 // Pantalla de perfil (RF-10.5): Por resolver, Tu perfil, Tu CV completo, Documentos subidos y Cómo escribes.
 const CAMPOS = {
-  experiencias: [["puesto", "Puesto"], ["empresa", "Empresa"], ["inicio", "Inicio"], ["fin", "Fin"],
+  experiencias: [["puesto", "Puesto"], ["empresa", "Empresa"], ["inicio", "Inicio (MM-AAAA)"], ["fin", "Fin (MM-AAAA o «actual»)"],
                  ["descripcion", "Descripción"]],
-  formacion: [["titulo", "Título"], ["centro", "Centro"], ["inicio", "Inicio"], ["fin", "Fin"]],
+  formacion: [["titulo", "Título"], ["centro", "Centro"], ["inicio", "Inicio (MM-AAAA)"], ["fin", "Fin (MM-AAAA)"]],
   idiomas: [["nivel", "Nivel (B2, nativo…)"]],
   habilidades: [["nombre", "Habilidad"]],
-  proyectos: [["nombre", "Proyecto"], ["descripcion", "Descripción"], ["fecha", "Fecha"]],
-  certificaciones: [["nombre", "Certificación"], ["entidad", "Entidad"], ["fecha", "Fecha"]],
-  actividades: [["descripcion", "Actividad"], ["inicio", "Inicio (AAAA o AAAA-MM)"], ["fin", "Fin (AAAA, AAAA-MM o «actual»)"]],
+  proyectos: [["nombre", "Proyecto"], ["descripcion", "Descripción"], ["fecha", "Fecha (MM-AAAA)"]],
+  certificaciones: [["nombre", "Certificación"], ["entidad", "Entidad"], ["fecha", "Fecha (MM-AAAA)"]],
+  actividades: [["descripcion", "Actividad"], ["inicio", "Inicio (MM-AAAA o AAAA)"], ["fin", "Fin (MM-AAAA, AAAA o «actual»)"]],
   otros: [["valor", "Dato"]],
   titular: [["valor", "Titular"]],
   resumen: [["valor", "Resumen"]],
-  nombre: [["valor", "Nombre"]],
+  nombre: [["valor", "Tu nombre (sale arriba en tus CV y cartas)"]],
 };
 // Si la pregunta es sobre un detalle («experiencias.Hotel Marina.fechas»), solo se piden esos campos.
 const DETALLES = { fechas: ["inicio", "fin"], nivel: ["nivel"] };
 const SECCIONES = [["titular", "Titular"], ["resumen", "Resumen"], ["experiencias", "Experiencia"],
-                   ["formacion", "Formación"], ["idiomas", "Idiomas"], ["habilidades", "Habilidades"],
-                   ["proyectos", "Proyectos"], ["certificaciones", "Certificaciones"],
+                   ["formacion", "Formación"], ["certificaciones", "Cursos y certificados"], ["idiomas", "Idiomas"],
+                   ["habilidades", "Habilidades"], ["proyectos", "Proyectos"],
                    ["actividades", "Otras actividades"], ["otros", "Otros"]];
 // Secciones que siempre se muestran (aunque estén vacías) con su ayuda y un botón para añadir (RF-5.1c).
 const AYUDA = {
@@ -32,18 +32,21 @@ let perfilActual = null;
 let maestroActual = "";
 let pendientesPrevias = 0;
 let temporizador = null;
+let leyendo = false;   // ya se enseñó la barra «Estamos leyendo tu CV»
+
+const CAMPOS_FECHA = ["inicio", "fin", "fecha"];
+const periodoVisto = (d) => [d.inicio, d.fin].filter(Boolean).map(fechaVista).join(" – ");
 
 function resumenDe(campoNombre, d) {
   if (campoNombre === "experiencias") {
-    const fechas = [d.inicio, d.fin].filter(Boolean).join(" – ");
-    return [d.puesto, d.empresa, fechas].filter(Boolean).join(" · ");
+    return [d.puesto, d.empresa, periodoVisto(d)].filter(Boolean).join(" · ");
   }
-  if (campoNombre === "formacion") return [d.titulo, d.centro, [d.inicio, d.fin].filter(Boolean).join(" – ")].filter(Boolean).join(" · ");
+  if (campoNombre === "formacion") return [d.titulo, d.centro, periodoVisto(d)].filter(Boolean).join(" · ");
   if (campoNombre === "idiomas") return [nombreIdioma(d.idioma), d.nivel].filter((x) => x && x !== "—").join(" · ");
   if (campoNombre === "habilidades") return d.nombre;
-  if (campoNombre === "proyectos") return [d.nombre, d.fecha].filter(Boolean).join(" · ") + (d.descripcion ? ` — ${d.descripcion}` : "");
-  if (campoNombre === "certificaciones") return [d.nombre, d.entidad, d.fecha].filter(Boolean).join(" · ");
-  if (campoNombre === "actividades") return [d.descripcion, [d.inicio, d.fin].filter(Boolean).join(" – ")].filter(Boolean).join(" · ");
+  if (campoNombre === "proyectos") return [d.nombre, fechaVista(d.fecha)].filter(Boolean).join(" · ") + (d.descripcion ? ` — ${d.descripcion}` : "");
+  if (campoNombre === "certificaciones") return [d.nombre, d.entidad, fechaVista(d.fecha)].filter(Boolean).join(" · ");
+  if (campoNombre === "actividades") return [d.descripcion, periodoVisto(d)].filter(Boolean).join(" · ");
   return d.valor;
 }
 
@@ -73,7 +76,7 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, 
     const i = nodo("input");
     i.type = "text";
     i.maxLength = 300;
-    i.value = inicial[clave] || "";
+    i.value = CAMPOS_FECHA.includes(clave) ? fechaVista(inicial[clave]) : inicial[clave] || "";
     entradas[clave] = i;
     f.append(campo(rotulo, i));
     if (extra.sugerencias?.length && clave === (extra.solo?.[0] ?? CAMPOS[campoNombre][0][0])) {   // opciones pulsables: rellenan el campo
@@ -99,13 +102,18 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, 
   f.addEventListener("submit", (e) => {
     e.preventDefault();
     const dato = {};
-    for (const [clave, i] of Object.entries(entradas)) dato[clave] = i.value.trim() || null;
+    for (const [clave, i] of Object.entries(entradas)) {
+      const v = i.value.trim();
+      dato[clave] = v ? (CAMPOS_FECHA.includes(clave) ? fechaGuardada(v) : v) : null;
+    }
     if (idioma) dato.idioma = idioma.value;
     else if (extra.idiomaFijo) dato.idioma = extra.idiomaFijo;
     alEnviar(dato);
   });
   return f;
 }
+
+const NOMBRES_SECCION = { ...Object.fromEntries(SECCIONES), genero_puestos: "Género de los puestos", nombre: "Nombre" };
 
 async function cambiarPerfil(ruta, metodo, cuerpo) {
   avisar("Guardando…");
@@ -114,14 +122,18 @@ async function cambiarPerfil(ruta, metodo, cuerpo) {
     avisar(r.motivo, true);
     return;
   }
-  avisar(`Hecho: ya es la versión ${r.datos.version} de tu perfil.${r.datos.aviso ? ` ${r.datos.aviso}` : ""}`);
+  const c = r.datos.cambio;   // qué ha cambiado y dónde (RF-10.14e)
+  const donde = c ? ` Actualizado en ${NOMBRES_SECCION[c.campo] || c.campo}: ${c.valor}.` : "";
+  avisar(`Hecho: perfil actualizado.${donde}${r.datos.aviso ? ` ${r.datos.aviso}` : ""}`);
   await cargarPerfil();
 }
 
 // Su nombre: sale como título de «Tu CV completo» y de sus PDF. Sin nombre, «Añadir»; con él, «Modificar».
 function filaNombre(nombre) {
   const fila = nodo("div", null, "fila");
-  fila.append(nodo(nombre ? "p" : "p", nombre || "Sin nombre: añádelo para que salga en tu CV completo.", nombre ? "dato" : "suave"));
+  const texto = nodo("p", null, nombre ? "dato" : "suave");
+  texto.append(nodo("strong", `${CAMPOS.nombre[0][1]}: `), nombre || "aún sin escribir");
+  fila.append(texto);
   const abrir = nodo("button", nombre ? "Modificar" : "Añadir nombre", "secundario");
   abrir.type = "button";
   abrir.addEventListener("click", () => {
@@ -198,6 +210,7 @@ function dato(campoNombre, d, indice) {
   const acciones = nodo("div", null, "fila");
   const editar = nodo("button", "Modificar", "secundario");
   editar.type = "button";
+  editar.dataset.modificar = "1";
   const quitar = nodo("button", "Eliminar", "secundario");
   quitar.type = "button";
   const enviar = (nuevo) => cambiarPerfil("/api/perfil/datos", "PATCH",
@@ -253,7 +266,7 @@ function seccion(titulo, hijos, clave) {
   const ul = nodo("ul", null, "lista");
   ul.append(...hijos);
   s.append(ul);
-  if (AYUDA[clave] || (clave === "resumen" && !hijos.length)) s.append(botonAnadir(clave, ul));
+  if (AYUDA[clave] || clave === "experiencias" || (clave === "resumen" && !hijos.length)) s.append(botonAnadir(clave, ul));
   return s;
 }
 
@@ -265,6 +278,12 @@ function irASeccion(clave, anadir = false) {
   if (s.tagName === "DETAILS") { s.open = true; abiertas.add(clave); }
   s.scrollIntoView({ behavior: "smooth", block: "start" });
   if (anadir) s.querySelector(`[data-anadir="${clave}"]`)?.click();
+}
+
+// Abre la caja «Modificar» de esa experiencia (RF-10.14k).
+function corregirExperiencia(indice) {
+  irASeccion("experiencias");
+  document.querySelectorAll('#perfil [data-seccion="experiencias"] > ul > li')[indice]?.querySelector("[data-modificar]")?.click();
 }
 
 function corregirAviso(a) {
@@ -300,14 +319,39 @@ const elegirLongitud = (longitud) => pedirAvisos("/api/perfil/longitud", { longi
 const ETIQUETA_AVISO = { hueco: "Hueco", largo: "CV largo", sin_resumen: "Sin resumen",
                          sin_descripcion: "Sin descripción", sin_cifras: "Sin cifras", sin_contacto: "Sin contacto" };
 
+// «Añadir» en un hueco pregunta qué fue y abre Experiencia u «Otras actividades» (RF-10.14i).
+function preguntarTipoDeHueco(li, acciones) {
+  if (li.querySelector(".tipo-hueco")) return;
+  const caja = nodo("div", null, "fila tipo-hueco");
+  caja.append(nodo("span", TEXTOS.preguntaTipoHueco));
+  for (const [texto, clave] of [["Un empleo", "experiencias"], ["Otra cosa", "actividades"]]) {
+    const b = nodo("button", texto, "secundario");
+    b.type = "button";
+    b.addEventListener("click", () => irASeccion(clave, true));
+    caja.append(b);
+  }
+  li.insertBefore(caja, acciones);
+}
+
 // Mismo diseño que las preguntas: etiqueta, titular y acciones (la primera, destacada).
 function avisoFila(a) {
   const li = nodo("li", null, "tarjeta aviso-accion");
   li.append(nodo("span", ETIQUETA_AVISO[a.regla] || "Aviso", "estado apagado"));
   li.append(nodo("h3", a.texto));
+  if (a.regla === "sin_cifras") li.append(nodo("p", TEXTOS.ejemplosCifras, "suave"));   // RF-10.14k
   if (a.elementos.length > 1) {   // aviso agrupado: sus elementos debajo (RF-10.13)
     const ul = nodo("ul", null, "lista");
-    ul.append(...a.elementos.map((x) => nodo("li", x.texto, "suave")));
+    ul.append(...a.elementos.map((x) => {
+      const e = nodo("li", null, "fila");
+      e.append(nodo("span", x.texto, "suave"));
+      if (x.indice != null) {   // un «Corregir» por experiencia
+        const b = nodo("button", "Corregir", "secundario");
+        b.type = "button";
+        b.addEventListener("click", () => corregirExperiencia(x.indice));
+        e.append(b);
+      }
+      return e;
+    }));
     li.append(ul);
   }
   const acciones = nodo("div", null, "fila acciones-aviso");
@@ -322,7 +366,9 @@ function avisoFila(a) {
     boton("Mantener la longitud", () => elegirLongitud("mantener"));
     boton("Que Horma lo sintetice", () => elegirLongitud("sintetizar"));
   } else {
-    boton(a.seccion === "hueco" ? "Añadir" : "Corregir", () => corregirAviso(a));
+    const porElemento = a.elementos.length > 1 && a.elementos.every((x) => x.indice != null);   // cada uno tiene su «Corregir»
+    if (a.seccion === "hueco") boton("Añadir", () => preguntarTipoDeHueco(li, acciones));
+    else if (!porElemento) boton("Corregir", () => (a.elementos[0]?.indice != null ? corregirExperiencia(a.elementos[0].indice) : corregirAviso(a)));
     boton("Dar por visto", () => verAviso(a));
   }
   li.append(acciones);
@@ -354,7 +400,7 @@ const SECCION_DEL_MAESTRO = { "Resumen": "resumen", "Experiencia": "experiencias
 function pintarMaestro(perfil, maestro, creadoEn) {
   $("maestro").hidden = !maestro;
   if (!maestro) return;
-  $("maestro-meta").textContent = `Versión ${perfil.version} · ${fecha(creadoEn)}`;
+  $("maestro-meta").textContent = `Actualizado el ${fecha(creadoEn)}`;
   maestroActual = maestro;
 }
 
@@ -387,6 +433,11 @@ async function cargarPerfil() {
   const { perfil, construyendo, error, cv_maestro: maestro, creado_en: creadoEn } = r.datos;
   const estado = $("estado-perfil");
   estado.replaceChildren();
+  if (construyendo) leyendo = true;
+  else if (leyendo && perfil) {   // acaba de terminar: ahora sí el mensaje siguiente (RF-10.14n)
+    leyendo = false;
+    avisar("Listo: tu perfil está construido.");
+  }
   if (construyendo) {
     const activas = await api("/api/tareas/activas?tipo=perfilar");   // una sola barra, con su % (RF-10.8)
     const progreso = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0].progreso : 0;
@@ -406,7 +457,6 @@ async function cargarPerfil() {
   pintarMaestro(perfil, maestro, creadoEn);
 
   $("datos").hidden = false;
-  $("version").textContent = `versión ${perfil.version}`;
   const cont = $("perfil");
   cont.replaceChildren();
   cont.append(filaNombre(perfil.nombre));
@@ -425,16 +475,33 @@ async function cargarPerfil() {
     const t = perfil.taxonomia;
     cont.append(nodo("p", `Clasificación: ${etiqueta(t.sector)} · ${etiqueta(t.familia)} · ${etiqueta(t.nivel)}`, "suave"));
   }
+  let formacion = null;
   for (const [clave, titulo] of SECCIONES) {
     const valor = perfil[clave];
     const elementos = Array.isArray(valor) ? valor : valor ? [valor] : [];
     if (!elementos.length && !AYUDA[clave] && clave !== "resumen") continue;
     const esLista = Array.isArray(valor);
-    cont.append(seccion(titulo, elementos.map((d, i) => dato(clave, d, esLista ? i : null)), clave));
+    const bloque = seccion(titulo, elementos.map((d, i) => dato(clave, d, esLista ? i : null)), clave);
+    if (clave === "formacion") formacion = bloque;
+    // «Formación» reúne los títulos y, debajo, «Cursos y certificados» (RF-10.14g)
+    if (clave === "certificaciones" && formacion) formacion.append(bloque);
+    else cont.append(bloque);
+    if (clave === "resumen" && (perfil.resumenes || []).length > 1) cont.append(otrosResumenes(perfil.resumenes));
   }
   if (perfil.instrucciones_embebidas && perfil.instrucciones_embebidas.length) {
     cont.append(nodo("p", `Tu CV contenía ${perfil.instrucciones_embebidas.length} instrucción(es) dirigidas a una IA. Se han registrado y no se han ejecutado.`, "alerta"));
   }
+}
+
+// Un resumen por CV (RF-10.14d): se guardan todos y, al redactar un CV, Horma elige el que mejor encaja.
+function otrosResumenes(resumenes) {
+  const d = nodo("details", null, "leer");
+  d.append(nodo("summary", `Resumen de cada uno de tus CV (${resumenes.length})`));
+  d.append(nodo("p", TEXTOS.resumenesPorCv, "suave"));
+  const ul = nodo("ul", null, "lista");
+  ul.append(...resumenes.map((r) => nodo("li", r.valor)));
+  d.append(ul);
+  return d;
 }
 
 // --- CV subidos -----------------------------------------------------------------------------
@@ -467,7 +534,7 @@ function tarjetaCv(c) {
     await cargarEstilo();
   });
   const fila = nodo("div", null, "fila");
-  const descargar = nodo("a", "Descargar", "boton secundario");
+  const descargar = nodo("a", c.tipo === "docx" ? "Descargar original" : "Descargar", "boton secundario");
   descargar.href = `/api/cv/${c.id}/archivo`;
   const renombrar = nodo("button", "Cambiar nombre", "secundario");
   renombrar.type = "button";
@@ -494,12 +561,10 @@ function tarjetaCv(c) {
     li.append(f);
     i.focus();
   });
-  if (c.tipo !== "docx") {   // el navegador no muestra DOCX: solo se descargan
-    const ver = nodo("button", "Ver", "secundario");
-    ver.type = "button";
-    ver.addEventListener("click", () => abrirVisor(c));
-    fila.append(ver);
-  }
+  const ver = nodo("button", "Ver", "secundario");   // un DOCX no se muestra: se enseña su texto (RF-10.14c)
+  ver.type = "button";
+  ver.addEventListener("click", () => abrirVisor(c));
+  fila.append(ver);
   const papelera = nodo("button", null, "secundario icono");
   papelera.type = "button";
   papelera.title = "Eliminar CV";
@@ -529,7 +594,17 @@ function tarjetaCv(c) {
   return li;
 }
 
-function abrirVisor(c) {
+async function abrirVisor(c) {
+  if (c.tipo === "docx") {
+    const r = await api(`/api/cv/${c.id}/texto`);
+    if (!r.ok) return avisar(r.motivo, true);
+    const cuerpo = nodo("div");
+    cuerpo.append(nodo("p", r.datos.aviso, "suave"), nodo("pre", r.datos.texto, "cv-texto"));
+    $("visor-titulo").textContent = c.nombre;
+    $("visor-cuerpo").replaceChildren(cuerpo);
+    $("visor").showModal();
+    return;
+  }
   const marco = nodo("iframe", null, "visor-marco");
   marco.src = `/api/cv/${c.id}/ver`;
   marco.title = c.nombre;
@@ -561,8 +636,8 @@ async function enviarDocumento(archivo, clase) {
   if (!r.ok) return avisar(r.motivo, true);
   if (r.datos.duda) return preguntarClase(archivo);
   $("pregunta-clase").hidden = true;
-  avisar(r.datos.clase === "carta" ? "Carta subida; Horma la usará para aprender cómo escribes."
-                                   : "CV subido; se está construyendo tu perfil.");
+  // RF-10.14n: con un CV, solo la barra «Estamos leyendo tu CV»; el mensaje de «listo» llega al terminar.
+  avisar(r.datos.clase === "carta" ? "Carta subida; Horma la usará para aprender cómo escribes." : "");
   await cargarCvs();
   await cargarPerfil();
   await cargarEstilo();
@@ -614,11 +689,20 @@ function resumirEstilo(g) {
   const cont = nodo("div", null, "estilo-resumen");
   const vinetas = g.vinetas ? `; viñetas: ${g.vinetas.replace(/[.\s]+$/, "")}` : "";
   cont.append(nodo("p", `Escribes en registro ${g.registro}, en ${PERSONAS[g.persona] || g.persona}, con frases ${g.longitud_frase}s${vinetas}.`));
-  const corto = (titulo, lista) => {
-    const rasgos = lista.slice(0, MAX_RASGOS).map((r) => r.rasgo).join(", ");
-    return nodo("p", `${titulo}: ${rasgos || "—"}.`);
+  // Un rasgo por viñeta (RF-10.14l); «Evitas» vacío lo dice en lugar de dejar un guion.
+  const lista = (titulo, rasgos, vacio) => {
+    const caja = nodo("div");
+    caja.append(nodo("p", `${titulo}:`, "etiqueta-mono"));
+    if (!rasgos.length) {
+      caja.append(nodo("p", vacio, "suave"));
+      return caja;
+    }
+    const ul = nodo("ul", null, "lista");
+    ul.append(...rasgos.slice(0, MAX_RASGOS).map((r) => nodo("li", r.rasgo)));
+    caja.append(ul);
+    return caja;
   };
-  cont.append(corto("Usas", g.expresiones), corto("Evitas", g.evita));
+  cont.append(lista("Usas", g.expresiones, TEXTOS.usasVacio), lista("Evitas", g.evita, TEXTOS.evitasVacio));
   return cont;
 }
 
@@ -689,7 +773,7 @@ async function cargarEstilo() {
   $("estilo-editar").hidden = !e.guia || e.analizando;   // lo editado durante el análisis se perdería
   if (e.analizando) document.querySelector("#estilo form.editor")?.remove();
   if (e.analizando) $("estilo-estado").textContent = "Analizando tu estilo…";
-  else if (e.guia) $("estilo-estado").textContent = e.origen === "usuaria" ? "Guía editada por ti." : "Guía calculada por Horma; puedes editarla.";
+  else if (e.guia) $("estilo-estado").textContent = e.origen === "usuaria" ? "Editada por ti" : "Hecha por Horma";
   else $("estilo-estado").textContent = "Todavía no hay guía.";
   if (e.guia) pintarGuia(e.guia); else $("estilo-guia").replaceChildren();
   clearTimeout(esperaEstilo);

@@ -31,11 +31,16 @@ def _plano(linea: str) -> str:
     return "".join(c for c in t if not unicodedata.combining(c)).casefold().strip(" :•·-*#\t")
 
 
+def es_titulo_de_seccion(linea: str) -> bool:
+    """¿Es una línea corta que abre una sección de CV («Experiencia», «Formación»…)?"""
+    return len(linea.strip()) <= 40 and bool(_SECCION.match(_plano(linea)))
+
+
 def clasificar_documento(texto: str) -> Clase:
     lineas = [x.strip() for x in (texto or "").splitlines() if x.strip()]
     if len(lineas) < 3:
         return "duda"
-    secciones = sum(1 for x in lineas if len(x) <= 40 and _SECCION.match(_plano(x)))
+    secciones = sum(1 for x in lineas if es_titulo_de_seccion(x))
     periodos = len(_PERIODO.findall(texto))
     saludo = any(_SALUDO.match(x) for x in lineas[:8])
     despedida = any(_DESPEDIDA.match(x) for x in lineas[-6:])

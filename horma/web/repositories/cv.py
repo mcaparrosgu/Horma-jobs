@@ -54,3 +54,7 @@ def marcar_escrito_por_ella(s: Session, cv_id: int, valor: bool) -> bool:
 def cambiar_clase(s: Session, cv_id: int, clase: str) -> bool:
     return s.execute(text("update cv_archivos set clase = :c where id = :i"),
                      {"c": clase, "i": cv_id}).rowcount == 1
+
+
+def texto(s: Session, cv_id: int) -> str | None:
+    return s.execute(text("select texto from cv_archivos where id = :i"), {"i": cv_id}).scalar_one_or_none()

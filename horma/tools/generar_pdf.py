@@ -7,11 +7,16 @@ texto real, sin tablas ni imágenes (RF-10.4b):
   «puesto · empresa» en negrita con las fechas a la derecha, habilidades e idiomas en una línea.
 - `tipo="carta"`: solo párrafos, sin negritas ni secciones.
 
+Sin páginas sueltas (RF-10.14o): una sección no empieza al pie de una página ni deja una línea sola en la
+siguiente; si la última página sale con menos de tres líneas, se vuelve a componer algo más apretado.
+
 Usa `fpdf2` (Python puro). Si faltan las fuentes de la marca, cae a DejaVu Sans, que cubre Unicode."""
+import io
 import re
 from pathlib import Path
 
 from fpdf import FPDF
+from pypdf import PdfReader
 
 _FUENTES = Path(__file__).resolve().parent.parent / "assets" / "fuentes"
 _MARCAS = re.compile(r"\*\*|__|`")
@@ -54,7 +59,29 @@ def _fuentes(pdf: FPDF) -> tuple[str, str]:
     return "DejaVu", "DejaVu"
 
 
+_ESCALAS = (1.0, 0.97, 0.94, 0.91, 0.88)   # tamaños y espacios, de lo normal a lo más apretado
+_MIN_LINEAS_ULTIMA = 3
+
+
+def _lineas_de_la_ultima(contenido: bytes) -> tuple[int, int]:
+    """(páginas, líneas de texto de la última)."""
+    paginas = PdfReader(io.BytesIO(contenido)).pages
+    texto = paginas[-1].extract_text() or ""
+    return len(paginas), len([x for x in texto.splitlines() if x.strip()])
+
+
 def generar_pdf(markdown: str, titulo: str, tipo: str = "cv") -> bytes:
+    """Compone el PDF; si deja una última página con menos de tres líneas, lo recompone más apretado."""
+    resultado = b""
+    for escala in _ESCALAS:
+        resultado = _componer(markdown, titulo, tipo, escala)
+        paginas, lineas = _lineas_de_la_ultima(resultado)
+        if paginas == 1 or lineas >= _MIN_LINEAS_ULTIMA:
+            break
+    return resultado
+
+
+def _componer(markdown: str, titulo: str, tipo: str, k: float) -> bytes:
     pdf = FPDF(format="A4")
     pdf.set_title(titulo)
     pdf.set_margins(22, 20, 22)
@@ -66,18 +93,32 @@ def generar_pdf(markdown: str, titulo: str, tipo: str = "cv") -> bytes:
     def escribir(contenido: str, familia: str, estilo: str, tamano: float, color=_TINTA,
                  interlineado: float = 1.45, sangria: float = 0, antes: float = 0, despues: float = 0,
                  alinear: str = "L") -> None:
-        pdf.ln(antes)
+        tamano, antes, despues = tamano * k, antes * k, despues * k
         pdf.set_font(familia, estilo, tamano)
+        alto = tamano * 0.3528 * interlineado
+        lineas = len(pdf.multi_cell(ancho - sangria, alto, contenido, align=alinear, dry_run=True,
+                                    output="LINES"))
+        queda = int((pdf.page_break_trigger - pdf.get_y() - antes) // alto)
+        if lineas > 1 and queda < lineas and (queda < 2 or lineas - queda < 2):
+            pdf.add_page()   # ni una línea suelta al pie ni la última sola en la página siguiente
+            antes = 0
+        pdf.ln(antes)
         pdf.set_text_color(*color)
         pdf.set_x(pdf.l_margin + sangria)
-        pdf.multi_cell(ancho - sangria, tamano * 0.3528 * interlineado, contenido, align=alinear,
-                       new_x="LMARGIN", new_y="NEXT")
+        pdf.multi_cell(ancho - sangria, alto, contenido, align=alinear, new_x="LMARGIN", new_y="NEXT")
         pdf.ln(despues)
+
+    def reservar(alto_mm: float) -> bool:
+        """Si no caben `alto_mm` en la página, abre otra; así un título nunca queda solo al pie."""
+        if pdf.page_break_trigger - pdf.get_y() < alto_mm * k:
+            pdf.add_page()
+            return True
+        return False
 
     if tipo == "carta":
         _carta(markdown, texto, escribir)
     else:
-        _cv(markdown, pdf, ancho, texto, etiqueta, escribir)
+        _cv(markdown, pdf, ancho, texto, etiqueta, escribir, reservar, k)
     return bytes(pdf.output())
 
 
@@ -94,7 +135,7 @@ def _carta(markdown: str, texto: str, escribir) -> None:
         previa_en_blanco = False
 
 
-def _cv(markdown: str, pdf: FPDF, ancho: float, texto: str, etiqueta: str, escribir) -> None:
+def _cv(markdown: str, pdf: FPDF, ancho: float, texto: str, etiqueta: str, escribir, reservar, k: float) -> None:
     seccion = ""
     pendiente: list[str] = []   # habilidades e idiomas: todo en una línea
     nombre_visto = False
@@ -116,13 +157,14 @@ def _cv(markdown: str, pdf: FPDF, ancho: float, texto: str, etiqueta: str, escri
                 escribir(contenido, texto, "B", 24, interlineado=1.2, despues=1)
                 continue
             seccion = contenido.casefold()
-            pdf.ln(5)
+            if not reservar(32):   # el título y al menos dos líneas de lo que sigue
+                pdf.ln(5 * k)
             escribir(contenido.upper(), etiqueta, "B", 8.5, color=_TINTA, interlineado=1.2, despues=0.6)
             y = pdf.get_y()
             pdf.set_draw_color(*_LINEA)
             pdf.set_line_width(0.2)
             pdf.line(pdf.l_margin, y, pdf.l_margin + ancho, y)
-            pdf.ln(2.2)
+            pdf.ln(2.2 * k)
             continue
         if seccion in _EN_UNA_LINEA:
             m = _VINETA.match(linea)
@@ -140,26 +182,28 @@ def _cv(markdown: str, pdf: FPDF, ancho: float, texto: str, etiqueta: str, escri
         partes = [p.strip() for p in _limpio(linea).split(" · ")]
         if entera or len(partes) > 1:   # «puesto · empresa · fechas»: negrita y fechas a la derecha
             fecha = partes.pop() if len(partes) > 1 and _es_fecha(partes[-1]) else ""
-            _cabecera(pdf, ancho, " · ".join(partes), fecha, texto, etiqueta)
+            reservar(22)   # la cabecera de un puesto no se queda sola sin sus primeras viñetas
+            _cabecera(pdf, ancho, " · ".join(partes), fecha, texto, etiqueta, k)
         else:
             escribir(_limpio(linea), texto, "", 10, color=_TINTA, despues=1.2)
     volcar()
 
 
-def _cabecera(pdf: FPDF, ancho: float, izquierda: str, fecha: str, texto: str, etiqueta: str) -> None:
-    pdf.ln(1.8)
+def _cabecera(pdf: FPDF, ancho: float, izquierda: str, fecha: str, texto: str, etiqueta: str,
+              k: float = 1.0) -> None:
+    pdf.ln(1.8 * k)
     y0 = pdf.get_y()
-    pdf.set_font(etiqueta, "", 8.5)
+    pdf.set_font(etiqueta, "", 8.5 * k)
     ancho_fecha = pdf.get_string_width(fecha) + 1 if fecha else 0
-    pdf.set_font(texto, "B", 10.5)
+    pdf.set_font(texto, "B", 10.5 * k)
     pdf.set_text_color(*_TINTA)
     pdf.set_x(pdf.l_margin)
-    pdf.multi_cell(ancho - ancho_fecha - 3, 5, izquierda, new_x="LMARGIN", new_y="NEXT")
+    pdf.multi_cell(ancho - ancho_fecha - 3, 5 * k, izquierda, new_x="LMARGIN", new_y="NEXT")
     y1 = pdf.get_y()
     if fecha:
-        pdf.set_font(etiqueta, "", 8.5)
+        pdf.set_font(etiqueta, "", 8.5 * k)
         pdf.set_text_color(*_GRIS)
         pdf.set_xy(pdf.l_margin + ancho - ancho_fecha, y0)
-        pdf.cell(ancho_fecha, 5, fecha, align="R")
+        pdf.cell(ancho_fecha, 5 * k, fecha, align="R")
         pdf.set_y(y1)
     pdf.ln(0.6)

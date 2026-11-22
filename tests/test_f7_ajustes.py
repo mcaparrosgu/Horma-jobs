@@ -163,9 +163,7 @@ def test_perfil_en_el_orden_de_p3_con_el_texto_de_p4():
     assert 'id="pendientes" class="panel-desplegado"' in html and "<details id=\"estilo\"" in html
     assert 'id="estilo" class="panel-desplegado" hidden>' in html
     assert "open" not in html.split('id="estilo"')[1][:60]
-    assert ("<strong>Horma escribe tus CV y cartas con lo que ves aquí.</strong> Si corriges algo, "
-            "Horma usará tu corrección aunque tu CV original diga otra cosa. Tu CV original no se toca: "
-            "se queda tal como lo subiste.") in html
+    assert 'data-explicacion="perfil"' in html   # el texto vive en la ayuda «?» (RF-10.14m)
     assert 'id="n-pendientes"' in html
 
 
@@ -180,8 +178,8 @@ def test_estilo_es_un_parrafo_corto_sin_ver_detalle():
     """Fase 7 · T18 (RF-7.5c): frase de tono, «Usas: …» y «Evitas: …» con 5 como máximo, sin detalle."""
     js = leer("perfil.js")
     assert "function resumirEstilo" in js and "MAX_RASGOS = 5" in js
-    assert "lista.slice(0, MAX_RASGOS)" in js and '.join(", ")' in js
-    assert '`${titulo}: ' in js and '"Usas"' in js and '"Evitas"' in js
+    assert "rasgos.slice(0, MAX_RASGOS)" in js and '"ul"' in js   # S8 (RF-10.14l): una viñeta por rasgo
+    assert '"Usas"' in js and '"Evitas"' in js and "TEXTOS.evitasVacio" in js
     assert "Ver detalle" not in js and "function rasgos(" not in js
     assert "Editar guía" in leer("perfil.html") and "Volver a analizar mi estilo" in leer("perfil.html")
 

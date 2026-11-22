@@ -70,4 +70,4 @@ def test_no_hay_boton_subir_cv_y_el_cambio_del_archivo_sube():
     assert "Subir CV</button>" not in html and 'id="escrito-por-ella"' not in html
     assert 'id="clase-cv"' not in html
     assert '$("archivo").addEventListener("change"' in js
-    assert '$("archivo"), $("archivo-nombre"), "fuente")' in js
+    assert '$("archivo"), $("archivo-nombre"))' in js   # la clase se detecta sola (RF-10.14b)

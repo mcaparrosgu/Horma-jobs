@@ -27,45 +27,6 @@ function tonoDe(texto) {
   return `tono-${h}`;
 }
 
-// --- Ayuda «?»: globo propio con clic o foco, Escape y clic fuera (RF-6.7b) -----------------------
-function cerrarAyudas(salvo = null) {
-  for (const b of document.querySelectorAll("button.ayuda[aria-expanded='true']")) {
-    if (b === salvo) continue;
-    b.setAttribute("aria-expanded", "false");
-    document.getElementById(b.getAttribute("aria-describedby")).hidden = true;
-  }
-}
-document.addEventListener("click", (e) => cerrarAyudas(e.target.closest("button.ayuda")));
-document.addEventListener("keydown", (e) => {
-  if (e.key !== "Escape") return;
-  const abierta = document.querySelector("button.ayuda[aria-expanded='true']");
-  cerrarAyudas();
-  if (abierta) abierta.focus();
-});
-
-function ayuda(nombre, texto, i) {
-  const q = nodo("button", "?", "ayuda");
-  q.type = "button";
-  q.setAttribute("aria-label", `Qué significa «${nombre}»`);
-  q.setAttribute("aria-expanded", "false");
-  const globo = nodo("span", texto, "ayuda-globo");
-  globo.id = `ayuda-${i}`;
-  globo.hidden = true;
-  q.setAttribute("aria-describedby", globo.id);
-  q.addEventListener("click", () => {
-    const abrir = globo.hidden;
-    globo.hidden = !abrir;
-    q.setAttribute("aria-expanded", String(abrir));
-  });
-  q.addEventListener("focusout", (e) => {
-    if (!globo.contains(e.relatedTarget)) {
-      globo.hidden = true;
-      q.setAttribute("aria-expanded", "false");
-    }
-  });
-  return [q, globo];
-}
-
 function cabeceras() {
   const fila = $("cabeceras");
   AYUDA.forEach(([nombre, texto], i) => {

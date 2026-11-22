@@ -39,6 +39,19 @@ const TEXTOS = {
   sinCompatibilidad: "Sin compatibilidad",
   sinPerfil: "Sube tu CV para ver qué ofertas encajan contigo",
   sinPerfilBoton: "Subir mi CV",
+  usasVacio: "Aún no lo sabemos.",
+  evitasVacio: "Aún no lo sabemos: sube una carta tuya.",   // RF-10.14l
+  // Explicaciones de cada bloque, dentro de su ayuda «?» (RF-10.14m)
+  explicaciones: {
+    perfil: "Con estos datos Horma escribe tus CV y cartas. Si corriges algo, Horma usa tu corrección; el CV que subiste no cambia. Cada dato dice de dónde sale. Al corregir, las compatibilidades y candidaturas que ya tenías se marcan como «desfasadas»: se hicieron con tus datos de antes.",
+    estilo: "Horma escribe tus CV y cartas imitando cómo escribes. Esta guía sale de tus documentos; pesan más los que marcas «Lo escribí yo». Si la editas, manda lo tuyo.",
+    ofertas: "Compatibilidad: un número de 0 a 100 de lo bien que encaja la oferta con tu perfil; orienta, no decide. «Sin compatibilidad»: la oferta aún no la tiene; Horma la calcula sola. Cambiar el orden o lo que se muestra no gasta nada. «Descartar» aparta una oferta sin borrarla. Despliega la fila para ver por qué.",
+    candidaturas: "Tus candidaturas, por estado. Se crean desde Ofertas con «Preparar candidatura». Horma prepara el CV y la carta; tú los revisas, los apruebas y los envías.",
+    candidatura: "Horma prepara el CV y la carta para esta oferta con lo que dice tu perfil; tú los revisas, los corriges, los apruebas y los envías.",
+  },
+  ejemplosCifras: "Un logro medible no tiene por qué ser de ventas: mesas o cubiertos por servicio, aforo, caja diaria, personas formadas, temporadas repetidas, ascensos, idiomas con los que atendías.",   // RF-10.14k
+  preguntaTipoHueco: "¿Fue un empleo u otra cosa?",   // RF-10.14i
+  resumenesPorCv: "Horma guarda el resumen de cada CV. Tu CV completo usa el del más reciente; al redactar un CV para una oferta, elige el que mejor encaja.",   // RF-10.14d
   preguntaClase: "No sabemos si este documento es un CV o una carta. ¿Cuál es?",   // RF-10.14b
   confirmarEliminarCv: "¿Eliminar este CV? Rehacemos tu perfil sin él. No se puede deshacer.",   // RF-10.14
   listaVaciaPorPuestos: "Ninguna oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta.",   // RF-10.14q

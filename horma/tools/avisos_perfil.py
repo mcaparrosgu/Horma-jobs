@@ -21,6 +21,7 @@ class Aviso:
     huella: str
     texto: str
     seccion: str  # dónde se corrige: «cv», «resumen», «experiencia» o «cv_fuente»
+    indice: int | None = None  # en «experiencia»: posición de la experiencia en el perfil (RF-10.14k)
 
 
 def _hash(*partes: str) -> str:
@@ -39,21 +40,21 @@ def avisos_perfil(perfil: Perfil, cv_maestro: str = "",
         avisos.append(Aviso("largo", _hash(str(round(palabras, -2))),
                             "Tu CV maestro tiene más de 1.000 palabras; un CV de selección "
                             "suele quedarse por debajo.", "cv"))
-    if perfil.resumen is None:
+    if perfil.resumen is None and not perfil.resumenes:   # solo si ningún CV lo tiene (RF-10.14d)
         avisos.append(Aviso("sin_resumen", _hash("sin_resumen"),
                             "Tu perfil no tiene resumen: tres líneas sobre quién eres y qué buscas.",
                             "resumen"))
-    for x in perfil.experiencias:
+    for i, x in enumerate(perfil.experiencias):
         nombre = " · ".join(p for p in (x.puesto, x.empresa) if p)
         clave = f"{normalizar(x.puesto)}|{normalizar(x.empresa)}"
         descripcion = (x.descripcion or "").strip()
         if not descripcion:
             avisos.append(Aviso(f"sin_descripcion:{clave}", _hash(clave),
-                                f"«{nombre}» no tiene descripción: cuenta qué hacías.", "experiencia"))
+                                f"«{nombre}» no tiene descripción: cuenta qué hacías.", "experiencia", i))
         elif not _con_cifras(descripcion):
             avisos.append(Aviso(f"sin_cifras:{clave}", _hash(descripcion),
                                 f"«{nombre}» no tiene ninguna cifra: un dato concreto (clientes, "
-                                "porcentajes, tamaño del equipo) convence más.", "experiencia"))
+                                "porcentajes, tamaño del equipo) convence más.", "experiencia", i))
     for cv_id, texto in (textos_cv or {}).items():
         if not (_CORREO.search(texto) or _TELEFONO.search(texto)):
             avisos.append(Aviso(f"sin_contacto:{cv_id}", _hash(texto),

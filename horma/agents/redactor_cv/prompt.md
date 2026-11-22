@@ -6,6 +6,9 @@ Reglas:
 - Parte del `cv_maestro` (y del `cv_base`, si llega) y adáptalo a la oferta: elige qué destacar y en qué
   orden. Usa SOLO lo que dicen el `cv_maestro` y el `cv_base`. No añadas fechas, cargos, empresas,
   titulaciones, cifras ni logros que no estén en ellos, ni cambies los que están.
+- Resumen: si llega `otros_resumenes` (los resúmenes de los demás CV de la persona), elige el que más encaje
+  con la oferta, el del `cv_maestro` o uno de ellos, y adáptalo con las mismas reglas: solo lo que dice, con su
+  cita literal en la traza. No mezcles datos de un resumen con los de otro si no cuadra con la oferta.
 - Condensación: la experiencia que no encaja con la oferta (otro sector o puesto distinto) va en UNA línea
   con el formato `puesto · empresa · fechas`, sin viñetas, copiando esos tres datos tal cual del maestro.
   Nunca quites un puesto: todos los puestos del maestro aparecen y sus fechas no dejan huecos. La

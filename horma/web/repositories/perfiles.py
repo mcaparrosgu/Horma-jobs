@@ -101,8 +101,8 @@ def _origenes(perfil: Perfil) -> list[tuple[str, str]]:
         dato = getattr(perfil, campo)
         if dato:
             salida.append((campo, dato.origen.fragmento))
-    for campo in ("experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",
-                  "actividades", "otros"):
+    for campo in ("resumenes", "titulares", "experiencias", "formacion", "idiomas", "habilidades", "proyectos",
+                  "certificaciones", "actividades", "otros"):
         for i, x in enumerate(getattr(perfil, campo)):
             salida.append((f"{campo}.{i}", x.origen.fragmento))
     return salida

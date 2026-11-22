@@ -68,7 +68,7 @@ def test_flujo_correr_perfilar_con_un_cv_en_markdown_guarda_la_traza(tmp_path):
     perfil = json.loads((tmp_path / "perfil.json").read_text(encoding="utf-8"))
     assert perfil["experiencias"][0]["puesto"] == "Camarera"
     assert sorted(p.name for p in traza.iterdir())[0] == "01-extraer.json"
-    assert len(list(traza.iterdir())) == 6  # un JSON por paso
+    assert len(list(traza.iterdir())) == 7  # un JSON por paso (S8 añade conservar_usuaria)
 
 
 def test_flujo_correr_perfilar_acepta_un_docx_y_rechaza_un_archivo_falso(tmp_path):
