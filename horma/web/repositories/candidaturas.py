@@ -32,9 +32,11 @@ def cerrada_previa(s: Session, oferta_id: int) -> dict | None:
     return dict(f) if f else None
 
 
-def crear(s: Session, usuaria_id: int, oferta_id: int) -> int:
-    return s.execute(text("insert into candidaturas (usuaria_id, oferta_id) values (:u, :o) returning id"),
-                     {"u": usuaria_id, "o": oferta_id}).scalar_one()
+def crear(s: Session, usuaria_id: int, oferta_id: int, informacion: str | None = None) -> int:
+    """`informacion`: lo que ella añadió al corregir la explicación de esa oferta (RF-10.15b). Queda fija."""
+    return s.execute(text("insert into candidaturas (usuaria_id, oferta_id, informacion) "
+                          "values (:u, :o, :i) returning id"),
+                     {"u": usuaria_id, "o": oferta_id, "i": informacion}).scalar_one()
 
 
 def tablero(s: Session) -> list[dict]:

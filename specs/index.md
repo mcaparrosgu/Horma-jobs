@@ -46,7 +46,8 @@ Formato: carpeta — qué es. **Estado.**
   - **S8 (correcciones de la pasada del 22-nov): construida** en `simplificacion-s8` (T38-T49, T54-T67), sin PR.
     El eval `cv` real pasó (22-nov, 33/33, 1,74 USD) y la prueba de cierre Q pasó por DOM/API (T50). Faltan lo visual
     (1280/390 px, claro/oscuro) que mira Mar y el PR.
-  - **S9 («Corregir explicación» amplía la información): spec firmada** el 22-nov; sin construir (T51-T53, T68).
+  - **S9 («Corregir explicación» amplía la información): construida y probada por DOM/API** (23-nov: suite verde, R1-R9) en `simplificacion-s9` (T51-T53), sin PR; faltan lo visual de Mar (R3-R5, R10) y el PR (T68).
+    Falta T68: migración `0029`, suite con base de datos, navegador y la prueba de Mar (sección R).
   - **S10 (subir varios documentos a la vez): sin spec** (T69). Con ella se cierra la fase 10.
 
 ## Lo que viene, en este orden

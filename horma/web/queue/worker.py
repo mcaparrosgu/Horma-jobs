@@ -346,6 +346,7 @@ class _Candidatura:
                 "cvs_base": (repo_candidaturas.cv_base_para_flujo(s)
                              if ajustes().horma_cv_base_respaldo else []),
                 "longitud_cv": repo_perfiles.longitud_cv(s),
+                "informacion_usuaria": c["informacion"],   # RF-10.15b: la que tenía al crearse
                 "guia_estilo": guia["guia"] if guia else None}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:

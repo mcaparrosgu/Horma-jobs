@@ -5,7 +5,7 @@ import json
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from horma.schemas.perfil import Perfil
+from horma.schemas.perfil import CAMPO_PROPUESTA, Perfil
 from horma.schemas.preferencias import MAX_LARGO_TERMINO, MAX_TERMINOS, Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.comparar_versiones import comparar_versiones
@@ -76,6 +76,8 @@ def lo_de_la_usuaria(s: Session, usuaria_id: int) -> dict | None:
         if datos[c] and datos[c]["origen"]["fuente"] == "usuaria":
             suyo[c] = datos[c]
     suyo["nombre"], suyo["genero_puestos"] = datos.get("nombre"), datos.get("genero_puestos")
+    # Lo que propuso guardar y aún no ha confirmado sigue en «Por resolver» (RF-10.15d).
+    suyo["propuestas"] = [p for p in datos["preguntas_pendientes"] if p["campo"] == CAMPO_PROPUESTA]
     return suyo
 
 
@@ -132,6 +134,13 @@ def guardar_perfil(s: Session, usuaria_id: int, perfil_id: int, perfil: Perfil,
         s.execute(text("insert into origen (usuaria_id, entidad, entidad_id, campo, fragmento) "
                        "values (:u, 'perfil', :i, :c, :f)"),
                   {"u": usuaria_id, "i": perfil_id, "c": campo, "f": fragmento})
+
+
+def guardar_pendientes(s: Session, perfil_id: int, pendientes: list[dict]) -> None:
+    """Cambia solo «Por resolver» de una versión, sin crear otra: añadir o descartar una propuesta de la
+    usuaria no toca ningún dato del perfil (RF-10.15d)."""
+    s.execute(text("update perfiles set preguntas_pendientes = cast(:p as jsonb) where id = :i"),
+              {"i": perfil_id, "p": _j(pendientes)})
 
 
 def marcar_error_perfil(s: Session, perfil_id: int, motivo: str) -> None:

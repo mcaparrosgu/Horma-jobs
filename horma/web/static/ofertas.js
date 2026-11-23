@@ -61,23 +61,69 @@ function formularioCorreccion(o, alTerminar) {
   motivo.maxLength = 1000;
   motivo.required = true;
   motivo.placeholder = "¿Qué no encaja? (por ejemplo: «la oferta pide carné de conducir y yo no lo tengo»)";
+  const informacion = nodo("textarea");   // RF-10.15: lo que no consta en su CV y vale para esta oferta
+  informacion.rows = 3;
+  informacion.maxLength = 1000;
+  informacion.placeholder = TEXTOS.informacionAyuda;
+  informacion.value = o.correccion?.informacion || "";   // enviar otra corrección no borra la que ya había
   const enviar = nodo("button", "Enviar corrección");
   const cancelar = nodo("button", "Cancelar", "secundario");
   cancelar.type = "button";
   cancelar.addEventListener("click", () => alTerminar(false));
   const fila = nodo("div", null, "fila");
   fila.append(enviar, cancelar);
-  f.append(campo(TEXTOS.corregirNota, valor), campo("Motivo", motivo), fila);
+  f.append(nodo("p", TEXTOS.corregirAyuda, "suave"), campo(TEXTOS.corregirNota, valor), campo("Motivo", motivo),
+           campo(TEXTOS.informacionNueva, informacion), fila);
   f.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const cuerpo = { comentario: motivo.value.trim(), nota: valor.value === "" ? null : Number(valor.value) };
+    const cuerpo = { comentario: motivo.value.trim(), nota: valor.value === "" ? null : Number(valor.value),
+                     informacion: informacion.value.trim() || null };
     const r = await api(`/api/matches/${o.id}/correccion`, { metodo: "POST", cuerpo });
     if (!r.ok) return avisar(r.estado === 422 ? TEXTOS.correccionRango : r.motivo, true);
     avisar(TEXTOS.correccionGuardada);
     o.correccion = r.datos;
-    alTerminar(true);
+    alTerminar(true, r.datos.informacion);
   });
   return f;
+}
+
+// Tras enviar la corrección con información (RF-10.15c): ¿guardarla también en el perfil? «Sí» la deja en
+// «Por resolver» de Perfil como propuesta; nada entra en el perfil hasta que ella la confirme allí.
+function preguntaGuardarEnPerfil(o) {
+  const caja = nodo("div", null, "editor");
+  caja.setAttribute("role", "group");
+  const texto = nodo("p", TEXTOS.guardarEnPerfil);
+  const si = nodo("button", TEXTOS.guardarEnPerfilSi);
+  const no = nodo("button", TEXTOS.guardarEnPerfilNo, "secundario");
+  si.type = "button";
+  no.type = "button";
+  const fila = nodo("div", null, "fila");
+  fila.append(si, no);
+  caja.append(texto, fila);
+  const cerrar = (mensaje, enlace) => {
+    texto.textContent = mensaje;
+    fila.replaceChildren();
+    if (enlace) {
+      const a = nodo("a", TEXTOS.guardarEnPerfilEnlace);
+      a.href = "/perfil";
+      fila.append(a);
+    }
+  };
+  si.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    si.disabled = true;
+    const r = await api(`/api/matches/${o.id}/informacion/perfil`, { metodo: "POST" });
+    if (!r.ok) {
+      si.disabled = false;
+      return avisar(r.motivo, true);
+    }
+    cerrar(TEXTOS.guardarEnPerfilHecho, true);
+  });
+  no.addEventListener("click", (e) => {
+    e.stopPropagation();
+    cerrar(TEXTOS.soloEstaOferta, false);
+  });
+  return caja;
 }
 
 // «Preparar candidatura» (RF-3.7b): crea la candidatura y lleva a ella.
@@ -199,6 +245,7 @@ function detalle(o) {
       const c = o.correccion;
       const propuesta = c.nota !== null && c.nota !== undefined ? TEXTOS.propuesta(c.nota) : "";
       izq.append(nodo("p", `Tu corrección${propuesta}: ${c.comentario}`, "origen"));
+      if (c.informacion) izq.append(nodo("p", TEXTOS.informacionTuya(c.informacion), "origen"));
     }
   };
   pintar();
@@ -216,10 +263,11 @@ function detalle(o) {
     corregir.addEventListener("click", (e) => {
       e.stopPropagation();
       corregir.hidden = true;
-      const f = formularioCorreccion(o, (guardada) => {
+      const f = formularioCorreccion(o, (guardada, informacion) => {
         if (guardada) pintar();
         f.remove();
         corregir.hidden = false;
+        if (guardada && informacion) izq.append(preguntaGuardarEnPerfil(o));
       });
       izq.append(f);
     });
