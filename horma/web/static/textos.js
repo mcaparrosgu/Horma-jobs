@@ -66,8 +66,9 @@ const TEXTOS = {
   cartaEliminada: "Carta eliminada.",
   listaVaciaPorPuestos: "Ninguna oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta.",   // RF-10.14q
   anadidaPorTi: "Añadida por ti",
+  corregirMotivo: "¿En qué nos hemos equivocado? Corrígenos (opcional)",
   corregirNota: "Compatibilidad que te parece justa (opcional)",
-  correccionRango: "La compatibilidad va de 0 a 100 y el motivo no puede estar vacío.",
+  correccionRango: "La compatibilidad va de 0 a 100 y si no rellenas nada más, escribe al menos un motivo o información nueva.",
   correccionGuardada: "Corrección guardada. Gracias.",
   // «Corregir explicación» con información nueva (RF-10.15 a 10.15e)
   corregirAyuda: "La compatibilidad que propones y el motivo los revisa el equipo de Horma y no cambian la compatibilidad. La información nueva solo se usa en las candidaturas nuevas de esta oferta. Tu perfil no cambia hasta que tú lo confirmes.",

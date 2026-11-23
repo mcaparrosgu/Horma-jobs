@@ -59,7 +59,6 @@ function formularioCorreccion(o, alTerminar) {
   const motivo = nodo("textarea");
   motivo.rows = 3;
   motivo.maxLength = 1000;
-  motivo.required = true;
   motivo.placeholder = "¿Qué no encaja? (por ejemplo: «la oferta pide carné de conducir y yo no lo tengo»)";
   const informacion = nodo("textarea");   // RF-10.15: lo que no consta en su CV y vale para esta oferta
   informacion.rows = 3;
@@ -72,7 +71,7 @@ function formularioCorreccion(o, alTerminar) {
   cancelar.addEventListener("click", () => alTerminar(false));
   const fila = nodo("div", null, "fila");
   fila.append(enviar, cancelar);
-  f.append(nodo("p", TEXTOS.corregirAyuda, "suave"), campo(TEXTOS.corregirNota, valor), campo("Motivo", motivo),
+  f.append(nodo("p", TEXTOS.corregirAyuda, "suave"), campo(TEXTOS.corregirNota, valor), campo(TEXTOS.corregirMotivo, motivo),
            campo(TEXTOS.informacionNueva, informacion), fila);
   f.addEventListener("submit", async (e) => {
     e.preventDefault();

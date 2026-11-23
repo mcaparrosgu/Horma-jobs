@@ -246,7 +246,7 @@ Diagnóstico hecho con Opus sobre los datos de la pasada (usuaria 100, perfiles 
     `opciones`), sin cambiar el esquema que ve el modelo. Endpoint: `POST /api/matches/{id}/informacion/perfil`.
     Se confirma con `POST /api/perfil/respuestas` más `campo` (experiencias, habilidades, formacion u otros);
     descartarla la quita sin crear versión. Al rehacer el perfil (subir o borrar un CV) las propuestas se conservan.
-  - El motivo de la corrección sigue siendo obligatorio. La ayuda dice «el equipo de Horma», no «Mar» (RF-10.2d).
+  - El motivo de la corrección es opcional («¿En qué nos hemos equivocado? Corrígenos (opcional)», 23-nov): basta con rellenar uno de motivo, compatibilidad o información nueva. La ayuda dice «el equipo de Horma», no «Mar» (RF-10.2d).
 - **Tests:** la información llega al redactor en una candidatura nueva y no en una anterior; «No» no toca
   `por_resolver`; «Sí» añade la propuesta y el perfil no cambia de versión hasta confirmarla.
 
