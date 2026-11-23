@@ -85,7 +85,7 @@ Con Sonnet, todas seguidas, en la misma rama. Solo T17 llama al modelo, con el O
     filas pinta «Total» con las sumas y las medias ponderadas; sin filas, sin «Total».
   - **Navegador:** Perfil, Preferencias y Costes a 1280 y 390 px, en claro y en oscuro.
 - [x] T21 — Prueba manual del bloque G.
-  - **Qué se hace:** añadir a `docs/plan-pruebas-007.md` solo los pasos de P9-P13; Mar los recorre y firma. *(recorrida y firmada por Mar el 20-nov)*
+  - **Qué se hace:** añadir al plan de pruebas manual (retirado) solo los pasos de P9-P13; Mar los recorre y firma. *(recorrida y firmada por Mar el 20-nov)*
 
 - [x] T14 — Prueba manual de Mar. *(hecha el 20-nov; de ella salieron P9-P14)*
   - **Test:** Mar recorre los criterios de aceptación de la spec y firma.

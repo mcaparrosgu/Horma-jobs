@@ -8,7 +8,8 @@ import unicodedata
 from horma.tools.clasificar_documento import es_titulo_de_seccion
 
 _TITULOS_RESUMEN = ("resumen", "perfil", "sobre mi", "objetivo profesional", "extracto")
-_CONTACTO = re.compile(r"@|https?://|www\.|\+?\d[\d \-.]{6,}|nacimiento|nacionalidad|carnet|carn[eé]", re.IGNORECASE)
+_CONTACTO = re.compile(r"@|https?://|www\.|\+?\d[\d \-.]{6,}|nacimiento|nacionalidad|carnet|carn[eé]",
+                       re.IGNORECASE)
 _MAX_TITULAR = 90
 _MAX_RESUMEN = 1200
 

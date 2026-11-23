@@ -1,5 +1,6 @@
-"""S8 · T60: «No consta en tu CV» (RF-10.13) solo dice lo que de verdad falta. Salió de la pasada del 22-nov (J1, I5):
-el CV de Irene tenía CoverManager, sumillería, inglés B2 y más de cinco años en sala, y el aviso los negaba."""
+"""S8 · T60: «No consta en tu CV» (RF-10.13) solo dice lo que de verdad falta. Salió de la pasada del
+22-nov (J1, I5): el CV de Irene tenía CoverManager, sumillería, inglés B2 y más de cinco años en sala,
+y el aviso los negaba."""
 import pytest
 
 from horma.tools.medir_ats import medir_ats
@@ -68,12 +69,15 @@ def test_el_nivel_de_idioma_pide_igual_o_mayor():
 
 
 def test_plural_de_palabras_cortas():
-    assert _huecos("Conocimientos de vino") == [] and _huecos("Atención de mesas", fuentes="Atención de mesa") == []
+    assert _huecos("Conocimientos de vino") == []
+    assert _huecos("Atención de mesas", fuentes="Atención de mesa") == []
 
 
 def test_requisito_con_punto_y_coma_se_respalda_con_una_de_las_partes():
-    """Q5 (22-nov): el CV de la candidatura 19 tiene «Curso de sumillería básica» pero no la palabra «vino»."""
-    cv = "## Certificaciones\nCurso de sumillería básica (40 horas) · Asociación Valenciana de Sumilleres · 2017\n"
+    """Q5 (22-nov): el CV de la candidatura 19 tiene «Curso de sumillería básica» pero no la palabra
+    «vino»."""
+    cv = ("## Certificaciones\nCurso de sumillería básica (40 horas) · "
+          "Asociación Valenciana de Sumilleres · 2017\n")
     req = "Conocimientos de vino; se valorará formación en sumillería"
     assert medir_ats(cv, _oferta(req), [cv])["ausentes_sin_origen"] == []
     assert medir_ats(cv, _oferta("Conocimientos de cata; se valorará formación en cocina"), [cv])[

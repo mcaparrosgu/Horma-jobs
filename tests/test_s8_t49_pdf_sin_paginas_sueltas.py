@@ -1,4 +1,5 @@
-"""S8, T49: el PDF no deja páginas sueltas (RF-10.14o) y Perfil no enseña dos mensajes a la vez (RF-10.14n)."""
+"""S8, T49: el PDF no deja páginas sueltas (RF-10.14o) y Perfil no enseña dos mensajes a la vez
+(RF-10.14n)."""
 import io
 from pathlib import Path
 
@@ -16,7 +17,8 @@ def _maestro(n_puestos: int, viñetas: int = 4) -> str:
               "Comunidad Valenciana, con equipos de hasta ocho personas.", "", "## Experiencia"]
     for i in range(n_puestos):
         partes.append(f"Jefa de sala · Restaurante {i} · {2000 + i}-{2001 + i}")
-        partes += [f"Coordiné un equipo de {i + 3} personas y organicé los turnos de cada semana." for _ in range(viñetas)]
+        partes += [f"Coordiné un equipo de {i + 3} personas y organicé los turnos de cada semana."
+                   for _ in range(viñetas)]
     partes += ["", "## Formación", "Grado Superior en Administración · IES Valencia · 2021-2023", "",
                "## Idiomas", "Inglés B2", "Francés A2"]
     return "\n".join(partes)

@@ -65,7 +65,8 @@ def test_borrar_uno_de_dos_encola_perfilar_solo_con_el_otro(motor_app, bd_limpia
     assert all(x.origen.cv_id == b for x in p.experiencias)
 
 
-def test_borrar_el_ultimo_deja_sin_perfil_y_las_candidaturas_siguen(motor_app, bd_limpia, tmp_path, monkeypatch):
+def test_borrar_el_ultimo_deja_sin_perfil_y_las_candidaturas_siguen(
+        motor_app, bd_limpia, tmp_path, monkeypatch):
     u, _ = _usuarias(motor_app)
     a = _con_archivo(motor_app, u, "A", CV, tmp_path, monkeypatch)
     _construir(motor_app, u, (a, CV, "Camarera", "Bar Sol"))
@@ -107,11 +108,14 @@ def test_la_confirmacion_trae_el_texto_nuevo():
     assert "TEXTOS.confirmarEliminarCv" in js and "ya construido no cambia" not in js
 
 
-def test_eliminar_una_carta_o_el_ultimo_cv_se_dice_en_su_idioma():   # T62: el diálogo y el aviso no valen para todo
+# T62: el diálogo y el aviso no valen para todo
+def test_eliminar_una_carta_o_el_ultimo_cv_se_dice_en_su_idioma():
     textos = (ESTATICOS / "textos.js").read_text(encoding="utf-8")
     js = (ESTATICOS / "perfil.js").read_text(encoding="utf-8")
-    assert "¿Eliminar esta carta? No se puede deshacer." in textos and 'cartaEliminada: "Carta eliminada."' in textos
+    assert "¿Eliminar esta carta? No se puede deshacer." in textos
+    assert 'cartaEliminada: "Carta eliminada."' in textos
     assert "Borramos tu perfil" in textos and "Se ha borrado tu perfil" in textos
-    for clave in ("confirmarEliminarCarta", "confirmarEliminarUltimoCv", "cartaEliminada", "ultimoCvEliminado"):
+    for clave in ("confirmarEliminarCarta", "confirmarEliminarUltimoCv", "cartaEliminada",
+                  "ultimoCvEliminado"):
         assert f"TEXTOS.{clave}" in js
     assert 'avisar("CV eliminado.")' not in js and "Eliminar la carta" in js

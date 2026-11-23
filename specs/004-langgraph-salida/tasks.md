@@ -252,15 +252,15 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
   - **Verificación:** **la firma de Mar (hecha el 17-nov).**
   - **Cubre:** RF-4.8b.
 - [x] T24 — Prueba final de Mar. *(firmada por Mar el 17-nov; los 5 casos los recorrió Claude con el modelo real)*
-  - **Qué se hace:** 5 CV inventados en `pruebas-manuales/fase4/` y `docs/plan-pruebas-fase4.md`
-    (gitignorado) con los 5 casos que cubren todas las opciones (ver el plan). Mar los ajusta, hace la
+  - **Qué se hace:** 5 CV inventados y un plan de pruebas manual
+    (gitignorados, retirados) con los 5 casos que cubren todas las opciones (ver el plan). Mar los ajusta, hace la
     prueba y anota lo que falle. Lo que falle se corrige en esta tarea o se anota en la bitácora.
   - **Hecho el 17-nov (Claude, por la API y la consola):** todo coincide con lo esperado salvo tres falsos
     avisos, corregidos con test (`tests/test_f4_t24_falsos_avisos.py`, commit 5444ff6): F1 «Se valora
     experiencia previa» salía como hueco (`medir_ats`); F2 la carta avisaba de datos que sí estaban en el CV
     (`verificar_trazabilidad`); F3 «idioma extranjero» activaba el aviso de nacionalidad
     (`rasgos_personales`). Quedan: el catálogo no tiene ofertas de sanidad (F4, solo anotado) y el plan
-    tenía cinco errores (resultados en `docs/plan-pruebas-fase4.md`).
+    tenía cinco errores (resultados en el plan de pruebas, retirado).
   - **Hecho (17-nov):** PWA instalada y sin conexión (Mar, 16-nov, T15) y HTTPS en local (T18); `/costes`
     como admin y como no admin (403) en Chrome; correo SMTP real con una alerta forzada (llegó, sin datos
     de usuarias); **firma de Mar el 17-nov**.

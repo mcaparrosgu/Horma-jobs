@@ -72,13 +72,3 @@ Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementació
 - Ante la duda de si un documento es técnico, no lo subas y pregunta.
 - El estado de cada fase vive solo en `specs/index.md`; los `tasks.md` llevan las casillas y el README enlaza.
   Al cambiar el estado de algo, actualiza en el mismo cambio `index.md` y las casillas.
-
-## Estructura
-- `specs/`                 artefactos SDD (OKF)
-- `horma/`                 paquete de la aplicación (schemas, llm, agents, tools, flows, cli, web)
-- `evals/`                 fixtures, ejecutor y resultados de los evals
-- `tests/`                 tests unitarios, de arquitectura, de flujos y de RLS
-- `config/endpoints.json`  semilla de la tabla de fuentes de ofertas
-- `.env` / `.env.example`  variables de entorno
-- `AGENTS.md`              este archivo: única fuente de verdad del comportamiento de los agentes
-- `CLAUDE.md`              puntero a este archivo

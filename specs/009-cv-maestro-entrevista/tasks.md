@@ -93,5 +93,5 @@ stale_after: null
   RF-2.11; en la 007, RF-7.5; en la 008, RF-8.4, marcados como cambiados por la 009.
 - [x] T19 — Prueba manual de Mar. *(firmada por Mar el 21-nov)*
   - **Estado (21-nov):** plan recorrido por Mar y firmado.
-  - **Qué se hace:** `docs/plan-pruebas-009a.md` (gitignorado) con los criterios de aceptación de 9a; avisar
+  - **Qué se hace:** un plan de pruebas manual (gitignorado, retirado) con los criterios de aceptación de 9a; avisar
     del gasto antes; Mar los recorre y firma.

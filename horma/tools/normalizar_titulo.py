@@ -16,7 +16,9 @@ def _singular(palabra: str) -> str:
     return palabra
 
 
-_MARCA_GENERO = re.compile(r"(?<=[^\W\d_])(?:\s*/\s*(?:as|os|a|o)(?![^\W\d_])|\((?:as|os|a|o)\))", re.IGNORECASE)
+_MARCA_GENERO = re.compile(
+    r"(?<=[^\W\d_])(?:\s*/\s*(?:as|os|a|o)(?![^\W\d_])|"
+    r"\((?:as|os|a|o)\))", re.IGNORECASE)
 
 
 def _a_femenino(p: str) -> str | None:
@@ -45,7 +47,8 @@ def _a_masculino(p: str) -> str | None:
 
 def variantes_genero(norm: str) -> list[str]:
     """El puesto ya normalizado más sus formas de género: todo en femenino, todo en masculino y cada palabra
-    cambiada por separado («jefe de sala» → «jefa de sala»; «auxiliar administrativo» → «… administrativa»)."""
+    cambiada por separado («jefe de sala» → «jefa de sala»;
+    «auxiliar administrativo» → «… administrativa»)."""
     palabras = norm.split()
     vistas = [norm] if norm else []
 

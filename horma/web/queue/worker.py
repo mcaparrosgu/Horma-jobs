@@ -182,7 +182,8 @@ def _perfil_de_la_tarea(s, tarea: dict, *, hecha: bool = False) -> dict:
 
 
 def _otros_resumenes(fila: dict) -> list[str]:
-    """Los resúmenes de los demás CV (el del maestro ya va en `cv_maestro`), para que el redactor elija (RF-10.14d)."""
+    """Los resúmenes de los demás CV (el del maestro ya va en `cv_maestro`), para que el redactor elija
+    (RF-10.14d)."""
     perfil = repo_perfiles.perfil_modelo(fila)
     usado = perfil.resumen.valor.strip() if perfil.resumen else None
     return [r.valor.strip() for r in perfil.resumenes if r.valor.strip() != usado]

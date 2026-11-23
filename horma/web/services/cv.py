@@ -94,7 +94,8 @@ def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original:
 
 
 def _rehacer_perfil(s, usuaria_id: int) -> None:
-    """Tras quitar un CV del perfil: se rehace con los que quedan; sin ninguno, la usuaria vuelve a «Sube tu CV»."""
+    """Tras quitar un CV del perfil: se rehace con los que quedan; sin ninguno, la usuaria vuelve a
+    «Sube tu CV»."""
     a = ajustes()
     if not perfiles.cvs_fuente(s):
         perfiles.retirar_todos(s)
@@ -108,7 +109,8 @@ def _rehacer_perfil(s, usuaria_id: int) -> None:
 
 
 def cambiar_clase(engine: Engine, usuaria_id: int, cv_id: int, clase: str) -> dict | None:
-    """«¿No es un CV? Cámbialo» (RF-10.14b). De carta a CV, se rehace el perfil con él; de CV a carta, sin él."""
+    """«¿No es un CV? Cámbialo» (RF-10.14b). De carta a CV, se rehace el perfil con él; de CV a carta,
+    sin él."""
     if clase not in CLASES:
         raise ArchivoRechazado(422, "La clase debe ser «fuente» o «carta».")
     with sesion_de(engine, usuaria_id) as s:
@@ -130,7 +132,8 @@ def cambiar_clase(engine: Engine, usuaria_id: int, cv_id: int, clase: str) -> di
 
 
 def eliminar(engine: Engine, usuaria_id: int, cv_id: int) -> bool:
-    """Quita el CV (fila y texto) y, ya confirmado, su archivo. Si era uno de los CV de los que sale el perfil,
+    """Quita el CV (fila y texto) y, ya confirmado, su archivo. Si era uno de los CV de los que sale el
+    perfil,
     el perfil se rehace con los que quedan; sin ninguno, la usuaria vuelve a «Sube tu CV» (RF-10.14).
     Las candidaturas ya hechas no se tocan. Rehacer gasta del presupuesto del día: sin él, el CV se borra y
     el perfil se rehace en cuanto vuelva a haberlo (`rehacer_aplazados`)."""

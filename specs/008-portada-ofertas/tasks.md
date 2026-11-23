@@ -113,5 +113,5 @@ stale_after: null
 - [x] T20 — Coherencia: `specs/index.md`, README, `system.md` si cambia algún RT; en la spec 002, RF-2.15c y en
   la 006, RF-6.3b, RF-6.3d, RF-6.3e y RF-6.5f marcados como sustituidos por la 008.
 - [x] T21 — Prueba manual de Mar (firmada el 21-nov).
-  - **Qué se hace:** `docs/plan-pruebas-008.md` (gitignorado) con los criterios de aceptación; avisar del gasto
+  - **Qué se hace:** un plan de pruebas manual (gitignorado, retirado) con los criterios de aceptación; avisar del gasto
     antes; Mar los recorre y firma.

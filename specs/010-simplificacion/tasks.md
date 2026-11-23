@@ -94,7 +94,7 @@ El estado de cada bloque está en [specs/index.md](../index.md); aquí solo van 
     huella a las filas de hoy.
 - [x] T22 — Precios oficiales del modelo.
   - **Test:** `config.py` sin «ESTIMADOS» y con la fecha de consulta.
-- [x] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR. *(pasos en `docs/plan-pruebas-010.md`; navegador de S3-S5 comprobado por Claude el 21-nov)*
+- [x] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR. *(pasos en el plan de pruebas manual, retirado; navegador de S3-S5 comprobado por Claude el 21-nov)*
 
 ### S6 · Orden interno (RF-10.11)
 - [x] T24 — Solo los servicios encolan; routers sin repositorios; contrato de import-linter.
