@@ -10,7 +10,7 @@ from sqlalchemy import Engine
 from sqlalchemy.exc import IntegrityError
 
 from horma.config import ajustes
-from horma.flows.candidatura import aviso_de_oferta, texto_oferta
+from horma.flows.candidatura import aviso_de_oferta, maestro_con_informacion, texto_oferta
 from horma.schemas.candidatura import (
     ESTADOS,
     TransicionInvalida,
@@ -28,6 +28,7 @@ from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_traz
 from horma.web import checkpointer
 from horma.web.db import sesion_de
 from horma.web.repositories import candidaturas as repo
+from horma.web.repositories import matches as repo_matches
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles, tareas
 from horma.web.services import presupuesto
@@ -95,7 +96,9 @@ def crear(engine: Engine, usuaria_id: int, oferta_id: int, repetir: bool = False
                                         "Revisa Candidaturas > Cerradas o confirma para preparar otra.")
         try:
             with s.begin_nested():
-                candidatura_id = repo.crear(s, usuaria_id, oferta_id)
+                # RF-10.15b: la información de la corrección de esta oferta viaja con la candidatura nueva.
+                candidatura_id = repo.crear(s, usuaria_id, oferta_id,
+                                            repo_matches.informacion_de(s, oferta_id))
         except IntegrityError as e:  # dos peticiones a la vez: el índice único parcial manda
             raise ErrorCandidatura(409, "Ya tienes una candidatura abierta para esta oferta.") from e
         tarea = presupuesto.encolar(s, usuaria_id, "candidatura", candidatura_id, a.tope_coste_candidatura,
@@ -141,7 +144,8 @@ def _avisos(s, c: dict, cv: str, carta: str) -> list[dict]:
     maestro = (perfil or {}).get("cv_maestro") or ""
     base = repo.contenido_cv_base(s, c["cv_base_id"])
     oferta = repo_ofertas.completas(s, [c["oferta_id"]]).get(c["oferta_id"])
-    fuentes_cv = [x for x in (maestro, base) if x]
+    # La información que llevaba esta candidatura es una fuente más, como en el flujo (RF-10.15b).
+    fuentes_cv = [x for x in (maestro_con_informacion(maestro, c.get("informacion")), base) if x]
     fuentes_carta = [*fuentes_cv, *([texto_oferta(oferta)] if oferta else [])]
     errores_cv = [f"Formato del CV para ATS: {x}" for x in errores_ats(cv)]
     errores_cv += verificar_trazabilidad(cv, c["cv_traza"], fuentes_cv or [""])

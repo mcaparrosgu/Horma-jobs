@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from sqlalchemy import Engine
 
 from horma.config import ajustes
-from horma.schemas.perfil import Perfil, PeriodoCubierto
+from horma.schemas.perfil import CAMPO_PROPUESTA, Perfil, PeriodoCubierto
 from horma.tools.avisos_perfil import agrupar_avisos, aviso_de_hueco, avisos_perfil
 from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.tools.detectar_huecos import detectar_huecos
@@ -117,10 +117,32 @@ def _nombre_de_dato(dato: dict) -> str:
     return ""
 
 
-def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -> dict:
+SECCIONES_PROPUESTA = ("experiencias", "habilidades", "formacion", "otros")   # RF-10.15d
+
+
+def _descartar_propuesta(engine: Engine, usuaria_id: int, indice: int) -> dict | None:
+    """Descartar una propuesta no cambia ningún dato: se quita de «Por resolver» sin crear versión, y así
+    nada queda «desfasado» (RF-10.15d). Devuelve `None` si ese pendiente no es una propuesta."""
+    with sesion_de(engine, usuaria_id) as s:
+        fila = perfiles.vigente(s)
+        if fila is None:
+            raise SinPerfil
+        pendientes = list(fila["preguntas_pendientes"] or [])
+        if not 0 <= indice < len(pendientes) or pendientes[indice]["campo"] != CAMPO_PROPUESTA:
+            return None
+        pendientes.pop(indice)
+        perfiles.guardar_pendientes(s, fila["id"], pendientes)
+        return {"id": fila["id"], "version": fila["version"]}
+
+
+def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None,
+              seccion_elegida: str | None = None) -> dict:
     """Responde una pregunta pendiente: la quita y, si trae un dato, lo añade con origen «usuaria».
-    Devuelve también `cambio` (sección y dato que han cambiado) para decírselo a ella (RF-10.14e)."""
+    Devuelve también `cambio` (sección y dato que han cambiado) para decírselo a ella (RF-10.14e).
+    Una propuesta (RF-10.15d) se coloca en `seccion_elegida`; sin dato, se descarta sin versión nueva."""
     cambiado: dict = {}
+    if dato is None and (descartada := _descartar_propuesta(engine, usuaria_id, indice)) is not None:
+        return descartada
 
     def cambio(p: dict) -> str | None:
         pendientes = p["preguntas_pendientes"]
@@ -129,6 +151,10 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -
         campo = pendientes.pop(indice)["campo"]
         if dato is None:
             return
+        if campo == CAMPO_PROPUESTA:
+            if seccion_elegida not in SECCIONES_PROPUESTA:
+                raise DatoNoValido("Elige dónde va: experiencia, habilidades, formación u otros.")
+            campo = seccion_elegida
         # El modelo a veces pregunta por un dato concreto: «experiencias.Hotel Marina.fechas».
         seccion, _, resto = campo.partition(".")
         clave = resto.partition(".")[0]

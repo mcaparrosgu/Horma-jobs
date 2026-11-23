@@ -66,7 +66,7 @@ def test_los_fallidos_traen_nombre_y_motivo_y_no_impiden_los_demas(app, motor_mi
     assert [x["nombre"] for x in d["subidos"]] == ["bien"]
     motivos = {f["nombre"]: f["motivo"] for f in d["fallidos"]}
     assert motivos["raro.exe"] == "formato no admitido"
-    assert re.fullmatch(r"pesa más de \d+(,\d+)? MB", motivos["grande.md"]) or "pesa más de" in motivos["grande.md"]
+    assert re.fullmatch(r"pesa más de \d+ MB", motivos["grande.md"]) or "pesa más de" in motivos["grande.md"]
     assert motivos["roto.pdf"] == "no se ha podido leer"
     assert len(_filas(motor_migrador)) == 1
 
@@ -138,7 +138,8 @@ def test_cv_y_carta_juntos_encolan_un_perfilar(app, motor_migrador):
     assert d["perfil"] == "en_marcha" and _tareas_perfilar(motor_migrador) == 1
 
 
-def test_sin_presupuesto_se_guarda_todo_y_el_perfil_queda_aplazado(app, motor_app, motor_migrador, monkeypatch):
+def test_sin_presupuesto_se_guarda_todo_y_el_perfil_queda_aplazado(
+        app, motor_app, motor_migrador, monkeypatch):
     c, h, _ = entrar(app)
     monkeypatch.setattr(ajustes(), "presupuesto_diario_usd", 0.0)
     d = _lote(c, h, [("a.md", CV), ("b.md", CV_B)]).json()
@@ -186,7 +187,8 @@ def test_cerrar_la_pregunta_encola_con_los_claros_y_no_guarda_los_dudosos(app, m
     assert r.status_code == 200 and r.json()["perfil"] == "en_marcha"
     assert _tareas_perfilar(motor_migrador) == 1 and _versiones(motor_migrador) == 1
     assert [f[0] for f in _filas(motor_migrador)] == ["cv"]
-    assert c.post("/api/cv/lote", headers=h, data={"cerrar": "true"}).json()["perfil"] is None   # nada que rehacer
+    otra = c.post("/api/cv/lote", headers=h, data={"cerrar": "true"})
+    assert otra.json()["perfil"] is None                                      # nada que rehacer
 
 
 def test_si_ella_se_va_sin_responder_el_worker_no_rehace_antes_de_tiempo_pero_si_despues(
@@ -231,7 +233,8 @@ def test_perfil_js_envia_todo_en_una_llamada_con_una_barra_y_un_mensaje():
     js = _leer("perfil.js")
     assert "/api/cv/lote" in js and 'datos.append("archivos"' in js
     assert "entrada.files" in js and "TEXTOS.maxLote" in js                   # comprueba el máximo antes
-    assert "TEXTOS.leyendoArchivos" in js and "if (!barraLectura && archivos.length)" in js   # la barra se crea una vez
+    assert "TEXTOS.leyendoArchivos" in js                                     # la barra se crea una vez
+    assert "if (!barraLectura && archivos.length)" in js
     assert "!subiendoLote && barraLectura" in js                              # y `cargarPerfil` no la quita
     assert "preguntarClases" in js and "elegidos.map" in js and js.count("\"Continuar\"") == 1
     assert 'api("/api/cv", { metodo: "POST"' not in js                       # ya no sube de uno en uno

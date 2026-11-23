@@ -150,7 +150,56 @@ function filaNombre(nombre) {
   return fila;
 }
 
+// Una propuesta (RF-10.15d): información que ella añadió en una oferta y quiso revisar aquí. Puede editarla,
+// colocarla en una sección o descartarla; hasta que la guarda, su perfil no cambia.
+// Cada sección, con el campo donde cae el texto.
+const SECCIONES_PROPUESTA = [["habilidades", "nombre"], ["experiencias", "descripcion"], ["formacion", "titulo"], ["otros", "valor"]];
+
+function propuesta(p, i) {
+  const li = nodo("li", null, "tarjeta");
+  const texto = (p.opciones || [])[0] || "";
+  li.append(nodo("span", TEXTOS.propuestaEtiqueta, "estado apagado"), nodo("h3", p.pregunta), nodo("p", `«${texto}»`, "dato"));
+  const acciones = nodo("div", null, "fila acciones-aviso");
+  const revisar = nodo("button", TEXTOS.propuestaRevisar);
+  revisar.type = "button";
+  revisar.addEventListener("click", () => {
+    acciones.hidden = true;
+    const donde = nodo("select");
+    for (const [clave] of SECCIONES_PROPUESTA) {
+      const o = nodo("option", NOMBRES_SECCION[clave]);
+      o.value = clave;
+      donde.append(o);
+    }
+    let f = null;
+    const pintarFormulario = () => {
+      const seccion = donde.value;
+      const principal = SECCIONES_PROPUESTA.find(([clave]) => clave === seccion)[1];
+      const nuevo = formularioDato(seccion, { [principal]: texto },
+        (dato) => cambiarPerfil("/api/perfil/respuestas", "POST", { indice: i, campo: seccion, dato }),
+        () => { f.remove(); acciones.hidden = false; }, TEXTOS.propuestaGuardar);
+      nuevo.prepend(campo(TEXTOS.propuestaDonde, donde));
+      if (f) f.replaceWith(nuevo);
+      else li.insertBefore(nuevo, acciones);
+      f = nuevo;
+    };
+    donde.addEventListener("change", pintarFormulario);
+    pintarFormulario();
+  });
+  const descartar = nodo("button", "Descartar", "secundario");
+  descartar.type = "button";
+  descartar.addEventListener("click", async () => {
+    const r = await api("/api/perfil/respuestas", { metodo: "POST", cuerpo: { indice: i, dato: null } });
+    if (!r.ok) return avisar(r.motivo, true);
+    avisar(TEXTOS.propuestaDescartada);
+    await cargarPerfil();
+  });
+  acciones.append(revisar, descartar);
+  li.append(acciones);
+  return li;
+}
+
 function pregunta(p, i) {
+  if (p.campo === "propuesta") return propuesta(p, i);
   const li = nodo("li", null, "tarjeta");
   li.append(nodo("span", MOTIVOS[p.motivo] || p.motivo, "estado apagado"));
   li.append(nodo("h3", p.pregunta));

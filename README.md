@@ -95,7 +95,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 3: candidatura y seguimiento
 
-1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0028`).
+1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0029`).
 2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide
    confirmar); el worker parte del CV maestro, sin CV base (RF-10.3), y redacta CV y carta. En `/candidaturas`
    las ves por estado: revisas, editas, apruebas, descargas los PDF y sigues el proceso (enviada, entrevista,

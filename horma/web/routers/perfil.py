@@ -13,6 +13,7 @@ router = APIRouter()
 class Respuesta(BaseModel):
     indice: int
     dato: dict | None = None
+    campo: str | None = None   # solo en una propuesta: la sección donde ella la coloca (RF-10.15d)
 
 
 class Correccion(BaseModel):
@@ -48,7 +49,8 @@ def _cambiar(request: Request, usuaria_id: int, accion):
 
 @router.post("/api/perfil/respuestas", status_code=201, dependencies=[Depends(exigir_csrf)])
 def responder(datos: Respuesta, request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    return _cambiar(request, usuaria_id, lambda e, u: servicio.responder(e, u, datos.indice, datos.dato))
+    return _cambiar(request, usuaria_id,
+                    lambda e, u: servicio.responder(e, u, datos.indice, datos.dato, datos.campo))
 
 
 @router.patch("/api/perfil/datos", status_code=201, dependencies=[Depends(exigir_csrf)])

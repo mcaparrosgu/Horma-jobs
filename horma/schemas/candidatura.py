@@ -150,7 +150,8 @@ TEXTOS_FORMATO: dict[str, str] = {
                         "como texto.",
     "lleva etiquetas HTML": f"Tu CV lleva código de formato (etiquetas HTML) que {_FILTROS} pueden leer mal. "
                             "Quítalo.",
-    "no tiene encabezados": f"Tu CV no tiene secciones con título (Experiencia, Formación…). Añádelas: {_FILTROS} "
+    "no tiene encabezados": f"Tu CV no tiene secciones con título (Experiencia, Formación…). Añádelas: "
+                            f"{_FILTROS} "
                             "las usan para encontrar cada dato.",
 }
 _RE_ENCABEZADO = re.compile(r"encabezado no estándar: «(.+)»")

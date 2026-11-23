@@ -27,8 +27,10 @@ def test_un_cv_nuevo_no_borra_lo_que_escribio_ella():
                   "resumen": {"valor": "Resumen mío", "origen": USUARIA}}
     p = _correr(de_usuaria, {
         "experiencias": [{"puesto": "Jefa de sala", "empresa": "Hotel Mar",
-                          "origen": {"fuente": "cv", "cv_id": 2, "fragmento": "Jefa de sala en Hotel Mar, 2019-2023"}}],
-        "habilidades": [{"nombre": "Excel básico", "origen": {"fuente": "cv", "cv_id": 2, "fragmento": "Excel básico"}}]})
+                          "origen": {"fuente": "cv", "cv_id": 2,
+                                     "fragmento": "Jefa de sala en Hotel Mar, 2019-2023"}}],
+        "habilidades": [{"nombre": "Excel básico",
+                         "origen": {"fuente": "cv", "cv_id": 2, "fragmento": "Excel básico"}}]})
     assert {x.puesto for x in p.experiencias} == {"Camarera", "Jefa de sala"}
     assert {h.nombre for h in p.habilidades} == {"Catas de vino", "Excel básico"}
     assert p.resumen.valor == "Resumen mío" and p.resumen.origen.fuente == "usuaria"
@@ -50,7 +52,8 @@ def test_el_nombre_que_edito_ella_manda_sobre_el_del_cv():   # T61 (N4, P11)
 
 
 def test_sin_nombre_suyo_se_usa_el_del_cv():
-    assert _correr({"habilidades": []}, {"nombre": "Irene Navarro Soler", "experiencias": []}).nombre == "Irene Navarro Soler"
+    perfil = _correr({"habilidades": []}, {"nombre": "Irene Navarro Soler", "experiencias": []})
+    assert perfil.nombre == "Irene Navarro Soler"
 
 
 def test_sin_nada_suyo_el_flujo_es_el_de_siempre():

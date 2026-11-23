@@ -76,6 +76,15 @@ def guardar_correccion(s: Session, oferta_id: int, perfil_version: int, correcci
               {"o": oferta_id, "v": perfil_version, "c": correccion})
 
 
+def informacion_de(s: Session, oferta_id: int) -> str | None:
+    """La «información nueva» de la última corrección de esa oferta (RF-10.15), aunque la compatibilidad se
+    haya vuelto a calcular después con otra versión del perfil."""
+    valor = s.execute(text(
+        "select correccion->>'informacion' from matches where oferta_id = :o and correccion is not null "
+        "order by corregido_en desc nulls last, perfil_version desc limit 1"), {"o": oferta_id}).scalar()
+    return (valor or "").strip() or None
+
+
 def guardar(s: Session, usuaria_id: int, perfil_version: int, matches: list[dict],
             huella: str | None = None) -> None:
     for m in matches:

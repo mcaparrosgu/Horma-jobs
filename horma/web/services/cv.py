@@ -133,7 +133,8 @@ def subir_lote(engine: Engine, usuaria_id: int, *, archivos: list[tuple[str, byt
     """Hasta `MAX_LOTE` documentos de una vez (RF-10.18). Guarda los válidos y devuelve
     `{subidos, repetidos, fallidos, dudosos, perfil}`; `perfil` es `en_marcha`, `aplazado` (sin presupuesto),
     `pendiente_de_respuesta` (hay dudosos) o `None` (nada que rehacer). El perfil se rehace una sola vez, al
-    final (RF-10.18f). Sin `archivos`, `cerrar=True` cierra la pregunta: rehace con lo ya guardado (RF-10.18e)."""
+    final (RF-10.18f). Sin `archivos`, `cerrar=True` cierra la pregunta: rehace con lo ya guardado
+    (RF-10.18e)."""
     if len(archivos) > MAX_LOTE:
         raise LoteDemasiado(TEXTO_MAX_LOTE)
     if not archivos and not cerrar:
@@ -185,9 +186,10 @@ def subir_lote(engine: Engine, usuaria_id: int, *, archivos: list[tuple[str, byt
                 ruta = f"{uuid.uuid4().hex}.{x['tipo']}"
                 try:
                     with s.begin_nested():
-                        cv_id = repo.crear(s, usuaria_id, nombre=x["nombre"],
-                                           nombre_original=x["nombre_original"][:200], ruta=ruta, tipo=x["tipo"],
-                                           clase=x["clase"], tamano=len(x["contenido"]), texto=x["texto"])
+                        cv_id = repo.crear(
+                            s, usuaria_id, nombre=x["nombre"], nombre_original=x["nombre_original"][:200],
+                            ruta=ruta, tipo=x["tipo"], clase=x["clase"], tamano=len(x["contenido"]),
+                            texto=x["texto"])
                 except IntegrityError:   # dos peticiones a la vez: el índice de nombres manda
                     fallidos.append({"nombre": x["nombre_original"],
                                      "motivo": "ya tienes un documento con ese nombre"})
@@ -205,8 +207,9 @@ def subir_lote(engine: Engine, usuaria_id: int, *, archivos: list[tuple[str, byt
 
 
 def _rehacer_una_vez(s, usuaria_id: int, subidos: list[dict], hay_dudosos: bool) -> str | None:
-    """El `perfilar` único del lote (RF-10.18f). Con dudosos pendientes solo reserva la versión; sin presupuesto
-    la deja reservada para `rehacer_aplazados` (RF-10.18g). Las cartas piden la guía de estilo una sola vez."""
+    """El `perfilar` único del lote (RF-10.18f). Con dudosos pendientes solo reserva la versión; sin
+    presupuesto la deja reservada para `rehacer_aplazados` (RF-10.18g). Las cartas piden la guía de estilo una
+    sola vez."""
     a = ajustes()
     if any(x["clase"] == "carta" for x in subidos):
         servicio_estilo.encolar_si_no_hay_guia(s, usuaria_id)
@@ -222,14 +225,16 @@ def _rehacer_una_vez(s, usuaria_id: int, subidos: list[dict], hay_dudosos: bool)
     else:
         perfil_id, _ = perfiles.nueva_version(s, usuaria_id)
     try:
-        presupuesto.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar, a.tope_reintentos_tarea)
+        presupuesto.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
+                            a.tope_reintentos_tarea)
     except presupuesto.SinPresupuesto:
         return "aplazado"   # la versión queda reservada y la recoge `rehacer_aplazados`
     return "en_marcha"
 
 
 def _rehacer_perfil(s, usuaria_id: int) -> None:
-    """Tras quitar un CV del perfil: se rehace con los que quedan; sin ninguno, la usuaria vuelve a «Sube tu CV»."""
+    """Tras quitar un CV del perfil: se rehace con los que quedan; sin ninguno, la usuaria vuelve a
+    «Sube tu CV»."""
     a = ajustes()
     if not perfiles.cvs_fuente(s):
         perfiles.retirar_todos(s)
@@ -243,7 +248,8 @@ def _rehacer_perfil(s, usuaria_id: int) -> None:
 
 
 def cambiar_clase(engine: Engine, usuaria_id: int, cv_id: int, clase: str) -> dict | None:
-    """«¿No es un CV? Cámbialo» (RF-10.14b). De carta a CV, se rehace el perfil con él; de CV a carta, sin él."""
+    """«¿No es un CV? Cámbialo» (RF-10.14b). De carta a CV, se rehace el perfil con él; de CV a carta,
+    sin él."""
     if clase not in CLASES:
         raise ArchivoRechazado(422, "La clase debe ser «fuente» o «carta».")
     with sesion_de(engine, usuaria_id) as s:
@@ -265,7 +271,8 @@ def cambiar_clase(engine: Engine, usuaria_id: int, cv_id: int, clase: str) -> di
 
 
 def eliminar(engine: Engine, usuaria_id: int, cv_id: int) -> bool:
-    """Quita el CV (fila y texto) y, ya confirmado, su archivo. Si era uno de los CV de los que sale el perfil,
+    """Quita el CV (fila y texto) y, ya confirmado, su archivo. Si era uno de los CV de los que sale el
+    perfil,
     el perfil se rehace con los que quedan; sin ninguno, la usuaria vuelve a «Sube tu CV» (RF-10.14).
     Las candidaturas ya hechas no se tocan. Rehacer gasta del presupuesto del día: sin él, el CV se borra y
     el perfil se rehace en cuanto vuelva a haberlo (`rehacer_aplazados`)."""

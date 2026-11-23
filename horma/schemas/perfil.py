@@ -108,6 +108,11 @@ class PeriodoCubierto(BaseModel):
     fin: str = Field(pattern=_FECHA)
 
 
+# Pendiente con `campo` = «propuesta»: información que ella escribió en una oferta (va en `opciones`) y aún no
+# ha confirmado (RF-10.15d). Lo crea solo el código; el esquema que ve el modelo no cambia.
+CAMPO_PROPUESTA = "propuesta"
+
+
 class PreguntaPendiente(BaseModel):
     """Lo que falta, es ambiguo o se contradice entre CV: se le pregunta a la usuaria."""
 
@@ -131,9 +136,11 @@ class Perfil(BaseModel):
     titular: DatoTexto | None = None
     resumen: DatoTexto | None = None
     resumenes: list[DatoTexto] = Field(
-        default_factory=list, description="El resumen de cada CV, tal como está escrito. Lo rellena el código.")
+        default_factory=list,
+        description="El resumen de cada CV, tal como está escrito. Lo rellena el código.")
     titulares: list[DatoTexto] = Field(
-        default_factory=list, description="El titular de cada CV, tal como está escrito. Lo rellena el código.")
+        default_factory=list,
+        description="El titular de cada CV, tal como está escrito. Lo rellena el código.")
     experiencias: list[Experiencia] = Field(default_factory=list)
     formacion: list[Formacion] = Field(default_factory=list)
     idiomas: list[IdiomaPerfil] = Field(default_factory=list)

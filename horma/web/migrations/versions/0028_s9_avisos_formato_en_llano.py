@@ -25,7 +25,8 @@ def upgrade() -> None:
 
     bind = op.get_bind()
     filas = bind.execute(sa.text(
-        "select id, avisos from candidaturas where avisos::text like :p"), {"p": f"%{_VIEJO}%"}).mappings().all()
+        "select id, avisos from candidaturas where avisos::text like :p"),
+        {"p": f"%{_VIEJO}%"}).mappings().all()
     for f in filas:
         avisos = f["avisos"] if isinstance(f["avisos"], list) else json.loads(f["avisos"])
         for a in avisos:

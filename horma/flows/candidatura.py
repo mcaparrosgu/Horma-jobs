@@ -6,7 +6,8 @@ Estado de entrada: {"usuaria_id": int, "perfil_version": int, "oferta": Oferta, 
 "otros_resumenes": [str] (opcional: los resúmenes de los demás CV, RF-10.14d),
 "cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...]
 (opcional), "guia_estilo": GuiaEstilo | None (opcional, RF-5.6e), "longitud_cv": "mantener" | "sintetizar" |
-None (opcional, RF-10.3b)}
+None (opcional, RF-10.3b), "informacion_usuaria": str | None (opcional, RF-10.15b: lo que ella añadió al
+corregir la explicación de esta oferta; es una fuente más, al final del CV maestro)}
 Sin CV base (lo normal desde la simplificación, RF-10.3) el flujo parte del CV maestro. Si el worker pasa
 CV base (respaldo, RF-10.3d), el código elige uno y descarta los rechazados y los de otras usuarias.
 Estado de salida: además, lo de `EstadoCandidatura` (cv_base_id, cv_base_motivo, cv_contenido, cv_traza,
@@ -81,6 +82,19 @@ def combinar_huecos(del_redactor: list[dict], ausentes: list[str]) -> list[dict]
     return salida
 
 
+TITULO_INFORMACION = "Información que añadiste para esta oferta (escrita por ti)"
+
+
+def maestro_con_informacion(cv_maestro: str, informacion: str | None) -> str:
+    """El CV maestro con la información que ella añadió para esta oferta como una sección más, al final
+    (RF-10.15b). Así redactores, juez y trazabilidad la tratan como cualquier otro dato de las fuentes: se
+    puede usar tal como está escrita y nada más (cada frase tiene que estar en las fuentes)."""
+    informacion = (informacion or "").strip()
+    if not informacion:
+        return cv_maestro
+    return f"{cv_maestro.rstrip()}\n\n## {TITULO_INFORMACION}\n{informacion}\n"
+
+
 def texto_oferta(oferta: Oferta) -> str:
     """La oferta como texto, fuente válida solo para la carta (RF-3.6)."""
     partes = [oferta.titulo, oferta.empresa, oferta.ubicacion, oferta.contrato, *oferta.idiomas,
@@ -119,7 +133,7 @@ CLAVES_INTERNAS = frozenset({
     "errores_cv", "errores_carta", "errores_formato", "palabras_sugeridas", "ausentes_sin_origen",
     "huecos_redactor", "rehacer", "cv_base_contenido", "cv_maestro", "cvs_base", "oferta", "usuaria_id",
     "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo", "longitud_cv",
-    "otros_resumenes"})
+    "otros_resumenes", "informacion_usuaria"})
 
 
 CLAVES_ESTADO = frozenset(EstadoCandidatura.model_fields) | CLAVES_INTERNAS
@@ -153,11 +167,14 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
                  cv_base_id=elegido["id"], cv_base_motivo=motivo, cv_base_contenido=elegido["contenido"])
         return e
 
+    def _maestro(e: dict) -> str:
+        return maestro_con_informacion(e["cv_maestro"], e.get("informacion_usuaria"))
+
     def redactar_cv(e: dict) -> dict:
         validar(e)
         e["redacciones_cv"] += 1
         r = RedactorCv.run(EntradaRedactorCv(
-            cv_base=e["cv_base_contenido"], cv_maestro=e["cv_maestro"], longitud=e.get("longitud_cv"),
+            cv_base=e["cv_base_contenido"], cv_maestro=_maestro(e), longitud=e.get("longitud_cv"),
             otros_resumenes=e.get("otros_resumenes") or [],
             oferta=Oferta.model_validate(e["oferta"]),
             errores_previos=[*e["errores_cv"], *e["errores_formato"]],
@@ -175,7 +192,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         oferta = Oferta.model_validate(e["oferta"])
         problemas = [Problema.model_validate(p) for p in e["problemas_juez"] if p["documento"] == "carta"]
         r = RedactorCarta.run(EntradaRedactorCarta(
-            cv_maestro=e["cv_maestro"], cv_adaptado=e["cv_contenido"], oferta=oferta,
+            cv_maestro=_maestro(e), cv_adaptado=e["cv_contenido"], oferta=oferta,
             sector=oferta.taxonomia.sector, errores_previos=[],
             problemas_previos=[*problemas, *_como_problemas(e["errores_carta"])],
             guia_estilo=_guia(e)), proveedor=proveedor)
@@ -188,7 +205,8 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         longitud, secciones, fechas y ATS del CV."""
         validar(e)
         oferta = Oferta.model_validate(e["oferta"])
-        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"], *(e.get("otros_resumenes") or [])) if x]
+        fuentes_cv = [x for x in (_maestro(e), e["cv_base_contenido"], *(e.get("otros_resumenes") or []))
+                      if x]
         e["errores_cv"] = [
             *verificar_trazabilidad(e["cv_contenido"], e["cv_traza"], fuentes_cv),
             *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])],
@@ -217,7 +235,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         validar(e)
         r = JuezCandidatura.run(EntradaJuezCandidatura(
             cv=e["cv_contenido"], cv_traza=e["cv_traza"], carta=e["carta_contenido"],
-            carta_traza=e["carta_traza"], cv_maestro=e["cv_maestro"],
+            carta_traza=e["carta_traza"], cv_maestro=_maestro(e),
             cv_base=e["cv_base_contenido"] or "", oferta=Oferta.model_validate(e["oferta"]),
             guia_estilo=_guia(e)), proveedor=proveedor)
         _sumar(e, r.instrucciones_embebidas)

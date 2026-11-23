@@ -3,8 +3,8 @@
 Al borrar el último CV, el perfil deja de estar vigente pero sus versiones se conservan: las candidaturas y
 las compatibilidades ya hechas apuntan a ellas.
 
-`perfiles_aplazados()` da (usuaria, perfil) de las versiones reservadas que esperan su `perfilar` porque no había
-presupuesto al borrar un CV. Solo en modo sistema: el worker no ve las filas de las usuarias por la RLS.
+`perfiles_aplazados()` da (usuaria, perfil) de las versiones reservadas que esperan su `perfilar` porque no
+había presupuesto al borrar un CV. Solo en modo sistema: el worker no ve las filas de las usuarias por la RLS.
 
 Revision ID: 0024
 Revises: 0023

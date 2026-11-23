@@ -5,7 +5,7 @@ Puntuar lo que falta es `POST /api/recomendar`."""
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.routers.ingesta import solo_ingesta
@@ -17,6 +17,12 @@ router = APIRouter()
 class Correccion(BaseModel):
     nota: int | None = Field(default=None, ge=0, le=100)
     comentario: str = Field(min_length=1, max_length=1000)
+    informacion: str | None = Field(default=None, max_length=1000)   # «Información nueva sobre ti» (RF-10.15)
+
+    @field_validator("informacion")
+    @classmethod
+    def _sin_espacios(cls, v: str | None) -> str | None:
+        return (v or "").strip() or None
 
 
 def _salario(f: dict) -> str | None:
@@ -109,6 +115,20 @@ def corregir(oferta_id: int, datos: Correccion, request: Request,
     except servicio.SinNota as e:
         raise HTTPException(status_code=404, detail="Esa oferta aún no tiene nota.") from e
     return {"oferta_id": oferta_id, **datos.model_dump()}
+
+
+@router.post("/api/matches/{oferta_id}/informacion/perfil", status_code=201,
+             dependencies=[Depends(exigir_csrf)])
+def proponer_al_perfil(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """«Sí, revisarla» (RF-10.15c-d): la información de la corrección pasa a «Por resolver» de Perfil como
+    propuesta. No crea versión ni llama al modelo: nada entra en el perfil hasta que ella la confirme."""
+    try:
+        servicio.proponer_al_perfil(request.app.state.engine, usuaria_id, oferta_id)
+    except servicio.SinNota as e:
+        raise HTTPException(status_code=404, detail="Esa oferta no tiene información nueva.") from e
+    except servicio.SinPerfil as e:
+        raise HTTPException(status_code=409, detail="Aún no tienes un perfil: sube un CV primero.") from e
+    return {"oferta_id": oferta_id, "propuesta": True}
 
 
 @router.get("/api/matches/{oferta_id}/exportar")

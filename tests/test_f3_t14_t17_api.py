@@ -436,7 +436,8 @@ def test_los_pdf_se_descargan_con_el_puesto_y_la_empresa(app, motor_app):
         s.execute(text("update perfiles set datos = jsonb_set(coalesce(datos, '{}'::jsonb), '{nombre}', "
                        "'\"María José Pérez\"')"))
     r = c.get(f"/api/candidaturas/{cid}/cv.pdf")
-    assert r.headers["content-disposition"] == 'attachment; filename="cv_maria-jose-perez_camarera_bar-luna.pdf"'
+    assert r.headers["content-disposition"] == (
+        'attachment; filename="cv_maria-jose-perez_camarera_bar-luna.pdf"')
 
 
 def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_otro_documento_subido(app, motor_app):

@@ -97,11 +97,13 @@ def test_perfil_enseña_origen_pendientes_y_la_gestion_de_cv():
 
 def test_ofertas_sigue_la_maqueta():
     html, js = leer("ofertas.html"), leer("ofertas.js")
-    assert "Cómo leer las recomendaciones" in html and "<details" in html   # bloque plegable (S8: dentro de un «?»)
+    # bloque plegable (S8: dentro de un «?»)
+    assert "Cómo leer las recomendaciones" in html and "<details" in html
     assert 'id="contador"' in html and 'id="que-buscas"' in html and 'id="vista"' in html  # contador y filtros  # noqa: E501
     for columna in ("Oferta", "Puesto", "Compatibilidad", "Salario", "Lugar", "Publicado"):
         assert f'"{columna}"' in js
-    assert leer("comun.js").count('"?"') >= 1 and "AYUDA" in js                            # «?» que explica cada columna
+    # «?» que explica cada columna
+    assert leer("comun.js").count('"?"') >= 1 and "AYUDA" in js
     assert "/api/recomendaciones" in js and "/api/recomendar" in js
     assert "Corregir explicación" in js and "/correccion" in js and "explicacion" in js
     assert "sin_puntuar" in js and "o.salario" in js                          # salario: texto de la oferta
