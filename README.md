@@ -4,8 +4,8 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> **Estado:** fases 0 a 9a y 10 (S1-S7) en `main`; la 10 sigue con S8, S9 y S10. Estado de cada fase y orden
-> de las siguientes (11 a 14): [`specs/index.md`](./specs/index.md). Despliegue local con Docker Compose.
+> **Estado:** fases 0 a 10 (salvo 9b) cerradas y en `main`. Estado de cada fase y orden de las siguientes
+> (11 a 14): [`specs/index.md`](./specs/index.md). Despliegue local con Docker Compose.
 
 **Recorrido de la usuaria:** Landing → Perfil (sube su CV) → Ofertas (compatibilidad 0-100) → Candidatura
 (CV y carta que aprueba y descarga). Tres pestañas: Ofertas · Candidaturas · Perfil, más Admin. Horma gasta

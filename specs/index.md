@@ -53,7 +53,7 @@ Formato: carpeta — qué es. **Estado.**
 ## Lo que viene, en este orden
 1. **Fase 11 · Aplicación autónoma y correo** (`011-aplicacion-autonoma/`, sin spec): enviar candidaturas en
    portales dentro de una regla de la usuaria, en modo prueba hasta las fases 12 y 13, y leer las respuestas por
-   correo reenviado. Antes, fusionar la constitución ya firmada (PR #38).
+   correo reenviado. La constitución ya lo permite (firmada y fusionada el 23-nov, PR #38).
 2. **Fase 9b · Entrevista por texto** (spec en `009-…`, RF-10.12; sin plan).
 3. **Fase 12 · `matcher` y puestos afines** (`012`): el [plan del `matcher`](./002-perfil-recomendacion/spec.md#plan-para-perfeccionar-el-matcher-obligatorio-antes-de-probar-con-usuarias-reales),
    el modelo pequeño para puntuar y el coste de editar el perfil. Espera a una investigación de puestos afines.

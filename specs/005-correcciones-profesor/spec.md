@@ -184,25 +184,25 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
   que corre el modelo real en cada PR. Antes del lanzamiento DEBERÁ reactivarse.
 
 ## Criterios de aceptación (puerta de salida)
-- [ ] Editar o borrar una experiencia cambia el CV maestro, y un CV adaptado nuevo usa el dato
+- [x] Editar o borrar una experiencia cambia el CV maestro, y un CV adaptado nuevo usa el dato
       editado sin errores de trazabilidad; lo borrado no aparece (test).
-- [ ] El extractor rellena proyectos, certificaciones y otros, y su set de evals (`evals/perfil/`)
+- [x] El extractor rellena proyectos, certificaciones y otros, y su set de evals (`evals/perfil/`)
       sigue en umbral.
-- [ ] Tras editar el perfil, los CV base y los borradores de candidatura muestran su aviso y su botón,
-      y nada se regenera solo (test).
-- [ ] Recomendadas ya no muestra «Condiciones».
-- [ ] La prueba del «limbo» (RF-5.3) falla antes y pasa después.
-- [ ] Una oferta añadida por Ana no la ve Berta ni por la web ni por la API (test de RLS).
-- [ ] Una oferta pegada o por URL sale puntuada en Recomendadas con su marca, aunque no pase los
+- [x] Tras editar el perfil, los CV base y los borradores de candidatura muestran su aviso y su botón,
+      y nada se regenera solo (test). *(los CV base, sustituidos después por RF-10.3)*
+- [x] Recomendadas ya no muestra «Condiciones».
+- [x] La prueba del «limbo» (RF-5.3) falla antes y pasa después.
+- [x] Una oferta añadida por Ana no la ve Berta ni por la web ni por la API (test de RLS).
+- [x] Una oferta pegada o por URL sale puntuada en Recomendadas con su marca, aunque no pase los
       filtros, y permite preparar la candidatura.
-- [ ] Una URL de LinkedIn, una IP privada o una URL `http` se rechazan con un mensaje en llano (test).
-- [ ] RGPD de Apify confirmado y anotado en `docs/revision-lineas-rojas.md` (sección «Encargados del tratamiento») (o cambiado a ScrapingBee).
-- [ ] Un CV de más de 1.000 palabras o con fechas incoherentes se señala y se corrige en la vuelta
+- [x] Una URL de LinkedIn, una IP privada o una URL `http` se rechazan con un mensaje en llano (test).
+- [ ] RGPD de Apify confirmado y anotado en `docs/revision-lineas-rojas.md` (sección «Encargados del tratamiento») (o cambiado a ScrapingBee). *(anotado; Mar aceptó el 18-nov seguir sin la lista de subencargados, así que no consta como confirmado: lo retoma la revisión de RGPD)*
+- [x] Un CV de más de 1.000 palabras o con fechas incoherentes se señala y se corrige en la vuelta
       única; los sets `cv` y `cv-base` siguen en umbral con el modelo real.
-- [ ] Adzuna, Himalayas, Jobicy y Remotive calificadas y activas; InfoJobs configurada e inactiva.
-- [ ] Con una carta escrita por ella subida, la guía de estilo aparece en el perfil con citas, y un CV
+- [ ] Adzuna, Himalayas, Jobicy y Remotive calificadas y activas; InfoJobs configurada e inactiva. *(Remotive y Adzuna salieron NO APTAS y siguen inactivas, T30; activas solo Jobicy y Himalayas; InfoJobs, inactiva)*
+- [x] Con una carta escrita por ella subida, la guía de estilo aparece en el perfil con citas, y un CV
       y una carta nuevos la siguen sin añadir hechos; `horma eval correr estilo` en umbral.
-- [ ] Un CV con «apasionada por» o una frase genérica se señala y se corrige en la vuelta única
+- [x] Un CV con «apasionada por» o una frase genérica se señala y se corrige en la vuelta única
       (test y eval `cv`).
 
 ## Riesgos

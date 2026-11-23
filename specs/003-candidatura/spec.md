@@ -142,31 +142,31 @@ requisitos transversales (RT-xx) están en [system.md](../system.md) y las respu
 ## Criterios de aceptación (puerta de salida)
 Cerrados el 16-nov-2026 para la versión anterior (606 tests, evals `cv` y `respuestas` con el modelo
 real, prueba manual de Mar). Tras el bloque H se vuelven a comprobar todos:
-- [ ] `horma eval correr cv` sobre los casos con errores sembrados (cifra inventada, cargo subido,
+- [x] `horma eval correr cv` sobre los casos con errores sembrados (cifra inventada, cargo subido,
       fecha o empresa cambiadas, titulación inventada, rasgo personal, promesa, inflado, carta que
       repite el CV): `comprobar` y `juez-candidatura` rechazan el 100 %; en los casos de flujo
       completo, fechas, cargos, empresas y titulaciones idénticos al maestro al 100 % y lo que falta
       va a huecos; el caso adversario, 100 % sin efecto; en los casos de selección, el código elige
       el CV base del sector de la oferta. La cobertura ATS queda medida (sin umbral).
-- [ ] `horma eval correr respuestas` sobre 15 correos inventados: etiqueta correcta ≥ 0,9; los 3
+- [x] `horma eval correr respuestas` sobre 15 correos inventados: etiqueta correcta ≥ 0,9; los 3
       adversarios, 100 % sin efecto.
-- [ ] Los dos sets corren en CI: simulado sin clave; con modelo real y tope de coste cuando hay clave.
-- [ ] Una candidatura sin problemas hace 3 llamadas al modelo y ninguna pasa de 5 (test con la puerta
+- [x] Los dos sets corren en CI: simulado sin clave; con modelo real y tope de coste cuando hay clave. *(cumplido en los PR #1 y #7; después RF-10.11d sacó `respuestas` de la CI y RF-5.8 dejó el modelo real solo a mano)*
+- [x] Una candidatura sin problemas hace 3 llamadas al modelo y ninguna pasa de 5 (test con la puerta
       simulada); una candidatura real cuesta menos de 1 USD (medida una vez).
-- [ ] Una tarea que no falla pero supera el tope se corta antes de la llamada siguiente (test).
-- [ ] La máquina de estados rechaza toda transición no permitida y nadie salvo la dueña con su
+- [x] Una tarea que no falla pero supera el tope se corta antes de la llamada siguiente (test).
+- [x] La máquina de estados rechaza toda transición no permitida y nadie salvo la dueña con su
       sesión aprueba (test).
-- [ ] Editar el CV conserva los avisos del juez sobre la carta, y viceversa (test).
-- [ ] Un test de RLS demuestra que una usuaria no lee las candidaturas ni el historial de otra, ni
+- [x] Editar el CV conserva los avisos del juez sobre la carta, y viceversa (test).
+- [x] Un test de RLS demuestra que una usuaria no lee las candidaturas ni el historial de otra, ni
       las versiones de sus CV base.
-- [ ] Editar un CV base y volver después a la versión anterior deja el texto original idéntico, y
-      las dos versiones siguen en el historial (test).
-- [ ] Consola: `horma flujo correr candidatura --usuaria ana --oferta 123 --paso-a-paso --traza
+- [x] Editar un CV base y volver después a la versión anterior deja el texto original idéntico, y
+      las dos versiones siguen en el historial (test). *(sustituido después por RF-10.3e: ya no hay CV base)*
+- [x] Consola: `horma flujo correr candidatura --usuaria ana --oferta 123 --paso-a-paso --traza
       trazas/ana-123/`, `horma agente correr juez-candidatura --entrada caso.json`,
-      `horma flujo correr clasificar_respuesta --entrada correo.json`, `horma eval correr cv`.
+      `horma flujo correr clasificar_respuesta --entrada correo.json`, `horma eval correr cv`. *(`clasificar_respuesta`, aparcado por RF-10.11d)*
 - [ ] Prueba manual: desde Recomendadas, preparar una candidatura; leer el CV, la carta y «Revisa
       esto»; abrir «Detalles»; editar una frase; «Aprobar y descargar» los dos PDF; marcar enviada en
-      un clic; «Me han llamado»; verla en el tablero con su historial. Forzar un error y «Reintentar».
+      un clic; «Me han llamado»; verla en el tablero con su historial. Forzar un error y «Reintentar». *(sin registro de la prueba completa tras el bloque H; hay pruebas parciales en T08 de la fase 4 y en la pasada del 22-nov, pero no de «Reintentar» tras un error forzado)*
 
 ## Fuera de alcance
 - LangGraph, pausa y reanudación con checkpointer: fase 4 (RF-4.1 a RF-4.3).
