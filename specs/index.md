@@ -46,9 +46,8 @@ Formato: carpeta — qué es. **Estado.**
   - **S8 (correcciones de la pasada del 22-nov): construida** en `simplificacion-s8` (T38-T49, T54-T67), sin PR.
     El eval `cv` real pasó (22-nov, 33/33, 1,74 USD) y la prueba de cierre Q pasó por DOM/API (T50). Faltan lo visual
     (1280/390 px, claro/oscuro) que mira Mar y el PR.
-  - **S9 («Corregir explicación» amplía la información): spec firmada** el 22-nov; sin construir (T51-T53, T68).
-  - **S10 (subir varios documentos a la vez): construida** en `simplificacion-s10` (T70-T74), sin PR; falta la prueba de
-    cierre (T75). Con ella se cierra la fase 10.
+  - **S9 («Corregir explicación» amplía la información): construida y probada por DOM/API** (23-nov) en `simplificacion-s9` (T51-T53), sin PR; faltan lo visual de Mar y el PR (T68).
+  - **S10 (subir varios documentos a la vez): construida y probada por DOM/API** (23-nov) en `simplificacion-s10` (T70-T74), sin PR; faltan lo visual de Mar y el PR (T75). Con ella se cierra la fase 10.
 
 ## Lo que viene, en este orden
 1. **Fase 11 · Aplicación autónoma y correo** (`011-aplicacion-autonoma/`, sin spec): enviar candidaturas en
