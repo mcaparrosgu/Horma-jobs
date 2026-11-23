@@ -245,3 +245,9 @@ def test_los_textos_estan_en_textos_js():
     for clave in ("maxLote", "leyendoArchivos", "perfilAplazado", "dudososSinResponder"):
         assert clave in t
     assert "Puedes subir hasta 5 archivos a la vez. Elige 5 o menos." in t
+
+
+def test_la_pregunta_de_clase_no_preselecciona_y_se_ve_en_el_movil():
+    js = _leer("perfil.js")
+    assert '["", "Elige…"]' in js and "TEXTOS.preguntaLoteElegir" in js    # sin «CV» por defecto
+    assert "caja.scrollIntoView" in js                                     # la caja sale sobre las tarjetas
