@@ -102,8 +102,12 @@ def verificar_idiomas(contenido: str, perfil) -> list[str]:
     return errores
 
 
-FORMULAS_CORTESIA: tuple[str, ...] = (
+FORMULAS_ANTIGUAS: tuple[str, ...] = (   # ya no se piden al modelo, pero valen en cartas guardadas (T66)
     "Estimado equipo de selección,", "Estimados señores,", "Hola equipo,", "Buenos días,",
+)
+FORMULAS_CORTESIA: tuple[str, ...] = (
+    "Hola, equipo:", "Estimado equipo de selección:", "Estimados señores:", "Buenos días:",
+    *FORMULAS_ANTIGUAS,
     "Un saludo", "Saludos cordiales", "Cordialmente", "Atentamente", "Muchas gracias por su tiempo",
     "Gracias por su tiempo", "Gracias por tu tiempo",
 )  # lista cerrada de saludos y despedidas de la carta (RF-3.6): no piden traza

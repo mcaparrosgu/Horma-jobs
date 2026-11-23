@@ -29,7 +29,7 @@ correcciones de la prueba manual (20-nov), como P9…P14.
 - **RF-7.1c** CUANDO «Solo remoto» esté marcado (en Preferencias o en el filtro de Recomendadas), SOLO
   DEBERÁN pasar las ofertas con modalidad `remoto`. Las que no tienen el dato NO DEBERÁN pasar (P7).
   Las ofertas propias de la usuaria se filtran igual que las de Horma (ver RF-7.1f).
-- **RF-7.1f** Los filtros de Preferencias y de Recomendadas (puestos, sector, contrato, nivel, país, idiomas,
+- **RF-7.1f** *(sustituido por la spec 010, RF-10.6g, 22-nov)* Los filtros de Preferencias y de Recomendadas (puestos, sector, contrato, nivel, país, idiomas,
   «Solo remoto», «Solo con salario», sueldo mínimo) y el rango de nota DEBERÁN aplicarse por igual a las
   ofertas propias y a las del catálogo (cambio pedido por Mar el 20-nov en la prueba manual; modifica RF-5.3e).
   Se mantiene que a las propias no se les exige «recomendable», y que se ven con su aviso del auditor.

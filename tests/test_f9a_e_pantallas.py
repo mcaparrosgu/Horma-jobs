@@ -78,7 +78,7 @@ def test_perfil_avisos_con_sus_acciones_y_otras_actividades():
 def test_cv_maestro_con_frase_fecha_version_editar_y_sin_innerhtml():
     html, js = leer("perfil.html"), leer("perfil.js")
     assert "Es el texto del que Horma saca tus CV y cartas. Se cambia desde tu perfil." in html
-    assert "cvBonito(maestroActual)" in js and "Editar" in js and "Versión ${perfil.version}" in js
+    assert "cvBonito(maestroActual)" in js and "Editar" in js and "Actualizado el ${fecha(creadoEn)}" in js
     assert "innerHTML" not in js and "contenteditable" not in html
 
 

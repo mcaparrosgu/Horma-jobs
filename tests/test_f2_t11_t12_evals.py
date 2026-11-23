@@ -258,7 +258,7 @@ def test_el_eval_se_detiene_al_superar_el_tope_y_deja_constancia(tmp_path):
     r = correr_set("recomendacion", raiz=raiz, simulado=True, tope_coste=1e-9)
     assert r["detenido_por_coste"] is True
     assert 1 <= r["casos_ejecutados"] < r["casos"] == 21
-    assert r["coste"] > r["tope_coste"] == 1e-9
+    assert r["tope_coste"] == 1e-9 and r["coste"] == 0   # T67: informa 0
     assert not r["aprobado"]
     guardado = json.loads(next((raiz / "resultados").glob("*-recomendacion.json"))
                           .read_text(encoding="utf-8"))
@@ -269,7 +269,7 @@ def test_el_eval_se_detiene_al_superar_el_tope_y_deja_constancia(tmp_path):
 def test_con_tope_holgado_corre_todo_y_anota_el_coste():
     r = correr_set("cv-base", raiz=RAIZ, simulado=True, tope_coste=1.0)
     assert r["detenido_por_coste"] is False and r["casos_ejecutados"] == r["casos"] == 9
-    assert 0 < r["coste"] < 1.0 and r["tope_coste"] == 1.0
+    assert r["coste"] == 0 and r["tope_coste"] == 1.0   # T67: simulado informa 0
 
 
 # --- T12: consola ------------------------------------------------------------------------------

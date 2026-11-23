@@ -21,8 +21,9 @@
     <h1 class="titulo-pantalla">Perfil</h1>
     <p id="aviso" role="status"></p>
     <div id="estado-perfil"></div>
+    <div id="pregunta-clase" class="panel" role="group" aria-labelledby="pregunta-clase-texto" hidden></div>
 
-    <section id="sube-cv" class="panel" aria-labelledby="t-cv">
+    <section id="sube-cv" class="panel" aria-labelledby="t-cv" hidden>
       <h2 id="t-cv" class="etiqueta-mono">Sube tu CV</h2>
       <p class="entradilla">Elige tu CV (PDF, DOCX o Markdown) y Horma construye tu perfil al momento.</p>
       <form id="subir" class="fila panel">
@@ -39,10 +40,9 @@
     <div id="pantalla" class="pantalla-perfil" hidden>
       <div class="col-izq">
       <section id="mi-perfil" class="panel" aria-labelledby="t-perfil">
-        <h2 id="t-perfil" class="etiqueta-mono">Tu perfil <span id="version" class="estado"></span></h2>
+        <h2 id="t-perfil" class="etiqueta-mono">Tu perfil</h2>
         <div id="datos" hidden>
-          <p id="aviso-edicion"><strong>Horma escribe tus CV y cartas con lo que ves aquí.</strong> Si corriges algo, Horma usará tu corrección aunque tu CV original diga otra cosa. Tu CV original no se toca: se queda tal como lo subiste.</p>
-          <p class="suave">Cada dato muestra de dónde sale. Si lo corriges, se crea una versión nueva del perfil y las candidaturas y compatibilidades anteriores quedan «desfasados».</p>
+          <p id="aviso-edicion" data-explicacion="perfil" data-explicacion-en="#t-perfil"></p>
           <div id="perfil"></div>
         </div>
       </section>
@@ -50,15 +50,9 @@
       <div class="col-der">
       <section id="subir-otro" class="panel" aria-labelledby="t-subir">
         <h2 id="t-subir" class="etiqueta-mono">Subir archivo</h2>
-        <p class="suave">¿Tienes un CV distinto para cada sector? Sube todos: Horma los junta en un solo perfil y adapta cada candidatura a su oferta. Las cartas le enseñan cómo escribes.</p>
+        <p class="suave" data-explicacion="subir">¿Tienes un CV distinto para cada sector? Sube todos: Horma los junta en un solo perfil y adapta cada candidatura a su oferta. Las cartas le enseñan cómo escribes.</p>
         <p class="suave">Formatos admitidos: <strong>PDF, DOCX o Markdown (.md)</strong>. Máximo 5 MB por archivo.</p>
         <form id="subir-doc" class="fila">
-          <label>Clase
-            <select id="clase-doc">
-              <option value="fuente" selected>CV</option>
-              <option value="carta">Carta</option>
-            </select>
-          </label>
           <label class="archivo">Archivo
             <span class="selector-archivo">
               <span class="boton" aria-hidden="true">Subir archivo</span>
@@ -70,7 +64,7 @@
 
       <section id="maestro" class="panel" aria-labelledby="t-maestro" hidden>
         <h2 id="t-maestro" class="etiqueta-mono">Tu CV completo</h2>
-        <p class="suave">Es el texto del que Horma saca tus CV y cartas. Se cambia desde tu perfil.</p>
+        <p class="suave" data-explicacion="maestro">Es el texto del que Horma saca tus CV y cartas. Se cambia desde tu perfil.</p>
         <p id="maestro-meta" class="suave maestro-meta"></p>
         <div class="fila">
           <button id="maestro-ver" class="secundario" type="button">Ver</button>
@@ -80,25 +74,25 @@
 
       <details id="pendientes" class="panel-desplegado" hidden>
         <summary>Por resolver <span id="n-pendientes" class="estado"></span></summary>
-        <p class="suave">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti. Ninguno es obligatorio.</p>
+        <p class="suave" data-explicacion="pendientes">Horma no adivina: lo que falta o es ambiguo te lo pregunta a ti. Ninguno es obligatorio.</p>
         <ul id="lista-pendientes" class="lista-editorial"></ul>
         <details id="avisos" class="seccion-plegable" hidden>
           <summary>Avisos <span id="n-avisos" class="estado"></span></summary>
-          <p class="suave">Te dicen qué mejorar. Si algo está bien como está, pulsa «Dar por visto».</p>
+          <p class="suave" data-explicacion="avisos">Te dicen qué mejorar. Si algo está bien como está, pulsa «Dar por visto».</p>
           <ul id="lista-avisos" class="lista-editorial"></ul>
         </details>
       </details>
 
       <details id="cvs-subidos" class="panel-desplegado seccion-plegable" open>
         <summary>Documentos subidos <span id="n-cvs" class="estado">0</span></summary>
-        <p class="suave">Tus CV y cartas. Horma saca de ellos tu perfil y tu manera de escribir.</p>
+        <p class="suave" data-explicacion="documentos">Tus CV y cartas. Horma saca de ellos tu perfil y tu manera de escribir.</p>
         <ul id="cvs" class="lista-editorial"></ul>
         <p id="sin-cvs" class="suave" hidden>Todavía no has subido ningún documento.</p>
       </details>
 
       <details id="estilo" class="panel-desplegado" hidden>
         <summary>Cómo escribes</summary>
-        <p class="suave">Horma escribe tus CV y cartas como escribes tú. Esta guía sale de tus CV y cartas (pesan más los que marcas «Lo escribí yo»); solo se calcula una vez. Lo que edites aquí manda.</p>
+        <p class="suave" data-explicacion="estilo"></p>
         <p id="estilo-estado" class="suave"></p>
         <div id="estilo-guia"></div>
         <div class="fila">

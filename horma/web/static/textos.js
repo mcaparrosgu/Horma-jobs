@@ -15,7 +15,7 @@ function estadoVisible(estado, preparacion) {
   return { enviada: "Enviada", entrevista: "Entrevista", cerrada: "Cerrada" }[estado] || estado;
 }
 
-const MOTIVOS_CIERRE = { rechazo: "Rechazo", descartada: "Descartada", retirada: "Retirada" };
+const MOTIVOS_CIERRE = { rechazo: "Rechazo", descartada: "Descartada", retirada: "Retirada", contratada: "Contratada" };
 const MOTIVOS_PREGUNTA = [["descartada", "La descarto yo"], ["retirada", "La retiro"]];
 
 // Lo que la oferta pide y el perfil no tiene (RF-10.2c). «Hueco» queda para un periodo sin actividad.
@@ -39,6 +39,27 @@ const TEXTOS = {
   sinCompatibilidad: "Sin compatibilidad",
   sinPerfil: "Sube tu CV para ver qué ofertas encajan contigo",
   sinPerfilBoton: "Subir mi CV",
+  usasVacio: "Aún no lo sabemos.",
+  evitasVacio: "Aún no lo sabemos: sube una carta tuya.",   // RF-10.14l
+  // Explicaciones de cada bloque, dentro de su ayuda «?» (RF-10.14m)
+  explicaciones: {
+    perfil: "Con estos datos Horma escribe tus CV y cartas. Si corriges algo, Horma usa tu corrección; el CV que subiste no cambia. Cada dato dice de dónde sale. Al corregir, las compatibilidades y candidaturas que ya tenías se marcan como «desfasadas»: se hicieron con tus datos de antes.",
+    estilo: "Horma escribe tus CV y cartas imitando cómo escribes. Esta guía sale de tus documentos; pesan más los que marcas «Lo escribí yo». Si la editas, manda lo tuyo.",
+    ofertas: "Compatibilidad: un número de 0 a 100 de lo bien que encaja la oferta con tu perfil; orienta, no decide. «Sin compatibilidad»: la oferta aún no la tiene; Horma la calcula sola. Cambiar el orden o lo que se muestra no gasta nada. «Descartar» aparta una oferta sin borrarla. Despliega la fila para ver por qué.",
+    candidaturas: "Tus candidaturas, por estado. Se crean desde Ofertas con «Preparar candidatura». Horma prepara el CV y la carta; tú los revisas, los apruebas y los envías.",
+    candidatura: "Horma prepara el CV y la carta para esta oferta con lo que dice tu perfil; tú los revisas, los corriges, los apruebas y los envías.",
+  },
+  ejemplosCifras: "Un logro medible no tiene por qué ser de ventas: mesas o cubiertos por servicio, aforo, caja diaria, personas formadas, temporadas repetidas, ascensos, idiomas con los que atendías.",   // RF-10.14k
+  preguntaTipoHueco: "¿Fue un empleo u otra cosa?",   // RF-10.14i
+  resumenesPorCv: "Horma guarda el resumen de cada CV. Tu CV completo usa el del más reciente; al redactar un CV para una oferta, elige el que mejor encaja.",   // RF-10.14d
+  preguntaClase: "No sabemos si este documento es un CV o una carta. ¿Cuál es?",   // RF-10.14b
+  confirmarEliminarCv: "¿Eliminar este CV? Rehacemos tu perfil sin él. No se puede deshacer.",   // RF-10.14
+  confirmarEliminarUltimoCv: "¿Eliminar tu único CV? Borramos tu perfil y vuelves a «Sube tu CV». No se puede deshacer.",   // RF-10.14
+  confirmarEliminarCarta: "¿Eliminar esta carta? No se puede deshacer.",
+  cvEliminado: "CV eliminado.",
+  ultimoCvEliminado: "CV eliminado. Se ha borrado tu perfil: sube un CV para crearlo de nuevo.",
+  cartaEliminada: "Carta eliminada.",
+  listaVaciaPorPuestos: "Ninguna oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta.",   // RF-10.14q
   anadidaPorTi: "Añadida por ti",
   corregirNota: "Compatibilidad que te parece justa (opcional)",
   correccionRango: "La compatibilidad va de 0 a 100 y el motivo no puede estar vacío.",
@@ -55,11 +76,15 @@ const TEXTOS = {
   senalesFraude: "Señales de fraude: Horma ha visto en esta oferta indicios de que podría no ser real.",
   fuenteDesconocida: "Fuente no reconocida por Horma",
   sinFuente: "Sin fuente indicada",
-  anadirIntro: "Pega el texto de una oferta o la dirección de su página. Es solo tuya: nadie más la ve. Horma la analiza y calcula su compatibilidad con tu perfil, y aparece siempre en Ofertas, pase o no tus filtros.",
+  anadirIntro: "Pega el texto de una oferta o la dirección de su página. Es solo tuya: nadie más la ve. Horma la analiza y calcula su compatibilidad con tu perfil, y aparece siempre en Ofertas, pase o no tus filtros. Si su puesto no está en «Qué buscas», se añade allí; puedes quitarlo cuando quieras.",
+  contratada: "Nos alegramos mucho por ti, esperamos que no vuelvas por aquí.",   // RF-10.17
+  anadirOculta: "Oferta añadida. No la ves porque en «Qué buscas» tienes desmarcado «Incluir las ofertas que añado».",
+  anadirPuesto: (t) => `Hemos añadido «${t}» a tus puestos de «Qué buscas». Puedes quitarlo cuando quieras.`,
   anadirUrl: "Para leerla, la dirección se envía a un servicio externo de lectura de páginas. LinkedIn, Indeed, Glassdoor e InfoJobs no se pueden leer: pega su texto.",
   anadirAplazada: "Oferta guardada. La analizamos mañana: hoy ya hemos trabajado todo lo posible para ti.",
-  anadirOk: "Oferta añadida. Se está analizando; se actualizará sola.",
-  leidaOk: "Oferta leída. Se está analizando; se actualizará sola.",
+  anadirRepetida: "Esa oferta ya la habías añadido.",
+  anadirError: "No se ha podido analizar la oferta añadida. Prueba a pegar su texto de nuevo.",
+  nadaQueCalificar: "No queda ninguna oferta por calificar.",
   sinCandidaturas: "Todavía no tienes candidaturas.",
   revisaFalta: "Horma no pudo cerrar algo por su cuenta: revisa el CV y la carta con cuidado.",
   editaDocumento: "Lo que escribas es tuyo: Horma lo vuelve a comprobar y lo que no esté en tu CV saldrá en «Revisa esto».",

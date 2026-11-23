@@ -116,6 +116,7 @@ mientras uno de estos sirva (RF-6.9).
 | **Etiqueta de puesto** | 28 px de alto, borde de 1 px, fondo transparente, texto de 13 px y peso 600. El color sale del tono de la familia, con suficiente contraste. El texto siempre visible |
 | **Barra de compatibilidad** | 6 px de alto, sin radio, pista y relleno según el tema; `role="meter"` con valor, mínimo y máximo. A su lado, la nota en DM Mono |
 | **Ayuda «?»** | botón de 44 × 44 px con un círculo de 20 px; abre una ayuda propia con foco o clic (no basta con `title`) y lleva `aria-label` «Qué significa …» |
+| **Explicación plegable** | la ayuda «?» junto al título de un bloque, con la explicación del bloque dentro (`montarExplicaciones()` en `comun.js`, sobre un párrafo marcado con `data-explicacion`). Sustituye a los párrafos explicativos sueltos (RF-10.14m) |
 | **Aviso** | texto con `role="status"` (o `alert` si es un error), con el color de error y nunca solo con color: el texto dice qué pasó |
 | **Tabla de datos** (admin) | cabeceras mono, filas con línea inferior, desplazamiento horizontal dentro de su caja en móvil |
 | **Documento** (CV y carta) | hoja de superficie con borde de 1 px en línea, tipografía del cuerpo y anchura de lectura |

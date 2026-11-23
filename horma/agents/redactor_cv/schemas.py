@@ -12,6 +12,11 @@ class EntradaRedactorCv(BaseModel):
         default=None, description="CV base de respaldo (puede venir editado por la usuaria): no fiable. "
                                   "Normalmente ausente: se parte del CV maestro (RF-10.3).")
     cv_maestro: str = Field(description="CV maestro en Markdown: contenido no fiable.")
+    otros_resumenes: list[str] = Field(
+        default_factory=list,
+        description="Los resúmenes de los demás CV de la usuaria, tal como los escribió "
+                    "(RF-10.14d): contenido no fiable. El del `cv_maestro` es el del "
+                    "CV más reciente.")
     oferta: Oferta
     longitud: Literal["mantener", "sintetizar"] | None = Field(
         default=None, description="Elección de la usuaria para un CV largo (RF-10.3b).")

@@ -6,17 +6,19 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from horma.schemas.perfil import Perfil
-from horma.schemas.preferencias import Preferencias
+from horma.schemas.preferencias import MAX_LARGO_TERMINO, MAX_TERMINOS, Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.comparar_versiones import comparar_versiones
 from horma.tools.cv_base_afectado import lineas_cambiadas
+from horma.tools.normalizar_titulo import casa_con_puestos
 from horma.tools.visibilidad_cv import clave_experiencia, nombre_experiencia
 
 _j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
 GRUPOS_DEL_CV = ("puestos", "sectores", "idiomas")   # el área ya no se rellena ni se elige
 _COLUMNAS_PREFS = ("familias", "puestos", "puestos_sugeridos", "excluidos", "sectores", "contratos",
                    "niveles", "paises", "idiomas", "solo_remoto",
-                   "solo_salario", "sueldo_minimo", "orden", "rango_min", "rango_max", "origen")
+                   "solo_salario", "sueldo_minimo", "incluir_propias", "orden", "rango_min", "rango_max",
+                   "origen")
 
 
 # --- CV ----------------------------------------------------------------------------------------
@@ -60,6 +62,23 @@ def vigente_de(s: Session, usuaria_id: int) -> dict | None:
     return dict(fila) if fila else None
 
 
+def lo_de_la_usuaria(s: Session, usuaria_id: int) -> dict | None:
+    """Lo que ella escribió o corrigió en el perfil vigente (origen «usuaria»), más su nombre y el género de
+    sus puestos. Se lleva a la versión nueva cuando se rehace el perfil (RF-10.14)."""
+    fila = vigente_de(s, usuaria_id)
+    if fila is None:
+        return None
+    datos = perfil_modelo(fila).model_dump(mode="json")
+    suyo: dict = {c: [x for x in datos[c] if x["origen"]["fuente"] == "usuaria"]
+                  for c in ("experiencias", "formacion", "idiomas", "habilidades", "proyectos",
+                            "certificaciones", "actividades", "otros")}
+    for c in ("titular", "resumen"):
+        if datos[c] and datos[c]["origen"]["fuente"] == "usuaria":
+            suyo[c] = datos[c]
+    suyo["nombre"], suyo["genero_puestos"] = datos.get("nombre"), datos.get("genero_puestos")
+    return suyo
+
+
 def por_version(s: Session, version: int) -> dict | None:
     fila = s.execute(text("select * from perfiles where version = :v"), {"v": version}).mappings().first()
     return dict(fila) if fila else None
@@ -84,8 +103,8 @@ def _origenes(perfil: Perfil) -> list[tuple[str, str]]:
         dato = getattr(perfil, campo)
         if dato:
             salida.append((campo, dato.origen.fragmento))
-    for campo in ("experiencias", "formacion", "idiomas", "habilidades", "proyectos", "certificaciones",
-                  "actividades", "otros"):
+    for campo in ("resumenes", "titulares", "experiencias", "formacion", "idiomas", "habilidades",
+                  "proyectos", "certificaciones", "actividades", "otros"):
         for i, x in enumerate(getattr(perfil, campo)):
             salida.append((f"{campo}.{i}", x.origen.fragmento))
     return salida
@@ -101,7 +120,7 @@ def guardar_perfil(s: Session, usuaria_id: int, perfil_id: int, perfil: Perfil,
         "update perfiles set datos = cast(:d as jsonb), cv_maestro = coalesce(:m, cv_maestro), "
         "preguntas_pendientes = cast(:p as jsonb), instrucciones_embebidas = cast(:i as jsonb), "
         "sector = :sector, familia = :familia, nivel = :nivel, stack = cast(:stack as jsonb), "
-        "estado = 'hecha', motivo_error = null where id = :id"),
+        "estado = 'hecha', motivo_error = null where id = :id and estado <> 'retirado'"),
         {"id": perfil_id, "d": _j(datos), "m": cv_maestro,
          "p": _j([p.model_dump(mode="json") for p in perfil.preguntas_pendientes]),
          "i": _j(perfil.instrucciones_embebidas), "sector": tax.sector if tax else None,
@@ -116,8 +135,22 @@ def guardar_perfil(s: Session, usuaria_id: int, perfil_id: int, perfil: Perfil,
 
 
 def marcar_error_perfil(s: Session, perfil_id: int, motivo: str) -> None:
-    s.execute(text("update perfiles set estado = 'error', motivo_error = :m where id = :i"),
+    s.execute(text("update perfiles set estado = 'error', motivo_error = :m where id = :i "
+                   "and estado <> 'retirado'"),
               {"i": perfil_id, "m": motivo[:500]})
+
+
+def retirar_todos(s: Session) -> None:
+    """Sin ningún CV, la usuaria se queda sin perfil vigente. Las versiones se conservan: las candidaturas y
+    las compatibilidades ya hechas apuntan a ellas (RF-10.14)."""
+    s.execute(text("update perfiles set estado = 'retirado' where estado in ('hecha', 'pendiente')"))
+
+
+def aplazados(s: Session) -> list[tuple[int, int]]:
+    """(usuaria, versión) de las versiones reservadas que esperan su `perfilar` porque no había presupuesto
+    (RF-10.14). Solo en modo sistema."""
+    filas = s.execute(text("select usuaria_id, perfil_id from perfiles_aplazados()")).all()
+    return [(f[0], f[1]) for f in filas]
 
 
 def nueva_version(s: Session, usuaria_id: int) -> tuple[int, int]:
@@ -185,6 +218,20 @@ def aplicar_puestos_del_cv(s: Session, usuaria_id: int, sugeridos: list[dict]) -
         else:
             actual.origen.pop("puestos", None)
     guardar_preferencias(s, usuaria_id, actual)
+
+
+def anadir_puesto_de_oferta(s: Session, usuaria_id: int, titulo: str | None) -> bool:
+    """RF-10.6h: el título de una oferta que ella añade entra en sus puestos marcados si ninguno lo cubre.
+    Con la lista vacía no se añade: un puesto empezaría a filtrar lo que hoy se ve todo."""
+    titulo = " ".join((titulo or "").split())[:MAX_LARGO_TERMINO]
+    actual = preferencias(s)
+    if (not titulo or not actual.puestos or len(actual.puestos) >= MAX_TERMINOS
+            or casa_con_puestos(titulo, actual.puestos)):
+        return False
+    actual.puestos = [*actual.puestos, titulo]
+    actual.origen["puestos"] = "usuaria"   # lo ha traído ella: el CV ya no lo pisa
+    guardar_preferencias(s, usuaria_id, actual)
+    return True
 
 
 # --- avisos vistos y longitud del CV (RF-9.2c, RF-9.2d) -----------------------------------------

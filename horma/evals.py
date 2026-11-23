@@ -372,7 +372,7 @@ def _cabeceras(texto: str) -> set[str]:
     return {" ".join(x.casefold().split()) for x in texto.splitlines() if "·" in x}
 
 
-CARTA_NEUTRA = "Hola equipo,\nUn saludo"
+CARTA_NEUTRA = "Hola, equipo:\nUn saludo"
 MAX_LLAMADAS = 5  # RF-3.1: de 3 a 5 llamadas al modelo por candidatura
 
 
@@ -499,7 +499,7 @@ def _respuestas_cv(e: EsperadoCv, entrada: dict) -> list[dict]:
                 "instrucciones_embebidas": oferta.instrucciones_embebidas}
     frases_carta = ["Me interesa mucho este puesto de trabajo.", "Es lo que busco en mi trabajo.",
                     "Quiero aprender más en este puesto."]
-    carta = {"contenido": "Hola equipo,\n\n" + "\n\n".join(frases_carta) + "\n\nUn saludo",
+    carta = {"contenido": "Hola, equipo:\n\n" + "\n\n".join(frases_carta) + "\n\nUn saludo",
              "traza": [{"frase": f, "fragmento": oferta.titulo} for f in frases_carta]}
     juez = {"veredicto_cv": "aprobado", "veredicto_carta": "aprobado", "problemas": []}
     return [redactor, carta, juez]
@@ -858,7 +858,7 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
             if tope_coste is not None and sum(x.coste for x in llamadas) > tope_coste:
                 detenido = True
                 break
-        coste = round(sum(x.coste for x in llamadas), 6)
+        coste = 0.0 if simulado else round(sum(x.coste for x in llamadas), 6)  # T67
     n = len(detalle)
     campos = {c: round(aciertos[c] / n, 4) for c in s.campos}
     tasa_adversarias = round(adversarias_ok / adversarias, 4) if adversarias else 1.0

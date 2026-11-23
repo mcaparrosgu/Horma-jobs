@@ -7,6 +7,7 @@ const DOCUMENTOS = { cv: "CV", carta: "Carta", oferta: "Oferta" };
 let c = null;
 let temporizador = null;
 let avance = 0;   // % de la tarea que prepara el CV y la carta (RF-8.7)
+let barraPrep = null;   // su barra, que se conserva entre repintados
 
 function boton(texto, alClic, clase) {
   const b = nodo("button", texto, clase);
@@ -201,14 +202,25 @@ function formularioEnviada() {
 }
 
 // Dos botones, solo los que son legales: «piden información» no cambia nada (P15).
+// «Estado» (RF-10.17): qué ha pasado con la candidatura después de enviarla.
 function respuestas() {
+  const s = nodo("section");
+  s.append(nodo("h3", "Estado", "subtitulo"));
   const fila = nodo("div", null, "fila");
   if (c.estado === "enviada") {
     fila.append(boton("Me han llamado", () => accion(`/api/candidaturas/${ID}/entrevista`, {}, "Pasada a entrevista.")));
   }
+  fila.append(boton("Me han contratado", async () => {
+    if (await accion(`/api/candidaturas/${ID}/cerrar`, { motivo: "contratada" }, "Candidatura cerrada: te han contratado.")) {
+      $("contratada-texto").textContent = TEXTOS.contratada;
+      $("ventana-contratada").showModal();
+    }
+  }));
   fila.append(boton("Me han rechazado", () => accion(`/api/candidaturas/${ID}/cerrar`, { motivo: "rechazo" }, "Candidatura cerrada."), "secundario"));
-  return fila;
+  s.append(fila);
+  return s;
 }
+$("contratada-cerrar").addEventListener("click", () => $("ventana-contratada").close());
 
 function formularioCerrar() {
   const f = nodo("form", null, "editor tarjeta");
@@ -265,10 +277,18 @@ function avisoDesfasada() {
 // --- pintar -------------------------------------------------------------------------------------
 function pintar() {
   const partes = [cabecera()];
+  if (c.preparacion !== "en_curso" && barraPrep) {   // terminó: la próxima preparación empieza de cero
+    barraPrep.quitar();
+    barraPrep = null;
+    avance = 0;
+  }
   if (c.preparacion === "en_curso") {
     const caja = nodo("div");
-    barraAvance(caja, "Preparando tu CV y tu carta").poner(avance);
-    partes.push(caja, nodo("p", "Horma está preparando el CV y la carta… puede tardar un minuto.", "suave"));
+    // la misma barra en cada repintado: así sigue rellenándose en vez de empezar de cero (RF-10.8c)
+    if (!barraPrep) barraPrep = barraAvance(caja, "Preparando tu CV y tu carta");
+    else caja.append(barraPrep.caja);
+    barraPrep.poner(avance);
+    partes.push(caja,nodo("p", "Horma está preparando el CV y la carta… puede tardar un minuto.", "suave"));
   } else if (c.preparacion === "error") {
     partes.push(nodo("p", c.motivo_error || "No se pudo preparar esta candidatura.", "alerta"));
     partes.push(boton("Reintentar", () => accion(`/api/candidaturas/${ID}/reintentar`, {}, "Preparando de nuevo…")));

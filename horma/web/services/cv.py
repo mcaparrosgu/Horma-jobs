@@ -7,8 +7,9 @@ from sqlalchemy import Engine
 from sqlalchemy.exc import IntegrityError
 
 from horma.config import ajustes
+from horma.tools.clasificar_documento import clasificar_documento
 from horma.tools.convertir_cv import ArchivoNoValido, convertir_cv
-from horma.web.db import sesion_de
+from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import cv as repo
 from horma.web.repositories import perfiles
 from horma.web.services import estilo as servicio_estilo
@@ -42,9 +43,11 @@ def _tipo(nombre_original: str) -> str:
 
 
 def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original: str,
-          nombre: str | None, clase: str, escrito_por_ella: bool = False) -> dict:
+          nombre: str | None, clase: str | None = None, escrito_por_ella: bool = False) -> dict:
+    """Sin `clase`, Horma detecta con reglas si es un CV o una carta (RF-10.14b). Si duda, no guarda nada y
+    devuelve `{"duda": True}`: la pantalla pregunta y vuelve a subir con la clase elegida."""
     a = ajustes()
-    if clase not in CLASES:
+    if clase is not None and clase not in CLASES:
         raise ArchivoRechazado(422, "La clase debe ser «fuente» o «carta».")
     tipo = _tipo(nombre_original)
     if len(contenido) > a.max_cv_bytes:
@@ -54,6 +57,11 @@ def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original:
         texto = convertir_cv(contenido, tipo)
     except ArchivoNoValido as e:
         raise ArchivoRechazado(422, str(e)) from e
+    if clase is None:
+        detectada = clasificar_documento(texto or "")
+        if detectada == "duda":
+            return {"duda": True}
+        clase = "fuente" if detectada == "cv" else "carta"
     nombre = (nombre or "").strip() or Path(nombre_original).stem[:80] or "CV"
 
     ruta = f"{uuid.uuid4().hex}.{tipo}"
@@ -85,15 +93,77 @@ def subir(engine: Engine, usuaria_id: int, *, contenido: bytes, nombre_original:
     return {"id": cv_id, "nombre": nombre, "tipo": tipo, "clase": clase, "perfil_id": perfil_id}
 
 
+def _rehacer_perfil(s, usuaria_id: int) -> None:
+    """Tras quitar un CV del perfil: se rehace con los que quedan; sin ninguno, la usuaria vuelve a
+    «Sube tu CV»."""
+    a = ajustes()
+    if not perfiles.cvs_fuente(s):
+        perfiles.retirar_todos(s)
+        return
+    perfil_id, _ = perfiles.nueva_version(s, usuaria_id)
+    try:
+        presupuesto.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
+                            a.tope_reintentos_tarea)
+    except presupuesto.SinPresupuesto:
+        pass   # la versión queda reservada y la recoge `rehacer_aplazados`
+
+
+def cambiar_clase(engine: Engine, usuaria_id: int, cv_id: int, clase: str) -> dict | None:
+    """«¿No es un CV? Cámbialo» (RF-10.14b). De carta a CV, se rehace el perfil con él; de CV a carta,
+    sin él."""
+    if clase not in CLASES:
+        raise ArchivoRechazado(422, "La clase debe ser «fuente» o «carta».")
+    with sesion_de(engine, usuaria_id) as s:
+        cv = repo.uno(s, cv_id)
+        if cv is None:
+            return None
+        if cv["clase"] == clase:
+            return {"id": cv_id, "clase": clase}
+        if clase == "fuente" and cv["texto_vacio"]:
+            raise ArchivoRechazado(422, "No se pudo leer el texto de este documento.")
+        repo.cambiar_clase(s, cv_id, clase)
+        if clase == "fuente":
+            _rehacer_perfil(s, usuaria_id)
+        else:
+            if cv["clase"] == "fuente":
+                _rehacer_perfil(s, usuaria_id)
+            servicio_estilo.encolar_si_no_hay_guia(s, usuaria_id)
+    return {"id": cv_id, "clase": clase}
+
+
 def eliminar(engine: Engine, usuaria_id: int, cv_id: int) -> bool:
-    """Quita el CV (fila y texto) y, ya confirmado, su archivo. El perfil ya construido no cambia."""
+    """Quita el CV (fila y texto) y, ya confirmado, su archivo. Si era uno de los CV de los que sale el
+    perfil,
+    el perfil se rehace con los que quedan; sin ninguno, la usuaria vuelve a «Sube tu CV» (RF-10.14).
+    Las candidaturas ya hechas no se tocan. Rehacer gasta del presupuesto del día: sin él, el CV se borra y
+    el perfil se rehace en cuanto vuelva a haberlo (`rehacer_aplazados`)."""
     with sesion_de(engine, usuaria_id) as s:
         cv = repo.uno(s, cv_id)
         if cv is None:
             return False
         repo.eliminar(s, cv_id)
+        if cv["clase"] == "fuente":
+            _rehacer_perfil(s, usuaria_id)
     (carpeta() / cv["ruta"]).unlink(missing_ok=True)
     return True
+
+
+def rehacer_aplazados(engine: Engine) -> int:
+    """Encola el `perfilar` de las versiones que quedaron sin presupuesto, de cada usuaria que ya lo tenga
+    (RF-10.14). Lo llama el worker de vez en cuando."""
+    a = ajustes()
+    n = 0
+    with sesion_sistema(engine) as s:
+        aplazados = perfiles.aplazados(s)
+    for usuaria_id, perfil_id in aplazados:
+        with sesion_de(engine, usuaria_id) as s:
+            try:
+                presupuesto.encolar(s, usuaria_id, "perfilar", perfil_id, a.tope_coste_perfilar,
+                                    a.tope_reintentos_tarea)
+                n += 1
+            except presupuesto.SinPresupuesto:
+                continue
+    return n
 
 
 def _borrar(destino: Path, escrito: bool) -> None:
@@ -120,6 +190,17 @@ def renombrar(engine: Engine, usuaria_id: int, cv_id: int, nombre: str) -> bool:
 def marcar_escrito_por_ella(engine: Engine, usuaria_id: int, cv_id: int, valor: bool) -> bool:
     with sesion_de(engine, usuaria_id) as s:
         return repo.marcar_escrito_por_ella(s, cv_id, valor)
+
+
+AVISO_DOCX = ("Así se lee tu documento; el diseño original del Word no se puede mostrar aquí.")
+
+
+def texto(engine: Engine, usuaria_id: int, cv_id: int) -> dict | None:
+    """El texto con el que Horma lee un documento, para «Ver» un DOCX (RF-10.14c). Solo la dueña (RLS)."""
+    with sesion_de(engine, usuaria_id) as s:
+        if repo.uno(s, cv_id) is None:
+            return None
+        return {"texto": repo.texto(s, cv_id) or "", "aviso": AVISO_DOCX}
 
 
 def archivo(engine: Engine, usuaria_id: int, cv_id: int) -> tuple[dict, Path] | None:

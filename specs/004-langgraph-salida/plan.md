@@ -31,7 +31,7 @@ horma/
              offline.html, iconos)
 evals/umbrales.json (nuevo) · evals/red-teaming/ (nuevo) · docker-compose.prod.yml + Caddyfile (nuevos)
 .env.produccion.example (nuevo) · .github/workflows/ci.yml (job evals-reales)
-docs/revision-lineas-rojas.md · docs/plan-pruebas-fase4.md (gitignorado) · pruebas-manuales/fase4/
+docs/revision-lineas-rojas.md · plan de pruebas y CV de prueba (gitignorados, retirados)
 ```
 
 - **Una sola definición del flujo:** `candidatura.py` define una vez `PASOS`, `ARISTAS`, `inicio`,
@@ -213,8 +213,8 @@ class Flow(Protocol):
   `SMTP_PASSWORD`, `ALERTAS_CORREO`, los límites de ritmo nuevos y `HORMA_DOMINIO`.
 
 ## Cierre (RF-4.8)
-- **`pruebas-manuales/fase4/`:** 5 CV inventados de sectores distintos. **`docs/plan-pruebas-fase4.md`**
-  (gitignorado): los 5 casos, cada uno con los pasos y lo que se espera. Entre los 5 cubren:
+- **CV de prueba** (gitignorados, retirados): 5 CV inventados de sectores distintos. **Plan de pruebas manual**
+  (gitignorado, retirado): los 5 casos, cada uno con los pasos y lo que se espera. Entre los 5 cubren:
   - perfil y CV base, con historial de versiones;
   - recomendaciones;
   - candidatura `lista` y `pendiente_de_ti`;
@@ -242,7 +242,7 @@ class Flow(Protocol):
 | RF-4.5-4.5e | `llm/vigilancia.py`, `gateway.py`, `metricas.py`, `evals/red-teaming/` | Tests de vigilancia; eval `red-teaming` al 100 % |
 | RF-4.6-4.6e | `static/`, `docker-compose.prod.yml`, `Caddyfile`, `main.py`, `web/limites.py` | Lighthouse; arranque en producción; 429 |
 | RF-4.7-4.7c | `routers/costes.py`, `web/alertas.py`, `worker.py` | Tests de `/costes` sin datos personales, alertas con SMTP simulado y motivo saneado |
-| RF-4.8, 4.8b | `docs/plan-pruebas-fase4.md`, `docs/revision-lineas-rojas.md` | Prueba de Mar y firma |
+| RF-4.8, 4.8b | Plan de pruebas manual (retirado), `docs/revision-lineas-rojas.md` | Prueba de Mar y firma |
 
 ## Decisiones del plan (revisables)
 - El módulo se llama `grafo.py`, no `langgraph.py`, para que no se confunda con el paquete `langgraph`.

@@ -123,7 +123,7 @@ _IDIOMAS_TEXTO = {
     "de": "alemán aleman german deutsch allemand",
     "it": "italiano italian italienisch",
     "pt": "portugués portugues portuguese portugiesisch",
-    "ca": "catalán catalan",
+    "ca": "catalán catalan valenciano valencià",
     "eu": "euskera vasco basque",
     "gl": "gallego galician",
     "nl": "neerlandés neerlandes holandés holandes dutch nederlands",

@@ -290,3 +290,18 @@ def test_texto_que_no_es_una_oferta_se_rechaza(app):
     ana, csrf = entrar(app, "google-A")
     r = ana.post("/ofertas", json={"texto": "<script>"}, headers=csrf)
     assert r.status_code == 422 and "no parece una oferta" in r.json()["detail"]
+
+
+def test_texto_largo_sin_vocabulario_de_empleo_se_rechaza():
+    """RF-5.3i: una receta pasa el mínimo de palabras, pero no tiene ninguna palabra de una oferta."""
+    from horma.web.services.ofertas import parece_oferta
+    receta = ("Ingredientes para hacer pan casero: 500 gramos de harina de fuerza, 10 gramos de sal, "
+              "300 ml de agua tibia y 5 gramos de levadura. Amasa diez minutos, deja reposar una hora "
+              "y hornea a 220 grados.")
+    assert not parece_oferta(receta)
+    for oferta in ("Se necesita personal de almacén. Empresa: Distribuciones Levante.",
+                   "Gestor/a de proyectos en Obras Levante SL. Incorporación inmediata.",
+                   "Diseñador/a gráfico/a freelance para Estudio Brújula, Barcelona.",
+                   "Clínica Norte busca enfermera/o para su planta de hospitalización en Bilbao.",
+                   "Senior data engineer for a fintech in Berlin, we are hiring now."):
+        assert parece_oferta(oferta), oferta

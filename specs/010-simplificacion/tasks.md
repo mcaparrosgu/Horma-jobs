@@ -1,7 +1,7 @@
 ---
 type: tasks
 title: simplificacion — Desglose de tareas
-description: Tareas pequeñas y comprobables de la simplificación, por bloques S1-S7. Cada una empieza con un test que falla; las de pantalla se comprueban a 1280 y 390 px, en claro y en oscuro.
+description: Tareas pequeñas y comprobables de la simplificación, por bloques S1-S10. Cada una empieza con un test que falla; las de pantalla se comprueban a 1280 y 390 px, en claro y en oscuro.
 tags: [tareas, simplificacion, frontend, flujos, costes, arquitectura]
 status: active
 sources: [./plan.md]
@@ -12,19 +12,15 @@ stale_after: null
 
 # simplificacion — Tareas
 
-## Estado (22-nov)
-| Bloques | Rama y PR | Prueba de Mar |
-|---|---|---|
-| S0-S1 | Fusionados (PR #27 y #28) | Firmada (21-nov) |
-| S2-S5 | Fusionados juntos (PR #29) | Hechas (21-nov); la prueba 2.3 dio lugar a S7 |
-| S6 | Fusionado (PR #30) | — (no tiene pantalla) |
-| S7 | Fusionado (PR #31) | Cerrada por Mar (22-nov); el repaso a 390 px lo hará Mar más adelante, fuera de esta fase |
+El estado de cada bloque está en [specs/index.md](../index.md); aquí solo van las casillas.
 
 ## Forma de trabajo
 - **Modelo:** aclaraciones, spec, plan y tareas, con Opus; la construcción, con Sonnet. Un fallo de eval poco
   claro se analiza con Opus.
-- **Ramas:** una por bloque (`simplificacion-s1` … `simplificacion-s7`); S2-S5 se fusionaron en un solo PR.
+- **Ramas:** una por bloque (`simplificacion-s1` … `simplificacion-s10`); S2-S5 se fusionaron en un solo PR.
   Dentro de un bloque, todas las tareas seguidas.
+- **Números:** en S8 no siguen el orden porque las tareas se añadieron durante la prueba; no se renumeran para no
+  romper las referencias de los commits.
 - **Gasto:** solo T09 (eval `cv`), T19 (evals `ofertas` y `red-teaming`) y las pruebas manuales llaman al modelo
   real: se avisa antes con la estimación.
 - **Tests:** `UV_NO_SYNC=1 uv run pytest`.
@@ -98,7 +94,7 @@ stale_after: null
     huella a las filas de hoy.
 - [x] T22 — Precios oficiales del modelo.
   - **Test:** `config.py` sin «ESTIMADOS» y con la fecha de consulta.
-- [x] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR. *(pasos en `docs/plan-pruebas-010.md`; navegador de S3-S5 comprobado por Claude el 21-nov)*
+- [x] T23 — Cierre de S5: prueba manual de Mar (Admin › Costes: una oferta = una llamada) y PR. *(pasos en el plan de pruebas manual, retirado; navegador de S3-S5 comprobado por Claude el 21-nov)*
 
 ### S6 · Orden interno (RF-10.11)
 - [x] T24 — Solo los servicios encolan; routers sin repositorios; contrato de import-linter.
@@ -148,3 +144,116 @@ Rama `simplificacion-s7`, sobre `simplificacion-s6`. Sale de la prueba 2.3 de Ma
 - [x] T37 — Cierre de S7: plan de pruebas, coherencia (spec, `index.md`, README) y prueba de Mar. *(cerrada por
   Mar el 22-nov; PR #31, fusionado el 22-nov)*
   - **T35 en real:** eval `cv`, 31 casos (1,60 USD, parado por tope) y los casos 32 y 33 de carta en verde (0,25 USD).
+
+### S8 · Correcciones de la pasada del 22-nov (RF-10.14 a 10.14r, RF-5.3i, 10.4e, 10.6i, 10.8c, 10.16, 10.17)
+Rama `simplificacion-s8`. Sale de la pasada completa de Mar (22-nov, apuntes C1-G1) y de su repetición (H-P).
+Construye Sonnet, todo el bloque seguido; se para solo antes de gastar (T50).
+- [x] T38 — Spec, plan y tareas de S8. *(Opus; firmadas por Mar el 22-nov)*
+- [x] T39 — Puestos con género (RF-10.14p).
+  - **Test:** «Jefe de sala» casa con «Jefe/a de sala», «Jefa de sala» y «Jefe(a) de sala», y no con «Jefe de
+    cocina»; «Auxiliar administrativo/a» casa con «Auxiliar administrativa»; `contar_por_puesto` cuenta igual;
+    la migración recalcula `titulo_norm`.
+- [x] T40 — Lista vacía con motivo (RF-10.14q) e ingesta atascada (RF-10.14r).
+  - **Test:** con puestos marcados y ninguna oferta, Ofertas enseña el texto de RF-10.14q; una ejecución «en
+    curso» de hace 31 min se cierra como error al reclamar otra; una de hace 5 min, no.
+- [x] T41 — `perfilar` conserva lo que escribió la usuaria (riesgo del plan, base de T42).
+  - **Test:** un perfil con una experiencia y una habilidad de origen `usuaria`, al subir otro CV, las mantiene
+    en la versión nueva.
+- [x] T42 — Borrar un CV rehace el perfil (RF-10.14).
+  - **Test:** con dos CV, borrar uno encola `perfilar` solo con el otro y la versión nueva no tiene datos con su
+    `cv_id`; borrar el último deja Perfil en «Sube tu CV» y las candidaturas siguen abriéndose; sin presupuesto,
+    el CV se borra y el perfil se rehace al día siguiente; la confirmación trae el texto nuevo.
+- [x] T43 — Detectar CV o carta (RF-10.14b).
+  - **Test:** los dos CV y la carta de `pruebas-manuales/pasada-22nov/` se clasifican bien (sin modelo); un texto
+    ambiguo da «duda»; cambiar la clase de carta a CV encola `perfilar`. Sin selector de clase en «Subir archivo».
+- [x] T44 — Un resumen y un titular por CV (RF-10.14d). *Gasta si cambia el prompt: avisar antes (eval `cv`).*
+  - **Test (simulado):** con dos CV, el perfil guarda los dos resúmenes con su origen; «Sin resumen» solo sale si
+    ninguno tiene; «Tu CV completo» usa el del CV más reciente; el redactor recibe los dos. **Real:** eval `cv` en
+    umbral, si se tocó el prompt.
+- [x] T45 — Ver DOCX y respuesta con lo que cambió (RF-10.14c, 10.14e).
+  - **Test:** «Ver» de un DOCX devuelve su texto y el aviso; «Descargar original», el archivo con su tipo; otra
+    usuaria, 404. Guardar una respuesta devuelve el campo y el valor nuevos.
+- [x] T46 — Perfil: sin versión, Formación con cursos, nombre, hueco y fechas (RF-10.14f-j).
+  - **Test:** ninguna página pinta «versión»; Formación tiene «Cursos y certificados»; el hueco pregunta
+    «¿Fue un empleo u otra cosa?»; las fechas se ven y se escriben como MM-AAAA y se guardan como hoy.
+- [x] T47 — «Corregir» por experiencia en «Sin cifras», con ejemplos (RF-10.14k).
+  - **Test:** un aviso con tres experiencias trae tres «Corregir»; cada uno abre la caja «Modificar» de la suya.
+- [x] T48 — Cómo escribes y ayudas «?» (RF-10.14l, 10.14m).
+  - **Test:** «Usas» y «Evitas» en `<ul>`; «Evitas» vacío con su texto; etiqueta según el origen; el componente
+    «Explicación plegable» en la guía y en las cuatro pantallas; textos de C2 y C8 en `textos.js`.
+- [x] T49 — Un solo mensaje a la vez y PDF sin páginas sueltas (RF-10.14n, 10.14o).
+  - **Test:** al subir un CV, Perfil no pinta a la vez la barra y «CV subido…»; el PDF del CV completo de la pasada
+    no tiene ninguna página con menos de tres líneas.
+  - **Navegador (T46-T49):** Perfil, Ofertas, Candidaturas y Candidatura a 1280 px, en claro y en oscuro; 390 px si
+    la herramienta lo permite (si no, se dice).
+
+#### Correcciones de la prueba H-I (22-nov)
+- [x] T54 — Barras que se rellenan en lima y conservan su punto al repintar (RF-10.8c).
+- [x] T55 — Filtro por vocabulario de empleo: la receta se rechaza sin analizarla (RF-5.3i).
+  - **Test:** `test_texto_largo_sin_vocabulario_de_empleo_se_rechaza`; las 177 ofertas guardadas y los casos de evals pasan.
+- [x] T56 — `/ofertas#anadir` abre la ventana también desde Ofertas (RF-10.6i). **Navegador:** comprobado.
+- [x] T57 — «Información adicional» y avisos de formato en llano (RF-10.16); migraciones 0026 (recompone maestros) y
+  0028 (reescribe avisos guardados).
+- [x] T58 — PDF `cv_nombre_puesto_empresa.pdf` (RF-10.4e).
+- [x] T59 — «Estado» y «Me han contratado» con su Ventana (RF-10.17); migración 0027.
+  - Pendiente: comprobación visual a 1280 y 390 px, claro y oscuro, en la prueba de cierre (T50).
+
+#### Correcciones de la pasada J-P (22-nov)
+Recorrida por Claude en el navegador y la consola; K1, O4, P1, P2, P5 y N4 repetidas después y correctas.
+- [x] T60 — «No consta en tu CV» solo con lo que falta (RF-10.13). La causa era `medir_ats`, no el redactor: exigía
+  todas las palabras de una frase de requisito. Ahora una palabra clave corta exige todas (nivel de idioma igual o
+  mayor; las cifras y «o superior/similar» no cuentan; «A o B» y «A; se valorará B» se respaldan con uno de los dos; «formación» no cuenta como palabra pedida) y una frase de 4 o más palabras la juzga el redactor.
+  - **Test:** `test_s8_t60_huecos_falsos.py` (los 4 requisitos de Irene ya no son hueco; «Excel avanzado» e «Inglés C1» sí).
+- [x] T61 — El nombre que editó ella manda sobre el del CV al rehacer el perfil (RF-10.5f, RF-10.14).
+  - **Test:** `test_s8_t41_conserva_lo_de_la_usuaria.py`.
+- [x] T62 — Eliminar una carta o el último CV lo dice en su idioma (RF-10.14): diálogo, etiqueta y aviso.
+  - **Test:** `test_s8_t42_borrar_cv_rehace_perfil.py`. **Navegador:** en la prueba de cierre (T50).
+
+#### Correcciones finales (cruce del 22-nov con los informes de investigación)
+Lo demás de la pasada no se arregla aquí: los falsos «Dato dudoso», los recortes del extractor y «manejo de
+ordenador» como hueco van a la fase 13; el coste de editar el perfil, a la 12; «sin límite» en Admin, a la 14; los
+avisos de presupuesto, a la gestión del gasto. Ver [index.md](../index.md#lo-que-viene).
+- [x] T63 — «Valenciano» en el CV maestro y en las ofertas.
+  - **Qué se hace:** `componer_cv_maestro` escribe «Valenciano» si el idioma es `ca` y su `origen.fragmento` dice
+    «valenci»; si no, «Catalán». `normalizar_oferta` añade «valenciano valencià» a `ca`.
+  - **Test:** `ca` con fragmento «Valenciano: C1» da «Valenciano C1» en el maestro; con «Catalán: B2», «Catalán
+    B2»; una oferta que pide valenciano no sale en «No consta» si el perfil tiene `ca`.
+- [x] T64 — «No consta» sin duplicados ni texto interno (RF-10.13).
+  - **Qué se hace:** en `flows/candidatura.py`, los huecos del redactor y los de `medir_ats` se comparan por una
+    clave normalizada (sin paréntesis, sin tildes, en minúsculas) y por inclusión; de los huecos del redactor se
+    quita el paréntesis con texto interno (p. ej., «según la taxonomía»).
+  - **Test:** «PMS (…según la taxonomía…)» y «pms» dan un solo «PMS»; ningún hueco contiene «taxonomía».
+- [x] T65 — Barra y Perfil sin parpadeo (RF-10.8c, RF-10.14n).
+  - **Qué se hace:** `perfil.js` conserva el nodo de la barra al repintar mientras la tarea siga activa (como T54)
+    y no pinta «Sube tu CV» hasta tener la respuesta de `/api/perfil`.
+  - **Test:** estático: la barra se crea una vez y se reutiliza; el estado vacío solo se pinta tras la respuesta.
+    **Navegador:** subir un CV y ver la barra continua hasta «Listo», a 1280 y 390 px, en claro y en oscuro.
+- [x] T66 — Saludos de la carta con la puntuación correcta (RF-3.6, lista cerrada).
+  - **Qué se hace:** la lista de `verificar_trazabilidad.py`, el prompt de `redactor_carta` (lista y ejemplo) y los
+    casos de `evals/cv` usan coma tras «Hola» y dos puntos al final: «Hola, equipo:», «Estimado equipo de
+    selección:», «Estimados señores:», «Buenos días:». La comprobación sigue aceptando las formas antiguas, para no
+    avisar en cartas ya guardadas. Despedidas, sin cambios. El nombre de la empresa en el saludo, en la fase 13.
+  - **Test:** el prompt y sus ejemplos solo traen formas nuevas; una carta con «Hola, equipo:» pasa la comprobación.
+    **Real:** el eval `cv` de T50.
+- [x] T67 — El eval simulado informa 0 USD.
+  - **Test:** `horma eval correr ofertas --simulado` da coste 0.
+- [x] T50 — Cierre de S8 (22-nov: Q1-Q10 pasan por DOM/API; falta solo lo visual a 1280/390 px y claro/oscuro, y el PR). *Gasta: avisar antes.*
+  - **Qué se hace:** eval `cv` real (hecho el 22-nov: 33/33, 1,74 USD, aprobado; cierra T44 y T66); prueba de cierre de Mar en
+    `docs/plan-pruebas-manuales.md` (subir y borrar CV, T59, T62-T66; ~0,3-0,6 USD); presupuesto diario de vuelta
+    a 1 USD; suite verde; `index.md` al día; PR.
+
+### S9 · «Corregir explicación» amplía la información (RF-10.15) — firmada el 22-nov
+Rama `simplificacion-s9`, desde `main` con S8 fusionada.
+- [ ] T51 — Campo «Información nueva sobre ti» y ayuda (RF-10.15, 10.15e).
+  - **Test:** `POST /api/matches/{id}/correccion` guarda `informacion`; sin ella sigue valiendo; otra usuaria, 404.
+- [ ] T52 — La información llega a las candidaturas nuevas como una fuente más, sin tocar los prompts (RF-10.15b).
+  - **Test (simulado):** el redactor, el juez y la trazabilidad la reciben en una candidatura nueva y no en una ya
+    preparada; una frase con un dato que no está ni en el perfil ni en la información da error de trazabilidad.
+- [ ] T53 — Preguntar y revisar en Perfil (RF-10.15c-d).
+  - **Test:** «No» no toca `por_resolver`; «Sí» añade la propuesta; el perfil no cambia de versión hasta
+    confirmarla; confirmar aplica «desfasadas». **Navegador:** Ofertas y Perfil a 1280 y 390 px, claro y oscuro.
+- [ ] T68 — Cierre de S9: prueba de Mar (~0,2 USD), suite verde, `index.md` al día y PR.
+
+### S10 · Subir varios documentos a la vez (RF-10.18) — sin spec
+Rama `simplificacion-s10`. Con S10 se cierra la fase 10.
+- [ ] T69 — Aclaraciones, spec, plan y tareas de S10. *(Opus; firma de Mar)*

@@ -20,10 +20,22 @@
   <main class="ancho">
     <h1 class="titulo-pantalla">Candidatura</h1>
 
+    <p hidden data-explicacion="candidatura" data-explicacion-en="h1"></p>
     <p class="etiqueta-mono"><a href="/candidaturas">← Todas las candidaturas</a></p>
     <span id="aviso" role="status"></span>
     <div id="candidatura"></div>
   </main>
+
+  <!-- RF-10.17: al marcar «Me han contratado» -->
+  <dialog id="ventana-contratada" class="ventana" aria-labelledby="contratada-titulo">
+    <header>
+      <h3 id="contratada-titulo" class="titulo-oferta">¡Enhorabuena!</h3>
+      <button id="contratada-cerrar" class="secundario" type="button">Cerrar</button>
+    </header>
+    <div class="ventana-cuerpo">
+      <p id="contratada-texto"></p>
+    </div>
+  </dialog>
   <script src="/static/textos.js"></script>
   <script src="/static/comun.js"></script>
   <script src="/static/candidatura.js"></script>

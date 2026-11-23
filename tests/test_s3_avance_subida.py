@@ -60,7 +60,7 @@ def test_ninguna_pagina_pinta_el_indicador_de_la_cabecera():
 def test_perfil_usa_la_barra_con_porcentaje_al_leer_el_cv():
     js = leer("perfil.js")
     assert "/api/tareas/activas?tipo=perfilar" in js
-    assert 'barraAvance(estado, "Estamos leyendo tu CV").poner(progreso)' in js
+    assert 'barraAvance(estado, "Estamos leyendo tu CV")' in js and "barraLectura.poner(progreso)" in js
     assert "innerHTML" not in leer("comun.js")
 
 
@@ -70,4 +70,4 @@ def test_no_hay_boton_subir_cv_y_el_cambio_del_archivo_sube():
     assert "Subir CV</button>" not in html and 'id="escrito-por-ella"' not in html
     assert 'id="clase-cv"' not in html
     assert '$("archivo").addEventListener("change"' in js
-    assert '$("archivo"), $("archivo-nombre"), "fuente")' in js
+    assert '$("archivo"), $("archivo-nombre"))' in js   # la clase se detecta sola (RF-10.14b)

@@ -15,6 +15,15 @@ están en `specs/system.md`.
 - Secretos: solo en `.env` (nunca se versiona). Las claves se documentan en `.env.example`.
 - Los artefactos de conocimiento usan el Open Knowledge Format (OKF): markdown + frontmatter YAML.
 - Idioma: toda la documentación y todo lo generado, en español de España.
+- Simple primero (constitución): antes de proponer un agente, una tabla, una pantalla o un paso nuevo,
+  comprueba si basta con código, con algo que ya existe o con quitar algo. Si propones añadir, di qué
+  opción más simple descartaste y por qué.
+- Documentación mínima, también en los documentos de trabajo: nada de documentos nuevos si cabe como
+  sección de uno existente; enlaza en vez de repetir; solo lo esencial.
+- Comunicación eficiente: empieza por la respuesta o el resultado; sin preámbulos ni recapitulaciones;
+  frases cortas y listas breves; explica el porqué en una o dos líneas. Los informes y documentos
+  sintetizan: conclusiones y decisiones primero, evidencia mínima, sin repetir lo que ya está en otro
+  documento. La brevedad no oculta riesgos, costes ni cosas irreversibles: se avisan siempre.
 
 ## Reglas de arquitectura del producto (de specs/system.md)
 - Los agentes del producto son módulos Python: `prompt.md` + esquemas Pydantic de entrada y
@@ -61,4 +70,5 @@ Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementació
   tablas cortas, sin repetir lo que ya dice otro documento (enlázalo), sin relleno ni narración de la
   conversación, y con el estado real (qué está hecho y qué no).
 - Ante la duda de si un documento es técnico, no lo subas y pregunta.
-- Al cambiar el estado de algo, actualiza en el mismo cambio spec, README e `index.md`.
+- El estado de cada fase vive solo en `specs/index.md`; los `tasks.md` llevan las casillas y el README enlaza.
+  Al cambiar el estado de algo, actualiza en el mismo cambio `index.md` y las casillas.

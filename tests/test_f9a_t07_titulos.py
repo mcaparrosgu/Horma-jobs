@@ -10,7 +10,7 @@ from horma.tools.normalizar_titulo import normalizar_titulo
 def test_normalizar_titulo():
     assert normalizar_titulo("Senior Data Analyst (m/f)") == "senior data analyst m f"
     assert normalizar_titulo("Analistas de Datos – Barcelona") == "analista de dato barcelona"
-    assert normalizar_titulo("Camarero/a de Sala") == "camarero a de sala"
+    assert normalizar_titulo("Camarero/a de Sala") == "camarero de sala"
     assert normalizar_titulo("Business Analyst") == "business analyst"
     assert normalizar_titulo(None) == "" and normalizar_titulo("  ") == ""
 

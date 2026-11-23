@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
-from horma.tools.normalizar_titulo import normalizar_titulo
+from horma.tools.normalizar_titulo import normalizar_titulo, variantes_genero
 
 
 @dataclass(frozen=True)
@@ -48,7 +48,7 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
         normalizados = [n for n in dict.fromkeys(normalizar_titulo(t) for t in terminos) if n]
         if not normalizados:
             return None
-        p[nombre] = [f"% {n} %" for n in normalizados]
+        p[nombre] = [f"% {v} %" for n in normalizados for v in variantes_genero(n)]
         return f"((' ' || coalesce(titulo_norm, '') || ' ') LIKE ANY(CAST(:{nombre} AS text[])))"
 
     casa_puesto = frases("puestos", prefs.puestos)
@@ -85,9 +85,11 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
                            "coalesce(salario_anual_eur_max, salario_anual_eur_min) >= :sueldo_minimo)")
     if prefs.solo_remoto:
         condiciones.append("modalidad = 'remoto'")
-    # Los filtros valen igual para las propias y las del catálogo (RF-7.1f). Solo «recomendable» (ni fantasma
-    # ni fraude) se les perdona: la usuaria ve sus ofertas con el aviso del auditor (RF-5.3e).
-    donde = ["estado = 'procesada'", "(usuaria_id IS NOT NULL OR recomendable)", *condiciones]
+    # RF-10.6g (sustituye a RF-7.1f): con «Incluir las ofertas que añado», las propias pasan siempre, sin
+    # filtros ni «recomendable» (llevan el aviso del auditor, RF-5.3e); sin ella, no salen.
+    del_catalogo = " AND ".join(["usuaria_id IS NULL", "recomendable", *condiciones])
+    donde = ["estado = 'procesada'",
+             f"(usuaria_id IS NOT NULL OR ({del_catalogo}))" if prefs.incluir_propias else del_catalogo]
     if excluir_ids:
         p["excluir_ids"] = list(excluir_ids)
         donde.append("NOT (id = ANY(CAST(:excluir_ids AS int[])))")

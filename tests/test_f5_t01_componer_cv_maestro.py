@@ -82,3 +82,15 @@ def test_sin_rasgos_personales_ni_genero():
     texto = componer_cv_maestro(_perfil(genero_puestos="femenino"))
     assert rasgos_personales(texto) == []
     assert "femenino" not in texto.lower()
+
+
+def test_los_meses_salen_como_mm_aaaa_y_el_validador_los_acepta():
+    from horma.tools.validar_cv import validar_cv
+    p = Perfil.model_validate({"experiencias": [{"puesto": "Camarera", "empresa": "Bar Sol",
+                                                 "inicio": "2021-03", "fin": "2023-09",
+                                                 "origen": {"fuente": "usuaria", "fragmento": "x"}}]})
+    assert "Camarera · Bar Sol · 03-2021 – 09-2023" in componer_cv_maestro(p).splitlines()
+    ok = "## Experiencia\nCamarera · 03-2021 – 09-2023\n"
+    assert not [e for e in validar_cv(ok) if "Fecha" in e or "periodo" in e]
+    assert any("acaba antes" in e for e in validar_cv("## Experiencia\nX · 09-2023 – 03-2021\n"))
+    assert any("no existe" in e for e in validar_cv("## Experiencia\nX · 13-2021 – 02-2022\n"))

@@ -11,7 +11,7 @@ from horma.schemas.oferta import Auditoria, Oferta, Salario
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.normalizar import huella
 from horma.tools.normalizar_oferta import normalizar_oferta
-from horma.tools.normalizar_titulo import normalizar_titulo
+from horma.tools.normalizar_titulo import normalizar_titulo, variantes_genero
 
 COLUMNAS_LISTA = (
     "o.id, o.estado, o.motivo_error, o.titulo, o.empresa, o.ubicacion, o.remoto, o.modalidad, o.contrato, "
@@ -167,8 +167,8 @@ def contar_por_puesto(s: Session, titulos: list[str]) -> dict[str, int]:
     for t in titulos:
         norm = normalizar_titulo(t)
         cuentas[t] = 0 if not norm else s.execute(text(
-            f"select count(*) {_BASE} and (' ' || coalesce(titulo_norm, '') || ' ') like :p"),
-            {"p": f"% {norm} %"}).scalar_one()
+            f"select count(*) {_BASE} and (' ' || coalesce(titulo_norm, '') || ' ') like any(:p)"),
+            {"p": [f"% {v} %" for v in variantes_genero(norm)]}).scalar_one()
     return cuentas
 
 
@@ -234,6 +234,10 @@ def dueña(s: Session, oferta_id: int) -> int | None:
     """La usuaria que añadió la oferta, o None si es del catálogo común."""
     return s.execute(text("select usuaria_id from ofertas where id=:i"),
                      {"i": oferta_id}).scalar_one_or_none()
+
+
+def titulo(s: Session, oferta_id: int) -> str | None:
+    return s.execute(text("select titulo from ofertas where id=:i"), {"i": oferta_id}).scalar_one_or_none()
 
 
 def hay_propias(s: Session) -> bool:

@@ -4,10 +4,8 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> **Estado (22-nov-2026):** fases 0 a 9a y la 10 (simplificación, S1-S7) fusionadas en `main` y cerradas.
-> Despliegue local con Docker Compose; Vercel, más adelante.
-> Antes de usuarias reales, el plan del `matcher`. El detalle de cada fase está en
-> [`specs/index.md`](./specs/index.md).
+> **Estado:** fases 0 a 9a y 10 (S1-S7) en `main`; la 10 sigue con S8, S9 y S10. Estado de cada fase y orden
+> de las siguientes (11 a 14): [`specs/index.md`](./specs/index.md). Despliegue local con Docker Compose.
 
 **Recorrido de la usuaria:** Landing → Perfil (sube su CV) → Ofertas (compatibilidad 0-100) → Candidatura
 (CV y carta que aprueba y descarga). Tres pestañas: Ofertas · Candidaturas · Perfil, más Admin. Horma gasta
@@ -97,7 +95,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 3: candidatura y seguimiento
 
-1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0022`).
+1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0028`).
 2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide
    confirmar); el worker parte del CV maestro, sin CV base (RF-10.3), y redacta CV y carta. En `/candidaturas`
    las ves por estado: revisas, editas, apruebas, descargas los PDF y sigues el proceso (enviada, entrevista,

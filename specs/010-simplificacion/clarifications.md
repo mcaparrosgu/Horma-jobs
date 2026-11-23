@@ -75,4 +75,5 @@ sobreviva a ediciones menores; precios oficiales del modelo; «solo los servicio
 
 ## Numeración
 La spec 010 es la simplificación. Las antiguas fases 10 (CV y carta ideales, diseños) y 11 (ingesta
-programada, vigía de portales) pasan a llamarse 11 y 12.
+programada, vigía de portales) pasan a llamarse 11 y 12. *(22-nov: renumeradas otra vez por orden de
+construcción: 13 y 14; la 11 es la aplicación autónoma y la 12, el `matcher`. Ver `specs/index.md`.)*

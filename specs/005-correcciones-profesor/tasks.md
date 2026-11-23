@@ -236,7 +236,7 @@ real (RF-5.8).
   - **Test:** con respuestas grabadas, cada fuente da ofertas normalizadas con enlace y atribución; la
     calificación queda guardada.
   - **Cubre:** RF-5.5, RF-5.5d.
-- [x] T31 — InfoJobs, configurada e inactiva. *(18-nov: entrada con Basic auth y detalle, `activa: false`; el correo a InfoJobs lo envía Mar)*
+- [x] T31 — InfoJobs, configurada e inactiva. *(18-nov: entrada con Basic auth y detalle, `activa: false`; el correo a InfoJobs lo envía Mar. Respuesta de InfoJobs: no dan la API a proyectos académicos, solo a empresas; se queda inactiva)*
   - **Qué se hace:** entrada con `activa: false` y mapeo con detalle; correo de Mar a InfoJobs pidiendo
     sus condiciones (lo envía ella).
   - **Test:** la ingesta no la llama mientras esté inactiva.
@@ -253,7 +253,7 @@ real (RF-5.8).
     `docs/mejoras-futuras.md` al día.
   - **Test:** Mar lo revisa.
 - [x] T34 — Plan de pruebas manuales de la fase 5. *(escrito el 18-nov: 9 apartados, incluye el cierre de T30 y T32; falta que Mar lo recorra)*
-  - **Qué se hace:** `docs/plan-pruebas-fase5.md` (gitignorado), cada paso con su explicación breve:
+  - **Qué se hace:** el plan de pruebas manual (gitignorado, retirado), cada paso con su explicación breve:
     perfil y secciones, CV base y visibilidad, borrador desfasado, añadir oferta por texto y por URL,
     privacidad con dos cuentas, estilo y muletillas.
   - **Test:** Mar lo recorre y anota lo que falle.
@@ -265,6 +265,6 @@ real (RF-5.8).
 
 ## Cierre de la fase 5: pasos pendientes
 Bloques A-H construidos y fusionados en `main` (PR #11). Queda:
-1. **Prueba manual de Mar: hecha el 19-nov** con `docs/plan-pruebas-fase5.md` (todos los apartados). El 3.4 falló y dio lugar a P18 (PR #12).
-2. **Fuentes (19-nov):** Jobicy y Himalayas activadas y probadas en local (incluido `cada_horas`). `/ingesta` ganó Activar/Desactivar (PR #16) y `cada_horas` editable (PR #17). En espera del profesor: InfoJobs (borrador en Gmail, sin enviar), Greenhouse (Mar envía el correo a legal@greenhouse.io el 20-nov) y decidir Lever.
+1. **Prueba manual de Mar: hecha el 19-nov** con su plan de pruebas manual (todos los apartados). El 3.4 falló y dio lugar a P18 (PR #12).
+2. **Fuentes (19-nov):** Jobicy y Himalayas activadas y probadas en local (incluido `cada_horas`). `/ingesta` ganó Activar/Desactivar (PR #16) y `cada_horas` editable (PR #17). InfoJobs: cerrada (no dan la API a proyectos académicos). En espera del profesor: Greenhouse (Mar envía el correo a legal@greenhouse.io el 20-nov) y decidir Lever.
 3. Antes de usuarias reales: plan del `matcher` y reactivar `evals-reales` (`docs/mejoras-futuras.md`, punto 6).

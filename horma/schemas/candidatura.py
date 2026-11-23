@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 Estado = Literal["borrador", "aprobada", "enviada", "entrevista", "cerrada"]
 Preparacion = Literal["en_curso", "lista", "pendiente_de_ti", "error"]
 Canal = Literal["correo", "web", "linkedin", "otro"]  # lista ampliable (P3)
-MotivoCierre = Literal["rechazo", "descartada", "retirada"]
+MotivoCierre = Literal["rechazo", "descartada", "retirada", "contratada"]  # contratada: RF-10.17
 EtiquetaRespuesta = Literal["entrevista", "rechazo", "piden_informacion", "otro"]
 TipoProblema = Literal["sin_origen", "inflado", "promesa", "rasgo_personal", "repite_cv", "incoherente",
                        "suena_a_ia"]
@@ -90,7 +90,6 @@ TEXTOS_ERROR: dict[str, str] = {
     "dato_nuevo": "Incluye «{dato}», que no consta en lo que sabemos de ti; revisa que sea cierto.",
     "fecha": "La fecha {dato} no aparece en lo que sabemos de ti; revisa que sea correcta.",
     "rasgo": "Menciona un dato personal ({dato}); quítalo del documento.",
-    "formato": "Para que los filtros de selección lean bien tu CV, revisa esto: {dato}.",
     "estructura": "Revisa el CV: {dato}.",
     "muletilla": "Suena a texto genérico de IA («{dato}»); cuéntalo con un hecho tuyo.",
     "otro": "Hay algo que revisar aquí.",
@@ -137,8 +136,38 @@ def aviso_de_error(documento: str, error: str, contenido: str = "") -> Aviso:
     if error.startswith("Rasgo personal"):
         return aviso("rasgo", error.split(": ", 1)[-1])
     if error.startswith("Formato del CV"):
-        return aviso("formato", error.split(": ", 1)[-1])
+        return Aviso(documento=documento, frase=None, tipo="revisa",
+                     mensaje=texto_de_formato(error.split(": ", 1)[-1]))
     return aviso("otro")
+
+
+# Cada problema de formato, en una frase que se entienda sin saber qué es un filtro de CV (RF-10.16b).
+_FILTROS = "los programas con los que las empresas filtran los CV"
+TEXTOS_FORMATO: dict[str, str] = {
+    "lleva una tabla": f"Tu CV lleva una tabla y {_FILTROS} a veces no la leen. Pasa ese contenido a líneas "
+                       "de texto.",
+    "lleva una imagen": f"Tu CV lleva una imagen y {_FILTROS} no leen imágenes. Quítala y escribe el dato "
+                        "como texto.",
+    "lleva etiquetas HTML": f"Tu CV lleva código de formato (etiquetas HTML) que {_FILTROS} pueden leer mal. "
+                            "Quítalo.",
+    "no tiene encabezados": f"Tu CV no tiene secciones con título (Experiencia, Formación…). Añádelas: "
+                            f"{_FILTROS} "
+                            "las usan para encontrar cada dato.",
+}
+_RE_ENCABEZADO = re.compile(r"encabezado no estándar: «(.+)»")
+
+
+def texto_de_formato(error: str) -> str:
+    """La frase para la usuaria de un error de `errores_ats`."""
+    m = _RE_ENCABEZADO.match(error)
+    if m:
+        return (f"La sección «{m.group(1)}» tiene un título poco habitual y {_FILTROS} podrían no "
+                "reconocerla. Cámbialo por uno común: Experiencia, Formación, Idiomas, Habilidades o "
+                "Información adicional.")
+    for clave, texto in TEXTOS_FORMATO.items():
+        if error.startswith(clave):
+            return texto
+    return f"Revisa el formato de tu CV para que {_FILTROS} lo lean bien: {error}."
 
 
 class Candidatura(BaseModel):

@@ -43,7 +43,7 @@ def test_el_maestro_incluye_las_tres_secciones_al_final():
         "otros": [{"valor": "Carnet de conducir B", "origen": _o("c")}]})
     texto = componer_cv_maestro(p)
     encabezados = [x for x in texto.splitlines() if x.startswith("## ")]
-    assert encabezados == ["## Habilidades", "## Proyectos", "## Certificaciones", "## Otros"]
+    assert encabezados == ["## Habilidades", "## Proyectos", "## Certificaciones", "## Información adicional"]
     assert "Carta digital · 2023\nQR para el bar" in texto
     assert "Manipulador de alimentos · Cruz Roja · 2022" in texto
     assert "Carnet de conducir B" in texto

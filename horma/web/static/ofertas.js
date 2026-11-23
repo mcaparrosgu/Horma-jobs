@@ -18,6 +18,7 @@ let vista = { ...VISTA_POR_DEFECTO };
 let barra = null;          // barra de avance del cálculo de compatibilidad en marcha
 let ultimoAvance = -1;
 let dejarDeSeguir = null;
+let descarteReciente = null;   // id de la última oferta descartada: su aviso queda en su sitio de la lista
 let abiertas = null;       // ids de las filas desplegadas; null hasta el primer pintado (entonces, solo la primera)
 
 // Mapeo fijo familia → tono (.tono-0…5, RF-6.4): la misma familia sale siempre del mismo color.
@@ -25,45 +26,6 @@ function tonoDe(texto) {
   let h = 0;
   for (const c of String(texto || "")) h = (h * 31 + c.charCodeAt(0)) % 6;
   return `tono-${h}`;
-}
-
-// --- Ayuda «?»: globo propio con clic o foco, Escape y clic fuera (RF-6.7b) -----------------------
-function cerrarAyudas(salvo = null) {
-  for (const b of document.querySelectorAll("button.ayuda[aria-expanded='true']")) {
-    if (b === salvo) continue;
-    b.setAttribute("aria-expanded", "false");
-    document.getElementById(b.getAttribute("aria-describedby")).hidden = true;
-  }
-}
-document.addEventListener("click", (e) => cerrarAyudas(e.target.closest("button.ayuda")));
-document.addEventListener("keydown", (e) => {
-  if (e.key !== "Escape") return;
-  const abierta = document.querySelector("button.ayuda[aria-expanded='true']");
-  cerrarAyudas();
-  if (abierta) abierta.focus();
-});
-
-function ayuda(nombre, texto, i) {
-  const q = nodo("button", "?", "ayuda");
-  q.type = "button";
-  q.setAttribute("aria-label", `Qué significa «${nombre}»`);
-  q.setAttribute("aria-expanded", "false");
-  const globo = nodo("span", texto, "ayuda-globo");
-  globo.id = `ayuda-${i}`;
-  globo.hidden = true;
-  q.setAttribute("aria-describedby", globo.id);
-  q.addEventListener("click", () => {
-    const abrir = globo.hidden;
-    globo.hidden = !abrir;
-    q.setAttribute("aria-expanded", String(abrir));
-  });
-  q.addEventListener("focusout", (e) => {
-    if (!globo.contains(e.relatedTarget)) {
-      globo.hidden = true;
-      q.setAttribute("aria-expanded", "false");
-    }
-  });
-  return [q, globo];
 }
 
 function cabeceras() {
@@ -168,8 +130,9 @@ function estadoDe(o) {
   return o.candidatura ? "candidatura" : "nuevas";
 }
 
+// Las propias solo llegan si ella las incluye, y entonces se ven siempre (RF-10.6g).
 function enRango(o) {
-  return o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
+  return o.propia || o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
 }
 
 function fechaOrden(o) {
@@ -204,6 +167,7 @@ function leerCamposVista() {
     const x = v === "" ? defecto : Number(v);
     return Number.isFinite(x) ? Math.max(0, Math.min(100, Math.round(x))) : defecto;
   };
+  descarteReciente = null;
   vista = { min: num("nota-min", 0), max: num("nota-max", 100), orden: $("orden").value, estado: $("estado").value };
   if (vista.min > vista.max) [vista.min, vista.max] = [vista.max, vista.min];
   guardarVista();
@@ -332,7 +296,7 @@ function botonDescartar(o) {
       return avisar(r.motivo, true);
     }
     o.descartada = true;
-    avisarDescarte(o);
+    descarteReciente = vista.estado === "descartadas" ? null : o.id;   // en «Descartadas» la fila ya se queda
     pintarLista();
   });
   return b;
@@ -342,16 +306,28 @@ async function recuperar(o) {
   const r = await api(`/api/descartes/${o.id}`, { metodo: "DELETE" });
   if (!r.ok) return avisar(r.motivo, true);
   o.descartada = false;
-  $("aviso-descarte").replaceChildren();
+  descarteReciente = null;
   pintarLista();
 }
 
-// «Oferta descartada. Deshacer»: sin confirmar antes (RF-8.6b).
-function avisarDescarte(o) {
-  const deshacer = nodo("button", "Deshacer", "boton-texto");
+// «Oferta descartada. Deshacer»: sin confirmar antes (RF-8.6b). El aviso ocupa el lugar de la oferta,
+// destacado, hasta que se deshace, se cierra o se cambia la vista.
+function filaDescartada(o) {
+  const deshacer = nodo("button", "Deshacer");
   deshacer.type = "button";
   deshacer.addEventListener("click", () => recuperar(o));
-  $("aviso-descarte").replaceChildren(nodo("span", "Oferta descartada. "), deshacer);
+  const cerrar = nodo("button", "Cerrar", "secundario");
+  cerrar.type = "button";
+  cerrar.addEventListener("click", () => { descarteReciente = null; pintarLista(); });
+  const fila = nodo("div", null, "fila");
+  fila.append(nodo("strong", `Oferta descartada. ${o.titulo || "Sin título"}`), deshacer, cerrar);
+  fila.setAttribute("role", "status");
+  const td = nodo("td");
+  td.colSpan = 7;
+  td.append(fila);
+  const tr = nodo("tr", null, "fila-descarte");
+  tr.append(td);
+  return [tr];
 }
 
 function filaOferta(o) {
@@ -436,9 +412,15 @@ function pintarLista() {
   pintarVista();
   const lista = ordenar(todas.filter((o) => enRango(o) && estadoDe(o) === vista.estado));
   if (abiertas === null) abiertas = new Set(lista.slice(0, 1).map((o) => o.id));   // la primera, abierta
-  $("filas").replaceChildren(...lista.flatMap(filaOferta));
-  $("vacio").hidden = lista.length > 0;
-  $("tabla").hidden = lista.length === 0;
+  // La oferta recién descartada sigue en su sitio como aviso; no cuenta como oferta.
+  const conAviso = descarteReciente === null ? lista
+    : ordenar(todas.filter((o) => (enRango(o) && estadoDe(o) === vista.estado) || (o.id === descarteReciente && o.descartada)));
+  $("filas").replaceChildren(...conAviso.flatMap((o) => (o.id === descarteReciente && o.descartada ? filaDescartada(o) : filaOferta(o))));
+  $("calificar-todas").hidden = !todas.some((o) => o.sin_puntuar && !o.descartada) || barra !== null;
+  $("vacio").hidden = lista.length > 0 || conAviso.length > 0;
+  // RF-10.14q: si los puestos marcados dejan la lista sin nada, se dice por qué y qué hacer.
+  $("vacio").textContent = !todas.length && puestos.some((p) => p.marcado) ? TEXTOS.listaVaciaPorPuestos : "Ninguna oferta cumple estos filtros.";
+  $("tabla").hidden = conAviso.length === 0;
   const pendientes = todas.filter((o) => o.sin_puntuar && !o.descartada).length;
   const n = lista.length === 1 ? "1 oferta" : `${lista.length} ofertas`;
   $("contador").textContent = pendientes ? `${n} · ${pendientes} sin compatibilidad en total` : n;
@@ -483,7 +465,18 @@ async function lanzarPuntuacion(motivo) {
   if (r.datos.motivo === "sin_perfil") return mostrarSinPerfil();
   $("aviso-tope").textContent = r.datos.motivo === "presupuesto" ? TEXTOS.presupuesto : "";
   if (r.datos.tarea_id) seguirPuntuacion(r.datos.tarea_id);
+  return r.datos;
 }
+
+// «Calificar todas»: calcula ya la compatibilidad de todas las que faltan, sin esperar a la hora de margen.
+$("calificar-todas").addEventListener("click", async () => {
+  const b = $("calificar-todas");
+  b.disabled = true;
+  const d = await lanzarPuntuacion("buscar");
+  b.disabled = false;
+  if (d && d.motivo === "sin_pendientes") avisar(TEXTOS.nadaQueCalificar);
+  pintarLista();
+});
 
 async function retomarOLanzar() {
   const r = await api("/api/tareas/activas?tipo=recomendar");
@@ -585,6 +578,7 @@ function pintarQueBuscas() {
                   { origen: (guardadas.origen || {})[clave] })));
   $("solo-remoto").checked = guardadas.solo_remoto;
   $("solo-salario").checked = guardadas.solo_salario;
+  $("incluir-propias").checked = guardadas.incluir_propias !== false;
   $("sueldo-minimo").value = guardadas.sueldo_minimo === null ? "" : guardadas.sueldo_minimo;
   const vacio = GRUPOS.every(([clave]) => !(guardadas[clave] || []).length) && !puestos.length;
   $("que-buscas").open = vacio || location.hash === "#que-buscas";   // abierto si aún no hay nada guardado
@@ -599,6 +593,7 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   nuevas.excluidos = [...excluidos];
   nuevas.solo_remoto = $("solo-remoto").checked;
   nuevas.solo_salario = $("solo-salario").checked;
+  nuevas.incluir_propias = $("incluir-propias").checked;
   const sueldo = $("sueldo-minimo").value.trim();
   nuevas.sueldo_minimo = sueldo === "" ? null : Number(sueldo);
   $("guardar-busca").disabled = true;
@@ -642,19 +637,87 @@ function mostrarSinPerfil() {
 
 // --- «+ Añadir oferta» (RF-10.6b): ventana con la dirección o el texto; la oferta sale en la lista -------------
 const SONDEO_MS = 3000;
+const SONDEOS_SIN_TAREA = 40;   // unos 2 min sin que empiece el análisis: se deja de esperar
 let lecturaBarra = null;
 let sondeoAnadidas = null;
+let lote = new Map();           // id de oferta añadida → { pct, fin, sinTarea }
+let barraAnadidas = null;       // { n, barra }
 function avisarUrl(texto, error) {
   const a = $("aviso-url");
   a.textContent = texto;
   a.className = error ? "alerta" : "suave";
 }
 
-// Mientras alguna oferta propia espera su compatibilidad, la lista se refresca sola.
-async function refrescarMientrasTrabaja() {
+// Barra «Analizando la oferta añadida · N %». La lista se recarga en cada consulta, así la oferta aparece
+// en cuanto está analizada, y se sigue hasta que tiene su compatibilidad (o ya no se va a calcular).
+function seguirAnadida(id) {
+  if (id === null || id === undefined) return;
+  lote.set(id, { pct: 0, fin: false, sinTarea: 0 });
+  sondearAnadidas();
+}
+
+function pintarBarraAnadidas() {
+  if (!lote.size) {
+    if (barraAnadidas) barraAnadidas.barra.quitar();
+    barraAnadidas = null;
+    return;
+  }
+  if (barraAnadidas && barraAnadidas.n !== lote.size) {   // el texto cambia entre singular y plural
+    barraAnadidas.barra.quitar();
+    barraAnadidas = null;
+  }
+  if (!barraAnadidas) {
+    const texto = lote.size === 1 ? "Analizando la oferta añadida" : "Analizando las ofertas añadidas";
+    barraAnadidas = { n: lote.size, barra: barraAvance($("avance"), texto) };
+  }
+  const pcts = [...lote.values()].map((e) => (e.fin ? 100 : e.pct));
+  barraAnadidas.barra.poner(pcts.reduce((a, b) => a + b, 0) / pcts.length);
+}
+
+async function sondearAnadidas() {
   clearTimeout(sondeoAnadidas);
+  if (!lote.size) return pintarBarraAnadidas();
+  const [p, t] = await Promise.all([api("/api/ofertas/propias"),
+                                    api("/api/tareas/activas?tipo=puntuar_propias&tipo=puntuar_una")]);
   await cargarLista();
-  if (todas.some((o) => o.propia && o.sin_puntuar && !o.descartada)) sondeoAnadidas = setTimeout(refrescarMientrasTrabaja, SONDEO_MS);
+  if (p.ok) {
+    const por = new Map(p.datos.map((x) => [x.id, x]));
+    const puntuando = t.ok && t.datos.tareas.length > 0;
+    for (const [id, e] of lote) {
+      const x = por.get(id);
+      const nueva = todas.find((o) => o.id === id);
+      if (!x) { lote.delete(id); continue; }
+      if (x.estado === "error") { lote.delete(id); avisar(TEXTOS.anadirError, true); continue; }
+      e.sinTarea = x.progreso === null || x.progreso === undefined ? e.sinTarea + 1 : 0;
+      if (e.sinTarea >= SONDEOS_SIN_TAREA) { lote.delete(id); avisar(TEXTOS.anadirAplazada); continue; }
+      e.pct = x.progreso || 0;
+      if (e.pct >= 100 && ((nueva && !nueva.sin_puntuar) || !puntuando)) e.fin = true;
+    }
+    if ([...lote.values()].every((e) => e.fin)) {
+      const ocultas = [...lote.keys()].some((id) => !todas.some((o) => o.id === id));
+      lote = new Map();
+      await traerPuestosNuevos();
+      if (ocultas) avisar(TEXTOS.anadirOculta);
+    }
+  }
+  pintarBarraAnadidas();
+  if (lote.size) sondeoAnadidas = setTimeout(sondearAnadidas, SONDEO_MS);
+}
+
+// RF-10.6h: el puesto de la oferta añadida ya está en sus preferencias; se suma a las casillas sin tocar
+// lo que ella esté cambiando en «Qué buscas».
+async function traerPuestosNuevos() {
+  const r = await api("/api/preferencias");
+  if (!r.ok) return;
+  const nuevos = r.datos.puestos.filter((t) => !(guardadas.puestos || []).includes(t));
+  guardadas.puestos = r.datos.puestos;
+  guardadas.origen = r.datos.origen;
+  for (const t of nuevos) {
+    if (!puestos.some((p) => p.valor === t)) puestos.push({ valor: t, dato: null, n: 0, marcado: true });
+  }
+  if (!nuevos.length) return;
+  pintarPuestos();
+  avisar(TEXTOS.anadirPuesto(nuevos.join("», «")));
 }
 
 function abrirAnadir() {
@@ -666,6 +729,12 @@ function abrirAnadir() {
 }
 $("abrir-anadir").addEventListener("click", abrirAnadir);
 $("anadir-cerrar").addEventListener("click", () => $("ventana-anadir").close());
+// «/ofertas#anadir» abre la ventana también si ya estaba en Ofertas (solo cambia el «#», no se recarga).
+window.addEventListener("hashchange", () => { if (location.hash === "#anadir") abrirAnadir(); });
+// Al cerrarla se quita el «#anadir», para que la misma dirección la vuelva a abrir.
+$("ventana-anadir").addEventListener("close", () => {
+  if (location.hash === "#anadir") history.replaceState(null, "", location.pathname + location.search);
+});
 
 $("formulario-texto").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -684,8 +753,11 @@ $("formulario-texto").addEventListener("submit", async (e) => {
   $("texto").value = "";
   aviso.textContent = "";
   $("ventana-anadir").close();
-  avisar(r.datos.aplazada ? TEXTOS.anadirAplazada : TEXTOS.anadirOk);   // sin presupuesto, se analiza mañana (RF-10.9e)
-  await refrescarMientrasTrabaja();
+  avisar("");
+  if (r.datos.aplazada) avisar(TEXTOS.anadirAplazada);   // sin presupuesto, se analiza mañana (RF-10.9e)
+  else if (!r.datos.nueva) avisar(TEXTOS.anadirRepetida);
+  else seguirAnadida(r.datos.id);
+  await cargarLista();
 });
 
 async function esperarLectura(id) {
@@ -702,8 +774,9 @@ async function esperarLectura(id) {
   $("url").value = "";
   avisarUrl("");
   $("ventana-anadir").close();
-  avisar(TEXTOS.leidaOk);
-  await refrescarMientrasTrabaja();
+  avisar("");
+  seguirAnadida(r.datos.oferta_id);
+  await cargarLista();
 }
 
 $("formulario-url").addEventListener("submit", async (e) => {
@@ -737,5 +810,12 @@ $("formulario-url").addEventListener("submit", async (e) => {
   await cargarLista();
   pintarTitular();
   await retomarOLanzar();
-  if (todas.some((o) => o.propia && o.sin_puntuar && !o.descartada)) refrescarMientrasTrabaja();
+  // Al volver a la pantalla se retoma el seguimiento de las añadidas que aún se analizan o esperan nota.
+  const propias = await api("/api/ofertas/propias");
+  if (propias.ok) {
+    for (const x of propias.datos) {
+      const nueva = todas.find((o) => o.id === x.id);
+      if (x.estado === "pendiente" || (nueva && nueva.sin_puntuar && !nueva.descartada)) seguirAnadida(x.id);
+    }
+  }
 })();

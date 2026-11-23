@@ -50,7 +50,7 @@ def _periodo_de(dato: dict) -> dict:
     try:
         p = PeriodoCubierto(inicio=dato.get("inicio") or "", fin=dato.get("fin") or dato.get("inicio") or "")
     except ValidationError as e:
-        raise DatoNoValido("Pon al menos la fecha de inicio (AAAA o AAAA-MM).") from e
+        raise DatoNoValido("Pon al menos la fecha de inicio (MM-AAAA o AAAA).") from e
     return p.model_dump(mode="json")
 
 
@@ -107,8 +107,21 @@ def _buscar(elementos: list[dict], clave: str) -> int | None:
     return None
 
 
+_NOMBRES_DE_DATO = ("nombre", "puesto", "titulo", "idioma", "valor", "descripcion")
+
+
+def _nombre_de_dato(dato: dict) -> str:
+    for k in _NOMBRES_DE_DATO:
+        if dato.get(k):
+            return str(dato[k])
+    return ""
+
+
 def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -> dict:
-    """Responde una pregunta pendiente: la quita y, si trae un dato, lo añade con origen «usuaria»."""
+    """Responde una pregunta pendiente: la quita y, si trae un dato, lo añade con origen «usuaria».
+    Devuelve también `cambio` (sección y dato que han cambiado) para decírselo a ella (RF-10.14e)."""
+    cambiado: dict = {}
+
     def cambio(p: dict) -> str | None:
         pendientes = p["preguntas_pendientes"]
         if not 0 <= indice < len(pendientes):
@@ -121,24 +134,31 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None) -
         clave = resto.partition(".")[0]
         nuevo = {k: v for k, v in dato.items() if v not in (None, "")}
         if seccion == "actividades":
+            cambiado.update(campo="actividades", valor=_nombre_de_dato(nuevo))
             return _actividad_nueva(p, nuevo)
         if seccion in LISTAS:
             existente = _buscar(p[seccion], clave) if clave else None
             if existente is None:
                 p[seccion].append(_con_origen(nuevo))
+                cambiado.update(campo=seccion, valor=_nombre_de_dato(nuevo))
             else:
                 p[seccion][existente] = _con_origen({**p[seccion][existente], **nuevo})
+                cambiado.update(campo=seccion, valor=_nombre_de_dato(p[seccion][existente]))
         elif seccion in UNICOS:
             p[seccion] = _con_origen(nuevo)
+            cambiado.update(campo=seccion, valor=_nombre_de_dato(nuevo))
         elif seccion == "genero_puestos":
             if nuevo.get("valor") not in ("femenino", "masculino"):
                 raise DatoNoValido("Elige «femenino» o «masculino».")
             p["genero_puestos"] = nuevo["valor"]
+            cambiado.update(campo="genero_puestos", valor=nuevo["valor"])
         elif seccion == "nombre" and nuevo.get("valor"):
             p["nombre"] = str(nuevo["valor"]).strip()
+            cambiado.update(campo="nombre", valor=p["nombre"])
         else:
             raise DatoNoValido(f"La pregunta sobre «{campo}» no admite un dato: respóndela sin dato.")
-    return _nueva_version(engine, usuaria_id, cambio)
+    resultado = _nueva_version(engine, usuaria_id, cambio)
+    return {**resultado, **({"cambio": cambiado} if cambiado else {})}
 
 
 def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
@@ -223,7 +243,8 @@ def avisos(engine: Engine, usuaria_id: int) -> dict:
         por_reglas = [a for a in por_reglas if a.clave != "largo"]
 
     def visibles(lista):
-        return [{"clave": a.clave, "huella": a.huella, "texto": a.texto, "seccion": a.seccion}
+        return [{"clave": a.clave, "huella": a.huella, "texto": a.texto, "seccion": a.seccion,
+                 "indice": a.indice}
                 for a in lista if vistos.get(a.clave) != a.huella]
     h, a = visibles(huecos), visibles(por_reglas)
     grupos = agrupar_avisos(h + a)

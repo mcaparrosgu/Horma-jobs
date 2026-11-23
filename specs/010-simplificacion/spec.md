@@ -1,12 +1,12 @@
 ---
 type: spec
 title: simplificacion — Spec funcional
-description: Requisitos de la simplificación de Horma en notación EARS — recorrido de 4 pantallas y 4 clics, ocho conceptos, tres pestañas, candidatura sin CV base, «Tu CV completo» en PDF, bandeja «Por resolver», un agente por oferta, caché de la compatibilidad, presupuesto diario único, orden interno y las correcciones tras la prueba (S7: avance en su pantalla, avisos agrupados, carta, PDF del CV, simetría y el repaso del 22-nov) — y la lista de requisitos anteriores que sustituye.
+description: Requisitos de la simplificación de Horma en notación EARS — recorrido de 4 pantallas y 4 clics, ocho conceptos, tres pestañas, candidatura sin CV base, «Tu CV completo» en PDF, bandeja «Por resolver», un agente por oferta, caché de la compatibilidad, presupuesto diario único, orden interno y las correcciones tras la prueba (S7: avance en su pantalla, avisos agrupados, carta, PDF del CV, simetría y el repaso del 22-nov; S8: correcciones de la pasada del 22-nov) — y la lista de requisitos anteriores que sustituye.
 tags: [spec, simplificacion, ux, frontend, costes, arquitectura, agentes]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
 generated: { by: claude-code, at: 2026-11-21 }
-verified: { by: human, at: 2026-11-21 }  # S7 (RF-10.3g, 10.4d, 10.5c, 10.6e, 10.8, 10.13) firmada el 21-nov
+verified: { by: human, at: 2026-11-22 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) y S9 (RF-10.15 a 10.15e) firmadas el 22-nov; RF-5.3i, 10.4e, 10.6i, 10.8c, 10.16 y 10.17 pedidos por Mar en la prueba del 22-nov
 stale_after: null
 ---
 
@@ -118,9 +118,11 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   empresa» en negrita y las fechas a la derecha; las habilidades en una línea; la tipografía de la marca, en
   tinta y gris. Todo es texto real, en el orden de lectura, sin tablas ni imágenes (RF-10.4b). La carta en
   PDF y en «Ver» DEBERÁ verse como carta: párrafos, sin negritas ni secciones. Las plantillas para elegir
-  siguen en la fase 11.
-- **RF-10.4e** *(22-nov)* Los PDF de una candidatura aprobada DEBERÁN descargarse como `cv-puesto-empresa.pdf` y
-  `carta-puesto-empresa.pdf`; si ella quiere otro nombre, lo cambia a mano.
+  siguen en la fase 13 (calidad de CV y carta).
+- **RF-10.4e** *(22-nov, cambiado tras la prueba: I8)* Los PDF de una candidatura aprobada DEBERÁN descargarse
+  como `cv_nombre-apellidos_puesto_empresa.pdf` y `carta_nombre-apellidos_puesto_empresa.pdf`: la persona que
+  selecciona la encuentra por su nombre y ella ve al final para qué puesto y empresa es. Lo que no conste (p. ej.
+  el nombre) no sale; si ella quiere otro nombre, lo cambia a mano.
 
 ### Perfil en una pantalla (RF-10.5)
 - **RF-10.5** CUANDO la usuaria no tenga perfil, Perfil DEBERÁ mostrar solo «Sube tu CV» (entradilla y un
@@ -139,7 +141,7 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   visto», como antes de la 010. Lo visto no vuelve mientras no cambie su causa (RF-9.2c).
 - **RF-10.5d** La elección de longitud del CV DEBERÁ aparecer en un solo sitio: en el aviso de CV largo de
   «Por resolver» (RF-9.2d).
-- **RF-10.5e** Al subir un documento, las clases DEBERÁN ser dos: «CV» (por defecto) y «Carta». La clase
+- **RF-10.5e** *(la elección de clase, sustituida en S8 por RF-10.14b)* Al subir un documento, las clases DEBERÁN ser dos: «CV» (por defecto) y «Carta». La clase
   «estético» se retira (P10); los ya subidos siguen en «Documentos subidos». Ningún documento subido se
   modifica.
 - **RF-10.5f** *(22-nov)* Perfil DEBERÁ dejar añadir o modificar el **nombre** de la usuaria, que encabeza «Tu CV
@@ -160,6 +162,13 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
 - **RF-10.6f** *(22-nov)* «Qué buscas» DEBERÁ ir sin «Área»: Puestos sugeridos, Sector y Condiciones en la primera
   fila; Tipo de contrato, Nivel, País e Idiomas en la segunda; después Términos excluidos. Al guardar, el área se
   vacía y el CV deja de rellenarla.
+- **RF-10.6g** *(22-nov, sustituye a RF-7.1f)* «Condiciones» DEBERÁ tener la casilla «Incluir las ofertas que
+  añado», marcada por defecto. Marcada, las ofertas que añade la usuaria DEBERÁN verse siempre, pasen o no
+  «Qué buscas» y el rango de compatibilidad; desmarcada, NO DEBERÁN verse. SI una oferta añadida queda oculta
+  por la casilla, al terminar su análisis Horma DEBERÁ decirlo.
+- **RF-10.6h** *(22-nov)* CUANDO se analiza una oferta añadida cuyo título no cubre ninguno de los puestos
+  marcados, ese título DEBERÁ añadirse a los puestos de «Qué buscas», con un aviso; ella puede quitarlo como
+  cualquier otro. Con la lista de puestos vacía NO DEBERÁ añadirse (empezaría a filtrar).
 
 ### Candidatura (RF-10.7)
 - **RF-10.7** La usuaria DEBERÁ ver un solo estado por candidatura, que junta `estado` y `preparacion`:
@@ -182,6 +191,9 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   candidatura… 40 %» en la candidatura, «Calculando la compatibilidad… 40 %» en Ofertas. La cabecera NO DEBERÁ
   mostrar ningún indicador: nunca se ven dos barras a la vez. Vuelve P8 de la 008 («sin aviso en la cabecera»).
 - **RF-10.8b** La barra DEBERÁ tener `role="status"` y no depender solo del color (RF-6.7e).
+- **RF-10.8c** *(prueba del 22-nov)* La barra DEBERÁ verse rellenándose en lima desde el primer momento: entre
+  un paso real del servidor y el siguiente avanza sola y despacio, hasta 20 puntos por delante del último paso
+  real, sin llegar nunca al 100 % antes de terminar. Al repintar la pantalla conserva su punto (no vuelve a 0).
 
 ### Gasto (RF-10.9)
 - **RF-10.9** Horma NO DEBERÁ gastar más de **1 USD al día** (día natural, hora de Madrid) por usuaria, en
@@ -242,6 +254,104 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
 - **RF-10.13c** SI no hay nada que revisar, la candidatura NO DEBERÁ mostrar el bloque «Revisa esto» vacío. Las
   candidaturas antiguas, sin grupo guardado, DEBERÁN verse con sus avisos en «Revisa».
 
+### Correcciones de la pasada del 22-nov (RF-10.14, S8)
+Salen de la prueba completa de Mar con la usuaria inventada Irene (C1-G1). Decisiones de Mar del 22-nov: C1, F1
+y E6.
+
+**Documentos y perfil**
+- **RF-10.14** CUANDO la usuaria elimine un CV, Horma DEBERÁ rehacer el perfil con los CV que queden,
+  conservando lo que ella escribió o corrigió (origen «usuaria»), y quitar de «Por resolver» y de «Tu CV
+  completo» lo que solo salía de ese CV. SI no queda ningún CV, el perfil DEBERÁ borrarse y Perfil vuelve a «Sube
+  tu CV» (RF-10.5). La confirmación DEBERÁ decirlo antes: «¿Eliminar este CV? Rehacemos tu perfil sin él. No se
+  puede deshacer.». Rehacer gasta del presupuesto del día (RF-10.9). Las candidaturas ya hechas no se tocan.
+  Sustituye a «Tu perfil ya construido no cambia».
+- **RF-10.14b** Al subir un documento, Horma DEBERÁ detectar con reglas, sin modelo, si es un CV o una carta: un CV tiene
+  secciones y fechas; una carta, saludo, párrafos y despedida. SI duda, DEBERÁ preguntarlo. Junto al
+  documento subido DEBERÁ ofrecer «¿No es un CV? Cámbialo» (o «¿No es una carta?»). Sustituye a la elección de
+  clase de RF-10.5e.
+- **RF-10.14c** Un DOCX subido DEBERÁ tener «Ver», que enseña su texto con el aviso «Así se lee tu documento; el
+  diseño original del Word no se puede mostrar aquí.», y «Descargar original».
+- **RF-10.14d** El perfil DEBERÁ guardar el resumen y el titular de **cada** CV, tal como están escritos y con su
+  origen. Ninguno se pierde al juntar CV. El redactor del CV DEBERÁ elegir el que más encaje con la oferta y
+  adaptarlo. «Tu CV completo» DEBERÁ usar el del CV más reciente. El aviso «Sin resumen» DEBERÁ salir solo si
+  ningún CV lo tiene.
+- **RF-10.14e** Responder una pregunta de «Por resolver» DEBERÁ decir qué ha cambiado y dónde («Actualizado en
+  Habilidades: Excel básico.»). Los nombres de cursos y títulos no se cambian.
+
+**Tu perfil**
+- **RF-10.14f** La pantalla NO DEBERÁ enseñar el número de versión del perfil (se sigue guardando por dentro). Tras
+  guardar, el mensaje DEBERÁ ser «Hecho: perfil actualizado.».
+- **RF-10.14g** «Formación» DEBERÁ reunir los títulos y, debajo, «Cursos y certificados» (las certificaciones).
+- **RF-10.14h** El nombre DEBERÁ rotularse «Tu nombre (sale arriba en tus CV y cartas)».
+- **RF-10.14i** «Añadir» en un hueco DEBERÁ preguntar «¿Fue un empleo u otra cosa?» y abrir Experiencia u «Otras
+  actividades».
+- **RF-10.14j** Toda fecha que se escribe o se ve en Horma DEBERÁ ir como MM-AAAA (o AAAA si solo hay año).
+- **RF-10.14k** El aviso «Sin cifras» DEBERÁ tener un «Corregir» por experiencia, que abra directamente la caja
+  de «Modificar» de ese puesto, y dar ejemplos de logros medibles sin ventas (mesas o cubiertos por servicio,
+  aforo, caja diaria, personas formadas, temporadas repetidas, ascensos, idiomas con los que atendió).
+
+**Cómo escribes**
+- **RF-10.14l** «Usas» y «Evitas» DEBERÁN verse como listas, un rasgo por viñeta. SI «Evitas» está vacío, DEBERÁ
+  decir «Aún no lo sabemos: sube una carta tuya.». La guía DEBERÁ llevar la etiqueta «Hecha por Horma» o
+  «Editada por ti».
+
+**Textos y ayudas**
+- **RF-10.14m** Las explicaciones de cada bloque DEBERÁN ir dentro de una ayuda «?» desplegable (componente de
+  RF-6.7b, que pasa a la guía como «Explicación plegable»), en todas las pantallas. Textos nuevos:
+  - Tu perfil: «Con estos datos Horma escribe tus CV y cartas. Si corriges algo, Horma usa tu corrección; el
+    CV que subiste no cambia. Cada dato dice de dónde sale. Al corregir, las compatibilidades y candidaturas
+    que ya tenías se marcan como «desfasadas»: se hicieron con tus datos de antes.»
+  - Cómo escribes: «Horma escribe tus CV y cartas imitando cómo escribes. Esta guía sale de tus documentos;
+    pesan más los que marcas «Lo escribí yo». Si la editas, manda lo tuyo.»
+- **RF-10.14n** Ninguna pantalla DEBERÁ enseñar a la vez dos mensajes que se contradigan. Al subir un CV: primero
+  solo «Estamos leyendo tu CV · N %»; el mensaje siguiente, solo al terminar.
+- **RF-10.14o** El PDF de «Tu CV completo» NO DEBERÁ dejar páginas con una o dos líneas sueltas: una sección no
+  empieza al pie de una página ni deja su última línea sola en la siguiente.
+
+**Ofertas e ingesta**
+- **RF-10.14p** Un puesto marcado DEBERÁ casar con sus variantes de género y de barra: «Jefe de sala» casa con
+  «Jefe/a de sala», «Jefa de sala» y «Jefe(a) de sala». Las cuentas de cada puesto en «Qué buscas» DEBERÁN
+  contar igual.
+- **RF-10.14q** CUANDO la lista de Ofertas salga vacía por los filtros, DEBERÁ decir por qué y qué hacer: «Ninguna
+  oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta.».
+- **RF-10.14r** Una ejecución de ingesta que lleve más de 30 minutos «en curso» DEBERÁ cerrarse sola como error,
+  con el motivo «Se cortó sin terminar».
+
+### «Corregir explicación» que amplía la información (RF-10.15, S9 — firmada por Mar el 22-nov)
+Decisiones de Mar del 22-nov: revisar antes de que entre en el perfil; solo para candidaturas nuevas.
+
+- **RF-10.15** El formulario de «Corregir explicación» DEBERÁ tener, además de la nota y el motivo, un campo
+  opcional «Información nueva sobre ti» («Algo que no consta en tu CV y que Horma puede usar en esta oferta»).
+  Se guarda junto a la corrección de esa oferta, con origen «usuaria». No llama al modelo.
+- **RF-10.15b** CUANDO se prepare una candidatura **nueva** para esa oferta, el redactor DEBERÁ recibir esa
+  información y poder usarla en el CV y la carta de esa candidatura, solo tal como ella la escribió: Horma NO
+  DEBERÁ ampliarla ni deducir nada de ella. Las candidaturas ya preparadas NO cambian.
+- **RF-10.15c** Tras enviar la corrección con información, DEBERÁ preguntar: «¿Guardarla también en tu perfil
+  para futuras candidaturas?», con «Sí, revisarla» y «No, solo para esta oferta».
+- **RF-10.15d** CON «Sí, revisarla», la información DEBERÁ aparecer en «Por resolver» de Perfil como propuesta
+  pendiente, que ella puede editar, colocar (experiencia, habilidades, formación u otra) o descartar. NADA DEBERÁ
+  entrar en el perfil hasta que ella la confirme. Al confirmar se aplica RF-10.14m (compatibilidades y
+  candidaturas anteriores quedan «desfasadas»). CON «No», solo se usa en esa oferta.
+- **RF-10.15e** El texto de ayuda de «Corregir explicación» DEBERÁ decir qué toca cada cosa: la nota y el motivo
+  los revisa Mar y no cambian la compatibilidad; la información nueva solo se usa en las candidaturas nuevas de
+  esa oferta; el perfil no cambia sin que ella lo confirme.
+
+### Correcciones de la prueba manual del 22-nov (RF-10.16, RF-10.17, RF-5.3i)
+- **RF-5.3i** *(H5)* Además de RF-5.3g, un texto pegado o leído por una usuaria sin ninguna palabra propia de
+  una oferta de empleo (puesto, contrato, salario, experiencia, empresa, se busca… o una cifra de sueldo; en
+  español o en inglés) DEBERÁ rechazarse con el mismo mensaje, sin analizarlo. Ante la duda deja pasar: rechazar
+  una oferta real es peor que analizar un texto que no lo es.
+- **RF-10.16a** *(I5)* El CV maestro DEBERÁ titular la sección «Otros» del perfil como «Información adicional», y
+  ningún título que escriba el propio maestro (Proyectos, Otras actividades…) DEBERÁ dar aviso de formato.
+- **RF-10.16b** *(I5)* Cada aviso de formato del CV DEBERÁ decir, en una frase en llano y sin «ATS» ni
+  «encabezado»: qué pasa, por qué importa («los programas con los que las empresas filtran los CV…») y cómo
+  arreglarlo.
+- **RF-10.17** *(I14)* En la candidatura enviada o en entrevista, los botones de respuesta DEBERÁN ir bajo el
+  título «Estado» e incluir «Me han contratado», que cierra la candidatura con el motivo «Contratada» y abre una
+  Ventana: «Nos alegramos mucho por ti, esperamos que no vuelvas por aquí.»
+- **RF-10.6i** *(H8)* `/ofertas#anadir` DEBERÁ abrir la ventana «Añadir oferta» también si ya se estaba en
+  Ofertas; al cerrarla se quita el `#anadir`.
+
 ## Bloques de construcción
 Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada bloque deja Horma funcionando.
 
@@ -254,6 +364,9 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 | S5 · Ahorro | RF-10.9, RF-10.10, RF-10.11c | ~1-2 USD (evals `ofertas` y `red-teaming`) |
 | S6 · Orden interno | RF-10.11 (salvo c) | 0 |
 | S7 · Correcciones tras la prueba | RF-10.3g, RF-10.4d-e, RF-10.5c, RF-10.5f, RF-10.6e-f, RF-10.8, RF-10.13, RF-6.4b | ~0,7-1,2 USD (eval `cv` y una candidatura) |
+| S8 · Correcciones de la pasada del 22-nov | RF-10.14 a RF-10.14r, RF-10.16, RF-10.17 | ~2,2-3,3 USD (eval `cv` y subir y borrar CV en la prueba) |
+| S9 · «Corregir explicación» amplía la información | RF-10.15 a RF-10.15e | ~0,2 USD (una candidatura de prueba); sin eval: los prompts no cambian |
+| S10 · Subir varios documentos a la vez | RF-10.18 (por escribir) | Por estimar en su spec |
 
 ## Criterios de aceptación
 - Una usuaria nueva entra con Google, sube su CV y, sin pasar por ninguna otra pantalla, ve sus ofertas con
@@ -277,6 +390,12 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
   vuelve a puntuar.
 - Sin `HORMA_FLOW_IMPL` en el entorno, `candidatura` corre con LangGraph.
 - Ningún router importa un repositorio ni encola (test de arquitectura).
+- *(S8)* Con dos CV, borrar uno deja el perfil sin sus datos y con las correcciones de ella; borrar el último
+  devuelve a «Sube tu CV». Una carta subida se reconoce sola como carta. Con dos CV, el perfil conserva los dos
+  resúmenes. «Jefe de sala» encuentra «Jefe/a de sala». Ninguna pantalla enseña «versión N» ni fechas AAAA-MM.
+- *(S9)* Una corrección con información nueva se usa en la candidatura nueva de esa oferta y no en las ya
+  hechas; con «Sí, revisarla» aparece en «Por resolver» y el perfil no cambia hasta confirmarla; con «No», no
+  aparece en Perfil.
 - Todo comprobado a 1280 y 390 px, en claro y en oscuro (RF-6.4b).
 
 ## Requisitos que sustituye
@@ -295,7 +414,7 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
   volver a firmar las líneas rojas.
 - Puntuar al acabar de leer el CV (P5).
 - Entrevista por tandas (P8); audio y valoración en la 9b (P9).
-- Plantillas de CV para elegir y el CV estético (fase 11). El diseño sobrio único de RF-10.4d sí entra (S7).
+- Plantillas de CV para elegir y el CV estético (fase 13). El diseño sobrio único de RF-10.4d sí entra (S7).
 - Plan de perfeccionamiento del `matcher`: sigue siendo obligatorio antes de usuarias reales.
 - Prueba con cinco personas: las cinco las hace Mar (21-nov), con perfiles y casos distintos; no hay usuarias externas en esa prueba. Coincide con RF-4.8 y P8 de la spec 004.
 - Otras formas de entrar además de Google (tocan la constitución).

@@ -11,7 +11,8 @@ def listar(s: Session) -> list[dict]:
 
 
 def uno(s: Session, cv_id: int) -> dict | None:
-    fila = s.execute(text(f"select {COLUMNAS}, ruta from cv_archivos where id = :i"),
+    fila = s.execute(text(f"select {COLUMNAS}, ruta, coalesce(texto, '') = '' as texto_vacio "
+                          "from cv_archivos where id = :i"),
                      {"i": cv_id}).mappings().first()
     return dict(fila) if fila else None
 
@@ -48,3 +49,12 @@ def renombrar(s: Session, cv_id: int, nombre: str) -> bool:
 def marcar_escrito_por_ella(s: Session, cv_id: int, valor: bool) -> bool:
     return s.execute(text("update cv_archivos set escrito_por_ella = :v where id = :i"),
                      {"v": valor, "i": cv_id}).rowcount == 1
+
+
+def cambiar_clase(s: Session, cv_id: int, clase: str) -> bool:
+    return s.execute(text("update cv_archivos set clase = :c where id = :i"),
+                     {"c": clase, "i": cv_id}).rowcount == 1
+
+
+def texto(s: Session, cv_id: int) -> str | None:
+    return s.execute(text("select texto from cv_archivos where id = :i"), {"i": cv_id}).scalar_one_or_none()

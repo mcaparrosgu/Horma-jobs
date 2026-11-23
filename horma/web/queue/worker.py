@@ -57,6 +57,7 @@ from horma.web.repositories import matches as repo_matches
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles as repo_perfiles
 from horma.web.repositories import tareas as repo_tareas
+from horma.web.services import cv as servicio_cv
 from horma.web.services import estilo as servicio_estilo
 from horma.web.services import ofertas as servicio_ofertas
 from horma.web.services import presupuesto
@@ -123,9 +124,13 @@ def _encolar_puntuar_propias(s, usuaria_id: int) -> None:
 
 
 def _propia_procesada(s, tarea: dict) -> None:
-    """Una oferta propia recién analizada se puntúa sola (RF-5.3d)."""
+    """Una oferta propia recién analizada se puntúa sola (RF-5.3d) y su puesto entra en «Qué buscas» si no
+    estaba (RF-10.6h). Las preferencias solo se ven con la sesión de ella (RLS): otra transacción."""
     if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
         _encolar_puntuar_propias(s, usuaria)
+        titulo = repo_ofertas.titulo(s, tarea["entidad_id"])
+        with sesion_de(s.get_bind(), usuaria) as su:
+            repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo)
 
 
 def _puntuar_si_hay_propias(s, tarea: dict) -> None:
@@ -176,6 +181,14 @@ def _perfil_de_la_tarea(s, tarea: dict, *, hecha: bool = False) -> dict:
     return fila
 
 
+def _otros_resumenes(fila: dict) -> list[str]:
+    """Los resúmenes de los demás CV (el del maestro ya va en `cv_maestro`), para que el redactor elija
+    (RF-10.14d)."""
+    perfil = repo_perfiles.perfil_modelo(fila)
+    usado = perfil.resumen.valor.strip() if perfil.resumen else None
+    return [r.valor.strip() for r in perfil.resumenes if r.valor.strip() != usado]
+
+
 class _Perfilar:
     """Lee todos los CV de la usuaria y rellena la versión reservada: perfil, orígenes y las
     preferencias que salen del CV."""
@@ -185,7 +198,8 @@ class _Perfilar:
         cvs = repo_perfiles.cvs_fuente(s)
         if not cvs:
             raise ValueError("la usuaria no tiene ningún CV para perfilar")
-        return {"cvs": cvs, "_version": fila["version"]}
+        return {"cvs": cvs, "_version": fila["version"],
+                "de_usuaria": repo_perfiles.lo_de_la_usuaria(s, tarea["usuaria_id"])}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         flujo = con_avance(perfilar.crear(proveedor=d.proveedor), d)
@@ -328,6 +342,7 @@ class _Candidatura:
         guia = repo_estilo.guia(s)
         return {"usuaria_id": tarea["usuaria_id"], "perfil_version": perfil["version"],
                 "oferta": oferta.model_dump(mode="json"), "cv_maestro": perfil["cv_maestro"],
+                "otros_resumenes": _otros_resumenes(perfil),
                 "cvs_base": (repo_candidaturas.cv_base_para_flujo(s)
                              if ajustes().horma_cv_base_respaldo else []),
                 "longitud_cv": repo_perfiles.longitud_cv(s),
@@ -476,8 +491,9 @@ def comprobar_aplazadas(engine: Engine, ultima: float | None, ahora: float) -> f
         return ultima
     try:
         servicio_ofertas.encolar_propias_aplazadas(engine)
+        servicio_cv.rehacer_aplazados(engine)
     except Exception as e:  # noqa: BLE001
-        log.error("No se pudieron encolar las ofertas aplazadas (%s)", type(e).__name__)
+        log.error("No se pudieron encolar las tareas aplazadas (%s)", type(e).__name__)
     return ahora
 
 

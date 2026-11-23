@@ -157,7 +157,13 @@ async function pintarPersona(persona) {
   }
 }
 
-// Barra de avance (RF-8.7): frase con el porcentaje y pista con `role="progressbar"`. Devuelve `poner(%)` y `quitar()`.
+// Barra de avance (RF-8.7): frase con el porcentaje y pista con `role="progressbar"`. Devuelve `poner(%)`,
+// `quitar()` y `caja` (para volver a colocarla sin perder su avance al repintar la pantalla).
+// El servidor avanza por pasos (cada paso puede tardar medio minuto); entre paso y paso la barra sigue
+// rellenándose despacio hacia el siguiente, sin llegar nunca a él ni al 100 % (RF-10.8c).
+const AVANCE_TICK_MS = 400;
+const AVANCE_HOLGURA = 20;   // cuánto puede adelantarse la barra al último paso real
+const AVANCE_RITMO = 0.02;   // fracción del hueco que recorre en cada tick (~20 s para casi llenarlo)
 function barraAvance(contenedor, texto, indeterminada = false) {
   const caja = nodo("div", null, "barra-avance");
   const frase = nodo("span", null, "texto");
@@ -170,11 +176,30 @@ function barraAvance(contenedor, texto, indeterminada = false) {
   pista.append(relleno);
   caja.append(frase, pista);
   contenedor.append(caja);
-  const poner = (p) => {
-    const v = Math.max(0, Math.min(100, Math.round(Number(p) || 0)));
+  let real = 0;
+  let mostrado = 0;
+  let reloj = null;
+  const pintar = () => {
+    const v = Math.max(0, Math.min(100, Math.round(mostrado)));
     frase.textContent = `${texto} · ${v} %`;
     pista.setAttribute("aria-valuenow", String(v));
-    relleno.style.width = `${v}%`;   // por CSSOM: la CSP no permite style= en el HTML
+    relleno.style.width = `${mostrado}%`;   // por CSSOM: la CSP no permite style= en el HTML
+  };
+  const quitar = () => {
+    clearInterval(reloj);
+    caja.remove();
+  };
+  const avanzarSolo = () => {
+    if (!caja.isConnected) return;   // la pantalla se está repintando: se retoma al volver a colocarla
+    const tope = Math.min(95, real + AVANCE_HOLGURA);
+    if (real >= 100 || mostrado >= tope) return;
+    mostrado += (tope - mostrado) * AVANCE_RITMO;
+    pintar();
+  };
+  const poner = (p) => {
+    real = Math.max(real, Math.max(0, Math.min(100, Number(p) || 0)));   // nunca baja
+    mostrado = real >= 100 ? 100 : Math.max(mostrado, real);
+    pintar();
   };
   if (indeterminada) {   // sin porcentaje: Horma trabaja y aún no sabe cuánto falta
     caja.classList.add("indeterminada");
@@ -182,9 +207,12 @@ function barraAvance(contenedor, texto, indeterminada = false) {
     pista.setAttribute("aria-busy", "true");
     frase.textContent = `${texto}…`;
   } else {
+    // un mínimo visible: la barra lima se ve desde el primer momento, no una pista vacía
+    mostrado = 2;
     poner(0);
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) reloj = setInterval(avanzarSolo, AVANCE_TICK_MS);
   }
-  return { poner, quitar: () => caja.remove() };
+  return { poner, quitar, caja };
 }
 
 // Sigue una tarea del servidor cada 3 s mientras esté en marcha, sin límite (RF-8.7f). `alAvanzar(progreso, tarea)`
@@ -351,6 +379,77 @@ function cartaBonita(md) {
     if (linea) hoja.append(nodo("p", linea, "cv-linea"));
   }
   return hoja;
+}
+
+// --- Explicación plegable: ayuda «?» con globo propio, clic o foco, Escape y clic fuera (RF-6.7b, RF-10.14m) ---
+function cerrarAyudas(salvo = null) {
+  for (const b of document.querySelectorAll("button.ayuda[aria-expanded='true']")) {
+    if (b === salvo) continue;
+    b.setAttribute("aria-expanded", "false");
+    document.getElementById(b.getAttribute("aria-describedby")).hidden = true;
+  }
+}
+document.addEventListener("click", (e) => cerrarAyudas(e.target.closest("button.ayuda")));
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const abierta = document.querySelector("button.ayuda[aria-expanded='true']");
+  cerrarAyudas();
+  if (abierta) abierta.focus();
+});
+
+function ayuda(nombre, texto, i) {
+  const q = nodo("button", "?", "ayuda");
+  q.type = "button";
+  q.setAttribute("aria-label", `Qué significa «${nombre}»`);
+  q.setAttribute("aria-expanded", "false");
+  const globo = nodo("span", texto, "ayuda-globo");
+  globo.id = `ayuda-${i}`;
+  globo.hidden = true;
+  q.setAttribute("aria-describedby", globo.id);
+  q.addEventListener("click", () => {
+    const abrir = globo.hidden;
+    globo.hidden = !abrir;
+    q.setAttribute("aria-expanded", String(abrir));
+  });
+  q.addEventListener("focusout", (e) => {
+    if (!globo.contains(e.relatedTarget)) {
+      globo.hidden = true;
+      q.setAttribute("aria-expanded", "false");
+    }
+  });
+  return [q, globo];
+}
+
+// Cada párrafo marcado con `data-explicacion` pasa a ser una ayuda «?» junto al título de su bloque. El texto sale de
+// `TEXTOS.explicaciones[clave]` o, si no está, del propio párrafo. `data-explicacion-en` fija el título (selector).
+function montarExplicaciones() {
+  document.querySelectorAll("[data-explicacion]").forEach((p, i) => {
+    const clave = p.dataset.explicacion;
+    const texto = (typeof TEXTOS !== "undefined" && TEXTOS.explicaciones?.[clave]) || p.textContent.trim();
+    let ancla = p.dataset.explicacionEn ? document.querySelector(p.dataset.explicacionEn) : p.previousElementSibling;
+    if (ancla && !ancla.matches("h1, h2, h3, summary")) ancla = ancla.querySelector("h1, h2, h3, summary");
+    if (!ancla || !texto) return;
+    const envoltorio = document.createElement("span");
+    envoltorio.className = "explicacion";
+    const nombre = (ancla.childNodes[0]?.textContent || "").trim() || "este bloque";
+    envoltorio.append(...ayuda(nombre, texto, `e${i}`));
+    ancla.append(envoltorio);
+    p.remove();
+  });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", montarExplicaciones);
+else montarExplicaciones();
+
+// Fechas de un periodo (RF-10.14j): se guardan como AAAA o AAAA-MM y se ven y se escriben como MM-AAAA (o AAAA).
+function fechaVista(valor) {
+  const m = /^(\d{4})-(\d{1,2})$/.exec(String(valor || "").trim());
+  return m ? `${m[2].padStart(2, "0")}-${m[1]}` : String(valor || "");
+}
+
+function fechaGuardada(valor) {
+  const t = String(valor || "").trim();
+  const m = /^(\d{1,2})[-/](\d{4})$/.exec(t);
+  return m ? `${m[2]}-${m[1].padStart(2, "0")}` : t;
 }
 
 function fecha(valor) {

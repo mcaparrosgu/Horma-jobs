@@ -425,12 +425,19 @@ def test_desde_aprobada_salen_el_cv_y_la_carta_en_pdf(app, motor_app):
 
 
 def test_los_pdf_se_descargan_con_el_puesto_y_la_empresa(app, motor_app):
-    """RF-10.4e: `cv-puesto-empresa.pdf` y `carta-puesto-empresa.pdf`."""
+    """RF-10.4e: `cv_nombre_puesto_empresa.pdf` y `carta_nombre_puesto_empresa.pdf`; sin nombre en el
+    perfil, `cv_puesto_empresa.pdf`."""
     c, h, u, cb, oferta, cid = _escenario(app, motor_app)
     c.post(f"/api/candidaturas/{cid}/aprobar", headers=h)
     for cual in ("cv", "carta"):
         r = c.get(f"/api/candidaturas/{cid}/{cual}.pdf")
-        assert r.headers["content-disposition"] == f'attachment; filename="{cual}-camarera-bar-luna.pdf"'
+        assert r.headers["content-disposition"] == f'attachment; filename="{cual}_camarera_bar-luna.pdf"'
+    with sesion_de(motor_app, u) as s:
+        s.execute(text("update perfiles set datos = jsonb_set(coalesce(datos, '{}'::jsonb), '{nombre}', "
+                       "'\"María José Pérez\"')"))
+    r = c.get(f"/api/candidaturas/{cid}/cv.pdf")
+    assert r.headers["content-disposition"] == (
+        'attachment; filename="cv_maria-jose-perez_camarera_bar-luna.pdf"')
 
 
 def test_el_pdf_es_siempre_del_cv_adaptado_aunque_haya_otro_documento_subido(app, motor_app):
@@ -480,3 +487,15 @@ def test_repetir_oferta_con_candidatura_cerrada_avisa_y_pide_confirmar(app, moto
     assert r.status_code == 409 and "Ya preparaste" in r.json()["detail"]
     r = c.post("/api/candidaturas", headers=h, json={"oferta_id": oferta, "repetir": True})
     assert r.status_code == 202
+
+
+def test_me_han_contratado_cierra_con_motivo_contratada(app, motor_app):
+    """RF-10.17: «Me han contratado» cierra la candidatura con el motivo «contratada»."""
+    c, h, u, cb, oferta, cid = _escenario(app, motor_app)
+    ruta = f"/api/candidaturas/{cid}"
+    c.post(f"{ruta}/aprobar", headers=h)
+    c.post(f"{ruta}/enviada", headers=h, json={})
+    c.post(f"{ruta}/entrevista", headers=h)
+    assert c.post(f"{ruta}/cerrar", headers=h, json={"motivo": "contratada"}).status_code == 200
+    f = _fila(motor_app, u, cid)
+    assert f["estado"] == "cerrada" and f["motivo_cierre"] == "contratada"

@@ -132,9 +132,10 @@ def test_solo_remoto_y_solo_salario(conexion):
     _insertar(conexion, 2, modalidad="hibrido")
     _insertar(conexion, 3, modalidad=None)
     _insertar(conexion, 5, modalidad="presencial")
-    _insertar(conexion, 6, modalidad=None, usuaria_id=1)  # propia sin dato: tampoco pasa (RF-7.1c)
-    _insertar(conexion, 7, modalidad="remoto", usuaria_id=1)  # propia remota: pasa
-    assert sorted(_ids(conexion, Preferencias(solo_remoto=True))) == [1, 7]  # RF-7.1c, estricto
+    _insertar(conexion, 6, modalidad=None, usuaria_id=1)  # propia: pasa siempre (RF-10.6g)
+    _insertar(conexion, 7, modalidad="remoto", usuaria_id=1)
+    assert sorted(_ids(conexion, Preferencias(solo_remoto=True))) == [1, 6, 7]  # RF-7.1c, estricto
+    assert sorted(_ids(conexion, Preferencias(solo_remoto=True, incluir_propias=False))) == [1]
     _insertar(conexion, 4, salario_publicado=False)
     assert 4 not in _ids(conexion, Preferencias(solo_salario=True))
 
@@ -164,13 +165,16 @@ def test_excluir_ids_y_limite(conexion):
     assert _ids(conexion, limite=2) == [5, 4]
 
 
-def test_las_propias_se_filtran_igual_pero_no_se_les_exige_recomendable(conexion):
-    """RF-7.1f (modifica RF-5.3e): las propias se filtran igual; solo `recomendable` se les perdona."""
+def test_las_propias_pasan_siempre_o_nunca_segun_incluir_propias(conexion):
+    """RF-10.6g (sustituye a RF-7.1f): con «Incluir las ofertas que añado», las propias procesadas salen
+    aunque no pasen ningún filtro ni sean `recomendable`; sin ella, no sale ninguna."""
     _insertar(conexion, 1)  # del catálogo y recomendable
     _insertar(conexion, 2, recomendable=False)  # del catálogo y fantasma: fuera
     _insertar(conexion, 3, usuaria_id=7, recomendable=False, pais="FR", familia="otros",
-              salario_publicado=False)  # propia fuera de los filtros: fuera, como cualquiera
+              salario_publicado=False)  # propia fuera de los filtros: dentro
     _insertar(conexion, 5, usuaria_id=7, recomendable=False)  # propia, fantasma, dentro de filtros: dentro
     _insertar(conexion, 4, usuaria_id=7, estado="pendiente")  # propia aún sin procesar: fuera
     prefs = Preferencias(paises=["ES"], familias=["hosteleria_restauracion"], solo_salario=True)
-    assert sorted(f[0] for f in _buscar(conexion, prefs)) == [1, 5]
+    assert sorted(f[0] for f in _buscar(conexion, prefs)) == [1, 3, 5]
+    sin = prefs.model_copy(update={"incluir_propias": False})
+    assert sorted(f[0] for f in _buscar(conexion, sin)) == [1]

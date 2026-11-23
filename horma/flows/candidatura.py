@@ -3,6 +3,7 @@
 el resultado.
 
 Estado de entrada: {"usuaria_id": int, "perfil_version": int, "oferta": Oferta, "cv_maestro": str,
+"otros_resumenes": [str] (opcional: los resúmenes de los demás CV, RF-10.14d),
 "cvs_base": [{id, usuaria_id, nombre, sector, familia, contenido, estado, perfil_version, creado_en}, ...]
 (opcional), "guia_estilo": GuiaEstilo | None (opcional, RF-5.6e), "longitud_cv": "mantener" | "sintetizar" |
 None (opcional, RF-10.3b)}
@@ -18,6 +19,8 @@ pero no se vuelve a juzgar. El flujo nunca cambia `estado`: la candidatura sigue
 
 Fase 4: tras `componer` el flujo se para (pausa antes de `entregar`); al aprobar la usuaria se reanuda y
 `entregar` deja los dos PDF con el texto aprobado."""
+import re
+import unicodedata
 from dataclasses import dataclass
 
 from horma.agents.juez_candidatura.agent import JuezCandidatura
@@ -52,6 +55,30 @@ from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, verificar_traz
 
 PROPUESTA_HUECO = ("La oferta lo pide y no aparece en tu perfil: si lo tienes, añádelo tú a tu CV "
                    "maestro y vuelve a preparar la candidatura.")
+
+
+def _clave_hueco(texto: str) -> str:
+    """Minúsculas, sin tildes ni paréntesis, para comparar huecos."""
+    sin = unicodedata.normalize("NFD", re.sub(r"\([^)]*\)", " ", texto))
+    sin = "".join(c for c in sin if unicodedata.category(c) != "Mn").casefold()
+    return re.sub(r"\s+", " ", sin).strip()
+
+
+def combinar_huecos(del_redactor: list[dict], ausentes: list[str]) -> list[dict]:
+    """Une los huecos del redactor y los de `medir_ats` sin duplicados (T64): se comparan por una clave
+    normalizada y por inclusión; del redactor se quita el paréntesis interno."""
+    salida: list[dict] = []
+    claves: list[str] = []
+    candidatos = [({**h, "requisito": re.sub(r"\s*\([^)]*\)", "", h["requisito"]).strip() or h["requisito"]})
+                  for h in del_redactor]
+    candidatos += [{"requisito": p, "propuesta": PROPUESTA_HUECO} for p in ausentes]
+    for h in candidatos:
+        k = _clave_hueco(h["requisito"])
+        if not k or any(k in c or c in k for c in claves):
+            continue
+        claves.append(k)
+        salida.append(h)
+    return salida
 
 
 def texto_oferta(oferta: Oferta) -> str:
@@ -91,7 +118,8 @@ def _como_problemas(errores: list[str]) -> list[Problema]:
 CLAVES_INTERNAS = frozenset({
     "errores_cv", "errores_carta", "errores_formato", "palabras_sugeridas", "ausentes_sin_origen",
     "huecos_redactor", "rehacer", "cv_base_contenido", "cv_maestro", "cvs_base", "oferta", "usuaria_id",
-    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo", "longitud_cv"})
+    "perfil_version", "en_pausa", "cv_pdf", "carta_pdf", "estado", "guia_estilo", "longitud_cv",
+    "otros_resumenes"})
 
 
 CLAVES_ESTADO = frozenset(EstadoCandidatura.model_fields) | CLAVES_INTERNAS
@@ -130,6 +158,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         e["redacciones_cv"] += 1
         r = RedactorCv.run(EntradaRedactorCv(
             cv_base=e["cv_base_contenido"], cv_maestro=e["cv_maestro"], longitud=e.get("longitud_cv"),
+            otros_resumenes=e.get("otros_resumenes") or [],
             oferta=Oferta.model_validate(e["oferta"]),
             errores_previos=[*e["errores_cv"], *e["errores_formato"]],
             problemas_previos=[Problema.model_validate(p) for p in e["problemas_juez"]
@@ -159,7 +188,8 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         longitud, secciones, fechas y ATS del CV."""
         validar(e)
         oferta = Oferta.model_validate(e["oferta"])
-        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"]) if x]
+        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"],
+                                  *(e.get("otros_resumenes") or [])) if x]
         e["errores_cv"] = [
             *verificar_trazabilidad(e["cv_contenido"], e["cv_traza"], fuentes_cv),
             *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])],
@@ -202,11 +232,7 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
     def componer(e: dict) -> dict:
         """Avisos en llano sobre el texto final: errores de `comprobar` y problemas del juez vigentes."""
         validar(e)
-        vistos = {h["requisito"].casefold() for h in e["huecos_redactor"]}
-        huecos = [*e["huecos_redactor"],
-                  *({"requisito": p, "propuesta": PROPUESTA_HUECO}
-                    for p in e["ausentes_sin_origen"] if p.casefold() not in vistos)]
-        e["huecos"] = list({h["requisito"].casefold(): h for h in huecos}.values())
+        e["huecos"] = combinar_huecos(e["huecos_redactor"], e["ausentes_sin_origen"])
         errores_del_cv = [*e["errores_formato"], *e["errores_cv"]]
         de_la_oferta = aviso_de_oferta(Oferta.model_validate(e["oferta"]))
         avisos = [*([de_la_oferta] if de_la_oferta else []),
