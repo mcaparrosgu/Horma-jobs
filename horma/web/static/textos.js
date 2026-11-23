@@ -56,6 +56,7 @@ const TEXTOS = {
   leyendoArchivos: (n) => `Leyendo ${n} archivos`,   // RF-10.18h
   perfilAplazado: "Tus archivos están guardados; rehacemos el perfil cuando haya presupuesto.",   // RF-10.18g
   dudososSinResponder: (nombres) => `No se han guardado, porque no dijiste qué eran: ${nombres.join(", ")}.`,   // RF-10.18e
+  preguntaLoteElegir: "Elige en cada documento si es un CV o una carta.",
   preguntaLote: "No sabemos si estos documentos son un CV o una carta. Dinos qué es cada uno.",   // RF-10.18e
   preguntaClase: "No sabemos si este documento es un CV o una carta. ¿Cuál es?",   // RF-10.14b
   confirmarEliminarCv: "¿Eliminar este CV? Rehacemos tu perfil sin él. No se puede deshacer.",   // RF-10.14

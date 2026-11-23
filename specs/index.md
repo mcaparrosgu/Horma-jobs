@@ -48,12 +48,12 @@ Formato: carpeta — qué es. **Estado.**
     (1280/390 px, claro/oscuro) hecho y firmado (23-nov).
   - **S9 («Corregir explicación» amplía la información): fusionada en `main`** (PR #35, 23-nov; suite verde, R1-R9 por
     DOM/API). Visual de Mar hecho y firmado (23-nov).
-  - **S10 (subir varios documentos a la vez): fusionada en `main`** (PR #36, 23-nov; T70-T74, probada por DOM/API). Falta lo visual de Mar (T75). Con ella se cierra la fase 10.
+  - **S10 (subir varios documentos a la vez): fusionada en `main`** (PR #36, 23-nov; T70-T74, probada por DOM/API). Visual de Mar hecho y firmado (23-nov, T75). **Fase 10 cerrada.**
 
 ## Lo que viene, en este orden
 1. **Fase 11 · Aplicación autónoma y correo** (`011-aplicacion-autonoma/`, sin spec): enviar candidaturas en
    portales dentro de una regla de la usuaria, en modo prueba hasta las fases 12 y 13, y leer las respuestas por
-   correo reenviado. Antes, cambiar y firmar la constitución.
+   correo reenviado. Antes, fusionar la constitución ya firmada (PR #38).
 2. **Fase 9b · Entrevista por texto** (spec en `009-…`, RF-10.12; sin plan).
 3. **Fase 12 · `matcher` y puestos afines** (`012`): el [plan del `matcher`](./002-perfil-recomendacion/spec.md#plan-para-perfeccionar-el-matcher-obligatorio-antes-de-probar-con-usuarias-reales),
    el modelo pequeño para puntuar y el coste de editar el perfil. Espera a una investigación de puestos afines.

@@ -151,7 +151,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     plan del `matcher` (con el modelo real `nota` da 0,67-0,71 frente a 0,9); sigue en `calidad`.
 
 ### Bloque D · Guardarraíles y red teaming (RF-4.5)
-- [ ] T12 — Vigilancia de entrada y de salida (`horma/llm/vigilancia.py`).
+- [x] T12 — Vigilancia de entrada y de salida (`horma/llm/vigilancia.py`).
   - **Test:**
     - cada tipo de señal se detecta en español y en inglés, y una oferta normal de la fase 1 da cero
       señales;
@@ -161,7 +161,9 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
       bloquea;
     - una salida con fuga se reintenta y acaba en `SalidaInvalida`.
   - **Cubre:** RF-4.5, RF-4.5c.
-- [ ] T13 — Aviso de oferta manipulada.
+  - **Hecho (16-nov-2026):** `senales_entrada` y `fuga_prompt` en `horma/llm/vigilancia.py`; la puerta única
+    marca la entrada (columna `senales_entrada`, solo tipos) y trata la fuga como salida inválida.
+- [x] T13 — Aviso de oferta manipulada.
   - **Qué se hace:** `comprobar` añade el aviso fijo si la oferta tiene señales (decidir aquí si va
     como `Aviso` con `documento = "oferta"` o como campo aparte).
   - **Test:**
@@ -169,13 +171,20 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
     - con una oferta normal no hay aviso;
     - igual con las dos implementaciones.
   - **Cubre:** RF-4.5b, RF-4.5d.
-- [ ] T14 — Set `evals/red-teaming/`: unas 10 ofertas y unos 10 correos inventados (manipular, activar
+  - **Hecho (16-nov-2026):** `Aviso.documento` admite «oferta» (decidido: no un campo aparte). El aviso sale
+    si el texto de la oferta tiene señales o si la fase 1 ya halló instrucciones embebidas; se añade en
+    `componer` (que es quien arma `avisos`), también al editar, y no deja la candidatura «pendiente de ti».
+- [x] T14 — Set `evals/red-teaming/`: unas 10 ofertas y unos 10 correos inventados (manipular, activar
   un envío, sacar el prompt o datos de contacto que no están en las fuentes), umbrales en
   `umbrales.json` y entrada en CI.
   - **Test:** el harness exige al 100 % `sin_efecto`, `registrada`, `marcada`, `sin_fuga` y
     `estado_intacto`, y aprueba en simulado.
   - **Medición real con OK de Mar** (≈ 0,5 USD).
   - **Cubre:** RF-4.5e, RT-07, RT-11.
+  - **Hecho (16-nov-2026):** 10 ofertas y 10 correos inventados (3 ofertas pasan por `candidatura`); aprueba
+    en simulado al 100 % y corre en `calidad`. **Medición real (16-nov, con OK de Mar):** 20 de 20 casos, los
+    cinco campos al 100 %, 0,5554 USD. Fusionado en el PR #4. Las mediciones reales del 17 y el 21-nov fallan en
+    casos distintos cada vez: se estabiliza antes de usuarias reales (PR #8, aparcado).
 
 ### Bloque E · Salida segura (RF-4.6)
 - [x] T15 — PWA. *(Hecha y verificada por Mar en escritorio el 16-nov; el móvil espera al despliegue real, T19.)*
@@ -282,7 +291,7 @@ protección de rama esté activa (T11), cada bloque se entrega en su rama y con 
 - Verificar aclaraciones, spec, plan y tareas (campo `verified` de cada documento) antes de T01.
 - ~~Preguntar al profesor dónde desplegar (P6)~~ *(contestado el 17-nov: local ahora, Vercel después)*.
 - Instalar `langgraph` si `uv` falla con certificados (T01).
-- OK antes de gastar en T14 (T11 ya hecha).
+- ~~OK antes de gastar en T14 (T11 ya hecha)~~ *(dado el 16-nov)*.
 - ~~Una cuenta SMTP para las alertas (T22)~~ *(hecho el 17-nov: Gmail con contraseña de aplicación; sin SMTP siguen funcionando la pantalla y el log)*.
 - ~~Prueba manual del bloque B, PWA (T15), HTTPS (T18), prueba final (T24) y firma de T23~~ *(hechas;
   T24 firmada el 17-nov)*.

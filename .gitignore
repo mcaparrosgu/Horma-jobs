@@ -28,6 +28,10 @@ trazas/
 # Node (si aplica, p. ej. herramientas de Neon)
 node_modules/
 
+# Claude Code: ajustes locales y worktrees de agentes (nunca se publican)
+.claude/settings.local.json
+.claude/worktrees/
+
 # Ejecuciones de evals (se generan; CI las sube como artefacto)
 evals/resultados/*.json
 

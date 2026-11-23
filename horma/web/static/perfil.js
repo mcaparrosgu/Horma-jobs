@@ -770,9 +770,10 @@ function preguntarClases(dudosos) {
     const etiqueta = nodo("label", null, null);
     etiqueta.append(nodo("span", d.nombre, "nombre-doc"));
     const selector = nodo("select", null, null);
-    for (const [valor, nombre] of [["fuente", "CV"], ["carta", "Carta"]]) {
+    for (const [valor, nombre] of [["", "Elige…"], ["fuente", "CV"], ["carta", "Carta"]]) {
       const o = nodo("option", nombre, null);
       o.value = valor;
+      if (!valor) o.selected = true;
       selector.append(o);
     }
     etiqueta.append(selector);
@@ -782,7 +783,9 @@ function preguntarClases(dudosos) {
   const acciones = nodo("div", null, "fila");
   const seguir = nodo("button", "Continuar", null);
   seguir.type = "button";
-  seguir.addEventListener("click", () => enviarLote(dudosos.map((d) => d.archivo), { clases: elegidos.map((s) => s.value) }));
+  seguir.addEventListener("click", () => elegidos.some((s) => !s.value)
+    ? avisar(TEXTOS.preguntaLoteElegir, true)
+    : enviarLote(dudosos.map((d) => d.archivo), { clases: elegidos.map((s) => s.value) }));
   const cerrar = nodo("button", "Ahora no", "secundario");
   cerrar.type = "button";
   cerrar.addEventListener("click", () => {
@@ -793,7 +796,8 @@ function preguntarClases(dudosos) {
   caja.replaceChildren(texto, filas, acciones);
   caja.hidden = false;
   avisar("");
-  elegidos[0].focus();
+  caja.scrollIntoView({ block: "start", behavior: "smooth" });   // en el móvil la caja queda sobre las tarjetas
+  elegidos[0].focus({ preventScroll: true });
 }
 
 async function subirDocumento(entrada, nombreVisible) {

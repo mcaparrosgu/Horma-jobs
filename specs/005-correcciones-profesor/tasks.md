@@ -64,7 +64,7 @@ real (RF-5.8).
     cita); casos nuevos en `evals/perfil/`.
   - **Test:** `horma eval correr perfil --simulado` en umbral con los casos nuevos.
   - **Cubre:** RF-5.1c.
-- [ ] T05 — Pantalla del perfil. *(código hecho el 17-nov; comprobada por Mar en la web el 19-nov)*
+- [x] T05 — Pantalla del perfil. *(código hecho el 17-nov; comprobada por Mar en la web el 19-nov)*
   - **Qué se hace:** las tres secciones en `perfil.html/js` con su texto de ayuda y los ejemplos de la
     spec; el aviso «Lo que edites aquí manda sobre tus CV subidos…».
   - **Test:** Mar lo comprueba en la web (paso del plan de pruebas): ve las secciones, la ayuda y el
