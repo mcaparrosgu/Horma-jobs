@@ -284,5 +284,5 @@ migración).
     reutiliza; el resultado sale en un solo mensaje; textos en `textos.js`; test de palabras prohibidas en verde.
   - **Navegador:** Perfil vacío y lleno, con lote, pregunta y mensaje final, a 1280 y 390 px, en claro y en
     oscuro, mirando alineación del selector y de la pregunta (RF-6.4b). Si no se puede comprobar, se dice.
-- [ ] T75 — Cierre de S10 (T70-T74 construidas y suite verde el 23-nov; falta S4 de la prueba, que gasta, y lo visual de Mar): prueba de Mar (~0,1-0,3 USD: un lote con CV, carta, repetido y fallido), suite verde,
+- [ ] T75 — Cierre de S10 (T70-T74 construidas y suite verde el 23-nov; S1-S8 pasan por DOM/API (23-nov, 0,13 USD); falta lo visual de Mar (S9, S10), su firma y el PR): prueba de Mar (~0,1-0,3 USD: un lote con CV, carta, repetido y fallido), suite verde,
   `index.md` al día y PR. *Gasta: avisar antes.* Con este PR se cierra la fase 10.
