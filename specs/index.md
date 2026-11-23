@@ -48,7 +48,7 @@ Formato: carpeta — qué es. **Estado.**
     (1280/390 px, claro/oscuro) hecho y firmado (23-nov).
   - **S9 («Corregir explicación» amplía la información): fusionada en `main`** (PR #35, 23-nov; suite verde, R1-R9 por
     DOM/API). Visual de Mar hecho y firmado (23-nov).
-  - **S10 (subir varios documentos a la vez): fusionada en `main`** (PR #36, 23-nov; T70-T74, probada por DOM/API). Falta lo visual de Mar (T75). Con ella se cierra la fase 10.
+  - **S10 (subir varios documentos a la vez): fusionada en `main`** (PR #36, 23-nov; T70-T74, probada por DOM/API). Visual de Mar hecho y firmado (23-nov, T75). **Fase 10 cerrada.**
 
 ## Lo que viene, en este orden
 1. **Fase 11 · Aplicación autónoma y correo** (`011-aplicacion-autonoma/`, sin spec): enviar candidaturas en
