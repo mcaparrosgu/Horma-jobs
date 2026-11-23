@@ -227,19 +227,26 @@ def hay_perfil(engine: Engine, usuaria_id: int) -> bool:
         return perfiles.vigente(s) is not None
 
 
+def _estado_ultima(s, usuaria_id: int, fila: dict | None, ultima: dict | None) -> dict:
+    """Qué pasa con la versión más nueva que la vigente: se construye, espera presupuesto (RF-10.18g: sin
+    tarea y sin presupuesto hoy; la recoge `rehacer_aplazados`) o falló."""
+    nueva = ultima is not None and (fila is None or ultima["version"] > fila["version"])
+    pendiente = nueva and ultima["estado"] == "pendiente"
+    aplazado = pendiente and ultima["sin_tarea"] and \
+        presupuesto.restante_hoy(s, usuaria_id) < presupuesto.MIN_USD
+    return {"construyendo": pendiente and not aplazado, "aplazado": aplazado,
+            "error": ultima["motivo_error"] if nueva and ultima["estado"] == "error" else None}
+
+
 def ver(engine: Engine, usuaria_id: int) -> dict:
     with sesion_de(engine, usuaria_id) as s:
         fila, ultima = perfiles.vigente(s), perfiles.ultima(s)
+        estado = _estado_ultima(s, usuaria_id, fila, ultima)
         if fila is None:
-            return {"perfil": None, "origenes": [],
-                    "construyendo": bool(ultima) and ultima["estado"] == "pendiente",
-                    "error": ultima["motivo_error"] if ultima and ultima["estado"] == "error" else None}
+            return {"perfil": None, "origenes": [], **estado}
         return {"perfil": perfiles.perfil_modelo(fila).model_dump(mode="json"),
                 "cv_maestro": fila["cv_maestro"], "creado_en": fila["creado_en"],
-                "origenes": perfiles.origenes(s, fila["id"]),
-                "construyendo": ultima["version"] > fila["version"] and ultima["estado"] == "pendiente",
-                "error": ultima["motivo_error"] if ultima["version"] > fila["version"]
-                and ultima["estado"] == "error" else None}
+                "origenes": perfiles.origenes(s, fila["id"]), **estado}
 
 
 def cv_completo_pdf(engine: Engine, usuaria_id: int) -> bytes:

@@ -482,7 +482,7 @@ async function cargarPerfil() {
     avisar(r.motivo, true);
     return;
   }
-  const { perfil, construyendo, error, cv_maestro: maestro, creado_en: creadoEn } = r.datos;
+  const { perfil, construyendo, aplazado, error, cv_maestro: maestro, creado_en: creadoEn } = r.datos;
   const estado = $("estado-perfil");
   if (!construyendo && !subiendoLote && barraLectura) {
     barraLectura.quitar();
@@ -505,6 +505,8 @@ async function cargarPerfil() {
     barraLectura.poner(progreso);
     temporizador = setTimeout(cargarPerfil, 3000);
   }
+  // sin presupuesto hoy no hay nada que leer: el aviso queda fijo, sin barra ni consultas (RF-10.18g)
+  if (aplazado) estado.append(nodo("p", TEXTOS.perfilAplazado, "suave"));
   if (error) estado.append(nodo("p", `No se pudo construir el perfil: ${error}`, "alerta"));
   $("pendientes").hidden = true;
   $("maestro").hidden = true;
@@ -696,7 +698,7 @@ function nuevoResumen() {
   return { subidos: 0, cartas: 0, repetidos: [], fallidos: [], sinGuardar: [] };
 }
 
-function textoResumen(r, aplazado) {
+function textoResumen(r) {
   const lineas = [];
   if (r.subidos === 1 && !r.repetidos.length && !r.fallidos.length && !r.sinGuardar.length) {
     if (r.cartas === 1) lineas.push("Carta subida; Horma la usará para aprender cómo escribes.");
@@ -705,8 +707,7 @@ function textoResumen(r, aplazado) {
   for (const x of r.repetidos) lineas.push(`${x.nombre} ya estaba subido`);
   for (const x of r.fallidos) lineas.push(`${x.nombre}: ${x.motivo}`);
   if (r.sinGuardar.length) lineas.push(TEXTOS.dudososSinResponder(r.sinGuardar));
-  if (aplazado) lineas.push(TEXTOS.perfilAplazado);
-  return lineas.join("\n");
+  return lineas.join("\n");   // «perfil aplazado» lo dice `cargarPerfil`, fijo, para que no salga dos veces
 }
 
 function quitarBarraLote() {
@@ -750,10 +751,10 @@ async function enviarLote(archivos, { clases = null, cerrar = false } = {}) {
   subiendoLote = false;
   if (d.perfil === "en_marcha") {
     // RF-10.14n y 10.18i: mientras lee, solo la barra; el resultado sale junto al «Listo» al terminar
-    notaLote = textoResumen(resumen, false);
+    notaLote = textoResumen(resumen);
   } else {
     quitarBarraLote();
-    avisar(textoResumen(resumen, d.perfil === "aplazado"));
+    avisar(textoResumen(resumen));
   }
   await cargarCvs();
   await cargarPerfil();

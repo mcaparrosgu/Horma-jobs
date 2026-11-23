@@ -159,6 +159,28 @@ def test_un_solo_cv_sin_presupuesto_tambien_se_guarda(app, motor_migrador, monke
     assert d["perfil"] == "aplazado" and len(_filas(motor_migrador)) == 1
 
 
+def test_sin_presupuesto_el_perfil_dice_aplazado_y_no_se_queda_leyendo(
+        app, motor_app, motor_migrador, monkeypatch):
+    """RF-10.18g: la versión reservada sin tarea no es «construyendo» (la barra se quedaba en 0 % para
+    siempre al volver a entrar); en cuanto hay presupuesto y tarea, sí."""
+    c, h, _ = entrar(app)
+    monkeypatch.setattr(ajustes(), "presupuesto_diario_usd", 0.0)
+    _lote(c, h, [("a.md", CV)])
+    p = c.get("/api/perfil", headers=h).json()
+    assert p["aplazado"] is True and p["construyendo"] is False and p["error"] is None
+    monkeypatch.setattr(ajustes(), "presupuesto_diario_usd", 1.0)
+    assert servicio_cv.rehacer_aplazados(motor_app) == 1
+    p = c.get("/api/perfil", headers=h).json()
+    assert p["aplazado"] is False and p["construyendo"] is True
+
+
+def test_con_presupuesto_el_perfil_en_marcha_no_es_aplazado(app, motor_migrador):
+    c, h, _ = entrar(app)
+    _lote(c, h, [("a.md", CV)])
+    p = c.get("/api/perfil", headers=h).json()
+    assert p["construyendo"] is True and p["aplazado"] is False
+
+
 def ajustes_carpeta() -> Path:
     return Path(ajustes().ruta_archivos)
 
@@ -238,6 +260,14 @@ def test_perfil_js_envia_todo_en_una_llamada_con_una_barra_y_un_mensaje():
     assert "!subiendoLote && barraLectura" in js                              # y `cargarPerfil` no la quita
     assert "preguntarClases" in js and "elegidos.map" in js and js.count("\"Continuar\"") == 1
     assert 'api("/api/cv", { metodo: "POST"' not in js                       # ya no sube de uno en uno
+
+
+def test_perfil_aplazado_se_dice_en_la_pantalla_sin_barra_ni_consultas():
+    js = _leer("perfil.js")
+    cargar = js[js.index("async function cargarPerfil()"):js.index("$(\"pendientes\").hidden = true;")]
+    assert "aplazado" in cargar and "TEXTOS.perfilAplazado" in cargar        # el aviso sigue al volver
+    assert cargar.count("setTimeout(cargarPerfil") == 1                       # solo consulta si construye
+    assert "textoResumen(resumen, d.perfil" not in js                         # y no sale dos veces
 
 
 def test_los_textos_estan_en_textos_js():

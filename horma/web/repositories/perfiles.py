@@ -87,9 +87,12 @@ def por_version(s: Session, version: int) -> dict | None:
 
 
 def ultima(s: Session) -> dict | None:
-    """La última versión reservada, esté como esté (para decir si se está construyendo o falló)."""
-    fila = s.execute(text("select id, version, estado, motivo_error from perfiles "
-                          "order by version desc limit 1")).mappings().first()
+    """La última versión reservada, esté como esté (para decir si se está construyendo, espera presupuesto o
+    falló). `sin_tarea`: aún no tiene su `perfilar` (se reservó sin presupuesto, RF-10.18g)."""
+    fila = s.execute(text(
+        "select id, version, estado, motivo_error, not exists (select 1 from tareas t "
+        "where t.tipo = 'perfilar' and t.entidad_id = perfiles.id) as sin_tarea from perfiles "
+        "order by version desc limit 1")).mappings().first()
     return dict(fila) if fila else None
 
 
