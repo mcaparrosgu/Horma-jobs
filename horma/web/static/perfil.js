@@ -34,6 +34,8 @@ let pendientesPrevias = 0;
 let temporizador = null;
 let leyendo = false;   // ya se enseñó la barra «Estamos leyendo tu CV»
 let barraLectura = null;   // esa barra, que se conserva entre consultas
+let subiendoLote = false;   // hay un lote en camino: la barra no se quita aunque aún no haya tarea (RF-10.18h)
+let notaLote = "";   // el resultado del lote, que sale junto al «Listo» (RF-10.18i)
 
 const CAMPOS_FECHA = ["inicio", "fin", "fecha"];
 const periodoVisto = (d) => [d.inicio, d.fin].filter(Boolean).map(fechaVista).join(" – ");
@@ -433,7 +435,7 @@ async function cargarPerfil() {
   }
   const { perfil, construyendo, error, cv_maestro: maestro, creado_en: creadoEn } = r.datos;
   const estado = $("estado-perfil");
-  if (!construyendo && barraLectura) {
+  if (!construyendo && !subiendoLote && barraLectura) {
     barraLectura.quitar();
     barraLectura = null;
   }
@@ -442,7 +444,8 @@ async function cargarPerfil() {
   if (construyendo) leyendo = true;
   else if (leyendo && perfil) {   // acaba de terminar: ahora sí el mensaje siguiente (RF-10.14n)
     leyendo = false;
-    avisar("Listo: tu perfil está construido.");
+    avisar(["Listo: tu perfil está construido.", notaLote].filter(Boolean).join("\n"));
+    notaLote = "";
   }
   if (construyendo) {
     const activas = await api("/api/tareas/activas?tipo=perfilar");   // una sola barra, con su % (RF-10.8)
@@ -635,53 +638,134 @@ async function cargarCvs() {
   $("n-cvs").textContent = String(r.datos.length);
 }
 
-// Al elegir el archivo se sube sin otro clic (RF-10.5). Horma detecta si es un CV o una carta (RF-10.14b);
-// si duda, pregunta y vuelve a subir con lo que ella elija.
-async function enviarDocumento(archivo, clase) {
+// Al elegir los archivos se suben sin otro clic, hasta 5 a la vez en una sola llamada (RF-10.18). Horma detecta si cada
+// uno es un CV o una carta (RF-10.14b); si duda de alguno, pregunta una sola vez al final.
+const MAX_LOTE = 5;
+let resumenLote = null;   // lo acumulado en las llamadas del mismo lote: subidos, repetidos, fallidos, sin guardar
+
+function nuevoResumen() {
+  return { subidos: 0, cartas: 0, repetidos: [], fallidos: [], sinGuardar: [] };
+}
+
+function textoResumen(r, aplazado) {
+  const lineas = [];
+  if (r.subidos === 1 && !r.repetidos.length && !r.fallidos.length && !r.sinGuardar.length) {
+    if (r.cartas === 1) lineas.push("Carta subida; Horma la usará para aprender cómo escribes.");
+  } else if (r.subidos) lineas.push(r.subidos === 1 ? "1 archivo subido." : `${r.subidos} archivos subidos.`);
+  else lineas.push("No se ha subido ningún archivo.");
+  for (const x of r.repetidos) lineas.push(`${x.nombre} ya estaba subido`);
+  for (const x of r.fallidos) lineas.push(`${x.nombre}: ${x.motivo}`);
+  if (r.sinGuardar.length) lineas.push(TEXTOS.dudososSinResponder(r.sinGuardar));
+  if (aplazado) lineas.push(TEXTOS.perfilAplazado);
+  return lineas.join("\n");
+}
+
+function quitarBarraLote() {
+  subiendoLote = false;
+  if (barraLectura) {
+    barraLectura.quitar();
+    barraLectura = null;
+  }
+}
+
+async function enviarLote(archivos, { clases = null, cerrar = false } = {}) {
   const datos = new FormData();
-  datos.append("archivo", archivo);
-  if (clase) datos.append("clase", clase);
-  datos.append("escrito_por_ella", "false");
-  avisar("Subiendo…");
-  const r = await api("/api/cv", { metodo: "POST", formulario: datos });
-  if (!r.ok) return avisar(r.motivo, true);
-  if (r.datos.duda) return preguntarClase(archivo);
+  for (const a of archivos) datos.append("archivos", a);
+  for (const c of clases || []) datos.append("clases", c);
+  if (cerrar) datos.append("cerrar", "true");
+  avisar("");
   $("pregunta-clase").hidden = true;
-  // RF-10.14n: con un CV, solo la barra «Estamos leyendo tu CV»; el mensaje de «listo» llega al terminar.
-  avisar(r.datos.clase === "carta" ? "Carta subida; Horma la usará para aprender cómo escribes." : "");
+  // una sola barra continua, creada ahora: `cargarPerfil` la reutiliza en vez de pintar otra (RF-10.18h)
+  subiendoLote = true;
+  if (!barraLectura && archivos.length) {
+    barraLectura = barraAvance($("estado-perfil"), archivos.length > 1 ? TEXTOS.leyendoArchivos(archivos.length) : "Estamos leyendo tu CV");
+  }
+  const r = await api("/api/cv/lote", { metodo: "POST", formulario: datos });
+  if (!r.ok) {
+    quitarBarraLote();
+    return avisar(r.motivo, true);
+  }
+  const d = r.datos;
+  resumenLote = resumenLote || nuevoResumen();
+  resumenLote.subidos += d.subidos.length;
+  resumenLote.cartas += d.subidos.filter((x) => x.clase === "carta").length;
+  resumenLote.repetidos.push(...d.repetidos);
+  resumenLote.fallidos.push(...d.fallidos);
+  if (d.perfil === "pendiente_de_respuesta" || d.dudosos.length) {
+    quitarBarraLote();
+    await cargarCvs();
+    return preguntarClases(d.dudosos.map((x) => ({ nombre: x.nombre, archivo: archivos[x.indice] })));
+  }
+  const resumen = resumenLote;
+  resumenLote = null;
+  subiendoLote = false;
+  if (d.perfil === "en_marcha") {
+    // RF-10.14n y 10.18i: mientras lee, solo la barra; el resultado sale junto al «Listo» al terminar
+    notaLote = textoResumen(resumen, false);
+  } else {
+    quitarBarraLote();
+    avisar(textoResumen(resumen, d.perfil === "aplazado"));
+  }
   await cargarCvs();
   await cargarPerfil();
   await cargarEstilo();
 }
 
-function preguntarClase(archivo) {
+function preguntarClases(dudosos) {
   const caja = $("pregunta-clase");
-  const texto = nodo("p", TEXTOS.preguntaClase, null);
+  const texto = nodo("p", TEXTOS.preguntaLote, null);
   texto.id = "pregunta-clase-texto";
-  const fila = nodo("div", null, "fila");
-  for (const [clase, etiqueta] of [["fuente", "Es un CV"], ["carta", "Es una carta"]]) {
-    const b = nodo("button", etiqueta, "secundario");
-    b.type = "button";
-    b.addEventListener("click", () => { caja.hidden = true; enviarDocumento(archivo, clase); });
-    fila.append(b);
+  const filas = nodo("div", null, "rejilla-clases");
+  const elegidos = [];
+  for (const d of dudosos) {
+    const etiqueta = nodo("label", null, null);
+    etiqueta.append(nodo("span", d.nombre, "nombre-doc"));
+    const selector = nodo("select", null, null);
+    for (const [valor, nombre] of [["fuente", "CV"], ["carta", "Carta"]]) {
+      const o = nodo("option", nombre, null);
+      o.value = valor;
+      selector.append(o);
+    }
+    etiqueta.append(selector);
+    elegidos.push(selector);
+    filas.append(etiqueta);
   }
-  caja.replaceChildren(texto, fila);
+  const acciones = nodo("div", null, "fila");
+  const seguir = nodo("button", "Continuar", null);
+  seguir.type = "button";
+  seguir.addEventListener("click", () => enviarLote(dudosos.map((d) => d.archivo), { clases: elegidos.map((s) => s.value) }));
+  const cerrar = nodo("button", "Ahora no", "secundario");
+  cerrar.type = "button";
+  cerrar.addEventListener("click", () => {
+    resumenLote.sinGuardar.push(...dudosos.map((d) => d.nombre));
+    enviarLote([], { cerrar: true });
+  });
+  acciones.append(seguir, cerrar);
+  caja.replaceChildren(texto, filas, acciones);
   caja.hidden = false;
   avisar("");
-  fila.querySelector("button").focus();
+  elegidos[0].focus();
 }
 
 async function subirDocumento(entrada, nombreVisible) {
-  const archivo = entrada.files[0];
-  if (nombreVisible) nombreVisible.textContent = archivo ? archivo.name : "Ningún archivo seleccionado";
-  if (!archivo) return;
-  entrada.disabled = true;
-  try {
-    await enviarDocumento(archivo, null);
-  } finally {
-    entrada.disabled = false;
+  const archivos = [...entrada.files];
+  const reponer = () => {
     entrada.value = "";
     if (nombreVisible) nombreVisible.textContent = "Ningún archivo seleccionado";
+  };
+  if (archivos.length > MAX_LOTE) {   // no se sube ninguno (RF-10.18b)
+    reponer();
+    return avisar(TEXTOS.maxLote, true);
+  }
+  if (nombreVisible) nombreVisible.textContent = archivos.length > 1 ? `${archivos.length} archivos` : archivos[0] ? archivos[0].name : "Ningún archivo seleccionado";
+  if (!archivos.length) return;
+  entrada.disabled = true;
+  resumenLote = nuevoResumen();
+  try {
+    await enviarLote(archivos);
+  } finally {
+    entrada.disabled = false;
+    reponer();
   }
 }
 

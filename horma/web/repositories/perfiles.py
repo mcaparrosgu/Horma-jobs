@@ -152,6 +152,43 @@ def aplazados(s: Session) -> list[tuple[int, int]]:
     return [(f[0], f[1]) for f in s.execute(text("select usuaria_id, perfil_id from perfiles_aplazados()")).all()]
 
 
+ESPERANDO_RESPUESTA = "esperando_respuesta"
+GRACIA_RESPUESTA_MIN = 15
+
+
+def version_en_espera(s: Session) -> int | None:
+    """La versión de la usuaria que espera su `perfilar` porque ella aún responde una pregunta (RF-10.18e)."""
+    fila = s.execute(text(
+        "select id from perfiles where estado = 'pendiente' and motivo_error = :m "
+        "and not exists (select 1 from tareas t where t.tipo = 'perfilar' and t.entidad_id = perfiles.id) "
+        "order by id desc limit 1"), {"m": ESPERANDO_RESPUESTA}).first()
+    return fila[0] if fila else None
+
+
+def reservar_en_espera(s: Session, usuaria_id: int) -> int:
+    """Reutiliza la versión en espera o reserva una nueva con la marca, para que `rehacer_aplazados` le dé un
+    margen antes de rehacerla por su cuenta."""
+    pid = version_en_espera(s)
+    if pid is None:
+        pid, _ = nueva_version(s, usuaria_id)
+        s.execute(text("update perfiles set motivo_error = :m where id = :i"),
+                  {"m": ESPERANDO_RESPUESTA, "i": pid})
+    return pid
+
+
+def quitar_espera(s: Session, perfil_id: int) -> None:
+    s.execute(text("update perfiles set motivo_error = null where id = :i and motivo_error = :m"),
+              {"i": perfil_id, "m": ESPERANDO_RESPUESTA})
+
+
+def en_espera_de_respuesta(s: Session, perfil_id: int) -> bool:
+    """Reservada hace menos de `GRACIA_RESPUESTA_MIN` minutos, mientras ella responde la pregunta."""
+    return bool(s.execute(text(
+        "select 1 from perfiles where id = :i and motivo_error = :m "
+        "and creado_en > now() - make_interval(mins => :g)"),
+        {"i": perfil_id, "m": ESPERANDO_RESPUESTA, "g": GRACIA_RESPUESTA_MIN}).first())
+
+
 def nueva_version(s: Session, usuaria_id: int) -> tuple[int, int]:
     """Reserva la siguiente versión (pendiente). Devuelve (id, versión)."""
     version = s.execute(text("select coalesce(max(version), 0) + 1 from perfiles "

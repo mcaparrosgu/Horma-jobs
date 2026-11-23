@@ -44,6 +44,27 @@ def subir(request: Request, response: Response, archivo: Annotated[UploadFile, F
         raise HTTPException(status_code=409, detail="Ya tienes un CV con ese nombre.") from e
 
 
+@router.post("/api/cv/lote", status_code=201, dependencies=[Depends(exigir_csrf), Depends(limite_subida_cv)])
+def subir_lote(request: Request, response: Response, archivos: Annotated[list[UploadFile], File()] = (),
+               clases: Annotated[list[str], Form()] = (), cerrar: bool = Form(default=False),
+               usuaria_id: int = Depends(usuaria_actual)):
+    """Hasta 5 documentos a la vez (RF-10.18): guarda los válidos y dice qué pasó con cada uno. `clases`: la
+    respuesta a la única pregunta por los dudosos; `cerrar`: ella la cierra sin responder."""
+    maximo = ajustes().max_cv_bytes + 1
+    try:
+        hecho = servicio.subir_lote(
+            request.app.state.engine, usuaria_id,
+            archivos=[(a.filename or "cv", a.file.read(maximo)) for a in archivos],
+            clases=list(clases), cerrar=cerrar)
+    except servicio.LoteDemasiado as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except servicio.ArchivoRechazado as e:
+        raise HTTPException(status_code=e.estado, detail=e.motivo) from e
+    if not hecho["subidos"]:
+        response.status_code = 200
+    return hecho
+
+
 class Clase(BaseModel):
     clase: str
 
