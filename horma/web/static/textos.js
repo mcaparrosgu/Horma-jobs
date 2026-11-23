@@ -52,6 +52,11 @@ const TEXTOS = {
   ejemplosCifras: "Un logro medible no tiene por qué ser de ventas: mesas o cubiertos por servicio, aforo, caja diaria, personas formadas, temporadas repetidas, ascensos, idiomas con los que atendías.",   // RF-10.14k
   preguntaTipoHueco: "¿Fue un empleo u otra cosa?",   // RF-10.14i
   resumenesPorCv: "Horma guarda el resumen de cada CV. Tu CV completo usa el del más reciente; al redactar un CV para una oferta, elige el que mejor encaja.",   // RF-10.14d
+  maxLote: "Puedes subir hasta 5 archivos a la vez. Elige 5 o menos.",   // RF-10.18b
+  leyendoArchivos: (n) => `Leyendo ${n} archivos`,   // RF-10.18h
+  perfilAplazado: "Tus archivos están guardados; rehacemos el perfil cuando haya presupuesto.",   // RF-10.18g
+  dudososSinResponder: (nombres) => `No se han guardado, porque no dijiste qué eran: ${nombres.join(", ")}.`,   // RF-10.18e
+  preguntaLote: "No sabemos si estos documentos son un CV o una carta. Dinos qué es cada uno.",   // RF-10.18e
   preguntaClase: "No sabemos si este documento es un CV o una carta. ¿Cuál es?",   // RF-10.14b
   confirmarEliminarCv: "¿Eliminar este CV? Rehacemos tu perfil sin él. No se puede deshacer.",   // RF-10.14
   confirmarEliminarUltimoCv: "¿Eliminar tu único CV? Borramos tu perfil y vuelves a «Sube tu CV». No se puede deshacer.",   // RF-10.14

@@ -29,6 +29,7 @@ from horma.web.routers import (
     recomendaciones,
     tareas,
 )
+from horma.web.services.cv import MAX_LOTE
 from horma.web.services.presupuesto import SinPresupuesto
 
 ESTATICOS = Path(__file__).parent / "static"
@@ -73,8 +74,9 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     async def cabeceras_de_seguridad(request, call_next):
         longitud = request.headers.get("content-length", "0")
         # Única excepción al límite: la subida de un CV (el archivo lleva su propio tope, RF-2.1)
-        subida = request.method == "POST" and request.url.path == "/api/cv"
-        maximo = a.max_cv_bytes + MARGEN_MULTIPART if subida else MAX_CUERPO
+        subida = request.method == "POST" and request.url.path in ("/api/cv", "/api/cv/lote")
+        archivos_max = MAX_LOTE if request.url.path == "/api/cv/lote" else 1   # hasta 5 a la vez (RF-10.18)
+        maximo = a.max_cv_bytes * archivos_max + MARGEN_MULTIPART if subida else MAX_CUERPO
         if not longitud.isdigit() or int(longitud) > maximo:
             r = JSONResponse({"detail": "Petición demasiado grande"}, status_code=413)
         else:

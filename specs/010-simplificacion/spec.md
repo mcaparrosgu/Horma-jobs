@@ -1,12 +1,12 @@
 ---
 type: spec
 title: simplificacion — Spec funcional
-description: Requisitos de la simplificación de Horma en notación EARS — recorrido de 4 pantallas y 4 clics, ocho conceptos, tres pestañas, candidatura sin CV base, «Tu CV completo» en PDF, bandeja «Por resolver», un agente por oferta, caché de la compatibilidad, presupuesto diario único, orden interno y las correcciones tras la prueba (S7: avance en su pantalla, avisos agrupados, carta, PDF del CV, simetría y el repaso del 22-nov; S8: correcciones de la pasada del 22-nov) — y la lista de requisitos anteriores que sustituye.
+description: Requisitos de la simplificación de Horma en notación EARS — recorrido de 4 pantallas y 4 clics, ocho conceptos, tres pestañas, candidatura sin CV base, «Tu CV completo» en PDF, bandeja «Por resolver», un agente por oferta, caché de la compatibilidad, presupuesto diario único, orden interno y las correcciones tras la prueba (S7: avance en su pantalla, avisos agrupados, carta, PDF del CV, simetría y el repaso del 22-nov; S8: correcciones de la pasada del 22-nov; S10: subir varios documentos a la vez) — y la lista de requisitos anteriores que sustituye.
 tags: [spec, simplificacion, ux, frontend, costes, arquitectura, agentes]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
 generated: { by: claude-code, at: 2026-11-21 }
-verified: { by: human, at: 2026-11-22 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) y S9 (RF-10.15 a 10.15e) firmadas el 22-nov; RF-5.3i, 10.4e, 10.6i, 10.8c, 10.16 y 10.17 pedidos por Mar en la prueba del 22-nov
+verified: { by: human, at: 2026-11-22 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) y S9 (RF-10.15 a 10.15e) firmadas el 22-nov; RF-5.3i, 10.4e, 10.6i, 10.8c, 10.16 y 10.17 pedidos por Mar en la prueba del 22-nov; S10 (RF-10.18 a 10.18i): decisiones de Mar del 23-nov, texto pendiente de su firma
 stale_after: null
 ---
 
@@ -352,6 +352,39 @@ Decisiones de Mar del 22-nov: revisar antes de que entre en el perfil; solo para
 - **RF-10.6i** *(H8)* `/ofertas#anadir` DEBERÁ abrir la ventana «Añadir oferta» también si ya se estaba en
   Ofertas; al cerrarla se quita el `#anadir`.
 
+### Subir varios documentos a la vez (RF-10.18, S10 — firmada el 23-nov)
+Decisiones de Mar del 23-nov: máximo 5; se suben los válidos; una sola pregunta al final para los dudosos; un solo
+perfil rehecho por lote; sin presupuesto, se guardan; una barra; los repetidos se ignoran; vale en las dos pantallas.
+
+- **RF-10.18** «Sube tu CV» (sin perfil, RF-10.5) y «Subir archivo» (con perfil, RF-10.5b) DEBERÁN dejar elegir
+  **hasta 5 archivos** de una vez, con el mismo selector, los mismos formatos y el mismo peso máximo por archivo
+  (RF-10.5f). Los dos DEBERÁN decir el máximo de 5. Al elegirlos se suben sin otro clic. Subir uno solo sigue
+  valiendo y sigue las mismas reglas.
+- **RF-10.18b** SI ella elige más de 5, Horma NO DEBERÁ subir ninguno y DEBERÁ decir: «Puedes subir hasta 5
+  archivos a la vez. Elige 5 o menos.»
+- **RF-10.18c** SI un archivo del lote falla, Horma DEBERÁ subir los válidos y avisar de cada fallido con su nombre
+  y su motivo: «formato no admitido», «pesa más de N MB» o «no se ha podido leer». Un fallo NO DEBERÁ impedir los
+  demás.
+- **RF-10.18d** Un archivo idéntico (mismo contenido) a otro del lote o a uno ya subido DEBERÁ ignorarse, con el
+  aviso «nombre.pdf ya estaba subido». No se guarda dos veces ni rehace el perfil.
+- **RF-10.18e** Horma DEBERÁ decidir si cada archivo es CV o carta con RF-10.14b. SI duda de alguno, DEBERÁ
+  preguntar **al final y una sola vez**: la lista de los dudosos, con un selector «CV / Carta» por cada uno y un
+  botón «Continuar». Los que no dan duda se guardan sin esperar. «¿No es un CV? Cámbialo» sigue junto a cada
+  documento. SI ella cierra la pregunta sin responder, los dudosos NO DEBERÁN guardarse y Horma DEBERÁ decir
+  cuáles; el perfil se rehace con los demás.
+- **RF-10.18f** El perfil DEBERÁ rehacerse **una sola vez por lote**, al final: después de guardar los archivos y,
+  si hubo pregunta, después de responderla. Un lote sin ningún CV nuevo (solo cartas, repetidos o fallidos) NO
+  DEBERÁ rehacer el perfil. Las cartas del lote siguen la regla de hoy para «Cómo escribes» (RF-5.6d).
+- **RF-10.18g** SI no queda presupuesto del día (RF-10.9), los archivos DEBERÁN guardarse y el perfil quedar por
+  rehacer, con el aviso «Tus archivos están guardados; rehacemos el perfil cuando haya presupuesto». El perfil
+  DEBERÁ rehacerse solo en cuanto vuelva a haberlo. No se pierde nada. Vale también al subir un solo archivo
+  (hoy no se guardaba).
+- **RF-10.18h** Mientras dure el lote, la pantalla DEBERÁ mostrar una sola barra continua, «Leyendo N archivos…
+  40 %» (N = los archivos que se están subiendo), sin parpadeo y sin volver a 0 (RF-10.8, RF-10.8c). Con un solo
+  archivo, la frase de RF-10.8.
+- **RF-10.18i** Al terminar, Horma DEBERÁ decir el resultado en un solo mensaje (RF-10.14n): cuántos se han
+  subido y, debajo, los ignorados y los fallidos, cada uno con su nombre y su motivo.
+
 ## Bloques de construcción
 Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada bloque deja Horma funcionando.
 
@@ -366,7 +399,7 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 | S7 · Correcciones tras la prueba | RF-10.3g, RF-10.4d-e, RF-10.5c, RF-10.5f, RF-10.6e-f, RF-10.8, RF-10.13, RF-6.4b | ~0,7-1,2 USD (eval `cv` y una candidatura) |
 | S8 · Correcciones de la pasada del 22-nov | RF-10.14 a RF-10.14r, RF-10.16, RF-10.17 | ~2,2-3,3 USD (eval `cv` y subir y borrar CV en la prueba) |
 | S9 · «Corregir explicación» amplía la información | RF-10.15 a RF-10.15e | ~0,2 USD (una candidatura de prueba); sin eval: los prompts no cambian |
-| S10 · Subir varios documentos a la vez | RF-10.18 (por escribir) | Por estimar en su spec |
+| S10 · Subir varios documentos a la vez | RF-10.18 a RF-10.18i | 0 al construir; ~0,1-0,3 USD la prueba (un lote = un perfil rehecho); sin eval: los prompts no cambian |
 
 ## Criterios de aceptación
 - Una usuaria nueva entra con Google, sube su CV y, sin pasar por ninguna otra pantalla, ve sus ofertas con
@@ -396,6 +429,11 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 - *(S9)* Una corrección con información nueva se usa en la candidatura nueva de esa oferta y no en las ya
   hechas; con «Sí, revisarla» aparece en «Por resolver» y el perfil no cambia hasta confirmarla; con «No», no
   aparece en Perfil.
+- *(S10)* Con 5 archivos elegidos (dos CV, una carta, uno repetido y uno de formato no admitido) se guardan tres,
+  se avisa de los otros dos con su nombre y su motivo, se ve una sola barra y el perfil se rehace una vez (una
+  tarea en Admin › Costes). Con 6, no se sube ninguno. Con un dudoso, hay una sola pregunta y el perfil se rehace
+  después de responderla. Sin presupuesto, los archivos quedan en «Documentos subidos» y el perfil se rehace al
+  volver a haberlo. Funciona igual en «Sube tu CV» y en «Subir archivo».
 - Todo comprobado a 1280 y 390 px, en claro y en oscuro (RF-6.4b).
 
 ## Requisitos que sustituye
@@ -425,3 +463,5 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
 - La compatibilidad no depende de las partes del perfil que no están en RF-10.10c.
 - Las candidaturas de hoy no pierden calidad al partir del CV maestro con la condensación de RF-10.3b; lo
   decide el eval `cv`.
+- *(S10)* Rehacer el perfil con un lote de 5 CV cabe en el tope de una tarea `perfilar` (0,50 USD). Sin medir: se
+  mira en la prueba de cierre.

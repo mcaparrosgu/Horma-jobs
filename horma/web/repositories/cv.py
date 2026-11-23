@@ -37,6 +37,12 @@ def crear(s: Session, usuaria_id: int, *, nombre: str, nombre_original: str, rut
          "z": tamano, "x": texto, "e": escrito_por_ella}).scalar_one()
 
 
+def rutas_de_igual_tamano(s: Session, tamano: int) -> list[str]:
+    """Los archivos ya subidos que pesan lo mismo: candidatos a ser idénticos (RF-10.18d)."""
+    filas = s.execute(text("select ruta from cv_archivos where tamano = :z"), {"z": tamano}).all()
+    return [f[0] for f in filas]
+
+
 def eliminar(s: Session, cv_id: int) -> bool:
     return s.execute(text("delete from cv_archivos where id = :i"), {"i": cv_id}).rowcount == 1
 

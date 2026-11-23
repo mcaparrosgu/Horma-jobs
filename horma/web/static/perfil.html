@@ -25,14 +25,14 @@
 
     <section id="sube-cv" class="panel" aria-labelledby="t-cv" hidden>
       <h2 id="t-cv" class="etiqueta-mono">Sube tu CV</h2>
-      <p class="entradilla">Elige tu CV (PDF, DOCX o Markdown) y Horma construye tu perfil al momento.</p>
+      <p class="entradilla">Elige tu CV (PDF, DOCX o Markdown), o hasta 5 archivos a la vez, y Horma construye tu perfil al momento.</p>
       <form id="subir" class="fila panel">
         <label class="archivo">Archivo
           <span class="selector-archivo">
-            <span class="boton secundario" aria-hidden="true">Elegir archivo</span>
+            <span class="boton secundario" aria-hidden="true">Elegir archivos</span>
             <span id="archivo-nombre" class="suave">Ningún archivo seleccionado</span>
           </span>
-          <input id="archivo" class="solo-lector" type="file" accept=".pdf,.docx,.md,.markdown">
+          <input id="archivo" class="solo-lector" type="file" multiple accept=".pdf,.docx,.md,.markdown">
         </label>
       </form>
     </section>
@@ -51,13 +51,13 @@
       <section id="subir-otro" class="panel" aria-labelledby="t-subir">
         <h2 id="t-subir" class="etiqueta-mono">Subir archivo</h2>
         <p class="suave" data-explicacion="subir">¿Tienes un CV distinto para cada sector? Sube todos: Horma los junta en un solo perfil y adapta cada candidatura a su oferta. Las cartas le enseñan cómo escribes.</p>
-        <p class="suave">Formatos admitidos: <strong>PDF, DOCX o Markdown (.md)</strong>. Máximo 5 MB por archivo.</p>
+        <p class="suave">Formatos admitidos: <strong>PDF, DOCX o Markdown (.md)</strong>. Hasta 5 archivos a la vez; máximo 5 MB por archivo.</p>
         <form id="subir-doc" class="fila">
           <label class="archivo">Archivo
             <span class="selector-archivo">
-              <span class="boton" aria-hidden="true">Subir archivo</span>
+              <span class="boton" aria-hidden="true">Subir archivos</span>
             </span>
-            <input id="archivo-doc" class="solo-lector" type="file" accept=".pdf,.docx,.md,.markdown">
+            <input id="archivo-doc" class="solo-lector" type="file" multiple accept=".pdf,.docx,.md,.markdown">
           </label>
         </form>
       </section>
