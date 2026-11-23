@@ -136,26 +136,26 @@ PostgreSQL, y más adelante Vercel (P6).
   pendiente. La firma Mar (P9).
 
 ## Criterios de aceptación (puerta de salida)
-- [ ] La suite de flujos y `evals/cv/` pasan con `PlainFlow` y con `LangGraphFlow` (simulado), y con la
+- [x] La suite de flujos y `evals/cv/` pasan con `PlainFlow` y con `LangGraphFlow` (simulado), y con la
       implementación activa con el modelo real en un PR.
-- [ ] `horma flujo correr candidatura --usuaria ana --oferta 123 --paso-a-paso --traza trazas/` funciona
+- [x] `horma flujo correr candidatura --usuaria ana --oferta 123 --paso-a-paso --traza trazas/` funciona
       con `HORMA_FLOW_IMPL=langgraph`.
-- [ ] Una candidatura se para tras `componer`; al aprobar, los PDF descargados coinciden con el texto
+- [x] Una candidatura se para tras `componer`; al aprobar, los PDF descargados coinciden con el texto
       aprobado (también tras editar) y el checkpoint se borra (test). Si la reanudación falla, la
       candidatura sigue aprobada y las descargas funcionan (test).
-- [ ] Un PR con un umbral en rojo no se puede fusionar (se comprueba una vez a propósito); el umbral ATS
+- [x] Un PR con un umbral en rojo no se puede fusionar (se comprueba una vez a propósito); el umbral ATS
       0,75 está en el archivo de umbrales.
-- [ ] `horma eval correr red-teaming`: 100 % sin efecto, en simulado y con el modelo real.
-- [ ] Lighthouse marca la web como instalable; sin red se ve «Sin conexión».
-- [ ] El perfil de producción arranca en local con HTTPS, sin puertos de API ni de base de datos
+- [ ] `horma eval correr red-teaming`: 100 % sin efecto, en simulado y con el modelo real. *(en simulado, sí; con el modelo real aprobó el 16-nov y en el PR #7, pero falla a ratos desde el 17-nov: PR #8, aparcado)*
+- [x] Lighthouse marca la web como instalable; sin red se ve «Sin conexión».
+- [x] El perfil de producción arranca en local con HTTPS, sin puertos de API ni de base de datos
       publicados, y la API se niega a arrancar con secretos de desarrollo (test).
-- [ ] Pasarse de un límite de ritmo da 429 (test).
-- [ ] `/costes` muestra coste y errores sin datos personales; una alerta forzada se ve, se registra y
+- [x] Pasarse de un límite de ritmo da 429 (test).
+- [x] `/costes` muestra coste y errores sin datos personales; una alerta forzada se ve, se registra y
       envía su correo (test con SMTP simulado).
-- [ ] Ningún motivo de error ni registro contiene texto de la usuaria (test).
-- [ ] Prueba final de Mar con los 5 casos hecha y anotada; revisión de líneas rojas firmada.
-- [ ] Despliegue: el profesor respondió el 17-nov-2026 (P6): de momento local con Compose y PostgreSQL;
-      Vercel, más adelante. Falta que Mar confirme dar por cerrada la fase con el despliegue local.
+- [x] Ningún motivo de error ni registro contiene texto de la usuaria (test).
+- [x] Prueba final de Mar con los 5 casos hecha y anotada; revisión de líneas rojas firmada.
+- [x] Despliegue: el profesor respondió el 17-nov-2026 (P6): de momento local con Compose y PostgreSQL;
+      Vercel, más adelante. Mar dio por cerrada la fase con el despliegue local el 19-nov (T19).
 
 ## Riesgos
 - **Gasto:** cada PR con el modelo real cuesta unos pocos USD (tope de 1 USD por set, 8 sets).
