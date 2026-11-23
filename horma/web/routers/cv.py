@@ -27,7 +27,8 @@ def _nombre(valor: str) -> str:
 
 
 @router.post("/api/cv", status_code=201, dependencies=[Depends(exigir_csrf), Depends(limite_subida_cv)])
-def subir(request: Request, response: Response, archivo: Annotated[UploadFile, File()], nombre: str | None = Form(default=None),
+def subir(request: Request, response: Response, archivo: Annotated[UploadFile, File()],
+          nombre: str | None = Form(default=None),
           clase: str | None = Form(default=None), escrito_por_ella: bool = Form(default=False),
           usuaria_id: int = Depends(usuaria_actual)):
     contenido = archivo.file.read(ajustes().max_cv_bytes + 1)
@@ -105,7 +106,8 @@ def descargar(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_ac
 
 @router.get("/api/cv/{cv_id}/texto")
 def texto(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
-    """El texto de un documento con el aviso de que es una lectura, no su diseño (RF-10.14c): «Ver» de un DOCX."""
+    """El texto de un documento con el aviso de que es una lectura, no su diseño (RF-10.14c):
+    «Ver» de un DOCX."""
     hallado = servicio.texto(request.app.state.engine, usuaria_id, cv_id)
     if hallado is None:
         raise HTTPException(status_code=404, detail="No existe ese CV")

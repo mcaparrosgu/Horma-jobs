@@ -68,17 +68,21 @@ def _esta(clave: str, texto: str) -> bool:
     return all(any(_coincide(w, p) for w in en_texto) for p in significativas)
 
 
-_NIVELES = {"a1": 1, "a2": 2, "b1": 3, "b2": 4, "c1": 5, "c2": 6}   # niveles de idioma (MCER), de menor a mayor
-_O_MAS = re.compile(r"\bo (superior|similar|equivalente|mas)\b")    # «B1 o superior», «CoverManager o similar»
-FRASE_LARGA = 4  # palabras con contenido a partir de las cuales un requisito es una frase, no una palabra clave
+# niveles de idioma (MCER), de menor a mayor
+_NIVELES = {"a1": 1, "a2": 2, "b1": 3, "b2": 4, "c1": 5, "c2": 6}
+# «B1 o superior», «CoverManager o similar»
+_O_MAS = re.compile(r"\bo (superior|similar|equivalente|mas)\b")
+# palabras con contenido a partir de las cuales un requisito es una frase, no una palabra clave
+FRASE_LARGA = 4
 
 
 def _respaldada(clave: str, texto: str) -> bool:
-    """¿Respaldan las fuentes este requisito? Solo para decidir qué «no consta» (RF-10.13): un falso aviso es peor
-    que uno que falta, porque la carta usa como propio lo que el aviso niega. Una palabra clave corta exige todas
-    sus palabras (con nivel de idioma igual o mayor; las cifras no cuentan). «A o B» se respalda con una de las dos.
-    Una frase larga («Mínimo 5 años de experiencia en sala, 2 de ellos como responsable») no se puede juzgar contando
-    palabras: la juzga el redactor con su `hueco`. Las palabras clave del propio CV se siguen midiendo con `_esta`."""
+    """¿Respaldan las fuentes este requisito? Solo para decidir qué «no consta» (RF-10.13): un falso aviso
+    es peor que uno que falta, porque la carta usa como propio lo que el aviso niega. Una palabra clave
+    corta exige todas sus palabras (con nivel de idioma igual o mayor; las cifras no cuentan). «A o B» se
+    respalda con una de las dos. Una frase larga («Mínimo 5 años de experiencia en sala, 2 de ellos como
+    responsable») no se puede juzgar contando palabras: la juzga el redactor con su `hueco`. Las palabras
+    clave del propio CV se siguen midiendo con `_esta`."""
     en_texto = _palabras(texto)
     # «A; se valorará B» se trata como «A o B»: basta con que las fuentes respalden una de las partes
     alternativas = re.split(r"\s+o\s+|;", _O_MAS.sub(" ", _sin_tildes(clave)))

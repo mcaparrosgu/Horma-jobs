@@ -103,8 +103,8 @@ def _origenes(perfil: Perfil) -> list[tuple[str, str]]:
         dato = getattr(perfil, campo)
         if dato:
             salida.append((campo, dato.origen.fragmento))
-    for campo in ("resumenes", "titulares", "experiencias", "formacion", "idiomas", "habilidades", "proyectos",
-                  "certificaciones", "actividades", "otros"):
+    for campo in ("resumenes", "titulares", "experiencias", "formacion", "idiomas", "habilidades",
+                  "proyectos", "certificaciones", "actividades", "otros"):
         for i, x in enumerate(getattr(perfil, campo)):
             salida.append((f"{campo}.{i}", x.origen.fragmento))
     return salida
@@ -149,7 +149,8 @@ def retirar_todos(s: Session) -> None:
 def aplazados(s: Session) -> list[tuple[int, int]]:
     """(usuaria, versión) de las versiones reservadas que esperan su `perfilar` porque no había presupuesto
     (RF-10.14). Solo en modo sistema."""
-    return [(f[0], f[1]) for f in s.execute(text("select usuaria_id, perfil_id from perfiles_aplazados()")).all()]
+    filas = s.execute(text("select usuaria_id, perfil_id from perfiles_aplazados()")).all()
+    return [(f[0], f[1]) for f in filas]
 
 
 def nueva_version(s: Session, usuaria_id: int) -> tuple[int, int]:

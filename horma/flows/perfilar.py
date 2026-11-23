@@ -138,14 +138,15 @@ def _clave(x: dict, nombre: str, lugar: str | None) -> tuple:
 
 
 def resumenes_por_cv(perfil: dict, cvs: list[dict]) -> None:
-    """El titular y el resumen de cada CV, tal como están escritos y con su origen; ninguno se pierde al juntar
-    CV. `titular` y `resumen` quedan como los del CV más reciente que los tenga (RF-10.14d)."""
+    """El titular y el resumen de cada CV, tal como están escritos y con su origen; ninguno se pierde al
+    juntar CV. `titular` y `resumen` quedan como los del CV más reciente que los tenga (RF-10.14d)."""
     for lista, unico, extraer in (("titulares", "titular", titular_de), ("resumenes", "resumen", resumen_de)):
         datos = []
         for c in cvs:
             texto = extraer(c["texto"])
             if texto and not rasgos_personales(texto):
-                datos.append({"valor": texto, "origen": {"fuente": "cv", "cv_id": c["cv_id"], "fragmento": texto}})
+                datos.append({"valor": texto,
+                              "origen": {"fuente": "cv", "cv_id": c["cv_id"], "fragmento": texto}})
         perfil[lista] = datos
         if datos:
             perfil[unico] = datos[-1]
@@ -156,8 +157,9 @@ def conservar_usuaria(perfil: dict, de_usuaria: dict | None) -> None:
     (mismo puesto y sitio, mismo título…). Lo suyo no se vuelve a comprobar contra un CV (RF-10.14)."""
     if not de_usuaria:
         return
-    lugares = {c: lugar for c, _, lugar in (("experiencias", "puesto", "empresa"), ("formacion", "titulo", "centro"),
-                                    ("certificaciones", "nombre", "entidad"))}
+    lugares = {c: lugar for c, _, lugar in (
+        ("experiencias", "puesto", "empresa"), ("formacion", "titulo", "centro"),
+        ("certificaciones", "nombre", "entidad"))}
     for campo, nombre, _ in (*_LISTAS, _ACTIVIDADES):
         suyos = de_usuaria.get(campo) or []
         if not suyos:

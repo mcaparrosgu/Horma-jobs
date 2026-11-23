@@ -29,7 +29,8 @@ def _correr(*cvs):
 
 
 def test_titular_y_resumen_de_un_cv():
-    assert titular_de(CV_A) == "Jefa de sala · Hostelería" and resumen_de(CV_A) == "Sé organizar equipos en sala."
+    assert titular_de(CV_A) == "Jefa de sala · Hostelería"
+    assert resumen_de(CV_A) == "Sé organizar equipos en sala."
     assert resumen_de(CV_B) == "Dos años facturando. Cuadro la caja a diario."
     assert titular_de(CV_C) is None and resumen_de(CV_C) is None
 
@@ -39,7 +40,8 @@ def test_el_perfil_guarda_los_dos_resumenes_con_su_origen():
     assert [(r.origen.cv_id, r.valor) for r in p.resumenes] == [
         (1, "Sé organizar equipos en sala."), (2, "Dos años facturando. Cuadro la caja a diario.")]
     assert [t.origen.cv_id for t in p.titulares] == [1, 2]
-    assert p.resumen.origen.cv_id == 2 and p.titular.valor == "Auxiliar administrativa · Facturación"  # el más reciente
+    # el más reciente
+    assert p.resumen.origen.cv_id == 2 and p.titular.valor == "Auxiliar administrativa · Facturación"
 
 
 def test_sin_resumen_solo_sale_si_ninguno_lo_tiene():

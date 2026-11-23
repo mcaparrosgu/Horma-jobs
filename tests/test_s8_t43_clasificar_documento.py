@@ -34,8 +34,10 @@ IDIOMAS
 Inglés B1
 """
 CARTA = """Hola equipo de La Marina:
-Os escribo por el puesto de camarera de sala. Llevo tres años en Bar Sol, en Valencia, y casi todos los turnos eran de fin de semana.
-En ese tiempo aprendí a cobrar rápido y a avisar a cocina antes de que se acumule el problema, y me gustaría seguir aprendiendo.
+Os escribo por el puesto de camarera de sala. Llevo tres años en Bar Sol, en Valencia, y casi todos los \
+turnos eran de fin de semana.
+En ese tiempo aprendí a cobrar rápido y a avisar a cocina antes de que se acumule el problema, y me \
+gustaría seguir aprendiendo.
 Un saludo,
 Lucía
 """

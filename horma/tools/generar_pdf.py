@@ -135,7 +135,8 @@ def _carta(markdown: str, texto: str, escribir) -> None:
         previa_en_blanco = False
 
 
-def _cv(markdown: str, pdf: FPDF, ancho: float, texto: str, etiqueta: str, escribir, reservar, k: float) -> None:
+def _cv(markdown: str, pdf: FPDF, ancho: float, texto: str, etiqueta: str, escribir, reservar,
+        k: float) -> None:
     seccion = ""
     pendiente: list[str] = []   # habilidades e idiomas: todo en una línea
     nombre_visto = False

@@ -188,7 +188,8 @@ def definicion(proveedor: Proveedor | None = None) -> Definicion:
         longitud, secciones, fechas y ATS del CV."""
         validar(e)
         oferta = Oferta.model_validate(e["oferta"])
-        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"], *(e.get("otros_resumenes") or [])) if x]
+        fuentes_cv = [x for x in (e["cv_maestro"], e["cv_base_contenido"],
+                                  *(e.get("otros_resumenes") or [])) if x]
         e["errores_cv"] = [
             *verificar_trazabilidad(e["cv_contenido"], e["cv_traza"], fuentes_cv),
             *[f"Rasgo personal en el CV: {r}" for r in rasgos_personales(e["cv_contenido"])],

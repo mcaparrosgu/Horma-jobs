@@ -38,5 +38,6 @@ def test_una_ejecucion_en_curso_de_31_min_se_cierra_y_una_de_5_no(motor_app, mot
 def test_ofertas_dice_por_que_la_lista_esta_vacia():
     textos = (ESTATICOS / "textos.js").read_text(encoding="utf-8")
     js = (ESTATICOS / "ofertas.js").read_text(encoding="utf-8")
-    assert "Ninguna oferta casa ahora con los puestos que marcaste. Desmarca alguno o añade una oferta." in textos
+    assert ("Ninguna oferta casa ahora con los puestos que marcaste. "
+            "Desmarca alguno o añade una oferta.") in textos
     assert "TEXTOS.listaVaciaPorPuestos" in js and "puestos.some((p) => p.marcado)" in js

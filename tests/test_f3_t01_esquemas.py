@@ -176,7 +176,8 @@ def test_cada_error_de_comprobar_da_un_aviso_en_llano_junto_a_su_frase(error, cl
     a = aviso_de_error("cv", error, contenido)
     assert a.frase == frase and a.documento == "cv"
     dato = {"fecha": "2019", "dato_nuevo": "jefa", "rasgo": error.split(": ", 1)[-1]}.get(clave, "")
-    esperado = TEXTOS_FORMATO["lleva una tabla"] if clave == "formato" else TEXTOS_ERROR[clave].format(dato=dato)
+    esperado = (TEXTOS_FORMATO["lleva una tabla"] if clave == "formato"
+                else TEXTOS_ERROR[clave].format(dato=dato))
     assert a.mensaje == esperado
     assert not any(p in a.mensaje.replace("(" + dato + ")", "") for p in PREFIJOS_TECNICOS)
 
