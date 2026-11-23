@@ -5,7 +5,7 @@ Puntuar lo que falta es `POST /api/recomendar`."""
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.routers.ingesta import solo_ingesta
@@ -16,13 +16,21 @@ router = APIRouter()
 
 class Correccion(BaseModel):
     nota: int | None = Field(default=None, ge=0, le=100)
-    comentario: str = Field(min_length=1, max_length=1000)
+    comentario: str = Field(default="", max_length=1000)   # «En qué nos hemos equivocado»: opcional
     informacion: str | None = Field(default=None, max_length=1000)   # «Información nueva sobre ti» (RF-10.15)
 
     @field_validator("informacion")
     @classmethod
     def _sin_espacios(cls, v: str | None) -> str | None:
         return (v or "").strip() or None
+
+    @model_validator(mode="after")
+    def _algo_que_decir(self):
+        """El motivo es opcional, pero la corrección no puede ir vacía del todo."""
+        self.comentario = self.comentario.strip()
+        if not (self.comentario or self.informacion or self.nota is not None):
+            raise ValueError("Escribe al menos un motivo, una compatibilidad o información nueva.")
+        return self
 
 
 def _salario(f: dict) -> str | None:

@@ -44,12 +44,11 @@ Formato: carpeta — qué es. **Estado.**
   orden interno y correcciones. Por bloques ([tasks.md](./010-simplificacion/tasks.md)):
   - **S1-S7: fusionadas** (PR #28 a #31) y probadas por Mar; el repaso a 390 px, más adelante.
   - **S8 (correcciones de la pasada del 22-nov): fusionada en `main`** (PR #34, 23-nov; T38-T49, T54-T67).
-    El eval `cv` real pasó (22-nov, 33/33, 1,74 USD) y la prueba de cierre Q pasó por DOM/API (T50). Falta lo visual
-    (1280/390 px, claro/oscuro) que mira Mar.
+    El eval `cv` real pasó (22-nov, 33/33, 1,74 USD) y la prueba de cierre Q pasó por DOM/API (T50). Visual de Mar
+    (1280/390 px, claro/oscuro) hecho y firmado (23-nov).
   - **S9 («Corregir explicación» amplía la información): fusionada en `main`** (PR #35, 23-nov; suite verde, R1-R9 por
-    DOM/API). Falta lo visual de Mar (R3-R5, R10).
-  - **S10 (subir varios documentos a la vez): construida y probada por DOM/API** (23-nov) en `simplificacion-s10`
-    (T70-T74); PR en curso. Falta lo visual de Mar (T75). Con ella se cierra la fase 10.
+    DOM/API). Visual de Mar hecho y firmado (23-nov).
+  - **S10 (subir varios documentos a la vez): fusionada en `main`** (PR #36, 23-nov; T70-T74, probada por DOM/API). Falta lo visual de Mar (T75). Con ella se cierra la fase 10.
 
 ## Lo que viene, en este orden
 1. **Fase 11 · Aplicación autónoma y correo** (`011-aplicacion-autonoma/`, sin spec): enviar candidaturas en

@@ -308,3 +308,14 @@ def test_al_rehacer_el_perfil_el_worker_lleva_las_propuestas(app, motor_app):
     with sesion_de(motor_app, u) as s:
         suyo = perfiles.lo_de_la_usuaria(s, u)
     assert [p["opciones"] for p in suyo["propuestas"]] == [[INFO]]
+
+
+@pytest.mark.bd
+def test_el_motivo_es_opcional_pero_la_correccion_no_puede_ir_vacia(app, motor_app):
+    c, h, u, oferta = _con_nota(app, motor_app)
+    url = f"/api/matches/{oferta}/correccion"
+    r = c.post(url, headers=h, json={"informacion": INFO})
+    assert r.status_code == 200 and r.json()["comentario"] == "" and r.json()["informacion"] == INFO
+    assert c.post(url, headers=h, json={"nota": 80}).status_code == 200
+    assert c.post(url, headers=h, json={}).status_code == 422
+    assert c.post(url, headers=h, json={"comentario": "  "}).status_code == 422
