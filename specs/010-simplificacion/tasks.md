@@ -254,7 +254,7 @@ DOM/API (R6 costó 0,231 USD). Falta lo visual de R3-R5 y R10 (Mar), su firma y 
 - [x] T53 — Preguntar y revisar en Perfil (RF-10.15c-d).
   - **Test:** «No» no toca `por_resolver`; «Sí» añade la propuesta; el perfil no cambia de versión hasta
     confirmarla; confirmar aplica «desfasadas». **Navegador:** Ofertas y Perfil a 1280 y 390 px, claro y oscuro.
-- [ ] T68 — Cierre de S9: hecho lo automático (arriba); falta lo visual de Mar (R3-R5, R10), `index.md` y PR.
+- [x] T68 — Cierre de S9: lo automático (arriba), lo visual de Mar (R3-R5, R10) firmado el 23-nov y fusionada (PR #35).
 
 ### S10 · Subir varios documentos a la vez (RF-10.18 a 10.18i) — firmada el 23-nov
 Rama `simplificacion-s10`, desde `simplificacion-s8`. Con S10 se cierra la fase 10. Construye Sonnet, todo el
