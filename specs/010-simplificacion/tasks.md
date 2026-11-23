@@ -244,9 +244,8 @@ avisos de presupuesto, a la gestión del gasto. Ver [index.md](../index.md#lo-qu
 
 ### S9 · «Corregir explicación» amplía la información (RF-10.15) — firmada el 22-nov
 Rama `simplificacion-s9`, desde `simplificacion-s8` (S8 aún sin fusionar). Tests en
-`tests/test_s9_t51_t53_informacion_nueva.py`. **Pendiente de T68:** los 12 tests con base de datos de ese archivo
-y la suite completa no se pudieron ejecutar al construir (el árbol de trabajo no tenía `.env`); la parte sin base
-de datos pasa. Navegador, sin comprobar.
+`tests/test_s9_t51_t53_informacion_nueva.py`. **T68 (23-nov):** migración `0029` aplicada, suite verde con base de datos (1565 pasan, 7 saltados) y R1-R9 pasan por
+DOM/API (R6 costó 0,231 USD). Falta lo visual de R3-R5 y R10 (Mar), su firma y el PR.
 - [x] T51 — Campo «Información nueva sobre ti» y ayuda (RF-10.15, 10.15e).
   - **Test:** `POST /api/matches/{id}/correccion` guarda `informacion`; sin ella sigue valiendo; otra usuaria, 404.
 - [x] T52 — La información llega a las candidaturas nuevas como una fuente más, sin tocar los prompts (RF-10.15b).
@@ -255,8 +254,7 @@ de datos pasa. Navegador, sin comprobar.
 - [x] T53 — Preguntar y revisar en Perfil (RF-10.15c-d).
   - **Test:** «No» no toca `por_resolver`; «Sí» añade la propuesta; el perfil no cambia de versión hasta
     confirmarla; confirmar aplica «desfasadas». **Navegador:** Ofertas y Perfil a 1280 y 390 px, claro y oscuro.
-- [ ] T68 — Cierre de S9: migración `0029` aplicada, suite verde con base de datos, navegador (1280 y 390 px,
-  claro y oscuro), prueba de Mar (sección R, ~0,2 USD), `index.md` al día y PR.
+- [ ] T68 — Cierre de S9: hecho lo automático (arriba); falta lo visual de Mar (R3-R5, R10), `index.md` y PR.
 
 ### S10 · Subir varios documentos a la vez (RF-10.18) — sin spec
 Rama `simplificacion-s10`. Con S10 se cierra la fase 10.
