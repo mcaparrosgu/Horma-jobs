@@ -24,7 +24,8 @@ global.sessionStorage = { getItem: (k) => (almacen.has(k) ? almacen.get(k) : nul
 global.window = { matchMedia: () => ({ matches: true }) };
 function el() { return { hijos: [], attrs: {}, style: {}, isConnected: true,
   textContent: "", className: "", value: "",
-  disabled: false, open: false, hidden: false, classList: { add() {} }, oyentes: {},
+  disabled: false, open: false, hidden: false, oyentes: {},
+  classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } },
   append(...h) { this.hijos.push(...h); }, remove() { this.isConnected = false; },
   replaceChildren() { this.hijos = []; }, setAttribute(k, v) { this.attrs[k] = v; }, removeAttribute() {},
   addEventListener(n, f) { this.oyentes[n] = f; }, close() { this.open = false; } }; }

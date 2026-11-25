@@ -20,7 +20,7 @@ global.sessionStorage = { getItem: (k) => (almacen.has(k) ? almacen.get(k) : nul
   setItem: (k, v) => almacen.set(k, String(v)), removeItem: (k) => almacen.delete(k) };
 global.window = { matchMedia: () => ({ matches: true }) };   // sin reloj: el avance solo se simula a mano
 function el() { const e = { hijos: [], attrs: {}, style: {}, isConnected: true, textContent: "",
-  classList: { add() {} },
+  classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } },
   append(...h) { this.hijos.push(...h); }, remove() { this.isConnected = false; },
   setAttribute(k, v) { this.attrs[k] = v; }, removeAttribute() {} }; return e; }
 global.nodo = () => el();

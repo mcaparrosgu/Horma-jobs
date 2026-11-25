@@ -161,11 +161,13 @@ async function pintarPersona(persona) {
 // `quitar()`, `vincular(clave)` y `caja` (para volver a colocarla sin perder su avance al repintar la pantalla).
 // `vincular` guarda en `sessionStorage` el último valor mostrado de una tarea: al cambiar de pestaña y volver, la barra
 // retoma ese punto en vez de empezar en 2 % (RF-10.8c). `quitar` borra la clave: la tarea ya terminó.
-// El servidor avanza por pasos (cada paso puede tardar medio minuto); entre paso y paso la barra sigue
-// rellenándose despacio hacia el siguiente, sin llegar nunca a él ni al 100 % (RF-10.8c).
+// El servidor avanza por pasos (cada paso puede tardar medio minuto o más); entre paso y paso la barra avanza sola
+// a ritmo constante (un punto cada 3 s), hasta AVANCE_HOLGURA puntos por delante del último paso real y sin llegar
+// nunca al 100 %. En ese tope la caja lleva la clase `esperando` (el relleno late, sin cambiar el %) hasta que el
+// servidor avanza (RF-10.8c).
 const AVANCE_TICK_MS = 400;
 const AVANCE_HOLGURA = 20;   // cuánto puede adelantarse la barra al último paso real
-const AVANCE_RITMO = 0.02;   // fracción del hueco que recorre en cada tick (~20 s para casi llenarlo)
+const AVANCE_PASO = AVANCE_TICK_MS / 3000;   // puntos por tick: uno cada 3 s
 function barraAvance(contenedor, texto, indeterminada = false) {
   const caja = nodo("div", null, "barra-avance");
   const frase = nodo("span", null, "texto");
@@ -182,12 +184,15 @@ function barraAvance(contenedor, texto, indeterminada = false) {
   let mostrado = 0;
   let reloj = null;
   let clave = null;
+  let anima = false;
   const pintar = () => {
     const v = Math.max(0, Math.min(100, Math.round(mostrado)));
     frase.textContent = `${texto} · ${v} %`;
     pista.setAttribute("aria-valuenow", String(v));
     relleno.style.width = `${mostrado}%`;   // por CSSOM: la CSP no permite style= en el HTML
     if (clave) sessionStorage.setItem(clave, String(mostrado));
+    // en el tope, esperando el siguiente paso real: el relleno late para no parecer parado
+    caja.classList.toggle("esperando", anima && real < 100 && Math.round(mostrado) >= Math.min(95, real + AVANCE_HOLGURA));
   };
   const vincular = (nueva) => {
     if (indeterminada || clave === nueva) return;
@@ -206,7 +211,7 @@ function barraAvance(contenedor, texto, indeterminada = false) {
     if (!caja.isConnected) return;   // la pantalla se está repintando: se retoma al volver a colocarla
     const tope = Math.min(95, real + AVANCE_HOLGURA);
     if (real >= 100 || mostrado >= tope) return;
-    mostrado += (tope - mostrado) * AVANCE_RITMO;
+    mostrado = Math.min(tope, mostrado + AVANCE_PASO);
     pintar();
   };
   const poner = (p) => {
@@ -223,7 +228,11 @@ function barraAvance(contenedor, texto, indeterminada = false) {
     // un mínimo visible: la barra lima se ve desde el primer momento, no una pista vacía
     mostrado = 2;
     poner(0);
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) reloj = setInterval(avanzarSolo, AVANCE_TICK_MS);
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      anima = true;
+      reloj = setInterval(avanzarSolo, AVANCE_TICK_MS);
+      pintar();
+    }
   }
   return { poner, quitar, vincular, caja };
 }

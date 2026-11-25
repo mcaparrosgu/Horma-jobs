@@ -312,6 +312,8 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 @keyframes horma-espera{ from{ left: 0; } to{ left: 65%; } }
 .barra-avance.indeterminada .relleno{ inset: 0 auto 0 0; }
 @media (prefers-reduced-motion: no-preference){ .barra-avance .relleno{ transition: width 0.4s ease; } }
+@media (prefers-reduced-motion: no-preference){ .barra-avance.esperando .relleno{ animation: horma-latido 1.6s ease-in-out infinite alternate; } }
+@keyframes horma-latido{ from{ opacity: 1; } to{ opacity: 0.7; } }
 
 /* ── Documento (CV y carta) ── */
 .cv-hoja{ background: var(--surface); color: var(--ink); border: var(--bw) solid var(--line); padding: 1.5rem 1.75rem; margin: 0.75rem 0; max-width: 42rem; line-height: 1.5; }
