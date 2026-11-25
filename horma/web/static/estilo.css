@@ -301,6 +301,8 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .texto-original .apartado-original{ margin: 0.5rem 0 0; font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--ink); border-bottom: var(--bw) solid var(--line-strong); padding-bottom: 0.25rem; }
 .texto-original .lista-original{ margin: 0; padding-left: 1.25rem; display: grid; gap: 0.35rem; }
 .visor-marco{ width: 100%; height: 100%; border: 0; background: var(--surface); }
+/* con un documento (CV o carta), su fila ocupa todo el cuerpo: sin esto el iframe se queda en sus 150 px (T08o) */
+.ventana-cuerpo:has(> .visor-marco){ grid-template-rows: minmax(0, 1fr); align-content: stretch; }
 
 /* ── Barra de avance (RF-6.4, RF-8.7): trabajo en marcha, con el porcentaje en texto ── */
 .barra-avance{ display: grid; gap: 6px; margin: 0 0 1rem; }
