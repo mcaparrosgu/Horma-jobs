@@ -137,6 +137,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 - `uv run horma ingestar <fuente> [--limite N] [--en-seco]`: `--en-seco` lee la fuente de
   `config/endpoints.json` y enseña las ofertas normalizadas sin entregarlas.
 - `uv run horma fuente calificar <url>`: pide la calificación a la API y espera el veredicto.
+- `uv run horma envios medir`: cuenta, sin enviar nada, a qué portal lleva cada oferta del catálogo y cuántas
+  exigen cuenta (por `GET /api/admin/envios/medicion`; también en Admin, pestaña «Envíos»).
 - `uv run horma flujo correr perfilar --usuaria ana --entrada cv.pdf [--paso-a-paso --traza trazas/]`
   (también `.docx` y `.md`): construye el perfil en local y no guarda nada; `--usuaria` solo
   nombra el CV en la traza.
