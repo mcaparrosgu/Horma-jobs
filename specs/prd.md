@@ -62,7 +62,7 @@ usuaria real.
 | Objetivo de Negocio | Métrica (SLI / KPI) | Línea Base (Actual) | Meta de Éxito (SLO) |
 |---|---|---|---|
 | Compatibilidad fiable | Casos del eval `recomendacion` con la nota dentro de ±10 | 0,67-0,71 (21 casos) | ≥ 0,90, estable en 3 ejecuciones |
-| Puestos sugeridos con evidencia | Precisión y cobertura sobre un set de 30 CV | N/A: nunca medido (solo se midió casar ofertas: 1,00 y 0,945) | [pendiente: umbrales al aprobar el set, spec 012] |
+| Puestos sugeridos con evidencia | Precisión y cobertura sobre un set de 30 CV | N/A: nunca medido (solo se midió casar ofertas: 1,00 y 0,945) | 0 ajenos marcados; precisión ≥ 0,95 marcados y ≥ 0,85 sin marcar; cobertura ≥ 0,80 (F4-D5; spec 012, RF-12.3) |
 | CV y carta sin inventar | Frases sin origen en el eval `cv` | 0 (33/33, 22-nov) | 0, y además el PDF final comprobado en el 100 % de las candidaturas |
 | Más ofertas de España | Ofertas vigentes de España en el catálogo | [pendiente: contar]; 2 fuentes activas | [pendiente: la fija la investigación del banco de ofertas] |
 | Envío dentro de una regla | Envíos con una respuesta inventada o fuera de la regla | N/A: no existe | 0; porcentaje que sale sin intervención: [pendiente: tras la medición de destinos] |
@@ -146,18 +146,20 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Robustez: ofertas en otro idioma, muy largas, con inyección o sin datos; fallos parciales. Falla con
     aviso, nunca con una nota inventada. Ignorar el texto invisible en `convertir_cv`.
   - Familia de cada oferta (F4-D3: los puestos genéricos casan solo con ofertas de su familia).
-  - Correcciones de la usuaria: [pendiente: si reordenan su lista y quién las revisa].
-  - Punto 3 · Condiciones dentro de la nota: resta fija por código, peso del `matcher` o tope de nota
-    [pendiente: lo decide Mar en las aclaraciones].
+  - Correcciones de la usuaria: su nota manda en su lista y ve el motivo que escribió; Mar las revisa antes de
+    cada medición del eval (D-027).
+  - Punto 3 · Condiciones: fuera de la nota, como LinkedIn, Indeed y Jobright. Una línea junto al veredicto dice
+    la condición que falta o no se cumple y, a igual nota, va antes la que cumple todo (D-026).
   - Veredicto en palabras junto a la nota, puesto por código y por franjas (F7-D5): «Muy compatible»,
-    «Compatible», «Poco compatible», «No te la recomendamos». La frase de la nota por franjas (70-100, 50-70,
-    30-50, 0-30) toca el prompt y, por tanto, los evals.
+    «Compatible», «Poco compatible», «No te la recomendamos». La frase de la nota por franjas (70-100, 50-69,
+    30-49, 0-29) toca el prompt y, por tanto, los evals.
   - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6) [pendiente: se decide con la medición].
 - **Puerta de salida:** eval `recomendacion` ≥ 0,90 dentro de ±10, estable en 3 ejecuciones (NFR-02) y de
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
-  citas verificadas; set de 30 CV en sus umbrales [pendiente: al aprobar el set]; ningún puesto marcado sin
+  citas verificadas; set de 30 CV en sus umbrales (sección 2); ningún puesto marcado sin
   evidencia; revisión de Mar sobre 20 recomendaciones.
-- **Depende de:** el paso 1. Gasto real: set de 30 CV (~0,1-0,5 USD) y el eval, con el OK de Mar.
+- **Depende de:** el paso 1. Gasto real: ~4,5-6,5 USD en todo el paso, en varias veces (set de 30 CV y evals;
+  detalle en el plan de la spec 012), cada vez con el OK de Mar.
 
 ### Paso 3 · Calidad de CV y carta, con PDF comprobado (spec 013)
 

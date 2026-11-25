@@ -144,7 +144,7 @@ mientras uno de estos sirva (RF-6.9).
 - **RF-6.5b** En escritorio (≥ 900 px), la lista DEBERÁ ser una tabla con estas columnas:
   - Oferta · Puesto · Compatibilidad · Salario · Lugar · Publicado, más el chevrón.
   - Cada cabecera lleva su ayuda «?» con los textos actuales.
-  - NO DEBERÁ aparecer «Condiciones» (RF-5.2).
+  - NO DEBERÁ aparecer «Condiciones» (RF-5.2). *(Ampliado por la spec 012, RF-12.25: una línea junto a la nota.)*
 - **RF-6.5c** Celdas:
   - **Oferta:** título de 21 px, que enlaza a la oferta, y la empresa en apagado. Debajo, la
     atribución de la fuente, o «Añadida por ti» y el aviso del auditor si los hay. Sin logotipo.

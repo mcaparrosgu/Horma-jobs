@@ -70,7 +70,7 @@ Esta spec modifica:
 - **RF-9.3** `clasificador_postulante` DEBERÁ sugerir, en la misma llamada, **8-15 títulos de puesto** ajustados
   a la experiencia de la usuaria: en castellano, en inglés y sinónimos (P11). Cada uno cita el dato del perfil
   que lo justifica (RT-08).
-- **RF-9.3b** «Qué buscas» DEBERÁ separar **Área** (las 19 familias de hoy) y **Puestos** (títulos). Los
+- **RF-9.3b** *(cambiado por la spec 012, RF-12.6: solo llegan marcados los de nivel 1)* «Qué buscas» DEBERÁ separar **Área** (las 19 familias de hoy) y **Puestos** (títulos). Los
   sugeridos llegan como casillas marcadas, con «Seleccionar todo» y «Quitar selección»; la usuaria puede
   desmarcar, añadir los suyos y escribir **términos excluidos** («prácticas», «comercial»). Lo que ella marcó o
   escribió no lo pisa una subida nueva.

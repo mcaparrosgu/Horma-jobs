@@ -333,7 +333,7 @@ Decisiones de Mar del 22-nov: revisar antes de que entre en el perfil; solo para
   pendiente, que ella puede editar, colocar (experiencia, habilidades, formación u otra) o descartar. NADA DEBERÁ
   entrar en el perfil hasta que ella la confirme. Al confirmar se aplica RF-10.14m (compatibilidades y
   candidaturas anteriores quedan «desfasadas»). CON «No», solo se usa en esa oferta.
-- **RF-10.15e** El texto de ayuda de «Corregir explicación» DEBERÁ decir qué toca cada cosa: la nota y el motivo
+- **RF-10.15e** *(cambiado por la spec 012, RF-12.26: la nota corregida manda en su lista)* El texto de ayuda de «Corregir explicación» DEBERÁ decir qué toca cada cosa: la nota y el motivo
   los revisa Mar y no cambian la compatibilidad; la información nueva solo se usa en las candidaturas nuevas de
   esa oferta; el perfil no cambia sin que ella lo confirme.
 
