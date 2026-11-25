@@ -20,6 +20,7 @@ from horma.web.routers import (
     candidaturas,
     costes,
     cv,
+    envios,
     estilo,
     ingesta,
     ofertas,
@@ -102,6 +103,7 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
     app.include_router(ofertas.router)
     app.include_router(ingesta.router)
     app.include_router(costes.router)
+    app.include_router(envios.router)
     for r in (cv, estilo, perfil, preferencias, recomendaciones, tareas, candidaturas, paginas):
         app.include_router(r.router)
     app.mount("/static", StaticFiles(directory=ESTATICOS), name="static")

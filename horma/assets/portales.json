@@ -1,0 +1,17 @@
+{
+  "nota": "Portales de empleo a los que Horma puede enviar. `dominios` casa el final del nombre de la página; `exige_cuenta` es lo habitual en ese portal, no una garantía. LinkedIn, Indeed y Glassdoor nunca están aquí: salen de portales_vetados.json y dan «no automático».",
+  "portales": {
+    "Teamtailor": {"dominios": ["teamtailor.com"], "exige_cuenta": false},
+    "Personio": {"dominios": ["personio.de", "personio.com"], "exige_cuenta": false},
+    "Greenhouse": {"dominios": ["greenhouse.io"], "exige_cuenta": false},
+    "Lever": {"dominios": ["lever.co"], "exige_cuenta": false},
+    "Ashby": {"dominios": ["ashbyhq.com"], "exige_cuenta": false},
+    "Workable": {"dominios": ["workable.com"], "exige_cuenta": false},
+    "SmartRecruiters": {"dominios": ["smartrecruiters.com"], "exige_cuenta": false},
+    "Recruitee": {"dominios": ["recruitee.com"], "exige_cuenta": false},
+    "Workday": {"dominios": ["myworkdayjobs.com", "myworkdaysite.com"], "exige_cuenta": true},
+    "SuccessFactors": {"dominios": ["successfactors.com", "successfactors.eu"], "exige_cuenta": true},
+    "InfoJobs": {"dominios": ["infojobs.net"], "exige_cuenta": true},
+    "Welcome to the Jungle": {"dominios": ["welcometothejungle.com"], "exige_cuenta": true}
+  }
+}

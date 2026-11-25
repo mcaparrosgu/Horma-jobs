@@ -23,10 +23,10 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T01 — Spec, plan y tareas de la parte 1, firmados por Mar (25-nov).
 
 ### A · Medición de destinos (RF-11.1)
-- [ ] T02 — `portales.json` y `resolver_destino`.
+- [x] T02 — `portales.json` y `resolver_destino`.
   - **Test:** direcciones de ejemplo de cada portal dan su canal; LinkedIn e Indeed dan «no
     automático»; InfoJobs y WTTJ dan su canal; una redirección se sigue; ninguna petición es distinta de `GET`.
-- [ ] T03 — Medición en consola y en Admin.
+- [x] T03 — Medición en consola y en Admin.
   - **Test:** con un catálogo de fixtures, la tabla cuenta bien portal, ofertas y «exige cuenta»; sin sesión
     de admin, la API responde 403.
   - **Navegador:** Admin a 1280 y 390 px, claro y oscuro.

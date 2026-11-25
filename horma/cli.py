@@ -21,6 +21,7 @@ agente = typer.Typer(help="Ejecutar agentes uno a uno.", no_args_is_help=True)
 flujo = typer.Typer(help="Ejecutar flujos, también paso a paso.", no_args_is_help=True)
 evals = typer.Typer(help="Correr sets de evals.", no_args_is_help=True)
 fuente = typer.Typer(help="Calificar fuentes de ofertas.", no_args_is_help=True)
+envios = typer.Typer(help="Envío de candidaturas (solo mide, no envía).", no_args_is_help=True)
 
 
 @app.callback()
@@ -35,6 +36,7 @@ app.add_typer(agente, name="agente")
 app.add_typer(flujo, name="flujo")
 app.add_typer(evals, name="eval")
 app.add_typer(fuente, name="fuente")
+app.add_typer(envios, name="envios")
 
 
 def _sin_clave_de_anthropic() -> None:
@@ -425,6 +427,29 @@ def greenhouse_anadir(
 
 
 # --- eval --------------------------------------------------------------------------------------
+def _mostrar_medicion(m: dict) -> None:
+    typer.echo(f"{'Portal':<24}{'Ofertas':>8}  Exige cuenta")
+    for f in m["filas"]:
+        cuenta = ("Sí" if f["exige_cuenta"] else "No") if f["automatico"] else "—"
+        typer.echo(f"{f['portal']:<24}{f['ofertas']:>8}  {cuenta}")
+    typer.echo(f"{m['total']} ofertas: {m['automaticas']} con canal automático "
+               f"({m['exigen_cuenta']} exigen cuenta) y {m['no_automaticas']} no automáticas.")
+
+
+@envios.command("medir")
+def envios_medir() -> None:
+    """Cuenta, sin enviar nada, a qué portal lleva cada oferta del catálogo (RF-11.1). Por la API."""
+    import httpx
+
+    from horma.ingesta import ErrorApi
+
+    try:
+        _mostrar_medicion(_cliente_api().medicion_destinos())
+    except (ErrorApi, httpx.HTTPError) as e:
+        typer.echo(f"No se pudo medir: {e}", err=True)
+        raise typer.Exit(1) from e
+
+
 @evals.command("correr")
 def correr_eval(
     conjunto: str = typer.Argument(..., metavar="SET"),

@@ -268,6 +268,12 @@ def listar(s: Session, limite: int = 200) -> list[dict]:
     return [dict(f) for f in filas]
 
 
+def urls_catalogo(s: Session) -> list[str | None]:
+    """La dirección de cada oferta del catálogo común (sin las propias de las usuarias)."""
+    filas = s.execute(text("select url from ofertas where usuaria_id is null order by id")).all()
+    return [u for (u,) in filas]
+
+
 def por_estado(s: Session) -> dict[str, int]:
     return {e: n for e, n in s.execute(text(
         "select estado, count(*) from ofertas group by estado order by estado")).all()}

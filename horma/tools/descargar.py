@@ -6,6 +6,8 @@ from urllib.parse import urljoin, urlsplit
 
 import httpx
 
+from horma.tools.validar_url import Resolvedor, validar_url
+
 Descargador = Callable[[str], str]
 MAX_BYTES = 2_000_000
 # ASCII: las cabeceras HTTP no admiten tildes.
@@ -34,6 +36,29 @@ def descargar_http(url: str, timeout: float = 15.0) -> str:
             if len(cuerpo) > MAX_BYTES:
                 break
         return cuerpo[:MAX_BYTES].decode(r.encoding or "utf-8", errors="replace")
+
+
+_REDIRECCIONES = {301, 302, 303, 307, 308}
+
+
+def seguir_redireccion(url: str, *, timeout: float = 8.0, max_saltos: int = 5,
+                       transporte: httpx.BaseTransport | None = None,
+                       resolver: Resolvedor | None = None) -> str:
+    """La dirección final de un enlace. Solo `GET`, sin leer el cuerpo y con un máximo de saltos.
+    Cada salto se valida antes de pedirlo (https, dominio público, portal no vetado): si no pasa, se
+    devuelve esa dirección sin tocarla."""
+    actual = url
+    with httpx.Client(follow_redirects=False, timeout=timeout, transport=transporte,
+                      headers={"User-Agent": AGENTE_HTTP}) as c:
+        for _ in range(max_saltos):
+            if validar_url(actual, resolver) is not None:
+                return actual
+            with c.stream("GET", actual) as r:
+                destino = r.headers.get("location")
+                if r.status_code not in _REDIRECCIONES or not destino:
+                    return actual
+            actual = urljoin(actual, destino)
+    return actual
 
 
 class _Enlaces(HTMLParser):
