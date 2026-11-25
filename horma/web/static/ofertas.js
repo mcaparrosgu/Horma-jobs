@@ -894,6 +894,12 @@ $("formulario-url").addEventListener("submit", async (e) => {
   await esperarLectura(r.datos.id);
 });
 
+// La ventana es modal: para ir a otra pantalla hay que cerrarla. Con la lectura en marcha, la barra sale de la ventana
+// y pasa a la página (con su valor y su clave), donde también la pone `retomarLectura` (M16).
+$("ventana-anadir").addEventListener("close", () => {
+  if (lecturaBarra && $("lectura-url").contains(lecturaBarra.caja)) $("avance").append(lecturaBarra.caja);
+});
+
 // Al volver a Ofertas con una lectura por URL en curso: barra en la página (la ventana no se reabre) y se sigue la lectura.
 async function retomarLectura() {
   const id = sessionStorage.getItem(CLAVE_LECTURA);

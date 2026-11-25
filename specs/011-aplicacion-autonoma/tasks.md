@@ -64,4 +64,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_f2_t08_t10_flujos.py`.
 - [x] T08i — Los cuadros de texto crecen solo en alto y nunca pasan del ancho de su columna (M15: descripción de experiencia, «Por texto» de «Añadir oferta» y corregir oferta). Causa: `field-sizing: content` ensanchaba el cuadro con una palabra larga sin espacios. Regla común en `estilo.css` y en la guía (spec 006, «Cuadro de texto»).
   - **Test:** `tests/test_p1_t07_t08_mejoras_pantalla.py`. **Navegador:** pendiente de Opus/Mar.
+- [x] T08j — Al cerrar «Añadir oferta» con una lectura por URL en marcha, la barra «Analizando la oferta» pasa a la página, bajo los filtros (M16: se quedaba dentro de la ventana cerrada y no se veía ninguna). La ventana es modal: para ir a otra pantalla hay que cerrarla antes.
+  - **Test:** `tests/test_s11_retomar_lectura_url.py`.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.

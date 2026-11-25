@@ -26,8 +26,12 @@ function el() { return { hijos: [], attrs: {}, style: {}, isConnected: true,
   textContent: "", className: "", value: "",
   disabled: false, open: false, hidden: false, oyentes: {},
   classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } },
-  append(...h) { this.hijos.push(...h); }, remove() { this.isConnected = false; },
-  replaceChildren() { this.hijos = []; }, setAttribute(k, v) { this.attrs[k] = v; }, removeAttribute() {},
+  append(...h) {   // como el DOM real, mover un nodo lo saca de su padre anterior
+    for (const n of h) { if (n.padre) n.padre.hijos = n.padre.hijos.filter((x) => x !== n); n.padre = this; }
+    this.hijos.push(...h);
+  }, remove() { this.isConnected = false; },
+  contains(n) { return this.hijos.includes(n); }, replaceChildren() { this.hijos = []; },
+  setAttribute(k, v) { this.attrs[k] = v; }, removeAttribute() {},
   addEventListener(n, f) { this.oyentes[n] = f; }, close() { this.open = false; } }; }
 global.nodo = () => el();
 const dom = {};
@@ -72,6 +76,17 @@ const salida = {};
     respuestas.push({ ok: true, datos: { estado: "pendiente" } });
     await dom["formulario-url"].oyentes.submit({ preventDefault() {} });
     salida.clave = almacen.get("horma:lectura-url") ?? null;
+  } else if (escenario === "cerrar") {
+    dom.url = el(); dom.url.value = "https://x.es/o";
+    respuestas.push({ ok: true, datos: { estado: "pendiente" } });
+    await dom["formulario-url"].oyentes.submit({ preventDefault() {} });
+    const caja = dom["lectura-url"].hijos[0];
+    salida.dentroAntes = dom["lectura-url"].hijos.includes(caja);
+    dom["ventana-anadir"].oyentes.close();   // la ventana es modal: se cierra para ir a otra pantalla
+    salida.dentro = dom["lectura-url"].hijos.includes(caja);
+    salida.enPagina = dom.avance.hijos.includes(caja);
+    salida.frase = caja.hijos[0].textContent;
+    salida.clave = almacen.get("horma:avance:lectura:7") ?? null;
   } else {
     almacen.set("horma:lectura-url", "7");
     almacen.set("horma:avance:lectura:7", "27");
@@ -132,3 +147,13 @@ def test_la_lectura_retomada_que_falla_avisa_en_la_pestana_de_texto(tmp_path):
     assert s["avisoTexto"] == "FALLIDA"
     ev = s["eventos"]
     assert ["abrirAnadir"] in ev and ev.index(["abrirAnadir"]) < ev.index(["pestana", "texto"])
+
+
+@node
+def test_al_cerrar_la_ventana_con_una_lectura_en_marcha_la_barra_pasa_a_la_pagina(tmp_path):
+    """M16: la ventana es modal; cerrada, la barra no se veía dentro de ella."""
+    s = _ejecutar(tmp_path, "cerrar")
+    assert s["dentroAntes"] is True
+    assert s["enPagina"] is True and s["dentro"] is False
+    assert "Analizando la oferta" in s["frase"] and "%" in s["frase"]
+    assert s["clave"] is not None          # conserva su clave de avance
