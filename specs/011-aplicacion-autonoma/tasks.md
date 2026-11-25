@@ -71,7 +71,11 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T08l — Una sola barra «Analizando la oferta» de la lectura de la página al análisis, sin cambiar de frase ni bajar (RF-11.30, D-031; antes pasaba a «Analizando la oferta añadida» y bajaba, p. ej. de 15 % a 4 %).
   - **Test:** `tests/test_s11_una_sola_barra.py` (en node); `tests/test_s11_retomar_lectura_url.py` ajustado. **Navegador:** 1280 px comprobado; 390 px, pendiente de Mar.
 - [x] T08m — Al rehacer el perfil, lo que escribió la usuaria pasa el filtro de datos personales y, si se quita algo, sale el aviso (RF-11.25c, D-032; un «casada con hijos» escrito antes de T05 pasaba de versión en versión).
-  - **Test:** `tests/test_f2_t08_t10_flujos.py`.
+  - **Test:** `tests/test_f2_t08_t10_flujos.py`. Las versiones antiguas del perfil de prueba (Irene, 38 a 55) y su `origen` se limpiaron a mano el 25-nov, tras la prueba M12c.
 - [x] T08n — Borrar las ofertas caducadas del catálogo ya no falla si tienen notas de compatibilidad (RF-5.5d, spec 005; el cierre de la ingesta se deshacía por `matches_oferta_id_fkey`). Causa: un DELETE exige también ver las filas y el sistema no veía `matches` ni `candidaturas`. Migración 0030: política SELECT solo para las notas de caducadas del catálogo y función `oferta_con_candidatura` (la candidatura sigue frenando el borrado).
   - **Test:** `tests/test_f5_t30_fuentes_nuevas.py` (con BD: borra oferta y nota, vigente intacta; el sistema solo ve las notas de caducadas; con candidatura no se borra).
-- [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.
+- [ ] T08o — «Ver» un CV o una carta en Perfil → Documentos subidos enseña el documento a toda la ventana (tercera prueba de Mar, 25-nov: solo se veía una franja y había que desplazarse dentro). Causa comprobada en Chrome: `.ventana-cuerpo` es una rejilla con `align-content: start` y el iframe `.visor-marco` (`height: 100%`) se queda en 150 px.
+- [ ] T08p — «Mostrar» en Ofertas tiene la opción «Añadidas por mí» (las que la usuaria añadió por URL o por texto). Mejora pedida por Mar: su RF y su decisión, por escribir.
+- [ ] T08q — «Ordenar por: Más recientes» pone arriba la última oferta añadida (prueba de Mar: la añadida por URL, la última calificada, quedaba abajo). Causa por investigar.
+- [ ] T08r — Tras «Ya añadiste esta oferta…», al volver a abrir «Añadir oferta» → «Por URL» el campo está vacío y sin el aviso (hoy conserva la URL anterior).
+- [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR. Tercera prueba (25-nov): M12a a M18 funcionan; Mar dice que «a trompicones» (por concretar) y salen T08o a T08r.
