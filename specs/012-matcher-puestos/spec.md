@@ -3,10 +3,10 @@ type: spec
 title: matcher-puestos — Spec funcional
 description: Requisitos en notación EARS de la spec 012 (paso 2 del PRD) — puestos sugeridos por niveles de evidencia, medidos antes de construir; nota del matcher fiable y estable; veredicto en palabras con citas comprobadas; condiciones fuera de la nota y correcciones que mandan en la lista de quien corrige.
 tags: [spec, matcher, puestos, recomendacion, evals]
-status: draft
+status: active
 sources: [./clarifications.md, ../prd.md, ../system.md, ../002-perfil-recomendacion/spec.md, ../009-cv-maestro-entrevista/spec.md, ../010-simplificacion/spec.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: null
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 

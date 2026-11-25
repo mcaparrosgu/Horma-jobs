@@ -3,10 +3,10 @@ type: plan
 title: matcher-puestos — Plan
 description: Piezas, archivos y costes de la spec 012 (paso 2 del PRD) — set de evals de puestos, puerta por niveles en código, eval de recomendación ampliado con tres ejecuciones, orden y equidad, citas verificadas, veredicto, condiciones al lado de la nota y correcciones de la usuaria.
 tags: [plan, matcher, puestos, recomendacion, evals]
-status: draft
+status: active
 sources: [./spec.md, ./clarifications.md, ../system.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: null
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 

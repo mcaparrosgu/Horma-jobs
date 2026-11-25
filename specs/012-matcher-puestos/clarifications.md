@@ -1,12 +1,12 @@
 ---
 type: clarifications
 title: matcher-puestos — Aclaraciones
-description: Decisiones que sostienen la spec 012 (paso 2 del PRD) — las ya tomadas en F4, F7 y F1, las dos que Mar cerró el 25-nov (D-026 y D-027) y los supuestos de Opus, que Mar puede cambiar al firmar.
+description: Decisiones que sostienen la spec 012 (paso 2 del PRD) — las ya tomadas en F4, F7 y F1, las dos que Mar cerró el 25-nov (D-026 y D-027) y los supuestos de Opus, aceptados por Mar al firmar (25-nov).
 tags: [clarify, matcher, puestos, recomendacion]
-status: draft
+status: active
 sources: [../prd.md, ../002-perfil-recomendacion/spec.md, ../009-cv-maestro-entrevista/spec.md, ../010-simplificacion/spec.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: null
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 
@@ -40,7 +40,7 @@ Están en los informes F4 (`docs/investigacion/f4-puestos-afines.md`, apartado 8
   (añadido por Mar) ella puede leer el motivo que escribió para recordar por qué subió o bajó la nota. Mar las
   revisa antes de cada medición del eval.
 
-## Supuestos (Opus; Mar puede cambiarlos al firmar)
+## Supuestos (Opus; aceptados por Mar al firmar, 25-nov)
 - **S1 · Cómo distingue el código el nivel 1 del 2.** El código mira de qué campo sale el `dato` (puesto,
   titulación, certificación u otro). Además, el modelo dice en la misma llamada si el título es el mismo puesto
   que el dato (traducido, en otro género o con sinónimo) o uno afín (`relacion`). Esa marca solo baja de nivel:

@@ -3,10 +3,10 @@ type: tasks
 title: matcher-puestos — Desglose de tareas
 description: Tareas pequeñas y comprobables de la spec 012 (paso 2 del PRD), en tres bloques — puestos, nota y explicación, y lo que ve la usuaria. Cada una empieza con un test que falla; cada gasto real, con estimación y OK de Mar.
 tags: [tareas, matcher, puestos, recomendacion]
-status: draft
+status: active
 sources: [./plan.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: null
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 
@@ -20,7 +20,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - **Tests:** `$env:UV_NO_SYNC=1; $env:PRESUPUESTO_DIARIO_USD='1.0'; uv run pytest`.
 
 ### Spec
-- [ ] T01 — Aclaraciones, spec, plan y tareas. 🛑 Firma de Mar.
+- [x] T01 — Aclaraciones, spec, plan y tareas, firmados por Mar (25-nov).
 
 ### P · Puestos (RF-12.1 a 12.10)
 - [ ] T02 — Set `puestos`: 12 CV difíciles nuevos y el harness con sus métricas, en simulado.
