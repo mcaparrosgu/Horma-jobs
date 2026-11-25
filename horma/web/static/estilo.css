@@ -91,6 +91,11 @@ input, select, textarea{
 }
 input:not([type="checkbox"]):not([type="radio"]), select{ min-height: var(--tap); padding: 0 12px; }
 textarea{ width: 100%; padding: 12px; resize: vertical; }
+/* Los cuadros de texto crecen con lo que se escribe (Chrome, Edge, Safari); en otros, `rows` y el asa de abajo.
+   El tope evita que uno larguísimo se salga de la pantalla: pasado el tope, tiene su propio desplazamiento. */
+textarea:not(.json){ field-sizing: content; min-height: 7rem; max-height: 70vh; overflow-y: auto; }
+textarea[rows="8"]:not(.json){ min-height: 13rem; }
+textarea[rows="18"]:not(.json){ min-height: 26rem; }
 input[type="file"]{ padding: 0; min-height: var(--tap); line-height: calc(var(--tap) - 2 * var(--bw)); }
 input[type="file"]::file-selector-button{
   height: calc(var(--tap) - 2 * var(--bw)); margin: 0 12px 0 0; padding: 0 16px; vertical-align: top; cursor: pointer;

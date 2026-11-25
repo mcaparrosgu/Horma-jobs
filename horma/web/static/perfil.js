@@ -76,9 +76,11 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, 
   }
   for (const [clave, rotulo] of CAMPOS[campoNombre]) {
     if (extra.solo && !extra.solo.includes(clave)) continue;
-    const i = nodo("input");
-    i.type = "text";
-    i.maxLength = 300;
+    // Los textos largos (descripción, resumen…) van en un cuadro que crece con lo que se escribe.
+    const largo = clave === "descripcion" || (clave === "valor" && ["resumen", "otros"].includes(campoNombre));
+    const i = nodo(largo ? "textarea" : "input");
+    if (!largo) i.type = "text";
+    i.maxLength = largo ? 2000 : 300;
     i.value = CAMPOS_FECHA.includes(clave) ? fechaVista(inicial[clave]) : inicial[clave] || "";
     entradas[clave] = i;
     f.append(campo(rotulo, i));
