@@ -15,7 +15,8 @@ stale_after: null
 ## Principios
 - Primero la spec, a su medida: lo grande lleva spec, plan y tareas antes del código; lo pequeño,
   test y una línea de tarea (umbral en AGENTS.md).
-- Primero aclarar: las ambigüedades se resuelven con la persona antes de especificar.
+- Aclarar lo que cambia el resultado: esas ambigüedades se resuelven con la persona antes de especificar.
+  Si la intención está clara, se toma la opción más simple, se anota el supuesto y se sigue.
 - Guiado por tests: cada tarea empieza con un test que falla; cada agente se entrega con un eval.
 - Fronteras limpias: la lógica de dominio no depende de frameworks, ORM ni E/S.
 - Una sola aplicación: los agentes son código Python dentro de la web desde la fase 0 y se pueden
@@ -53,8 +54,9 @@ stale_after: null
 - Stack: Python (uv) · Pydantic · SDK anthropic detrás de `horma.llm` · FastAPI + HTML/CSS/JS planos ·
   consola Typer · PostgreSQL en Docker Compose (RLS + cola de tareas; sin Neon) · LangGraph (fase 4) ·
   Playwright (spec 011, envío con pasos fijos).
-- Ingesta: `httpx` por defecto. Apify, Zyte, Scrapy y Crawlee están permitidos cuando el plan de la
-  spec diga por qué `httpx` no basta; siempre bajo RT-15 a RT-19.
+- Ingesta: Horma agrega y normaliza ofertas públicas de portales, ATS y fuentes estructuradas (PRD, 7.1).
+  `httpx` por defecto. Apify, Zyte, Scrapy, Crawlee, Firecrawl y las API de índices públicos están
+  permitidos con una línea en `tasks.md` que diga por qué `httpx` no basta; siempre bajo RT-15 a RT-19.
 - Identidad: Google OAuth 2.0 (sin email ni contraseña propios).
 - Sin RAG: ni embeddings ni búsqueda híbrida.
 - Todos los secretos viven en `.env` (nunca se versiona).

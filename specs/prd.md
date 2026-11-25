@@ -411,21 +411,45 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 
 ## 7. Fuera de Alcance (Exclusiones Explícitas del Sistema)
 
+Revisada el 25-nov-2026 (Mar): la agregación de ofertas públicas pasa a alcance activo.
+
+### 7.1 En alcance: agregación de ofertas públicas
+
+Horma ingiere, agrega y normaliza ofertas públicas de empleo de múltiples portales, ATS y fuentes
+estructuradas, como un indexador de ofertas públicas.
+
+- **Vías:** conectores, API, feeds, sitemaps, marcado `JobPosting` y API de índices públicos de ofertas.
+- **Herramientas:** `httpx` por defecto; Apify, Zyte, Crawlee, Scrapy y Firecrawl cuando hagan falta.
+- **Condiciones, siempre:** ritmo limitado por dominio, espera con `Retry-After` y reintentos, extracción
+  incremental y ningún dato personal de terceros (RT-15 a RT-19 de `system.md`); sin cuentas ni contraseñas;
+  cada fuente, con calificación apta.
+- **Límite que no cambia:** las líneas rojas de la constitución (RES-03). Nunca LinkedIn ni Indeed, tampoco
+  cuando una oferta suya llega a través de un índice o de un tercero.
+- De momento, solo vías gratuitas (F7-D2).
+
+### 7.2 Exclusiones que se mantienen
+
 1. **No hay lado empresas ni recruiters.** Abrirlo convertiría a Horma en sistema de alto riesgo.
-2. **No automatiza LinkedIn, Indeed, InfoJobs ni Welcome to the Jungle,** ni como fuente ni para enviar.
-3. **No resuelve captchas, no rota IP, no disfraza el navegador y no crea cuentas.**
+2. **No usa LinkedIn ni Indeed,** ni como fuente ni para enviar. **No envía candidaturas en InfoJobs ni en
+   Welcome to the Jungle;** como fuente de ofertas públicas siguen las condiciones de 7.1.
+3. **No resuelve captchas, no rota IP, no disfraza el navegador, no crea cuentas y no entra en áreas privadas.**
 4. **No guarda contraseñas de portales.** Los portales con cuenta quedan como «Envíala tú».
 5. **No envía en Greenhouse ni por la API de Recruitee.**
 6. **No conecta el buzón de la usuaria** (Gmail, Outlook): solo lee la dirección de Horma que ella activa.
 7. **No es copiloto de entrevista en vivo,** ni hace entrevista por voz ni valora las respuestas.
-8. **No tiene servidor MCP, extensión de navegador ni aplicación nativa.**
-9. **No funciona fuera de España ni en otros idiomas.**
-10. **No usa embeddings ni taxonomías externas,** salvo la excepción condicionada de los sinónimos de puestos.
-11. **No fija precio ni planes de pago:** esperan a su estudio de mercado.
-12. **No se aloja en la UE todavía** ni se despliega fuera de local.
 
-Lo de esta lista y las ideas sin decidir viven en `docs/mejoras-futuras.md` (documento de trabajo). Entrar en
-alcance exige cambiar este PRD.
+### 7.3 Diferido (en `docs/mejoras-futuras.md`)
+
+No son exclusiones de principio: no entran ahora.
+
+- Servidor MCP, extensión de navegador y aplicación nativa.
+- Fuera de España y otros idiomas.
+- Embeddings y taxonomías externas, salvo la excepción condicionada de los sinónimos de puestos.
+- Precio y planes de pago: esperan a su estudio de mercado.
+- Alojamiento en la UE y despliegue fuera de local.
+- Compra de ofertas a proveedores.
+
+Entrar en alcance desde 7.2 o 7.3 exige cambiar este PRD.
 
 ## 8. Gestión de Riesgos y Mitigación
 

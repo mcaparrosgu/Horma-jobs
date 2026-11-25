@@ -93,7 +93,7 @@ RT-15 a RT-19 se verifican en CI desde la spec 014; hasta entonces `ingesta.py` 
 - **Herramientas:** `uv`, Typer, `import-linter`, `pytest`, `ruff`.
 - **Flujos desde la API:** siempre por cola y worker, con un flag de desarrollo para ejecutarlos en línea.
 - **Sin RAG:** el match es filtro duro en SQL, pre-orden por taxonomía compartida y puntuación del matcher por tandas.
-- **Fuentes:** nunca LinkedIn ni Indeed; cada fuente es una fila editable de la tabla `fuentes`, sembrada desde `config/endpoints.json`. Una fuente solo se activa con una calificación apta (condiciones de uso y `robots.txt`). Con esa calificación, añadir su conector (API, feed, Apify, Zyte, Scrapy o Crawlee) no necesita más permiso que RT-15 a RT-19.
+- **Fuentes:** nunca LinkedIn ni Indeed; cada fuente es una fila editable de la tabla `fuentes`, sembrada desde `config/endpoints.json`. Una fuente solo se activa con una calificación apta (condiciones de uso y `robots.txt`). Con esa calificación, añadir su conector (API, feed, sitemap, API de índice público, Apify, Zyte, Scrapy, Crawlee o Firecrawl) no necesita más permiso que RT-15 a RT-19.
 - **Ofertas:** catálogo común (desde la fase 1). Cualquier sesión las lee; solo el modo sistema (la API al recibirlas y el worker al procesarlas) las escribe, por RLS.
 - **Administración:** el dashboard `/ingesta` y las claves de API son solo para las cuentas listadas en `HORMA_ADMINS`.
 Las decisiones de cada fase se leen junto con las siguientes: la **simplificación (fase 10)**, al final,

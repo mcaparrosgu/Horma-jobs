@@ -9,11 +9,12 @@ están en `specs/system.md`.
 - Primero la spec, a su medida:
   - Cambio grande (módulo, agente, esquema, tabla, pantalla o flujo nuevos): spec, plan y tareas en
     `specs/NNN-<feature>/` antes del código.
-  - Cambio pequeño (corrección, refactor sin cambio de comportamiento, texto, configuración, o un
-    conector de ingesta que cumple RT-15 a RT-19 sin tocar esquemas): test que falla y una línea en
-    el `tasks.md` de la spec vigente. Sin spec nueva.
-- Aclarar antes de especificar: haz las preguntas abiertas y ESPERA las respuestas de la persona
-  antes de escribir una spec.
+  - Cambio pequeño (corrección, refactor sin cambio de comportamiento, texto, configuración, o una pieza
+    de ingesta que cumple RT-15 a RT-19 sin tocar esquemas: conector, parser, normalizador, cola o fuente
+    nueva): test que falla y una línea en el `tasks.md` de la spec vigente. Sin spec nueva.
+- Aclarar solo lo que cambia el resultado: pregunta antes de especificar cuando la respuesta cambie lo que
+  se construye. Si la intención está clara, toma la opción más simple, anota el supuesto y sigue, sin
+  bloqueos ni preguntas innecesarias.
 - TDD: un test que falla precede a cada tarea de implementación.
 - Cada agente del producto se entrega con su set de evals y su umbral (`evals/<set>/`).
 - Secretos: solo en `.env` (nunca se versiona). Las claves se documentan en `.env.example`.
@@ -41,6 +42,11 @@ están en `specs/system.md`.
 - Solo la API y el worker leen y escriben en Postgres.
 - Ingesta: los conectores, parsers y colas de fuentes viven en `horma/ingesta`, sin credenciales de
   BD (entregan por `POST /ofertas`) y cumplen RT-15 a RT-19.
+- Agregación de ofertas públicas, autorizada (PRD, 7.1): se pueden desarrollar conectores, parsers, colas
+  e integraciones con portales, ATS, feeds, sitemaps y API de índices públicos, con `httpx`, Apify, Zyte,
+  Crawlee, Scrapy o Firecrawl. Siempre con ritmo por dominio, `Retry-After` y reintentos con espera,
+  extracción incremental, sin datos personales de terceros, sin cuentas ni contraseñas, y sin eludir
+  captchas ni bloqueos. Nunca LinkedIn ni Indeed.
 
 ## Frontend: simetría y alineación (prioridad alta, RF-6.4b)
 - Cada pantalla se construye con `tokens.css` y `estilo.css` (spec 006): sin colores ni medidas sueltas.
