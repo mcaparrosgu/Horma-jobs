@@ -794,6 +794,7 @@ function elegirPestanaAnadir(cual) {
     p.setAttribute("aria-selected", String(activa));
     p.classList.toggle("activa", activa);
   }
+  limpiarRepetida();
   $(cual === "url" ? "url" : "texto").focus();
 }
 $("pestana-url").addEventListener("click", () => elegirPestanaAnadir("url"));
@@ -847,6 +848,23 @@ function terminarLectura() {
   $("enviar-url").disabled = false;
 }
 
+// RF-11.29: la dirección ya estaba añadida. Fecha, «Ver oferta» y «Leer de nuevo» (dos botones secundarios en una fila).
+function limpiarRepetida() {
+  $("repetida-url").replaceChildren();
+}
+
+function avisarRepetida(url, oferta) {
+  const ver = nodo("button", "Ver oferta", "secundario");
+  ver.setAttribute("type", "button");
+  ver.addEventListener("click", () => verOriginal(oferta.oferta_id));
+  const releer = nodo("button", "Leer de nuevo", "secundario");
+  releer.setAttribute("type", "button");
+  releer.addEventListener("click", () => leerUrl(url, true));
+  const fila = nodo("div", null, "fila");
+  fila.append(ver, releer);
+  $("repetida-url").replaceChildren(nodo("p", TEXTOS.anadidaYa(fecha(oferta.anadida_en))), fila);
+}
+
 async function esperarLectura(id) {
   const r = await api(`/ofertas/url/${id}`);
   if (!r.ok) {
@@ -874,25 +892,41 @@ async function esperarLectura(id) {
   await cargarLista();
 }
 
-$("formulario-url").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const url = $("url").value.trim();
-  if (!url) return avisarUrl("Pega la dirección de la oferta.", true);
+// Lee la dirección y sigue la lectura. Con `releer` («Leer de nuevo», RF-11.29) el servidor actualiza la oferta que ya
+// estaba añadida en vez de crear otra.
+async function leerUrl(url, releer = false) {
+  limpiarRepetida();
   $("enviar-url").disabled = true;
   avisarUrl("Leyendo la página…");
   $("lectura-url").replaceChildren();
   lecturaBarra = barraAvance($("lectura-url"), "Analizando la oferta");
   lecturaBarra.poner(10);
-  const r = await api("/ofertas/url", { metodo: "POST", cuerpo: { url } });
+  const r = await api("/ofertas/url", { metodo: "POST", cuerpo: releer ? { url, releer: true } : { url } });
   if (!r.ok) {
     $("enviar-url").disabled = false;
     $("lectura-url").replaceChildren();
     return avisarUrl(r.motivo, true);
   }
+  if (r.datos.repetida) {   // ya estaba añadida: nada que leer, la barra sobra
+    lecturaBarra.quitar();
+    lecturaBarra = null;
+    $("lectura-url").replaceChildren();
+    $("enviar-url").disabled = false;
+    avisarUrl("");
+    return avisarRepetida(url, r.datos);
+  }
   sessionStorage.setItem(CLAVE_LECTURA, String(r.datos.id));
   lecturaBarra.vincular(`horma:avance:lectura:${r.datos.id}`);
   await esperarLectura(r.datos.id);
+}
+
+$("formulario-url").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = $("url").value.trim();
+  if (!url) return avisarUrl("Pega la dirección de la oferta.", true);
+  await leerUrl(url);
 });
+$("url").addEventListener("input", limpiarRepetida);
 
 // La ventana es modal: para ir a otra pantalla hay que cerrarla. Con la lectura en marcha, la barra sale de la ventana
 // y pasa a la página (con su valor y su clave), donde también la pone `retomarLectura` (M16).

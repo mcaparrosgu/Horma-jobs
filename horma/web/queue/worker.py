@@ -373,10 +373,13 @@ class _LeerUrl:
             raise ValueError(f"no existe la importación {tarea['entidad_id']} de esta usuaria")
         if (motivo := validar_url(fila["url"])) is not None:  # otra vez: pasó tiempo desde que se pidió
             raise ValueError(motivo)
-        return {"url": fila["url"], "usuaria_id": tarea["usuaria_id"]}
+        return {"url": fila["url"], "usuaria_id": tarea["usuaria_id"], "oferta_id": fila["oferta_id"]}
 
     def ejecutar(self, estado: dict, d: Dependencias) -> dict:
         texto = d.lector(estado["url"])
+        if estado["oferta_id"] is not None:   # «Leer de nuevo»: se actualiza esa misma oferta (RF-11.29)
+            r = servicio_ofertas.releer(d.engine, texto, estado["oferta_id"], estado["usuaria_id"])
+            return {"oferta_id": r["id"]}
         r = servicio_ofertas.recibir(d.engine, texto, url=estado["url"], usuaria_id=estado["usuaria_id"])
         return {"oferta_id": r["id"]}
 

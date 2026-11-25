@@ -23,7 +23,7 @@ La spec 011 se construye en tres partes, cada una en su paso del [PRD](../prd.md
 | 2 | 7 | Envío y correo, en modo prueba | Sin especificar: se escribe al llegar el paso 7 |
 | 3 | 10 | Envío real | Sin especificar: se escribe al llegar el paso 10 |
 
-La parte 1 no envía nada, no usa el modelo y no cambia la constitución ni los requisitos transversales.
+La parte 1 no envía nada, no añade llamadas al modelo y no cambia la constitución ni los requisitos transversales.
 Sin aclaraciones propias: las decisiones son de Mar (23 y 25-nov) y se citan aquí.
 
 ## Requisitos (EARS)
@@ -52,6 +52,12 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
   táctil. Sustituye a las dos casillas de RF-8.4c; el componente se añade antes a la guía (RF-6.9).
 - **RF-11.28** Cada pantalla cambiada DEBERÁ comprobarse a 1280 y 390 px, en claro y en oscuro, mirando
   alineación y simetría (RF-6.4b). SI algo falla, se arregla en la misma tarea; SI no se pudo comprobar, se dice.
+- **RF-11.29** *(Mar, 25-nov, D-030)* CUANDO la usuaria añada por URL una oferta cuya dirección ya añadió (se
+  comparan sin los parámetros de seguimiento `utm_*`, `gclid`, `fbclid` y `msclkid`), Horma NO DEBERÁ leerla ni
+  analizarla otra vez: DEBERÁ decir «Ya añadiste esta oferta el DD/MM/AAAA» con «Ver oferta» y «Leer de nuevo».
+  «Leer de nuevo» DEBERÁ volver a leer la página y actualizar esa misma oferta (mismo id; sus candidaturas siguen
+  enlazadas), sin crear otra; SI el texto no ha cambiado, no se analiza de nuevo. SI esa dirección ya se está
+  leyendo, DEBERÁ seguirse esa lectura en vez de empezar otra.
 
 ## Criterios de aceptación
 - Con el catálogo real, Admin y la consola enseñan la tabla portal · ofertas · exige cuenta, sin coste.
@@ -59,6 +65,7 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
 - Subir un CV con un dato que Horma no guarda enseña el aviso.
 - Calificar Adzuna termina en «no apta» con su motivo.
 - El filtro con la barra de rango da las mismas ofertas que daban las dos casillas.
+- Añadir dos veces la misma URL, con o sin `utm_*`, no la lee ni la analiza la segunda vez.
 
 ## Fuera de alcance
 - Enviar candidaturas, leer correo, la regla de envío y sus ajustes: parte 2.

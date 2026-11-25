@@ -6,6 +6,8 @@ from datetime import datetime
 from sqlalchemy import Engine
 
 from horma.config import ajustes
+from horma.tools.normalizar import huella
+from horma.tools.validar_url import url_canonica
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import importaciones, tareas
 from horma.web.repositories import ingesta as repo_ingesta
@@ -110,13 +112,52 @@ def encolar_propias_aplazadas(engine: Engine) -> int:
     return n
 
 
-def pedir_lectura_url(engine: Engine, usuaria_id: int, url: str) -> int:
-    """Encola la lectura de una URL de oferta, privada de la usuaria (RF-5.3f). Sin reintentos."""
+def releer(engine: Engine, texto: str, oferta_id: int, usuaria_id: int) -> dict:
+    """«Leer de nuevo» (RF-11.29): el texto recién leído sustituye al de esa misma oferta. Si es igual, no
+    cambia nada y no se analiza otra vez; si cambió, se borra su análisis y sus notas y se vuelve a analizar.
+    El id no cambia: sus candidaturas siguen enlazadas."""
+    if not parece_oferta(texto):
+        raise NoPareceOferta(MOTIVO_NO_OFERTA)
     a = ajustes()
+    with sesion_sistema(engine) as s:
+        guardada = repo.huella_y_estado_propia(s, oferta_id, usuaria_id)
+        if guardada is None:
+            raise ValueError(f"la oferta {oferta_id} no es de esta usuaria")
+        if guardada[0] == huella(texto) and guardada[1] != "error":   # una en error se vuelve a analizar
+            return {"id": oferta_id, "cambiada": False}
+        repo.actualizar_texto(s, oferta_id, texto)
+        with sesion_de(engine, usuaria_id) as propia:
+            repo.borrar_notas(propia, oferta_id)
+        try:
+            presupuesto.encolar_oferta_propia(s, usuaria_id, oferta_id, a.tope_coste_tarea,
+                                              a.tope_reintentos_tarea)
+        except presupuesto.SinPresupuesto:  # queda pendiente y se analiza en cuanto haya presupuesto
+            pass
+    return {"id": oferta_id, "cambiada": True}
+
+
+def pedir_lectura_url(engine: Engine, usuaria_id: int, url: str, releer: bool = False) -> dict:
+    """Encola la lectura de una URL de oferta, privada de la usuaria (RF-5.3f). Sin reintentos.
+    RF-11.29: una URL que ya añadió (sin parámetros de seguimiento) no se lee otra vez: se devuelve la oferta
+    (`repetida`); con `releer` se lee de nuevo y se actualiza esa misma oferta. Si ya se está leyendo,
+    se devuelve esa lectura."""
+    a = ajustes()
+    url = url.strip()
+    canonica = url_canonica(url)
     with sesion_de(engine, usuaria_id) as s:
-        importacion = importaciones.crear(s, usuaria_id, url.strip())
+        previa = next((o for o in repo.propias_con_url(s, usuaria_id)
+                       if url_canonica(o["url"]) == canonica), None)
+        if previa and not releer:
+            return {"repetida": True, "oferta_id": previa["id"], "anadida_en": previa["creada_en"],
+                    "titulo": previa["titulo"]}
+        if not previa:
+            en_curso = next((i for i in importaciones.pendientes(s)
+                             if url_canonica(i["url"]) == canonica), None)
+            if en_curso:
+                return {"id": en_curso["id"], "estado": "pendiente"}
+        importacion = importaciones.crear(s, usuaria_id, url, previa["id"] if previa else None)
         presupuesto.encolar(s, usuaria_id, "leer_url", importacion, a.tope_coste_tarea, 1)
-    return importacion
+    return {"id": importacion, "estado": "pendiente"}
 
 
 def estado_lectura_url(engine: Engine, usuaria_id: int, importacion_id: int) -> dict | None:

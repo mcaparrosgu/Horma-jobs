@@ -113,6 +113,7 @@ const TEXTOS = {
   anadirUrl: "Para leerla, la dirección se envía a un servicio externo de lectura de páginas. LinkedIn, Indeed, Glassdoor e InfoJobs no se pueden leer: pega su texto.",
   anadirAplazada: "Oferta guardada. La analizamos mañana: hoy ya hemos trabajado todo lo posible para ti.",
   anadirRepetida: "Esa oferta ya la habías añadido.",
+  anadidaYa: (f) => `Ya añadiste esta oferta el ${f}.`,
   anadirUrlFallida: "Estamos teniendo problemas para leer esa dirección. Mejor copia y pega aquí el texto de la oferta.",
   anadirError: "No se ha podido analizar la oferta añadida. Prueba a pegar su texto de nuevo.",
   nadaQueCalificar: "No queda ninguna oferta por calificar.",

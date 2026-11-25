@@ -66,4 +66,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_p1_t07_t08_mejoras_pantalla.py`. **Navegador:** pendiente de Opus/Mar.
 - [x] T08j — Al cerrar «Añadir oferta» con una lectura por URL en marcha, la barra «Analizando la oferta» pasa a la página, bajo los filtros (M16: se quedaba dentro de la ventana cerrada y no se veía ninguna). La ventana es modal: para ir a otra pantalla hay que cerrarla antes.
   - **Test:** `tests/test_s11_retomar_lectura_url.py`.
+- [x] T08k — Una URL ya añadida no se vuelve a leer ni analizar: «Ya añadiste esta oferta el …» con «Ver oferta» y «Leer de nuevo», que relee y actualiza la misma oferta (RF-11.29, D-030; antes la misma URL de lifeworq creó las ofertas 200, 203 y 205, cada una pagada).
+  - **Test:** `tests/test_s11_url_repetida.py` (URL canónica, API y worker con BD), `tests/test_s11_url_repetida_cliente.py` (pantalla, en node).
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.
