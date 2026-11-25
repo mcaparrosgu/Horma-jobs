@@ -772,12 +772,26 @@ async function traerPuestosNuevos() {
   avisar(TEXTOS.anadirPuesto(nuevos.join("», «")));
 }
 
+// Dos pestañas, un solo botón «Añadir oferta» a la vista: con una dirección o pegando el texto.
+function elegirPestanaAnadir(cual) {
+  for (const c of ["url", "texto"]) {
+    const activa = c === cual;
+    $(`formulario-${c}`).hidden = !activa;
+    const p = $(`pestana-${c}`);
+    p.setAttribute("aria-selected", String(activa));
+    p.classList.toggle("activa", activa);
+  }
+  $(cual === "url" ? "url" : "texto").focus();
+}
+$("pestana-url").addEventListener("click", () => elegirPestanaAnadir("url"));
+$("pestana-texto").addEventListener("click", () => elegirPestanaAnadir("texto"));
+
 function abrirAnadir() {
   $("anadir-intro").textContent = TEXTOS.anadirIntro;
   $("anadir-url-ayuda").textContent = TEXTOS.anadirUrl;
   const v = $("ventana-anadir");
   if (!v.open) v.showModal();
-  $("url").focus();
+  elegirPestanaAnadir("url");
 }
 $("abrir-anadir").addEventListener("click", abrirAnadir);
 $("anadir-cerrar").addEventListener("click", () => $("ventana-anadir").close());
@@ -820,7 +834,7 @@ async function esperarLectura(id) {
   $("lectura-url").replaceChildren();
   if (r.datos.estado === "error") {
     avisarUrl(r.datos.motivo || "La página no se ha podido leer: pega el texto de la oferta.", true);
-    $("texto").focus();
+    elegirPestanaAnadir("texto");
     return;
   }
   $("url").value = "";

@@ -132,17 +132,21 @@
     </header>
     <div class="ventana-cuerpo">
       <p id="anadir-intro" class="suave"></p>
-      <form id="formulario-url">
+      <div class="pestanas pestanas-ventana" role="tablist" aria-label="Cómo añadir la oferta">
+        <button id="pestana-url" class="pestana activa" type="button" role="tab" aria-selected="true" aria-controls="formulario-url">Con una dirección</button>
+        <button id="pestana-texto" class="pestana" type="button" role="tab" aria-selected="false" aria-controls="formulario-texto">Pegando el texto</button>
+      </div>
+      <form id="formulario-url" role="tabpanel" aria-labelledby="pestana-url">
         <label for="url">Dirección de la oferta</label>
         <div class="fila fila-url">
           <input id="url" type="url" maxlength="2000" placeholder="https://…" autocomplete="off">
-          <button id="enviar-url" class="secundario" type="submit">Leer oferta</button>
+          <button id="enviar-url" type="submit">Añadir oferta</button>
         </div>
         <div id="lectura-url"></div>
         <span id="aviso-url" role="status"></span>
         <p id="anadir-url-ayuda" class="suave"></p>
       </form>
-      <form id="formulario-texto">
+      <form id="formulario-texto" role="tabpanel" aria-labelledby="pestana-texto" hidden>
         <label for="texto">Texto de la oferta</label>
         <textarea id="texto" rows="8" maxlength="20000" required></textarea>
         <div class="fila">

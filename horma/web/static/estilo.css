@@ -181,6 +181,10 @@ fieldset.grupo.panel > label input.corto{ width: 100%; }
 fieldset.grupo.panel > label:not(.casilla){ align-self: stretch; display: flex; flex-direction: column; gap: 6px; }
 fieldset.grupo.panel > label:not(.casilla) > :is(input, select){ margin-top: auto; }
 
+.pestanas-ventana{ flex: none; border-bottom: var(--bw) solid var(--line); }
+.pestanas-ventana .pestana{ border: 0; border-radius: 0; background: transparent; cursor: pointer; font: inherit; }
+.pestanas-ventana .pestana{ border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.pestanas-ventana .pestana.activa{ font-weight: 700; color: var(--ink); border-bottom-color: var(--accent); }
 .fila-url{ margin-top: 0; }
 .fila-titulo{ justify-content: space-between; align-items: center; margin: 40px 0 16px; }
 .fila-titulo .titulo-pantalla{ margin: 0; }
