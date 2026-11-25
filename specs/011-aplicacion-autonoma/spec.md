@@ -60,7 +60,8 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
   analizarla otra vez: DEBERÁ decir «Ya añadiste esta oferta el DD/MM/AAAA» con «Ver oferta» y «Leer de nuevo».
   «Leer de nuevo» DEBERÁ volver a leer la página y actualizar esa misma oferta (mismo id; sus candidaturas siguen
   enlazadas), sin crear otra; SI el texto no ha cambiado, no se analiza de nuevo. SI esa dirección ya se está
-  leyendo, DEBERÁ seguirse esa lectura en vez de empezar otra.
+  leyendo, DEBERÁ seguirse esa lectura en vez de empezar otra. Al volver a abrir «Añadir oferta», «Por URL» DEBERÁ
+  estar vacío y sin ese aviso, salvo con una lectura en marcha (entonces enseña la dirección que se lee; T08r).
 - **RF-11.30** *(Mar, 25-nov, D-031)* Añadir una oferta DEBERÁ enseñar una sola barra «Analizando la oferta» desde
   que se pide hasta que sale en la lista: la lectura de la página y el análisis van en la misma barra, sin cambiar
   de frase y sin bajar nunca (RF-10.8c).

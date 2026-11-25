@@ -813,7 +813,15 @@ function abrirAnadir() {
   $("anadir-intro").textContent = TEXTOS.anadirIntro;
   $("anadir-url-ayuda").textContent = TEXTOS.anadirUrl;
   const v = $("ventana-anadir");
-  if (!v.open) v.showModal();
+  if (!v.open) {
+    // Se abre limpia: sin la dirección ni el aviso de la vez anterior (T08r). Con una lectura en marcha se queda la
+    // dirección que se está leyendo y su «Leyendo la página…». «Ya añadiste…» lo quita `elegirPestanaAnadir`.
+    if (!lecturaBarra) {
+      $("url").value = "";
+      avisarUrl("");
+    }
+    v.showModal();
+  }
   elegirPestanaAnadir("url");
 }
 $("abrir-anadir").addEventListener("click", abrirAnadir);
