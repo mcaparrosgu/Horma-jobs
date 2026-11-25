@@ -42,6 +42,9 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
   un dato personal que Horma no guarda» en la pantalla donde ocurre. Hoy se genera y no se ve.
 - **RF-11.25b** Calificar una fuente DEBERÁ terminar siempre con un resultado, «apta» o «no apta» con su
   motivo. SI la fuente responde 403 (hoy, Adzuna), el resultado DEBERÁ ser «no apta» con ese motivo, no un error.
+- **RF-11.25c** *(Mar, 25-nov, D-032)* AL rehacer el perfil, lo que escribió la usuaria DEBERÁ pasar el mismo filtro
+  de datos personales que el texto de sus CV (RT-09): lo que traiga un dato que Horma no guarda se quita y DEBERÁ
+  salir el aviso de RF-11.25.
 - **RF-11.26** Los botones de archivo DEBERÁN seguir la norma de los demás botones de la guía: primario si
   subir el archivo es la acción principal de la pantalla y secundario si no. «Subir mi CV» en Ofertas y
   «Elegir archivo» en Perfil DEBERÁN verse iguales en la misma situación.

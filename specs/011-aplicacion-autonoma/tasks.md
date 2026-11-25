@@ -32,7 +32,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Navegador:** Admin a 1280 y 390 px, claro y oscuro.
 - [ ] T04 — Cierre de A. 🛑 Mar lee la medición del catálogo real y se anota en la hoja de ruta como decisión; PR.
 
-### M · Mejoras pequeñas (RF-11.25 a 11.28)
+### M · Mejoras pequeñas (RF-11.25 a 11.30)
 - [x] T05 — El aviso «Hemos quitado un dato personal» se ve.
   - **Test:** un CV con un dato que Horma no guarda devuelve el aviso en la API y la pantalla lo pinta.
 - [x] T06 — Calificar una fuente que responde 403 da «no apta» con motivo.
@@ -70,4 +70,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_s11_url_repetida.py` (URL canónica, API y worker con BD), `tests/test_s11_url_repetida_cliente.py` (pantalla, en node).
 - [x] T08l — Una sola barra «Analizando la oferta» de la lectura de la página al análisis, sin cambiar de frase ni bajar (RF-11.30, D-031; antes pasaba a «Analizando la oferta añadida» y bajaba, p. ej. de 15 % a 4 %).
   - **Test:** `tests/test_s11_una_sola_barra.py` (en node); `tests/test_s11_retomar_lectura_url.py` ajustado. **Navegador:** pendiente de Opus/Mar.
+- [x] T08m — Al rehacer el perfil, lo que escribió la usuaria pasa el filtro de datos personales y, si se quita algo, sale el aviso (RF-11.25c, D-032; un «casada con hijos» escrito antes de T05 pasaba de versión en versión).
+  - **Test:** `tests/test_f2_t08_t10_flujos.py`.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.

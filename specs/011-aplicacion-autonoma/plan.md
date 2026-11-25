@@ -25,7 +25,7 @@ Las rutas de archivo son las del 23-nov: se comprueban antes de tocar.
   `GET /api/admin/envios/medicion` (solo admins): tabla portal · ofertas · exige cuenta.
 - Simple primero: la medición se calcula al pedirla; no se guarda en ninguna tabla.
 
-## Bloque M · Mejoras pequeñas (RF-11.25 a 11.28)
+## Bloque M · Mejoras pequeñas (RF-11.25 a 11.30)
 - **Aviso de dato personal:** `services/perfil.py` (`AVISO_DATO_PERSONAL`) ya lo genera; falta llevarlo hasta
   la respuesta de la API y pintarlo con `avisar()` en `perfil.js`. Primero, un test que reproduzca que no llega.
 - **Fuente con 403:** en `flows/calificar_fuente.py` y `tools/descargar.py`, un 403 pasa a ser un resultado
