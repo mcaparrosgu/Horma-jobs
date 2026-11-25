@@ -59,7 +59,7 @@ Qué es cada una, por qué y en qué orden se construye: [PRD](./prd.md), secci�
 | `011-aplicacion-autonoma/` | Parte 1: medición de destinos y mejoras pequeñas. Partes 2 y 3 (envío y correo; envío real): se especifican al llegar su paso | US-001, US-007 · RF-001 a 005, RF-016 | **Parte 1 firmada el 25-nov, sin construir** (paso 1). La spec del 23-nov, anterior al PRD, está archivada como insumo |
 | `012` | `matcher` y puestos afines | US-002 · RF-006, RF-007 | **Sin spec** |
 | `013` | Calidad de CV y carta, con PDF comprobado | US-004 · RF-008, RF-009 | **Sin spec** |
-| `014` | Ingesta programada, conectores, ritmo (RT-15 a RT-19) y vigilancia | US-005 · RF-010, RF-011 | **Sin spec.** Agregación de ofertas públicas en alcance (PRD, 7.1; 25-nov). Espera a que termine la investigación del banco de ofertas (F5, en marcha en Fable) y a la prueba práctica |
+| `014` | Ingesta programada, conectores, ritmo (RT-15 a RT-19) y vigilancia | US-005 · RF-010, RF-011 | **Sin spec.** Agregación de ofertas públicas en alcance (PRD, 7.1; 25-nov). Investigación del banco de ofertas (F5) entregada y decidida (25-nov). Espera a la prueba práctica |
 | `015` | Privacidad y cuenta (RGPD y Configuración) | US-003 · RF-012, RF-013 | **Sin spec** |
 | `016` | Entrevista por texto (sustituye a la parte 9b de la 009) | US-008 · RF-014 | **Sin spec** |
 | `017` | Gasto por usuaria (sustituye a RF-8.5 y RF-10.9d) | US-006 · RF-015 | **Sin spec;** espera a su investigación |
