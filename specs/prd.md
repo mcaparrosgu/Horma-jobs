@@ -3,10 +3,10 @@ type: prd
 title: Horma — Product Requirements Document (PRD)
 description: Guía de producto de la ampliación de Horma, por pasos de construcción — problema, objetivos medibles, alcance por pasos (historia, qué incluye, puerta de salida y dependencias), requisitos, restricciones, fuera de alcance, riesgos y dependencias. Cada spec cita la parte que desarrolla.
 tags: [prd, producto, sdd]
-status: draft
+status: active
 sources: [./constitution.md, ./system.md, ./index.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: { by: null, at: null }
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 
@@ -15,7 +15,7 @@ stale_after: null
 Documento: `specs/prd.md`
 Módulo / Asignatura: PRD Ampliaciones Horma
 Caso: Horma — proyecto propio del bootcamp de AI Engineering
-Estado: Borrador (pendiente de la firma de Mar)
+Estado: Firmado por Mar el 25-nov (D-020). Los `[pendiente]` se cierran en el paso que los cita
 Autores: Mar
 
 **Cómo se usa.** Dice el qué, el porqué y el orden. El cómo está en la [constitución](./constitution.md), la
@@ -115,7 +115,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - No incluye los cambios de constitución y de RT del envío: van con el paso 7.
 - **Puerta de salida:** Mar lee la medición del catálogo real y se anota como decisión; el bloque M, probado
   por Mar a 1280 y 390 px, en claro y en oscuro; suite verde.
-- **Depende de:** la firma de este PRD y de la parte 1 de la spec 011.
+- **Depende de:** la parte 1 de la spec 011 (firmada, con el PRD, el 25-nov).
 
 ### Paso 2 · `matcher` y puestos afines (spec 012)
 
@@ -157,7 +157,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
   citas verificadas; set de 30 CV en sus umbrales [pendiente: al aprobar el set]; ningún puesto marcado sin
   evidencia; revisión de Mar sobre 20 recomendaciones.
-- **Depende de:** la firma del PRD. Gasto real: set de 30 CV (~0,1-0,5 USD) y el eval, con el OK de Mar.
+- **Depende de:** el paso 1. Gasto real: set de 30 CV (~0,1-0,5 USD) y el eval, con el OK de Mar.
 
 ### Paso 3 · Calidad de CV y carta, con PDF comprobado (spec 013)
 
@@ -219,7 +219,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     ajustes del envío se añaden en el paso 7. Solo preferencias de comodidad, nunca salvaguardas.
 - **Puerta de salida:** los 9 hallazgos de F9, a 0; borrar y descargar, probados por Mar; test de que ningún
   prompt lleva contacto (NFR-04).
-- **Depende de:** la firma del PRD. La evaluación de impacto (DEP-03) y la asesoría legal (DEP-04) no bloquean
+- **Depende de:** el paso 3. La evaluación de impacto (DEP-03) y la asesoría legal (DEP-04) no bloquean
   construir: bloquean el paso 9.
 
 ### Paso 5 · Ingesta y vigilancia (spec 014)

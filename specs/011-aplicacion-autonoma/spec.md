@@ -3,10 +3,10 @@ type: spec
 title: aplicacion-autonoma — Spec funcional
 description: Requisitos en notación EARS de la spec 011. Parte 1 (paso 1 del PRD) — medición de destinos, sin enviar nada, y mejoras pequeñas de pantalla. Las partes 2 (envío y correo en modo prueba) y 3 (envío real) se especifican al llegar su paso.
 tags: [spec, envio, medicion, frontend]
-status: draft
+status: active
 sources: [../prd.md, ../constitution.md, ../system.md, ../006-rediseno-2c/spec.md, ../008-portada-ofertas/spec.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: { by: null, at: null }
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 

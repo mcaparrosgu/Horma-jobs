@@ -6,6 +6,11 @@ la capa operativa por encima. La arquitectura del sistema y los requisitos trans
 están en `specs/system.md`.
 
 ## Reglas de oro
+- **Una decisión, toda la documentación (MUY IMPORTANTE).** Cuando cambia un estado, una decisión, una cifra o
+  un orden, se actualizan en el mismo cambio y el mismo día todos los documentos que lo mencionan: `specs/prd.md`,
+  `specs/index.md`, las specs y sus `tasks.md`, `docs/hoja-de-ruta.md`, el README y los encargos. Antes de dar la
+  tarea por cerrada, busca el dato con `grep` en todo el repo y en `docs/`; si queda un sitio sin tocar, no está
+  hecha. Una versión a medias provoca contradicciones y caos.
 - Primero la spec, a su medida:
   - Cambio grande (módulo, agente, esquema, tabla, pantalla o flujo nuevos): spec, plan y tareas en
     `specs/NNN-<feature>/` antes del código.

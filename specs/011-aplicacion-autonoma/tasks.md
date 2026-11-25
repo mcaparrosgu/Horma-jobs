@@ -3,10 +3,10 @@ type: tasks
 title: aplicacion-autonoma — Desglose de tareas
 description: Tareas pequeñas y comprobables de la parte 1 de la spec 011 (paso 1 del PRD) — medición de destinos y mejoras pequeñas. Cada una empieza con un test que falla; las de pantalla se comprueban a 1280 y 390 px, en claro y en oscuro.
 tags: [tareas, envio, medicion, frontend]
-status: draft
+status: active
 sources: [./plan.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: { by: null, at: null }
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 
@@ -20,7 +20,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - **Tests:** `UV_NO_SYNC=1 uv run pytest`.
 
 ### Spec
-- [ ] T01 — Spec, plan y tareas de la parte 1, firmados por Mar (`verified`).
+- [x] T01 — Spec, plan y tareas de la parte 1, firmados por Mar (25-nov).
 
 ### A · Medición de destinos (RF-11.1)
 - [ ] T02 — `portales.json` y `resolver_destino`.

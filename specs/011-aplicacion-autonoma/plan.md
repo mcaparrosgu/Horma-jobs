@@ -3,10 +3,10 @@ type: plan
 title: aplicacion-autonoma — Plan
 description: Piezas y archivos de la parte 1 de la spec 011 — medición de destinos (bloque A) y mejoras pequeñas (bloque M). Sin modelo, sin migraciones y sin piezas nuevas de arquitectura.
 tags: [plan, envio, medicion, frontend]
-status: draft
+status: active
 sources: [./spec.md, ../system.md]
 generated: { by: claude-code, at: 2026-11-25 }
-verified: { by: null, at: null }
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 
