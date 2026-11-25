@@ -64,6 +64,9 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
 - **RF-11.30** *(Mar, 25-nov, D-031)* Añadir una oferta DEBERÁ enseñar una sola barra «Analizando la oferta» desde
   que se pide hasta que sale en la lista: la lectura de la página y el análisis van en la misma barra, sin cambiar
   de frase y sin bajar nunca (RF-10.8c).
+- **RF-11.31** *(Mar, 25-nov, D-033)* En Ofertas, «Mostrar» DEBERÁ ofrecer, tras los estados de RF-8.6c,
+  «Añadidas por mí (N)»: las ofertas que la usuaria añadió por URL o por texto, con candidatura o sin ella. Las
+  descartadas NO DEBERÁN salir ahí: siguen solo en «Descartadas».
 
 ## Criterios de aceptación
 - Con el catálogo real, Admin y la consola enseñan la tabla portal · ofertas · exige cuenta, sin coste.
@@ -73,6 +76,7 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
 - El filtro con la barra de rango da las mismas ofertas que daban las dos casillas.
 - Añadir dos veces la misma URL, con o sin `utm_*`, no la lee ni la analiza la segunda vez.
 - Añadir por URL enseña una sola barra que nunca baja.
+- «Mostrar: Añadidas por mí» enseña las suyas sin las descartadas, con su número.
 
 ## Fuera de alcance
 - Enviar candidaturas, leer correo, la regla de envío y sus ajustes: parte 2.

@@ -10,7 +10,9 @@ const AYUDA = [
 ];
 const CLAVE_VISTA = "horma.vista.recomendadas";   // la clave no cambia: conserva la vista de quien ya la guardó
 const VISTA_POR_DEFECTO = { min: 40, max: 100, orden: "recientes", estado: "nuevas" };
-const ESTADOS_VISTA = [["nuevas", "Nuevas"], ["candidatura", "Con candidatura"], ["descartadas", "Descartadas"]];
+// «Añadidas por mí» no es un estado: las suyas (por URL o por texto), menos las descartadas (RF-11.31, D-033).
+const ESTADOS_VISTA = [["nuevas", "Nuevas"], ["candidatura", "Con candidatura"], ["descartadas", "Descartadas"],
+                       ["propias", "Añadidas por mí"]];
 let guardadas = null;
 let opciones = null;
 let todas = [];            // lo que devuelve la API; la vista lo filtra y ordena sin volver a pedirlo
@@ -175,6 +177,12 @@ function estadoDe(o) {
   return o.candidatura ? "candidatura" : "nuevas";
 }
 
+// Si la oferta entra en lo que pide «Mostrar» (por defecto, lo elegido en la vista).
+function enVista(o, cual = vista.estado) {
+  if (cual === "propias") return !!o.propia && !o.descartada;
+  return estadoDe(o) === cual;
+}
+
 // Las propias solo llegan si ella las incluye, y entonces se ven siempre (RF-10.6g).
 function enRango(o) {
   return o.propia || o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
@@ -200,9 +208,8 @@ function pintarVista() {
   pintarRango();
   $("orden").value = vista.orden;
   const visibles = todas.filter(enRango);
-  const n = (e) => visibles.filter((o) => estadoDe(o) === e).length;
   $("estado").replaceChildren(...ESTADOS_VISTA.map(([valor, texto]) => {
-    const op = nodo("option", `${texto} (${n(valor)})`);
+    const op = nodo("option", `${texto} (${visibles.filter((o) => enVista(o, valor)).length})`);
     op.value = valor;
     return op;
   }));
@@ -460,11 +467,11 @@ function filaOferta(o) {
 // --- Lista --------------------------------------------------------------------------------------
 function pintarLista() {
   pintarVista();
-  const lista = ordenar(todas.filter((o) => enRango(o) && estadoDe(o) === vista.estado));
+  const lista = ordenar(todas.filter((o) => enRango(o) && enVista(o)));
   if (abiertas === null) abiertas = new Set(lista.slice(0, 1).map((o) => o.id));   // la primera, abierta
   // La oferta recién descartada sigue en su sitio como aviso; no cuenta como oferta.
   const conAviso = descarteReciente === null ? lista
-    : ordenar(todas.filter((o) => (enRango(o) && estadoDe(o) === vista.estado) || (o.id === descarteReciente && o.descartada)));
+    : ordenar(todas.filter((o) => (enRango(o) && enVista(o)) || (o.id === descarteReciente && o.descartada)));
   $("filas").replaceChildren(...conAviso.flatMap((o) => (o.id === descarteReciente && o.descartada ? filaDescartada(o) : filaOferta(o))));
   $("calificar-todas").hidden = !todas.some((o) => o.sin_puntuar && !o.descartada) || barra !== null;
   $("vacio").hidden = lista.length > 0 || conAviso.length > 0;

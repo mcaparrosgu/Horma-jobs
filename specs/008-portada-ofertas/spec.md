@@ -128,7 +128,8 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
   pulsarlo, la oferta DEBERÁ salir de la vista «Nuevas» sin confirmar y con el aviso «Oferta descartada.
   Deshacer». Las ofertas con candidatura abierta NO DEBERÁN tener «Descartar» (P4).
 - **RF-8.6c** El filtro de estado DEBERÁ tener: **Nuevas** (por defecto: sin candidatura y sin descartar) ·
-  **Con candidatura** (abierta o cerrada) · **Descartadas**. Cada opción con su número.
+  **Con candidatura** (abierta o cerrada) · **Descartadas**. Cada opción con su número. *(Ampliado por la spec 011,
+  RF-11.31: «Añadidas por mí».)*
 - **RF-8.6d** En «Descartadas», cada oferta DEBERÁ tener «Recuperar», que la devuelve a «Nuevas». Descartar no
   borra la nota guardada ni toca ninguna candidatura.
 - **RF-8.6e** Los descartes DEBERÁN ser de cada usuaria (RLS): nadie ve ni cambia los de otra.
