@@ -24,7 +24,7 @@ from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.tools.puestos_del_perfil import puestos_del_perfil
-from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.rasgos_personales import AVISO_DATO_PERSONAL, rasgos_personales
 from horma.tools.resumenes_cv import resumen_de, titular_de
 
 # (campo del perfil, atributo con el nombre del dato, atributos de texto opcionales)
@@ -237,7 +237,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
     def quitar_sensibles(e: dict) -> dict:
         """RT-09: ni edad, ni nacionalidad, ni categorías del art. 9 llegan al perfil."""
         perfil = e["extraccion"]["perfil"]
-        sin_dato = False
+        sin_dato = quitado = False
         for campo, nombre, opcionales in _LISTAS:
             limpios = []
             for x in perfil[campo]:
@@ -247,24 +247,28 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                 for o in opcionales:
                     if x.get(o) and rasgos_personales(x[o]):
                         x[o] = None
+                        quitado = True
                 limpios.append(x)
             perfil[campo] = limpios
+        antes = len(perfil["actividades"])
         perfil["actividades"], periodos = _actividades_sin_sensibles(perfil["actividades"])
         perfil["periodos_cubiertos"] = periodos
+        quitado = sin_dato or len(perfil["actividades"]) < antes or quitado
         for campo in _UNICOS:
             dato = perfil[campo]
             if dato and (rasgos_personales(dato["valor"]) or rasgos_personales(
                     dato["origen"]["fragmento"])):
                 perfil[campo] = None
+                quitado = True
         if perfil["nombre"] and rasgos_personales(perfil["nombre"]):
             perfil["nombre"] = None
+            quitado = True
         perfil["preguntas_pendientes"] = [
             p for p in perfil["preguntas_pendientes"]
             if not rasgos_personales(" ".join([p["pregunta"], *p["opciones"]]))]
-        if sin_dato:
+        if quitado:  # RF-11.25: se le dice siempre, con el mismo texto que al editar el perfil
             perfil["preguntas_pendientes"].append(_pendiente(
-                "perfil", "falta", "He descartado algún dato de tus CV que no se puede usar. "
-                                   "Si falta algo de tu experiencia, escríbelo tú."))
+                "perfil", "falta", f"{AVISO_DATO_PERSONAL} Si falta algo de tu experiencia, escríbelo tú."))
         return e
 
     def conservar(e: dict) -> dict:

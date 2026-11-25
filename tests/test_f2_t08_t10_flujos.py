@@ -268,3 +268,22 @@ def test_un_idioma_con_niveles_distintos_en_dos_cv_no_se_pierde_y_se_pregunta():
     assert pendientes[0]["campo"] == "idiomas.en.nivel" and pendientes[0]["opciones"] == ["B1", "medio"]
     assert _genero_puestos({"genero_puestos": None, "experiencias": [{}]})[0]["campo"] == "genero_puestos"
     assert _genero_puestos({"genero_puestos": "femenino", "experiencias": [{}]}) == []
+
+
+def test_quitar_un_dato_personal_deja_el_aviso_de_siempre():
+    """RF-11.25: aunque el dato quitado sea un campo suelto, la usuaria ve el aviso, siempre el mismo."""
+    cv = "Ana, 34 años, de nacionalidad colombiana\nCamarera en Bar Sol"
+    _, e = _perfilar(_extraccion(
+        resumen={"valor": "Mujer de 34 años", "origen": _o(1, "34 años, de nacionalidad colombiana")},
+        experiencias=[{"puesto": "Camarera", "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": cv}])
+    textos = [q.pregunta for q in Perfil.model_validate(e["perfil"]).preguntas_pendientes]
+    assert len(textos) == 1 and textos[0].startswith("Hemos quitado un dato personal que Horma no guarda.")
+
+
+def test_sin_dato_personal_no_hay_aviso():
+    _, e = _perfilar(
+        _extraccion(experiencias=[{"puesto": "Camarera", "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": CV1}])
+    pendientes = Perfil.model_validate(e["perfil"]).preguntas_pendientes
+    assert not any("Hemos quitado" in q.pregunta for q in pendientes)

@@ -24,11 +24,17 @@ class NoEncontrada(Exception):
     """La página respondió 404 o 410."""
 
 
+class Prohibida(Exception):
+    """La página respondió 403: el portal no deja el acceso automático."""
+
+
 def descargar_http(url: str, timeout: float = 15.0) -> str:
     with httpx.Client(follow_redirects=True, timeout=timeout,
                       headers={"User-Agent": AGENTE_HTTP}) as c, c.stream("GET", url) as r:
         if r.status_code in (404, 410):
             raise NoEncontrada(url)
+        if r.status_code == 403:
+            raise Prohibida(url)
         r.raise_for_status()
         cuerpo = b""
         for trozo in r.iter_bytes():

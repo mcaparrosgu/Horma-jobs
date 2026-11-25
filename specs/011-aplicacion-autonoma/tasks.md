@@ -33,9 +33,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T04 — Cierre de A. 🛑 Mar lee la medición del catálogo real y se anota en la hoja de ruta como decisión; PR.
 
 ### M · Mejoras pequeñas (RF-11.25 a 11.28)
-- [ ] T05 — El aviso «Hemos quitado un dato personal» se ve.
+- [x] T05 — El aviso «Hemos quitado un dato personal» se ve.
   - **Test:** un CV con un dato que Horma no guarda devuelve el aviso en la API y la pantalla lo pinta.
-- [ ] T06 — Calificar una fuente que responde 403 da «no apta» con motivo.
+- [x] T06 — Calificar una fuente que responde 403 da «no apta» con motivo.
   - **Test:** con un 403 simulado, la calificación termina sin error y guarda el motivo.
 - [ ] T07 — Botones de archivo con una sola norma, resaltado simétrico en «Añadir oferta» y barras sin borde.
   - **Navegador:** Ofertas, Perfil y la ventana «Añadir oferta» a 1280 y 390 px, claro y oscuro.

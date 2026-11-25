@@ -15,7 +15,7 @@ from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.tools.detectar_huecos import detectar_huecos
 from horma.tools.generar_pdf import generar_pdf
 from horma.tools.huella_perfil import huella_clasificacion
-from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.rasgos_personales import AVISO_DATO_PERSONAL, rasgos_personales
 from horma.web.db import sesion_de
 from horma.web.repositories import perfiles
 from horma.web.services import presupuesto
@@ -43,7 +43,6 @@ def _con_origen(dato: dict) -> dict:
     return {**{k: v for k, v in dato.items() if k != "origen"}, "origen": _origen_usuaria(dato)}
 
 
-AVISO_DATO_PERSONAL = "Hemos quitado un dato personal que Horma no guarda."
 
 
 def _periodo_de(dato: dict) -> dict:
