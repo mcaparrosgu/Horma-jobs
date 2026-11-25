@@ -158,11 +158,11 @@ def test_catalogo_es_solo_para_administradoras(app):
     assert TestClient(app, follow_redirects=False).get("/catalogo").status_code == 401
 
 
-def test_las_tres_pantallas_de_admin_llevan_las_tres_subpestanas():
-    for archivo in ("ingesta.html", "catalogo.html", "costes.html"):
+def test_las_pantallas_de_admin_llevan_las_cuatro_subpestanas():
+    for archivo in ("ingesta.html", "catalogo.html", "costes.html", "envios.html"):
         h = leer(archivo)
         sub = h[h.index('<nav class="subpestanas"'):h.index("</nav>", h.index('<nav class="subpestanas"'))]
-        assert [m for m in re.findall(r'href="(/[a-z]+)"', sub)] == ["/ingesta", "/catalogo", "/costes"], archivo  # noqa: E501
+        assert [m for m in re.findall(r'href="(/[a-z]+)"', sub)] == ["/ingesta", "/catalogo", "/costes", "/envios"], archivo  # noqa: E501
         assert sub.count("aria-current") == 1
     assert not (ESTATICOS / "app.js").exists()
     js = leer("catalogo.js")
@@ -238,7 +238,7 @@ def test_ofertas_ya_no_tiene_boton_recomendar_ni_limite_de_sondeos():
     html, js = leer("ofertas.html"), leer("ofertas.js")
     assert 'id="recomendar"' not in html and ">Recomendar<" not in html
     assert "MAX_PUNTUANDO" not in js and "sondeos" not in js
-    assert 'id="avance"' in html and "barraAvance($(\"avance\"), \"Calculando la compatibilidad de las ofertas\")" in js  # noqa: E501
+    assert 'id="avance"' in html and "barraAvance($(\"avance\"), \"Calculando la compatibilidad de las ofertas\"," in js  # noqa: E501
     textos = leer("textos.js")   # RF-10.2e: los textos, en un solo archivo
     assert TEXTO_TOPE in textos
     assert "TEXTOS.presupuesto" in js and "sueltas" not in js

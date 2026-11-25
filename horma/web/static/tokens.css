@@ -60,7 +60,7 @@
   --on-accent: #0a0a0a;
   --accent-text: #0a0a0a;
   --btn-border: #0a0a0a;
-  --bar-track: #d9d9d2;
+  --bar-track: #8f8f88;   /* 3:1 sobre el fondo: sin borde, la pista se ve sola */
   --bar-fill: #c8f031;
   --tab-active-bg: #c8f031;
   --tab-active-fg: #0a0a0a;
@@ -85,7 +85,7 @@
     --on-accent: #0a0a0a;
     --accent-text: #c8f031;
     --btn-border: #c8f031;
-    --bar-track: #2c2c2a;
+    --bar-track: #6a6a64;   /* 3:1 sobre la superficie oscura */
     --bar-fill: #c8f031;
     --tab-active-bg: #c8f031;
     --tab-active-fg: #0a0a0a;
@@ -108,7 +108,7 @@
   --on-accent: #0a0a0a;
   --accent-text: #c8f031;
   --btn-border: #c8f031;
-  --bar-track: #2c2c2a;
+  --bar-track: #6a6a64;   /* 3:1 sobre la superficie oscura */
   --bar-fill: #c8f031;
   --tab-active-bg: #c8f031;
   --tab-active-fg: #0a0a0a;

@@ -10,6 +10,10 @@ Salud» no son rasgos personales. Lo que se escapa, lo detecta el juez de los ev
 import re
 import unicodedata
 
+# Lo que se le dice a la usuaria cuando Horma quita un dato personal (RF-11.25): el mismo texto en la
+# subida de un CV (flujo `perfilar`) y al editar el perfil.
+AVISO_DATO_PERSONAL = "Hemos quitado un dato personal que Horma no guarda."
+
 _PATRONES: dict[str, list[str]] = {
     "edad": [
         r"\bedad\b", r"\bfecha de nacimiento\b", r"\bnacid[oa] (?:en|el)\b", r"\bnacimiento\b",

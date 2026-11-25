@@ -17,6 +17,7 @@ from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.fuente import CalificacionFuente
 from horma.schemas.oferta import Oferta, OfertaExtraida
 from horma.schemas.taxonomia import Taxonomia
+from horma.tools.descargar import Prohibida
 
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
        "stack": ["tpv"]}
@@ -223,3 +224,15 @@ def test_la_vigilancia_marca_una_orden_al_principio_de_linea():
     with metricas.capturar() as llamadas:
         AnalizadorOferta.run(TextoOferta(texto=texto), proveedor=ProveedorSimulado([ANALISIS]))
     assert "orden_a_ia" in llamadas[0].senales_entrada
+
+
+def test_una_fuente_que_responde_403_termina_en_no_apta_con_motivo():
+    """RF-11.25b: Adzuna responde 403; calificar termina con «no apta» y su motivo, sin error ni modelo."""
+    def prohibido(url):
+        raise Prohibida(url)
+
+    prov = ProveedorSimulado([])
+    e = crear_calificar(proveedor=prov, descargador=prohibido).run({"url": "https://www.adzuna.es/"})
+    c = CalificacionFuente.model_validate(e["calificacion"])
+    assert c.apta is False and not c.excluida_por_regla and prov.llamadas == []
+    assert any("403" in m for m in c.motivos)

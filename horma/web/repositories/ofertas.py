@@ -57,6 +57,31 @@ def _propia_igual(s: Session, usuaria_id: int, texto: str) -> dict | None:
     return dict(fila) if fila else None
 
 
+def propias_con_url(s: Session, usuaria_id: int) -> list[dict]:
+    """Las ofertas propias que tienen dirección (para reconocer una URL ya añadida, RF-11.29)."""
+    return [dict(r) for r in s.execute(text(
+        "select id, url, titulo, creada_en from ofertas where usuaria_id=:u and url is not null order by id"),
+        {"u": usuaria_id}).mappings()]
+
+
+def actualizar_texto(s: Session, oferta_id: int, texto: str) -> None:
+    """Una relectura trajo otro texto: se vuelve a analizar, sin su análisis ni sus notas (RF-11.29)."""
+    s.execute(text("update ofertas set texto_crudo=:t, huella=:h, estado='pendiente', motivo_error=null "
+                   "where id=:i"), {"t": texto, "h": huella(texto), "i": oferta_id})
+
+
+def borrar_notas(s: Session, oferta_id: int) -> None:
+    """Las notas de compatibilidad de una oferta propia (sesión suya: la RLS de `matches` es suya)."""
+    s.execute(text("delete from matches where oferta_id=:i"), {"i": oferta_id})
+
+
+def huella_y_estado_propia(s: Session, oferta_id: int, usuaria_id: int) -> tuple[str, str] | None:
+    """(huella, estado) de la oferta propia, o None si no existe o no es suya."""
+    fila = s.execute(text("select huella, estado from ofertas where id=:i and usuaria_id=:u"),
+                     {"i": oferta_id, "u": usuaria_id}).first()
+    return (fila[0], fila[1]) if fila else None
+
+
 def crear(s: Session, texto: str, *, fuente_id: int | None = None, clave_id: int | None = None,
           id_externo: str | None = None, url: str | None = None,
           usuaria_id: int | None = None, caduca_en=None,
@@ -82,8 +107,9 @@ def crear(s: Session, texto: str, *, fuente_id: int | None = None, clave_id: int
 def borrar_caducadas(s: Session) -> int:
     """Borra del catálogo las ofertas cuya fuente las da por caducadas (RF-5.5d, Himalayas), con sus
     notas. Se conservan las que ya tienen una candidatura: son trabajo de una usuaria."""
-    ids = ("(select id from ofertas o where usuaria_id is null and caduca_en < now() and not exists "
-           "(select 1 from candidaturas c where c.oferta_id = o.id))")
+    # La sesión de sistema no ve `candidaturas` (RLS): se pregunta por una función que solo devuelve si hay.
+    ids = ("(select id from ofertas o where usuaria_id is null and caduca_en < now() "
+           "and not oferta_con_candidatura(o.id))")
     s.execute(text(f"delete from matches where oferta_id in {ids}"))
     return s.execute(text(f"delete from ofertas where id in {ids}")).rowcount
 
@@ -266,6 +292,12 @@ def listar(s: Session, limite: int = 200) -> list[dict]:
         f"select {COLUMNAS_LISTA} from ofertas o left join fuentes f on f.id = o.fuente_id "
         "order by o.id desc limit :l"), {"l": limite}).mappings().all()
     return [dict(f) for f in filas]
+
+
+def urls_catalogo(s: Session) -> list[str | None]:
+    """La dirección de cada oferta del catálogo común (sin las propias de las usuarias)."""
+    filas = s.execute(text("select url from ofertas where usuaria_id is null order by id")).all()
+    return [u for (u,) in filas]
 
 
 def por_estado(s: Session) -> dict[str, int]:

@@ -107,6 +107,7 @@ mientras uno de estos sirva (RF-6.9).
 | **Botón secundario** | transparente, borde de 1 px en tinta, texto tinta; hover en superficie-2 |
 | **Botón de texto** | subrayado con desplazamiento de 4 px, peso 600, 44 px de alto |
 | **Campo** | 44 px de alto, superficie, borde de 1 px en tinta, sin radio; en móvil, texto de 16 px (para que iOS no haga zoom). La etiqueta va encima, en estilo mono |
+| **Cuadro de texto** (añadido por la spec 011) | campo de varias líneas con el ancho de su columna: crece en alto con lo que se escribe (hasta el 70 % de la pantalla; después se desplaza por dentro), nunca en ancho, y solo se estira en vertical (`resize: vertical`, `contain: inline-size`). Mismo borde y fondo que el campo |
 | **Casilla** | 22 px, con la fila entera clicable de 44 px; color de marca: tinta en claro y lima en oscuro |
 | **Panel** | transparente, borde de 1 px en tinta, 20 px de relleno (16 px en móvil). Agrupa formularios y filtros |
 | **Panel desplegado** | superficie y borde de 1 px en línea. Para guías y detalles |
@@ -114,17 +115,19 @@ mientras uno de estos sirva (RF-6.9).
 | **Fila desplegable** | toda la fila es clicable, con un chevrón de 44 px dibujado con bordes que lleva `aria-expanded` y `aria-controls`; el contenido desplegado va tras una línea superior |
 | **Plegable** | `<details>`/`<summary>` o botón con `aria-expanded`, con el mismo chevrón |
 | **Etiqueta de puesto** | 28 px de alto, borde de 1 px, fondo transparente, texto de 13 px y peso 600. El color sale del tono de la familia, con suficiente contraste. El texto siempre visible |
-| **Barra de compatibilidad** | 6 px de alto, sin radio, pista y relleno según el tema; `role="meter"` con valor, mínimo y máximo. A su lado, la nota en DM Mono |
+| **Barra de compatibilidad** | 6 px de alto, sin radio y sin línea de borde (la pista ya contrasta 3:1), pista y relleno según el tema; `role="meter"` con valor, mínimo y máximo. A su lado, la nota en DM Mono |
 | **Ayuda «?»** | botón de 44 × 44 px con un círculo de 20 px; abre una ayuda propia con foco o clic (no basta con `title`) y lleva `aria-label` «Qué significa …» |
 | **Explicación plegable** | la ayuda «?» junto al título de un bloque, con la explicación del bloque dentro (`montarExplicaciones()` en `comun.js`, sobre un párrafo marcado con `data-explicacion`). Sustituye a los párrafos explicativos sueltos (RF-10.14m) |
 | **Aviso** | texto con `role="status"` (o `alert` si es un error), con el color de error y nunca solo con color: el texto dice qué pasó |
 | **Tabla de datos** (admin) | cabeceras mono, filas con línea inferior, desplazamiento horizontal dentro de su caja en móvil |
 | **Documento** (CV y carta) | hoja de superficie con borde de 1 px en línea, tipografía del cuerpo y anchura de lectura |
-| **Ventana** (añadida por la spec 008) | `<dialog class="ventana">` modal de ancho de lectura (60 rem como máximo), borde de 1 px en tinta, cabecera con el título y «Cerrar» (secundario de 44 px), cuerpo con desplazamiento propio. Esc la cierra y el foco vuelve al botón que la abrió. Generaliza el visor de CV de Perfil |
-| **Barra de avance** (añadida por la spec 008) | pista de 6 px sin radio con relleno según el tema, `role="progressbar"` con `aria-valuenow`, mínimo y máximo, y encima una frase en mono con el porcentaje («Puntuando ofertas · 40 %»). El color nunca es la única señal. Sin animación si se pide reducir el movimiento |
+| **Ventana** (añadida por la spec 008) | `<dialog class="ventana">` modal de ancho de lectura (60 rem como máximo), borde de 1 px en tinta, cabecera con el título y «Cerrar» (secundario de 44 px), cuerpo con desplazamiento propio; con un documento (CV o carta), el documento ocupa todo el cuerpo (spec 011, T08o). Esc la cierra y el foco vuelve al botón que la abrió. Generaliza el visor de CV de Perfil |
+| **Barra de avance** (añadida por la spec 008) | pista de 6 px sin radio ni borde con relleno según el tema, `role="progressbar"` con `aria-valuenow`, mínimo y máximo, y encima una frase en mono con el porcentaje («Puntuando ofertas · 40 %»). Entre pasos avanza sola según lo que suele tardar la tarea, rápida al principio y cada vez más despacio, hacia el 95 %; si el % no cambia en 3 s, el relleno late; al volver de otra pestaña cuenta el tiempo fuera (RF-10.8c, D-035). El color nunca es la única señal. Sin animación si se pide reducir el movimiento |
 | **Aviso con dos acciones** (añadido por la spec 009) | fila con el texto a la izquierda y dos botones a la derecha, ambos de 44 px de alto (la acción que arregla y «Dar por visto»), separada por una línea inferior de 1 px. En móvil, el texto arriba y los botones debajo. Lleva el texto del aviso, nunca solo un color |
 | **Aviso con elección de longitud** (añadido por la spec 009) | el aviso con dos acciones con el texto arriba y las dos opciones debajo, de igual ancho («Mantener la longitud» y «Que Horma lo sintetice») |
 | **Indicador de avance** (añadido por la spec 010) | enlace en la cabecera, a la izquierda de «Tema» y «Salir», con la frase y el porcentaje en mono mayúsculas («Puntuando 40 %»), borde de 1 px, alto `--tap` y `role="status"`. Lleva a la pantalla de la tarea y desaparece al terminar. A 390 px cabe junto a la marca sin desplazar el menú. El texto es la señal: no depende del color |
+| **Barra de rango** (añadida por la spec 011) | un solo control para un mínimo y un máximo: pista de 6 px sin borde, tramo elegido en el color de relleno, dos tiradores con zona táctil de 44 px y sus dos números en mono a los lados. El mínimo no pasa del máximo. Se maneja con el teclado (flechas) y cada tirador lleva su `aria-label`. Etiqueta encima, como un campo |
+| **Botón de archivo** (añadido por la spec 011) | sigue la norma de los botones: primario si subir el archivo es la acción principal de la pantalla («Subir mi CV» en Ofertas, «Elegir archivos» en Perfil sin CV) y secundario si no («Subir archivos» en Perfil con CV) |
 
 - **RF-6.4b** Simetría (prioridad alta de Mar): los elementos de una misma fila o rejilla DEBERÁN
   tener la misma altura, la misma separación y estar alineados por abajo. Una etiqueta o un contador

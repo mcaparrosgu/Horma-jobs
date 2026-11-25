@@ -6,7 +6,7 @@ import socket
 from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 Resolvedor = Callable[[str], list[str]]
 
@@ -70,3 +70,16 @@ def validar_url(url: str, resolver: Resolvedor | None = None) -> str | None:
     if not all(_es_publica(ip) for ip in ips):
         return "La dirección no es de una página pública."
     return None
+
+
+_SEGUIMIENTO = ("gclid", "fbclid", "msclkid")
+
+
+def url_canonica(url: str) -> str:
+    """La misma dirección escrita de una sola manera (RF-11.29): esquema y dominio en minúsculas, sin
+    fragmento, sin parámetros de seguimiento (`utm_*`, `gclid`, `fbclid`, `msclkid`) y sin «/» final."""
+    partes = urlsplit((url or "").strip())
+    consulta = [(k, v) for k, v in parse_qsl(partes.query, keep_blank_values=True)
+                if not k.lower().startswith("utm_") and k.lower() not in _SEGUIMIENTO]
+    ruta = partes.path.rstrip("/") or "/"
+    return urlunsplit((partes.scheme.lower(), partes.netloc.lower(), ruta, urlencode(consulta), ""))

@@ -94,6 +94,7 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
   mostrar una barra de espera con el texto «Buscando y puntuando ofertas…», para que no parezca bloqueada (P20).
 - **RF-8.4c** Los filtros de vista DEBERÁN ser: nota mínima y máxima, orden (recientes / más compatibles) y estado
   (RF-8.6c). NO DEBERÁN guardarse en el servidor ni llamar al modelo; este navegador los recuerda (P2).
+  *(«Recientes» = por la llegada a Horma: spec 011, RF-11.32.)*
 - **RF-8.4d** Lo que se puntúa NO DEBERÁ depender de la vista: Horma puntúa en orden de más a menos parecido al
   perfil y decide si sigue con otra tanda con el rango 40-100 (RF-2.13), aunque la vista enseñe otro rango.
 
@@ -128,7 +129,8 @@ admin), RF-6.3e (portada sin sesión), RF-6.5, RF-6.5d y RF-6.5f (Recomendadas) 
   pulsarlo, la oferta DEBERÁ salir de la vista «Nuevas» sin confirmar y con el aviso «Oferta descartada.
   Deshacer». Las ofertas con candidatura abierta NO DEBERÁN tener «Descartar» (P4).
 - **RF-8.6c** El filtro de estado DEBERÁ tener: **Nuevas** (por defecto: sin candidatura y sin descartar) ·
-  **Con candidatura** (abierta o cerrada) · **Descartadas**. Cada opción con su número.
+  **Con candidatura** (abierta o cerrada) · **Descartadas**. Cada opción con su número. *(Ampliado por la spec 011,
+  RF-11.31: «Añadidas por mí».)*
 - **RF-8.6d** En «Descartadas», cada oferta DEBERÁ tener «Recuperar», que la devuelve a «Nuevas». Descartar no
   borra la nota guardada ni toca ninguna candidatura.
 - **RF-8.6e** Los descartes DEBERÁN ser de cada usuaria (RLS): nadie ve ni cambia los de otra.

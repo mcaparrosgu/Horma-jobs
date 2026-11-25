@@ -39,6 +39,12 @@ const TEXTOS = {
   sinCompatibilidad: "Sin compatibilidad",
   sinPerfil: "Sube tu CV para ver qué ofertas encajan contigo",
   sinPerfilBoton: "Subir mi CV",
+  // Al quitar un dato personal (RF-11.25): sale junto a lo que ella ve, sin ventana emergente.
+  datoPersonalTitulo: "Hemos quitado un dato personal",
+  datoPersonalMotivo: "Datos como la edad, el estado civil, los hijos o la salud no deben usarse para elegir a una persona: " +
+    "lo prohíben la normativa de protección de datos y la de igualdad de trato. Por eso Horma no los guarda ni los comparte. " +
+    "Si falta algo de tu experiencia, escríbelo sin ese dato.",
+  datoPersonalCerrar: "Entendido",
   usasVacio: "Aún no lo sabemos.",
   evitasVacio: "Aún no lo sabemos: sube una carta tuya.",   // RF-10.14l
   // Explicaciones de cada bloque, dentro de su ayuda «?» (RF-10.14m)
@@ -53,6 +59,7 @@ const TEXTOS = {
   preguntaTipoHueco: "¿Fue un empleo u otra cosa?",   // RF-10.14i
   resumenesPorCv: "Horma guarda el resumen de cada CV. Tu CV completo usa el del más reciente; al redactar un CV para una oferta, elige el que mejor encaja.",   // RF-10.14d
   maxLote: "Puedes subir hasta 5 archivos a la vez. Elige 5 o menos.",   // RF-10.18b
+  actualizandoPerfil: "Actualizando tu perfil con los CV que quedan",   // tras borrar un CV (RF-10.14)
   leyendoArchivos: (n) => `Leyendo ${n} archivos`,   // RF-10.18h
   perfilAplazado: "Tus archivos están guardados; rehacemos el perfil cuando haya presupuesto.",   // RF-10.18g
   dudososSinResponder: (nombres) => `No se han guardado, porque no dijiste qué eran: ${nombres.join(", ")}.`,   // RF-10.18e
@@ -106,6 +113,8 @@ const TEXTOS = {
   anadirUrl: "Para leerla, la dirección se envía a un servicio externo de lectura de páginas. LinkedIn, Indeed, Glassdoor e InfoJobs no se pueden leer: pega su texto.",
   anadirAplazada: "Oferta guardada. La analizamos mañana: hoy ya hemos trabajado todo lo posible para ti.",
   anadirRepetida: "Esa oferta ya la habías añadido.",
+  anadidaYa: (f) => `Ya añadiste esta oferta el ${f}.`,
+  anadirUrlFallida: "Estamos teniendo problemas para leer esa dirección. Mejor copia y pega aquí el texto de la oferta.",
   anadirError: "No se ha podido analizar la oferta añadida. Prueba a pegar su texto de nuevo.",
   nadaQueCalificar: "No queda ninguna oferta por calificar.",
   sinCandidaturas: "Todavía no tienes candidaturas.",

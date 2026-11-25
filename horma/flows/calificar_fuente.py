@@ -28,6 +28,16 @@ def crear(proveedor: Proveedor | None = None,
         return e
 
     def descargar(e: dict) -> dict:
+        try:
+            return _descargar(e)
+        except desc.Prohibida as p:  # RF-11.25b: un 403 es un resultado («no apta»), no un error
+            e["calificacion"] = CalificacionFuente(
+                url=e["url"], apta=False,
+                motivos=[f"La página responde 403 (acceso prohibido) a los accesos automáticos: {p}."],
+            ).model_dump(mode="json")
+            return e
+
+    def _descargar(e: dict) -> dict:
         if "condiciones" not in e:
             destino = e.get("condiciones_url")
             if not destino:
@@ -80,6 +90,7 @@ def crear(proveedor: Proveedor | None = None,
     pasos = {"regla_exclusion": regla_exclusion, "descargar": descargar, "auditar": auditar,
              "robots": comprobar_robots, "decidir": decidir}
     aristas = {"regla_exclusion": lambda e: "decidir" if "calificacion" in e else "descargar",
-               "descargar": "auditar", "auditar": "robots", "robots": "decidir"}
+               "descargar": lambda e: "decidir" if "calificacion" in e else "auditar",
+               "auditar": "robots", "robots": "decidir"}
     return PlainFlow("calificar_fuente", pasos=pasos, aristas=aristas, inicio="regla_exclusion",
                      finales={"decidir"})
