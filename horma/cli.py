@@ -434,6 +434,8 @@ def _mostrar_medicion(m: dict) -> None:
         typer.echo(f"{f['portal']:<24}{f['ofertas']:>8}  {cuenta}")
     typer.echo(f"{m['total']} ofertas: {m['automaticas']} con canal automático "
                f"({m['exigen_cuenta']} exigen cuenta) y {m['no_automaticas']} no automáticas.")
+    for x in m.get("motivos", []):
+        typer.echo(f"  No automáticas · {x['motivo']} {x['ofertas']}")
 
 
 @envios.command("medir")

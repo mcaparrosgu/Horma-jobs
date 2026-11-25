@@ -18,6 +18,10 @@ function pintar(r) {
   t.append(encabezado, cuerpo);
   $("resumen").textContent = `${entero(r.total)} ofertas: ${entero(r.automaticas)} con canal automático ` +
     `(${entero(r.exigen_cuenta)} exigen cuenta) y ${entero(r.no_automaticas)} no automáticas.`;
+  const motivos = $("motivos");
+  motivos.replaceChildren();
+  (r.motivos || []).forEach((x) => motivos.append(nodo("li", `${x.motivo} ${entero(x.ofertas)}`)));
+  $("motivos-bloque").hidden = !(r.motivos || []).length;
   $("resultado").hidden = false;
 }
 

@@ -115,7 +115,7 @@ label input.corto{ width: 7rem; }
 .fila input:not(.corto):not([type="checkbox"]){ flex: 1 1 14rem; }
 .editor{ display: grid; gap: 0.5rem; margin-top: 0.5rem; }
 .editor.fila{ display: flex; }
-.rango{ display: inline-flex; align-items: center; gap: 0.5rem; }
+.rango{ display: block; }
 
 /* ── Avisos y estados (siempre con texto) ── */
 #aviso, .aviso{ min-height: 1.5rem; margin: 0.5rem 0; color: var(--muted); white-space: pre-line; }

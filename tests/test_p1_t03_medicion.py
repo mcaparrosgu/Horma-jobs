@@ -31,6 +31,12 @@ def test_la_tabla_cuenta_portal_ofertas_y_exige_cuenta():
         ("Teamtailor", 2, False), ("InfoJobs", 1, True), ("Lever", 1, False), ("No automático", 3, False)]
 
 
+def test_los_motivos_de_las_no_automaticas_se_cuentan():
+    r = resumir(URLS, _resolver)
+    assert r["motivos"] == [{"motivo": "x", "ofertas": 2},
+                            {"motivo": "La oferta no tiene enlace.", "ofertas": 1}]
+
+
 def test_una_direccion_repetida_se_resuelve_una_sola_vez():
     llamadas = []
 
