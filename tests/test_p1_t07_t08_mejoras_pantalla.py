@@ -81,3 +81,12 @@ vista = acotarRango("40", "70", "min");                // lo que da la barra con
 console.log(JSON.stringify([casillas, ofertas.filter(enRango).map((o) => o.nota)]));"""
     casillas, barra = _node(codigo)
     assert casillas == barra == [40, 55, 70, 5, 0]
+
+
+def test_los_cuadros_de_texto_crecen_solo_en_alto_y_nunca_pasan_del_ancho_de_su_columna():
+    """M15: `field-sizing: content` ensanchaba el cuadro con una palabra larga; `contain` lo impide."""
+    reglas = [x for x in leer("estilo.css").splitlines() if x.startswith("textarea")]
+    crecen = [x for x in reglas if "field-sizing: content" in x]
+    assert crecen and all("contain: inline-size" in x for x in crecen)
+    assert any(x.startswith("textarea{") and "resize: vertical" in x for x in reglas)
+    assert not any("resize: both" in x or "resize: horizontal" in x for x in reglas)

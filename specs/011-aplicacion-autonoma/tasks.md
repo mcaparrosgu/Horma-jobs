@@ -62,4 +62,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_s11_barra_nunca_parada.py` (ejecuta `barraAvance` en node).
 - [x] T08h — El aviso «Hemos quitado un dato personal» sale al subir un CV con fecha de nacimiento, nacionalidad o estado civil (M12b). Causa: solo salía si el modelo devolvía el dato y el código lo quitaba; el modelo ya no lo extrae (su prompt se lo prohíbe), así que no salía nunca. Ahora también se mira el texto de los CV.
   - **Test:** `tests/test_f2_t08_t10_flujos.py`.
+- [x] T08i — Los cuadros de texto crecen solo en alto y nunca pasan del ancho de su columna (M15: descripción de experiencia, «Por texto» de «Añadir oferta» y corregir oferta). Causa: `field-sizing: content` ensanchaba el cuadro con una palabra larga sin espacios. Regla común en `estilo.css` y en la guía (spec 006, «Cuadro de texto»).
+  - **Test:** `tests/test_p1_t07_t08_mejoras_pantalla.py`. **Navegador:** pendiente de Opus/Mar.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.

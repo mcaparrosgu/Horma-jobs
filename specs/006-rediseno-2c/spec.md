@@ -107,6 +107,7 @@ mientras uno de estos sirva (RF-6.9).
 | **Botón secundario** | transparente, borde de 1 px en tinta, texto tinta; hover en superficie-2 |
 | **Botón de texto** | subrayado con desplazamiento de 4 px, peso 600, 44 px de alto |
 | **Campo** | 44 px de alto, superficie, borde de 1 px en tinta, sin radio; en móvil, texto de 16 px (para que iOS no haga zoom). La etiqueta va encima, en estilo mono |
+| **Cuadro de texto** (añadido por la spec 011) | campo de varias líneas con el ancho de su columna: crece en alto con lo que se escribe (hasta el 70 % de la pantalla; después se desplaza por dentro), nunca en ancho, y solo se estira en vertical (`resize: vertical`, `contain: inline-size`). Mismo borde y fondo que el campo |
 | **Casilla** | 22 px, con la fila entera clicable de 44 px; color de marca: tinta en claro y lima en oscuro |
 | **Panel** | transparente, borde de 1 px en tinta, 20 px de relleno (16 px en móvil). Agrupa formularios y filtros |
 | **Panel desplegado** | superficie y borde de 1 px en línea. Para guías y detalles |
