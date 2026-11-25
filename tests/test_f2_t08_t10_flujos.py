@@ -287,3 +287,15 @@ def test_sin_dato_personal_no_hay_aviso():
         cvs=[{"cv_id": 1, "nombre": "A", "texto": CV1}])
     pendientes = Perfil.model_validate(e["perfil"]).preguntas_pendientes
     assert not any("Hemos quitado" in q.pregunta for q in pendientes)
+
+
+def test_un_rasgo_personal_en_la_descripcion_de_un_puesto_se_quita_y_avisa():
+    """M12: «Casada, con hijos» en la descripción de un puesto se quita, el puesto se queda y hay aviso."""
+    cv = "Camarera en Bar Sol. Casada, con hijos."
+    _, e = _perfilar(_extraccion(
+        experiencias=[{"puesto": "Camarera", "empresa": "Bar Sol", "descripcion": "Casada, con hijos",
+                       "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": cv}])
+    p = Perfil.model_validate(e["perfil"])
+    assert p.experiencias[0].puesto == "Camarera" and not p.experiencias[0].descripcion
+    assert any(q.pregunta.startswith("Hemos quitado un dato personal") for q in p.preguntas_pendientes)

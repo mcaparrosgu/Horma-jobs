@@ -45,6 +45,9 @@ def _con_origen(dato: dict) -> dict:
 
 
 
+_NOMBRES_DE_DATO = ("nombre", "puesto", "titulo", "idioma", "valor", "descripcion")
+
+
 def _periodo_de(dato: dict) -> dict:
     try:
         p = PeriodoCubierto(inicio=dato.get("inicio") or "", fin=dato.get("fin") or dato.get("inicio") or "")
@@ -67,6 +70,19 @@ def _actividad_nueva(p: dict, dato: dict, antigua: int | None = None) -> str | N
     else:
         p["actividades"].insert(antigua, nuevo)
     return None
+
+
+def _sin_sensibles(dato: dict) -> tuple[dict | None, bool]:
+    """RT-09 en las ediciones a mano: el texto con un rasgo personal no se guarda. Si lo tiene el nombre del
+    dato (puesto, título…), el dato entero se descarta; si lo tiene otro campo (descripción…), solo ese."""
+    for k in _NOMBRES_DE_DATO[:-1]:  # sin «descripcion»: esa se limpia, no descarta el dato
+        if isinstance(dato.get(k), str) and rasgos_personales(dato[k]):
+            return None, True
+    limpio, quitado = dict(dato), False
+    for k, v in dato.items():
+        if k != "origen" and isinstance(v, str) and rasgos_personales(v):
+            limpio[k], quitado = None, True
+    return limpio, quitado
 
 
 def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], str | None]) -> dict:
@@ -104,9 +120,6 @@ def _buscar(elementos: list[dict], clave: str) -> int | None:
                for k, v in x.items() if k != "origen"):
             return i
     return None
-
-
-_NOMBRES_DE_DATO = ("nombre", "puesto", "titulo", "idioma", "valor", "descripcion")
 
 
 def _nombre_de_dato(dato: dict) -> str:
@@ -158,6 +171,13 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None,
         seccion, _, resto = campo.partition(".")
         clave = resto.partition(".")[0]
         nuevo = {k: v for k, v in dato.items() if v not in (None, "")}
+        aviso = None
+        if seccion != "actividades" and seccion in (*LISTAS, *UNICOS):
+            nuevo, quitado = _sin_sensibles(nuevo)
+            nuevo = {k: v for k, v in (nuevo or {}).items() if v not in (None, "")}
+            aviso = AVISO_DATO_PERSONAL if quitado else None
+            if not nuevo:
+                return aviso
         if seccion == "actividades":
             cambiado.update(campo="actividades", valor=_nombre_de_dato(nuevo))
             return _actividad_nueva(p, nuevo)
@@ -182,6 +202,7 @@ def responder(engine: Engine, usuaria_id: int, indice: int, dato: dict | None,
             cambiado.update(campo="nombre", valor=p["nombre"])
         else:
             raise DatoNoValido(f"La pregunta sobre «{campo}» no admite un dato: respóndela sin dato.")
+        return aviso
     resultado = _nueva_version(engine, usuaria_id, cambio)
     return {**resultado, **({"cambio": cambiado} if cambiado else {})}
 
@@ -194,18 +215,25 @@ def corregir(engine: Engine, usuaria_id: int, campo: str, indice: int | None,
             if indice is not None and not 0 <= indice < len(p[campo]):
                 raise DatoNoValido("Ese dato no existe.")
             return _actividad_nueva(p, dato, indice)
+        limpio, quitado = (None, False) if dato is None else _sin_sensibles(dato)
+        aviso = AVISO_DATO_PERSONAL if quitado else None
         if campo in LISTAS:
             if indice is None and dato is not None:  # sin índice: dato nuevo al final de la lista
-                p[campo].append(_con_origen(dato))
-                return None
+                if limpio is not None:
+                    p[campo].append(_con_origen(limpio))
+                return aviso
             if indice is None or not 0 <= indice < len(p[campo]):
                 raise DatoNoValido("Ese dato no existe.")
             if dato is None:
                 p[campo].pop(indice)
+            elif limpio is None:
+                p[campo].pop(indice)
             else:
-                p[campo][indice] = _con_origen(dato)
+                p[campo][indice] = _con_origen(limpio)
+            return aviso
         elif campo in UNICOS:
-            p[campo] = None if dato is None else _con_origen(dato)
+            p[campo] = None if limpio is None else _con_origen(limpio)
+            return aviso
         elif campo == "nombre":   # su nombre, tal como sale en el encabezado de «Tu CV completo»
             valor = str((dato or {}).get("valor") or "").strip()
             if not valor:

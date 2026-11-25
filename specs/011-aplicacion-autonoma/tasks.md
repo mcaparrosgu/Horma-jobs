@@ -33,7 +33,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T04 — Cierre de A. 🛑 Mar lee la medición del catálogo real y se anota en la hoja de ruta como decisión; PR.
 
 ### M · Mejoras pequeñas (RF-11.25 a 11.28)
-- [ ] T05 — El aviso «Hemos quitado un dato personal» se ve.
+- [x] T05 — El aviso «Hemos quitado un dato personal» se ve.
   - **Test:** un CV con un dato que Horma no guarda devuelve el aviso en la API y la pantalla lo pinta.
 - [x] T06 — Calificar una fuente que responde 403 da «no apta» con motivo.
   - **Test:** con un 403 simulado, la calificación termina sin error y guarda el motivo.
