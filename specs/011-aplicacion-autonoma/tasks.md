@@ -63,13 +63,13 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T08h — El aviso «Hemos quitado un dato personal» sale al subir un CV con fecha de nacimiento, nacionalidad o estado civil (M12b). Causa: solo salía si el modelo devolvía el dato y el código lo quitaba; el modelo ya no lo extrae (su prompt se lo prohíbe), así que no salía nunca. Ahora también se mira el texto de los CV.
   - **Test:** `tests/test_f2_t08_t10_flujos.py`.
 - [x] T08i — Los cuadros de texto crecen solo en alto y nunca pasan del ancho de su columna (M15: descripción de experiencia, «Por texto» de «Añadir oferta» y corregir oferta). Causa: `field-sizing: content` ensanchaba el cuadro con una palabra larga sin espacios. Regla común en `estilo.css` y en la guía (spec 006, «Cuadro de texto»).
-  - **Test:** `tests/test_p1_t07_t08_mejoras_pantalla.py`. **Navegador:** pendiente de Opus/Mar.
+  - **Test:** `tests/test_p1_t07_t08_mejoras_pantalla.py`. **Navegador:** 1280 px comprobado (claro y oscuro); 390 px, pendiente de Mar.
 - [x] T08j — Al cerrar «Añadir oferta» con una lectura por URL en marcha, la barra «Analizando la oferta» pasa a la página, bajo los filtros (M16: se quedaba dentro de la ventana cerrada y no se veía ninguna). La ventana es modal: para ir a otra pantalla hay que cerrarla antes.
   - **Test:** `tests/test_s11_retomar_lectura_url.py`.
 - [x] T08k — Una URL ya añadida no se vuelve a leer ni analizar: «Ya añadiste esta oferta el …» con «Ver oferta» y «Leer de nuevo», que relee y actualiza la misma oferta (RF-11.29, D-030; antes la misma URL de lifeworq creó las ofertas 200, 203 y 205, cada una pagada).
-  - **Test:** `tests/test_s11_url_repetida.py` (URL canónica, API y worker con BD), `tests/test_s11_url_repetida_cliente.py` (pantalla, en node).
+  - **Test:** `tests/test_s11_url_repetida.py` (URL canónica, API y worker con BD), `tests/test_s11_url_repetida_cliente.py` (pantalla, en node). **Navegador:** 1280 px comprobado (claro y oscuro); 390 px, pendiente de Mar.
 - [x] T08l — Una sola barra «Analizando la oferta» de la lectura de la página al análisis, sin cambiar de frase ni bajar (RF-11.30, D-031; antes pasaba a «Analizando la oferta añadida» y bajaba, p. ej. de 15 % a 4 %).
-  - **Test:** `tests/test_s11_una_sola_barra.py` (en node); `tests/test_s11_retomar_lectura_url.py` ajustado. **Navegador:** pendiente de Opus/Mar.
+  - **Test:** `tests/test_s11_una_sola_barra.py` (en node); `tests/test_s11_retomar_lectura_url.py` ajustado. **Navegador:** 1280 px comprobado; 390 px, pendiente de Mar.
 - [x] T08m — Al rehacer el perfil, lo que escribió la usuaria pasa el filtro de datos personales y, si se quita algo, sale el aviso (RF-11.25c, D-032; un «casada con hijos» escrito antes de T05 pasaba de versión en versión).
   - **Test:** `tests/test_f2_t08_t10_flujos.py`.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.
