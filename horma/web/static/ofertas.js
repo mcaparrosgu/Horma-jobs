@@ -699,6 +699,17 @@ function avisarUrl(texto, error) {
   a.className = error ? "alerta" : "suave";
 }
 
+// Qué añadidas se siguen al volver a Ofertas: las que aún se analizan, las que esperan su nota y, mientras se puntúa,
+// las ya analizadas que todavía no están en la lista (sin esto, la barra y la oferta «desaparecían» al cambiar de pantalla).
+function anadidasPorRetomar(propias, todas, puntuando) {
+  return propias.filter((x) => {
+    const fila = todas.find((o) => o.id === x.id);
+    if (x.estado === "pendiente") return true;
+    if (fila) return fila.sin_puntuar && !fila.descartada;
+    return x.estado === "procesada" && puntuando;
+  }).map((x) => x.id);
+}
+
 // Barra «Analizando la oferta añadida · N %». La lista se recarga en cada consulta, así la oferta aparece
 // en cuanto está analizada, y se sigue hasta que tiene su compatibilidad (o ya no se va a calcular).
 function seguirAnadida(id) {
@@ -808,6 +819,7 @@ $("formulario-texto").addEventListener("submit", async (e) => {
   const aviso = $("aviso-texto");
   if (!texto) { aviso.textContent = "Pega el texto de la oferta."; return; }
   $("enviar").disabled = true;
+  aviso.className = "suave";
   aviso.textContent = "Enviando…";
   const r = await api("/ofertas", { metodo: "POST", cuerpo: { texto } });
   $("enviar").disabled = false;
@@ -833,8 +845,11 @@ async function esperarLectura(id) {
   $("enviar-url").disabled = false;
   $("lectura-url").replaceChildren();
   if (r.datos.estado === "error") {
-    avisarUrl(r.datos.motivo || "La página no se ha podido leer: pega el texto de la oferta.", true);
-    elegirPestanaAnadir("texto");
+    avisarUrl("");
+    elegirPestanaAnadir("texto");   // el aviso se pinta en esta pestaña, que es la que ve
+    const aviso = $("aviso-texto");
+    aviso.className = "alerta";
+    aviso.textContent = TEXTOS.anadirUrlFallida;
     return;
   }
   $("url").value = "";
@@ -877,11 +892,9 @@ $("formulario-url").addEventListener("submit", async (e) => {
   pintarTitular();
   await retomarOLanzar();
   // Al volver a la pantalla se retoma el seguimiento de las añadidas que aún se analizan o esperan nota.
-  const propias = await api("/api/ofertas/propias");
+  const [propias, activas] = await Promise.all([api("/api/ofertas/propias"),
+                                                api("/api/tareas/activas?tipo=puntuar_propias&tipo=puntuar_una")]);
   if (propias.ok) {
-    for (const x of propias.datos) {
-      const nueva = todas.find((o) => o.id === x.id);
-      if (x.estado === "pendiente" || (nueva && nueva.sin_puntuar && !nueva.descartada)) seguirAnadida(x.id);
-    }
+    for (const id of anadidasPorRetomar(propias.datos, todas, activas.ok && activas.datos.tareas.length > 0)) seguirAnadida(id);
   }
 })();

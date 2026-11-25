@@ -14,7 +14,7 @@ def test_la_ventana_tiene_dos_pestanas_y_ningun_boton_leer_oferta():
     ventana = html[html.index('<dialog id="ventana-anadir"'):html.index("</dialog>")]
     assert "Leer oferta" not in ventana
     assert 'role="tablist"' in ventana and ventana.count('role="tab"') == 2
-    assert "Con una dirección" in ventana and "Pegando el texto" in ventana
+    assert "Por URL" in ventana and "Por texto" in ventana
     # uno por formulario, nunca los dos a la vez
     assert len(re.findall(r">Añadir oferta</button>", ventana)) == 2
     # el formulario del texto nace oculto: se ve la dirección

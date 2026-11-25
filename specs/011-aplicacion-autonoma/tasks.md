@@ -49,7 +49,10 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T08c — La barra no retrocede al cambiar de pestaña y volver (RF-10.8c): se guarda en `sessionStorage` el último
   valor mostrado de cada tarea (Perfil y «Analizando la oferta añadida»).
   - **Test:** `tests/test_s11_barra_avance_persistente.py` (ejecuta `barraAvance` en node).
-- [x] T08d — «Añadir oferta» en dos pestañas («Con una dirección» y «Pegando el texto»), un solo botón «Añadir oferta» a la
+- [x] T08d — «Añadir oferta» en dos pestañas («Por URL» y «Por texto»), un solo botón «Añadir oferta» a la
   vista; desaparece «Leer oferta» (prueba de Mar: confundía con el verde de abajo).
   - **Test:** `tests/test_s11_anadir_oferta_dos_pestanas.py`. **Navegador:** 1280 px comprobado; 390 px y oscuro, pendientes.
+- [x] T08e — Si la URL no se puede leer, el aviso sale en «Por texto» («Estamos teniendo problemas para leer esa dirección…»);
+  al volver a Ofertas se retoma la oferta ya analizada que aún no está en la lista (la barra y la oferta no desaparecen).
+  - **Test:** `tests/test_s11_anadir_oferta_retomar_y_url.py`.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.
