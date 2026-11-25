@@ -430,8 +430,8 @@ estructuradas, como un indexador de ofertas públicas.
 ### 7.2 Exclusiones que se mantienen
 
 1. **No hay lado empresas ni recruiters.** Abrirlo convertiría a Horma en sistema de alto riesgo.
-2. **No usa LinkedIn ni Indeed,** ni como fuente ni para enviar. **No envía candidaturas en InfoJobs ni en
-   Welcome to the Jungle;** como fuente de ofertas públicas siguen las condiciones de 7.1.
+2. **No usa LinkedIn ni Indeed,** ni como fuente ni para enviar. InfoJobs y Welcome to the Jungle sí están en
+   alcance, como fuente (7.1) y para enviar, con las mismas reglas que cualquier portal (puntos 3 y 4).
 3. **No resuelve captchas, no rota IP, no disfraza el navegador, no crea cuentas y no entra en áreas privadas.**
 4. **No guarda contraseñas de portales.** Los portales con cuenta quedan como «Envíala tú».
 5. **No envía en Greenhouse ni por la API de Recruitee.**

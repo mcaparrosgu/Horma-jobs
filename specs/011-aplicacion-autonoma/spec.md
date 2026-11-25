@@ -32,8 +32,8 @@ Sin aclaraciones propias: las decisiones son de Mar (23 y 25-nov) y se citan aqu
 - **RF-11.1** El sistema DEBERÁ contar, sin enviar nada, a qué portal lleva el enlace de cada oferta del
   catálogo y cuántas exigen cuenta, y enseñarlo en Admin y en la consola.
 - **RF-11.1b** `resolver_destino` DEBERÁ reconocer el portal por la dirección final del enlace, siguiendo las
-  redirecciones, y devolver un canal o «no automático». LinkedIn, Indeed, InfoJobs y Welcome to the Jungle
-  DEBERÁN dar siempre «no automático».
+  redirecciones, y devolver un canal o «no automático». LinkedIn e Indeed
+  DEBERÁN dar siempre «no automático»; InfoJobs y Welcome to the Jungle se resuelven como cualquier portal.
 - **RF-11.1c** La medición NO DEBERÁ hacer ninguna petición que no sea `GET` ni llamar al modelo.
 
 ### M · Mejoras pequeñas (PRD RF-016)
