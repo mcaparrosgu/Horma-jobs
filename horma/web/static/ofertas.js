@@ -492,6 +492,7 @@ function frasePorError(t) {
 function seguirPuntuacion(tareaId) {
   if (dejarDeSeguir) dejarDeSeguir();
   if (!barra) barra = barraAvance($("avance"), "Calculando la compatibilidad de las ofertas");
+  barra.vincular(`horma:avance:puntuar:${tareaId}`);   // al volver de otra pestaña no retrocede (RF-10.8c)
   ultimoAvance = -1;
   dejarDeSeguir = seguirTarea(tareaId, async (p) => {
     if (barra) barra.poner(p);
@@ -720,6 +721,7 @@ function pintarBarraAnadidas() {
     const texto = lote.size === 1 ? "Analizando la oferta añadida" : "Analizando las ofertas añadidas";
     barraAnadidas = { n: lote.size, barra: barraAvance($("avance"), texto) };
   }
+  barraAnadidas.barra.vincular(`horma:avance:anadidas:${[...lote.keys()].sort().join(",")}`);
   const pcts = [...lote.values()].map((e) => (e.fin ? 100 : e.pct));
   barraAnadidas.barra.poner(pcts.reduce((a, b) => a + b, 0) / pcts.length);
 }

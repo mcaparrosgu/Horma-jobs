@@ -515,11 +515,13 @@ async function cargarPerfil() {
   }
   if (construyendo) {
     const activas = await api("/api/tareas/activas?tipo=perfilar");   // una sola barra, con su % (RF-10.8)
-    const progreso = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0].progreso : 0;
+    const tarea = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0] : null;
+    const progreso = tarea ? tarea.progreso : 0;
     // la misma barra en cada consulta: sigue rellenándose en vez de empezar de cero (RF-10.8c)
     const rehaciendo = sessionStorage.getItem(CLAVE_REHACIENDO) === "1";
     if (!barraLectura) barraLectura = barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV");
     else if (barraLectura.caja.parentNode !== estado) estado.append(barraLectura.caja);
+    if (tarea) barraLectura.vincular(`horma:avance:perfilar:${tarea.id}`);   // al volver de otra pestaña no retrocede
     barraLectura.poner(progreso);
     temporizador = setTimeout(cargarPerfil, 3000);
   }

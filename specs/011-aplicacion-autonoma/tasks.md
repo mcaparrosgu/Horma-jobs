@@ -46,7 +46,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T08b — Tras borrar un CV, la barra dice «Actualizando tu perfil con los CV que quedan», no «Estamos leyendo tu CV».
   Rehacer el perfil con los CV que quedan es correcto (RF-10.14); el fallo era solo el texto.
   - **Test:** `tests/test_s11_borrar_cv_texto_barra.py`.
-- [ ] T08c — La barra no retrocede al cambiar de pestaña y volver (RF-10.8c): se guarda en `sessionStorage` el último
+- [x] T08c — La barra no retrocede al cambiar de pestaña y volver (RF-10.8c): se guarda en `sessionStorage` el último
   valor mostrado de cada tarea (Perfil y «Analizando la oferta añadida»).
   - **Test:** `tests/test_s11_barra_avance_persistente.py` (ejecuta `barraAvance` en node).
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.

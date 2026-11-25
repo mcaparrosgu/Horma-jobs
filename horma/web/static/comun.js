@@ -158,7 +158,9 @@ async function pintarPersona(persona) {
 }
 
 // Barra de avance (RF-8.7): frase con el porcentaje y pista con `role="progressbar"`. Devuelve `poner(%)`,
-// `quitar()` y `caja` (para volver a colocarla sin perder su avance al repintar la pantalla).
+// `quitar()`, `vincular(clave)` y `caja` (para volver a colocarla sin perder su avance al repintar la pantalla).
+// `vincular` guarda en `sessionStorage` el último valor mostrado de una tarea: al cambiar de pestaña y volver, la barra
+// retoma ese punto en vez de empezar en 2 % (RF-10.8c). `quitar` borra la clave: la tarea ya terminó.
 // El servidor avanza por pasos (cada paso puede tardar medio minuto); entre paso y paso la barra sigue
 // rellenándose despacio hacia el siguiente, sin llegar nunca a él ni al 100 % (RF-10.8c).
 const AVANCE_TICK_MS = 400;
@@ -179,13 +181,24 @@ function barraAvance(contenedor, texto, indeterminada = false) {
   let real = 0;
   let mostrado = 0;
   let reloj = null;
+  let clave = null;
   const pintar = () => {
     const v = Math.max(0, Math.min(100, Math.round(mostrado)));
     frase.textContent = `${texto} · ${v} %`;
     pista.setAttribute("aria-valuenow", String(v));
     relleno.style.width = `${mostrado}%`;   // por CSSOM: la CSP no permite style= en el HTML
+    if (clave) sessionStorage.setItem(clave, String(mostrado));
+  };
+  const vincular = (nueva) => {
+    if (indeterminada || clave === nueva) return;
+    clave = nueva;
+    const guardado = Number(sessionStorage.getItem(clave));
+    if (guardado > mostrado && guardado < 100) mostrado = guardado;
+    pintar();
   };
   const quitar = () => {
+    if (clave) sessionStorage.removeItem(clave);
+    clave = null;
     clearInterval(reloj);
     caja.remove();
   };
@@ -212,7 +225,7 @@ function barraAvance(contenedor, texto, indeterminada = false) {
     poner(0);
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) reloj = setInterval(avanzarSolo, AVANCE_TICK_MS);
   }
-  return { poner, quitar, caja };
+  return { poner, quitar, vincular, caja };
 }
 
 // Sigue una tarea del servidor cada 3 s mientras esté en marcha, sin límite (RF-8.7f). `alAvanzar(progreso, tarea)`
