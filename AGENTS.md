@@ -28,6 +28,8 @@ están en `specs/system.md`.
   frases cortas y listas breves; explica el porqué en una o dos líneas. Los informes y documentos
   sintetizan: conclusiones y decisiones primero, evidencia mínima, sin repetir lo que ya está en otro
   documento. La brevedad no oculta riesgos, costes ni cosas irreversibles: se avisan siempre.
+- Encargos de investigación (`docs/investigacion/encargos.md`): al entregar el informe, el encargo no se
+  borra. Se le pone «(HECHA)» delante del título y, debajo, la ruta del informe.
 
 ## Reglas de arquitectura del producto (de specs/system.md)
 - Los agentes del producto son módulos Python: `prompt.md` + esquemas Pydantic de entrada y
