@@ -238,7 +238,7 @@ def test_ofertas_ya_no_tiene_boton_recomendar_ni_limite_de_sondeos():
     html, js = leer("ofertas.html"), leer("ofertas.js")
     assert 'id="recomendar"' not in html and ">Recomendar<" not in html
     assert "MAX_PUNTUANDO" not in js and "sondeos" not in js
-    assert 'id="avance"' in html and "barraAvance($(\"avance\"), \"Calculando la compatibilidad de las ofertas\")" in js  # noqa: E501
+    assert 'id="avance"' in html and "barraAvance($(\"avance\"), \"Calculando la compatibilidad de las ofertas\"," in js  # noqa: E501
     textos = leer("textos.js")   # RF-10.2e: los textos, en un solo archivo
     assert TEXTO_TOPE in textos
     assert "TEXTOS.presupuesto" in js and "sueltas" not in js

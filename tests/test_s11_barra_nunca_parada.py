@@ -1,4 +1,5 @@
-"""Spec 011 · T08g · la barra de avance nunca parece parada (RF-10.8c).
+"""Spec 011 · T08g · la barra de avance nunca parece parada (RF-10.8c). Revisado en T08s (D-035): ya no
+hay tope de «paso real + 20»; la barra se acerca al 95 % y, si el % no cambia en 3 s, el relleno late.
 Ejecuta `barraAvance` real en node con un DOM de mentira y un reloj manual (un tick = 400 ms)."""
 import json
 import shutil
@@ -42,7 +43,7 @@ function ticks(b, n, real, hist) {
     if (f) f();
     const v = pct(b);
     if (hist.length && v < hist[hist.length - 1]) salida.errores.push("baja " + v);
-    if (v >= 100 || v > real + 20) salida.errores.push("tope " + v);
+    if (v >= 100) salida.errores.push("100 antes de terminar");
     hist.push(v);
     const ult = hist.slice(-10);
     const cambio = ult.length < 10 || ult.some((x) => x !== ult[0]);
@@ -54,22 +55,17 @@ function ticks(b, n, real, hist) {
 const modo = process.argv[4];
 if (modo === "perfil") {
   const hist = [];
-  const a = barraAvance(el(), "x"); a.vincular("horma:avance:perfilar:5"); a.poner(0);
+  const a = barraAvance(el(), "x", false, 37); a.vincular("horma:avance:perfilar:5"); a.poner(0);
   ticks(a, 50, 0, hist);
-  const b = barraAvance(el(), "x"); b.vincular("horma:avance:perfilar:5"); b.poner(0);
-  ticks(b, 140, 0, hist);
-  salida.espera = b.caja.classList.contains("esperando");
-  const antes = pct(b);
-  b.poner(14);
-  salida.sinEspera = !b.caja.classList.contains("esperando");
-  ticks(b, 60, 14, []);   // tras un paso real, la ventana de «parada» empieza de nuevo
-  salida.avanza = pct(b) > Math.max(antes, 14);
-} else if (modo === "lectura") {
-  almacen.set("horma:avance:lectura:7", "29.7");
-  const b = barraAvance(el(), "x"); b.vincular("horma:avance:lectura:7"); b.poner(10);
-  relojes[relojes.length - 1]();
-  salida.espera = b.caja.classList.contains("esperando");
-  salida.pct = pct(b);
+  // se repinta la pantalla: otra barra con la misma clave sigue desde su punto; el paso real tarda 200 s
+  const b = barraAvance(el(), "x", false, 37); b.vincular("horma:avance:perfilar:5"); b.poner(0);
+  ticks(b, 500, 0, hist);
+  salida.espera = b.caja.classList.contains("esperando");   // casi en el 95 %: el % apenas cambia y late
+  salida.alFinal = pct(b);
+  b.poner(96);
+  salida.sinEspera = !b.caja.classList.contains("esperando");   // un paso real cambia el % y deja de latir
+  ticks(b, 20, 96, []);
+  salida.vuelveALatir = b.caja.classList.contains("esperando");
 } else {
   const b = barraAvance(el(), "x"); b.vincular("k"); b.poner(0);
   salida.relojes = relojes.length;
@@ -91,16 +87,10 @@ def _correr(tmp_path, modo, reducir=False):
 def test_el_perfil_nunca_parece_parado_aunque_el_paso_real_tarde(tmp_path):
     s = _correr(tmp_path, "perfil")
     assert s["errores"] == []
-    assert s["espera"] is True        # en el tope, el relleno late
-    assert s["sinEspera"] is True     # un paso real sube el tope
-    assert s["avanza"] is True
-
-
-@node
-def test_la_lectura_retomada_en_el_tope_espera_desde_el_primer_tick(tmp_path):
-    s = _correr(tmp_path, "lectura")
-    assert s["espera"] is True
-    assert s["pct"] >= 29
+    assert s["espera"] is True        # cerca del 95 %, sin cambiar el %, el relleno late
+    assert 90 <= s["alFinal"] <= 95
+    assert s["sinEspera"] is True     # un paso real que cambia el % quita el latido
+    assert s["vuelveALatir"] is True
 
 
 @node

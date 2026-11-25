@@ -55,7 +55,8 @@ const f0 = comun.indexOf("function fecha(valor)");
 eval(comun.slice(f0, comun.indexOf("\n}\n", f0) + 3) + "; global.fecha = fecha;");
 const ini = comun.indexOf("const AVANCE_TICK_MS");
 const fin = comun.indexOf("// Sigue una tarea del servidor");
-eval(comun.slice(ini, fin) + "; global.barraAvance = barraAvance;");
+eval(comun.slice(ini, fin) + "; global.barraAvance = barraAvance;"
+  + " global.DURACION_TIPICA_S = DURACION_TIPICA_S;");
 // desde la sección «+ Añadir oferta» hasta el arranque de la pantalla: el código real, sin cortes a mano
 const a = ofertas.indexOf("// --- «+ Añadir oferta»");
 const b = ofertas.indexOf("(async () => {\n  if (!(await arrancar");

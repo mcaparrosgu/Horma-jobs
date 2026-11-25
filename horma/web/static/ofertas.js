@@ -500,7 +500,7 @@ function frasePorError(t) {
 // Sigue una tarea de puntuar: barra con su %, y la lista se recarga cada vez que sube (llegan por tandas).
 function seguirPuntuacion(tareaId) {
   if (dejarDeSeguir) dejarDeSeguir();
-  if (!barra) barra = barraAvance($("avance"), "Calculando la compatibilidad de las ofertas");
+  if (!barra) barra = barraAvance($("avance"), "Calculando la compatibilidad de las ofertas", false, DURACION_TIPICA_S.compatibilidad);
   barra.vincular(`horma:avance:puntuar:${tareaId}`);   // al volver de otra pestaña no retrocede (RF-10.8c)
   ultimoAvance = -1;
   dejarDeSeguir = seguirTarea(tareaId, async (p) => {
@@ -741,7 +741,7 @@ function pintarBarraAnadidas() {
   }
   if (!barraAnadidas) {
     const texto = lote.size === 1 ? "Analizando la oferta" : "Analizando las ofertas añadidas";
-    barraAnadidas = { n: lote.size, barra: barraAvance($("avance"), texto) };
+    barraAnadidas = { n: lote.size, barra: barraAvance($("avance"), texto, false, DURACION_TIPICA_S.oferta) };
   }
   barraAnadidas.barra.vincular(`horma:avance:anadidas:${[...lote.keys()].sort().join(",")}`);
   const pcts = [...lote.values()].map((e) => (e.fin ? 100 : e.pct));
@@ -930,7 +930,7 @@ async function leerUrl(url, releer = false) {
   $("enviar-url").disabled = true;
   avisarUrl("Leyendo la página…");
   $("lectura-url").replaceChildren();
-  lecturaBarra = barraAvance($("lectura-url"), "Analizando la oferta");
+  lecturaBarra = barraAvance($("lectura-url"), "Analizando la oferta", false, DURACION_TIPICA_S.oferta);
   lecturaBarra.poner(10);
   const r = await api("/ofertas/url", { metodo: "POST", cuerpo: releer ? { url, releer: true } : { url } });
   if (!r.ok) {
@@ -969,7 +969,7 @@ $("ventana-anadir").addEventListener("close", () => {
 async function retomarLectura() {
   const id = sessionStorage.getItem(CLAVE_LECTURA);
   if (!id) return;
-  lecturaBarra = barraAvance($("avance"), "Analizando la oferta");
+  lecturaBarra = barraAvance($("avance"), "Analizando la oferta", false, DURACION_TIPICA_S.oferta);
   lecturaBarra.vincular(`horma:avance:lectura:${id}`);
   lecturaBarra.poner(10);
   $("enviar-url").disabled = true;

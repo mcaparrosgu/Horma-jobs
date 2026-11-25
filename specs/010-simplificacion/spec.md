@@ -191,12 +191,14 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   candidatura… 40 %» en la candidatura, «Calculando la compatibilidad… 40 %» en Ofertas. La cabecera NO DEBERÁ
   mostrar ningún indicador: nunca se ven dos barras a la vez. Vuelve P8 de la 008 («sin aviso en la cabecera»).
 - **RF-10.8b** La barra DEBERÁ tener `role="status"` y no depender solo del color (RF-6.7e).
-- **RF-10.8c** *(prueba del 22-nov; revisado el 25-nov, spec 011 T08g)* La barra DEBERÁ verse rellenándose en lima
-  desde el primer momento y nunca parecer parada: entre un paso real del servidor y el siguiente avanza sola a
-  ritmo constante y despacio (un punto cada 3 s), hasta 20 puntos por delante del último paso real, sin llegar
-  nunca al 100 % antes de terminar. Si llega a ese tope antes del siguiente paso, el relleno late, sin cambiar el
-  porcentaje, hasta que el servidor avanza; sin animación si se pide reducir el movimiento. Al repintar la
-  pantalla o al volver a ella conserva su punto (no vuelve a 0).
+- **RF-10.8c** *(prueba del 22-nov; revisado el 25-nov en la spec 011, T08g y T08s, D-035)* La barra DEBERÁ verse
+  rellenándose en lima desde el primer momento y nunca parecer parada: entre un paso real del servidor y el
+  siguiente avanza sola según lo que suele tardar esa tarea (leer un CV, 37 s; analizar una oferta, 55 s; preparar
+  una candidatura, 106 s), rápida al principio y cada vez más despacio, acercándose al 95 % sin llegar (a su
+  duración típica va por el 60 %). Un paso real la adelanta si va por detrás; nunca baja ni llega al 100 % antes
+  de terminar. SI el porcentaje no cambia en 3 s, el relleno late. Al repintar la pantalla o al volver a ella
+  conserva su punto y cuenta el tiempo que la usuaria pasó en otra pestaña. Sin animación si se pide reducir el
+  movimiento (entonces solo avanza con los pasos reales).
 
 ### Gasto (RF-10.9)
 - **RF-10.9** Horma NO DEBERÁ gastar más de **1 USD al día** (día natural, hora de Madrid) por usuaria, en

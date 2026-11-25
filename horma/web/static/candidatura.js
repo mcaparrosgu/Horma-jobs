@@ -285,7 +285,7 @@ function pintar() {
   if (c.preparacion === "en_curso") {
     const caja = nodo("div");
     // la misma barra en cada repintado: así sigue rellenándose en vez de empezar de cero (RF-10.8c)
-    if (!barraPrep) barraPrep = barraAvance(caja, "Preparando tu CV y tu carta");
+    if (!barraPrep) barraPrep = barraAvance(caja, "Preparando tu CV y tu carta", false, DURACION_TIPICA_S.candidatura);
     else caja.append(barraPrep.caja);
     barraPrep.poner(avance);
     partes.push(caja,nodo("p", "Horma está preparando el CV y la carta… puede tardar un minuto.", "suave"));

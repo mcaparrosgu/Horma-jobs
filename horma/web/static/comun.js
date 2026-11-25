@@ -159,16 +159,33 @@ async function pintarPersona(persona) {
 
 // Barra de avance (RF-8.7): frase con el porcentaje y pista con `role="progressbar"`. Devuelve `poner(%)`,
 // `quitar()`, `vincular(clave)` y `caja` (para volver a colocarla sin perder su avance al repintar la pantalla).
-// `vincular` guarda en `sessionStorage` el último valor mostrado de una tarea: al cambiar de pestaña y volver, la barra
-// retoma ese punto en vez de empezar en 2 % (RF-10.8c). `quitar` borra la clave: la tarea ya terminó.
-// El servidor avanza por pasos (cada paso puede tardar medio minuto o más); entre paso y paso la barra avanza sola
-// a ritmo constante (un punto cada 3 s), hasta AVANCE_HOLGURA puntos por delante del último paso real y sin llegar
-// nunca al 100 %. En ese tope la caja lleva la clase `esperando` (el relleno late, sin cambiar el %) hasta que el
-// servidor avanza (RF-10.8c).
+// El servidor avanza por pasos y el más largo suele ser una sola llamada al modelo (un CV: 0 % casi todo el rato).
+// Entre pasos la barra avanza sola según lo que suele tardar esa tarea (`duracion`, en segundos): rápida al principio
+// y cada vez más despacio, acercándose a AVANCE_TECHO sin llegar (a su duración típica va por el 60 %). Un paso real
+// la adelanta si va por detrás; nunca baja ni llega al 100 % antes de terminar. Si el % no cambia en 3 s, la caja
+// lleva la clase `esperando` (el relleno late). `vincular` guarda en `sessionStorage` el valor y la hora de cada
+// tarea: al volver de otra pestaña la barra retoma su punto y cuenta también el tiempo que estuvo fuera (RF-10.8c,
+// D-035). `quitar` borra la clave: la tarea ya terminó. Sin animación (movimiento reducido), solo pasos reales.
 const AVANCE_TICK_MS = 400;
-const AVANCE_HOLGURA = 20;   // cuánto puede adelantarse la barra al último paso real
-const AVANCE_PASO = AVANCE_TICK_MS / 3000;   // puntos por tick: uno cada 3 s
-function barraAvance(contenedor, texto, indeterminada = false) {
+const AVANCE_TECHO = 95;
+const AVANCE_QUIETO_MS = 3000;   // sin cambiar el % este rato, el relleno late
+// Lo que suele tardar cada tarea, en segundos: medianas de las tareas hechas en la BD local (25-nov, 5 días).
+// «oferta» es leer la página (8 s) y analizarla (46 s); «compatibilidad», una tanda de `recomendar`.
+const DURACION_TIPICA_S = { perfil: 37, oferta: 55, candidatura: 106, compatibilidad: 15 };
+
+function leerAvance(clave) {
+  const s = sessionStorage.getItem(clave);
+  if (s === null) return null;
+  try {
+    const g = JSON.parse(s);
+    if (typeof g === "number") return { v: g, t: 0 };   // guardado por la versión anterior: sin hora
+    return g && typeof g.v === "number" ? g : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function barraAvance(contenedor, texto, indeterminada = false, duracion = 40) {
   const caja = nodo("div", null, "barra-avance");
   const frase = nodo("span", null, "texto");
   const pista = nodo("div", null, "pista");
@@ -180,25 +197,37 @@ function barraAvance(contenedor, texto, indeterminada = false) {
   pista.append(relleno);
   caja.append(frase, pista);
   contenedor.append(caja);
+  const tau = Math.max(1, Number(duracion) || 40) * 1000;
+  // dónde va la barra `ms` milisegundos después de estar en `desde`, sin pasos reales entre medias
+  const acercar = (desde, ms) => (desde >= AVANCE_TECHO ? desde : AVANCE_TECHO - (AVANCE_TECHO - desde) * Math.exp(-ms / tau));
   let real = 0;
   let mostrado = 0;
   let reloj = null;
   let clave = null;
   let anima = false;
+  let ultimo = -1;
+  let quietos = 0;   // ticks seguidos sin cambiar el %
   const pintar = () => {
     const v = Math.max(0, Math.min(100, Math.round(mostrado)));
+    if (v !== ultimo) {
+      ultimo = v;
+      quietos = 0;
+    }
     frase.textContent = `${texto} · ${v} %`;
     pista.setAttribute("aria-valuenow", String(v));
     relleno.style.width = `${mostrado}%`;   // por CSSOM: la CSP no permite style= en el HTML
-    if (clave) sessionStorage.setItem(clave, String(mostrado));
-    // en el tope, esperando el siguiente paso real: el relleno late para no parecer parado
-    caja.classList.toggle("esperando", anima && real < 100 && Math.round(mostrado) >= Math.min(95, real + AVANCE_HOLGURA));
+    if (clave) sessionStorage.setItem(clave, JSON.stringify({ v: mostrado, t: Date.now() }));
+    caja.classList.toggle("esperando", anima && real < 100 && quietos * AVANCE_TICK_MS >= AVANCE_QUIETO_MS);
   };
   const vincular = (nueva) => {
     if (indeterminada || clave === nueva) return;
     clave = nueva;
-    const guardado = Number(sessionStorage.getItem(clave));
-    if (guardado > mostrado && guardado < 100) mostrado = guardado;
+    const g = leerAvance(clave);
+    if (g && g.v < 100) {
+      // el rato en otra pestaña cuenta como si hubiera seguido aquí; sin animación no se inventa avance
+      const fuera = anima && g.t ? Math.max(0, Date.now() - g.t) : 0;
+      mostrado = Math.max(mostrado, acercar(g.v, fuera));
+    }
     pintar();
   };
   const quitar = () => {
@@ -209,9 +238,9 @@ function barraAvance(contenedor, texto, indeterminada = false) {
   };
   const avanzarSolo = () => {
     if (!caja.isConnected) return;   // la pantalla se está repintando: se retoma al volver a colocarla
-    const tope = Math.min(95, real + AVANCE_HOLGURA);
-    if (real >= 100 || mostrado >= tope) return;
-    mostrado = Math.min(tope, mostrado + AVANCE_PASO);
+    if (real >= 100) return;
+    mostrado = acercar(mostrado, AVANCE_TICK_MS);
+    quietos += 1;
     pintar();
   };
   const poner = (p) => {

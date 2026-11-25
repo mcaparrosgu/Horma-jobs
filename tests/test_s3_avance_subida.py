@@ -60,7 +60,7 @@ def test_ninguna_pagina_pinta_el_indicador_de_la_cabecera():
 def test_perfil_usa_la_barra_con_porcentaje_al_leer_el_cv():
     js = leer("perfil.js")
     assert "/api/tareas/activas?tipo=perfilar" in js
-    assert 'barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV")' in js and "barraLectura.poner(progreso)" in js  # noqa: E501
+    assert 'barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV",' in js and "barraLectura.poner(progreso)" in js  # noqa: E501
     assert "innerHTML" not in leer("comun.js")
 
 

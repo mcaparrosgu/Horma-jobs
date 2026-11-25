@@ -55,7 +55,8 @@ global.setTimeout = () => 0;
 
 const ini = comun.indexOf("const AVANCE_TICK_MS");
 const fin = comun.indexOf("// Sigue una tarea del servidor");
-eval(comun.slice(ini, fin) + "; global.barraAvance = barraAvance;");
+eval(comun.slice(ini, fin) + "; global.barraAvance = barraAvance;"
+  + " global.DURACION_TIPICA_S = DURACION_TIPICA_S;");
 global.lecturaBarra = null;
 global.lote = new Map();
 global.barraAnadidas = null;

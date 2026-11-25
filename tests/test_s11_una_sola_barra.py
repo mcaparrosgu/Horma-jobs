@@ -59,7 +59,8 @@ global.api = async (ruta, op) => {
 
 const ini = comun.indexOf("const AVANCE_TICK_MS");
 const fin = comun.indexOf("// Sigue una tarea del servidor");
-eval(comun.slice(ini, fin) + "; global.barraAvance = barraAvance;");
+eval(comun.slice(ini, fin) + "; global.barraAvance = barraAvance;"
+  + " global.DURACION_TIPICA_S = DURACION_TIPICA_S;");
 const a = ofertas.indexOf("const SONDEO_MS");
 const d = ofertas.indexOf("(async () => {\n  if (!(await arrancar");
 if (a < 0 || d < 0) throw new Error("no se encuentra el corte");

@@ -519,7 +519,8 @@ async function cargarPerfil() {
     const progreso = tarea ? tarea.progreso : 0;
     // la misma barra en cada consulta: sigue rellenándose en vez de empezar de cero (RF-10.8c)
     const rehaciendo = sessionStorage.getItem(CLAVE_REHACIENDO) === "1";
-    if (!barraLectura) barraLectura = barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV");
+    if (!barraLectura) barraLectura = barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV", false,
+                                                 DURACION_TIPICA_S.perfil);
     else if (barraLectura.caja.parentNode !== estado) estado.append(barraLectura.caja);
     if (tarea) barraLectura.vincular(`horma:avance:perfilar:${tarea.id}`);   // al volver de otra pestaña no retrocede
     barraLectura.poner(progreso);
@@ -750,7 +751,8 @@ async function enviarLote(archivos, { clases = null, cerrar = false } = {}) {
   // una sola barra continua, creada ahora: `cargarPerfil` la reutiliza en vez de pintar otra (RF-10.18h)
   subiendoLote = true;
   if (!barraLectura && archivos.length) {
-    barraLectura = barraAvance($("estado-perfil"), archivos.length > 1 ? TEXTOS.leyendoArchivos(archivos.length) : "Estamos leyendo tu CV");
+    barraLectura = barraAvance($("estado-perfil"), archivos.length > 1 ? TEXTOS.leyendoArchivos(archivos.length) : "Estamos leyendo tu CV",
+                               false, DURACION_TIPICA_S.perfil);
   }
   const r = await api("/api/cv/lote", { metodo: "POST", formulario: datos });
   if (!r.ok) {
