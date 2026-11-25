@@ -35,7 +35,8 @@ let temporizador = null;
 let leyendo = false;   // ya se enseñó la barra «Estamos leyendo tu CV»
 let barraLectura = null;   // esa barra, que se conserva entre consultas
 let subiendoLote = false;   // hay un lote en camino: la barra no se quita aunque aún no haya tarea (RF-10.18h)
-let notaLote = "";   // el resultado del lote, que sale junto al «Listo» (RF-10.18i)
+let notaLote = "";
+const CLAVE_REHACIENDO = "horma:perfil-rehaciendo";   // borró un CV: la barra dice «Actualizando», no «leyendo»; sobrevive a cambiar de pestaña   // el resultado del lote, que sale junto al «Listo» (RF-10.18i)
 
 const CAMPOS_FECHA = ["inicio", "fin", "fecha"];
 const periodoVisto = (d) => [d.inicio, d.fin].filter(Boolean).map(fechaVista).join(" – ");
@@ -76,9 +77,11 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, 
   }
   for (const [clave, rotulo] of CAMPOS[campoNombre]) {
     if (extra.solo && !extra.solo.includes(clave)) continue;
-    const i = nodo("input");
-    i.type = "text";
-    i.maxLength = 300;
+    // Los textos largos (descripción, resumen…) van en un cuadro que crece con lo que se escribe.
+    const largo = clave === "descripcion" || (clave === "valor" && ["resumen", "otros"].includes(campoNombre));
+    const i = nodo(largo ? "textarea" : "input");
+    if (!largo) i.type = "text";
+    i.maxLength = largo ? 2000 : 300;
     i.value = CAMPOS_FECHA.includes(clave) ? fechaVista(inicial[clave]) : inicial[clave] || "";
     entradas[clave] = i;
     f.append(campo(rotulo, i));
@@ -118,6 +121,18 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, 
 
 const NOMBRES_SECCION = { ...Object.fromEntries(SECCIONES), genero_puestos: "Género de los puestos", nombre: "Nombre" };
 
+// El aviso de dato personal quitado se queda a la vista, pegado al borde inferior, hasta que ella lo cierra.
+function mostrarAvisoDato() {
+  const caja = $("aviso-dato");
+  caja.replaceChildren(nodo("strong", TEXTOS.datoPersonalTitulo), nodo("p", TEXTOS.datoPersonalMotivo));
+  const cerrar = nodo("button", TEXTOS.datoPersonalCerrar, "secundario");
+  cerrar.type = "button";
+  cerrar.addEventListener("click", () => { caja.hidden = true; });
+  caja.append(cerrar);
+  caja.hidden = false;
+  cerrar.focus();
+}
+
 async function cambiarPerfil(ruta, metodo, cuerpo) {
   avisar("Guardando…");
   const r = await api(ruta, { metodo, cuerpo });
@@ -127,7 +142,8 @@ async function cambiarPerfil(ruta, metodo, cuerpo) {
   }
   const c = r.datos.cambio;   // qué ha cambiado y dónde (RF-10.14e)
   const donde = c ? ` Actualizado en ${NOMBRES_SECCION[c.campo] || c.campo}: ${c.valor}.` : "";
-  avisar(`Hecho: perfil actualizado.${donde}${r.datos.aviso ? ` ${r.datos.aviso}` : ""}`);
+  avisar(`Hecho: perfil actualizado.${donde}`);
+  if (r.datos.aviso) mostrarAvisoDato();
   await cargarPerfil();
 }
 
@@ -490,6 +506,7 @@ async function cargarPerfil() {
   }
   // se quita todo menos la barra viva: vaciar el contenedor y recolocarla tras un `await` la hacía parpadear
   for (const hijo of [...estado.children]) if (!(barraLectura && hijo === barraLectura.caja)) hijo.remove();
+  if (!construyendo) sessionStorage.removeItem(CLAVE_REHACIENDO);
   if (construyendo) leyendo = true;
   else if (leyendo && perfil) {   // acaba de terminar: ahora sí el mensaje siguiente (RF-10.14n)
     leyendo = false;
@@ -498,10 +515,14 @@ async function cargarPerfil() {
   }
   if (construyendo) {
     const activas = await api("/api/tareas/activas?tipo=perfilar");   // una sola barra, con su % (RF-10.8)
-    const progreso = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0].progreso : 0;
+    const tarea = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0] : null;
+    const progreso = tarea ? tarea.progreso : 0;
     // la misma barra en cada consulta: sigue rellenándose en vez de empezar de cero (RF-10.8c)
-    if (!barraLectura) barraLectura = barraAvance(estado, "Estamos leyendo tu CV");
+    const rehaciendo = sessionStorage.getItem(CLAVE_REHACIENDO) === "1";
+    if (!barraLectura) barraLectura = barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV", false,
+                                                 DURACION_TIPICA_S.perfil);
     else if (barraLectura.caja.parentNode !== estado) estado.append(barraLectura.caja);
+    if (tarea) barraLectura.vincular(`horma:avance:perfilar:${tarea.id}`);   // al volver de otra pestaña no retrocede
     barraLectura.poner(progreso);
     temporizador = setTimeout(cargarPerfil, 3000);
   }
@@ -645,6 +666,7 @@ function tarjetaCv(c, _i, todos) {
     si.addEventListener("click", async () => {
       const r = await api(`/api/cv/${c.id}`, { metodo: "DELETE" });
       if (!r.ok) return avisar(r.motivo, true);
+      if (esCv && !ultimoCv) sessionStorage.setItem(CLAVE_REHACIENDO, "1");
       avisar(!esCv ? TEXTOS.cartaEliminada : ultimoCv ? TEXTOS.ultimoCvEliminado : TEXTOS.cvEliminado);
       await cargarCvs();
       await cargarPerfil();   // el perfil se rehace con los CV que quedan (RF-10.14)
@@ -724,11 +746,13 @@ async function enviarLote(archivos, { clases = null, cerrar = false } = {}) {
   for (const c of clases || []) datos.append("clases", c);
   if (cerrar) datos.append("cerrar", "true");
   avisar("");
+  sessionStorage.removeItem(CLAVE_REHACIENDO);   // subir un CV es leer, no rehacer
   $("pregunta-clase").hidden = true;
   // una sola barra continua, creada ahora: `cargarPerfil` la reutiliza en vez de pintar otra (RF-10.18h)
   subiendoLote = true;
   if (!barraLectura && archivos.length) {
-    barraLectura = barraAvance($("estado-perfil"), archivos.length > 1 ? TEXTOS.leyendoArchivos(archivos.length) : "Estamos leyendo tu CV");
+    barraLectura = barraAvance($("estado-perfil"), archivos.length > 1 ? TEXTOS.leyendoArchivos(archivos.length) : "Estamos leyendo tu CV",
+                               false, DURACION_TIPICA_S.perfil);
   }
   const r = await api("/api/cv/lote", { metodo: "POST", formulario: datos });
   if (!r.ok) {

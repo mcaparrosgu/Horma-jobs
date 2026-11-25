@@ -95,7 +95,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 3: candidatura y seguimiento
 
-1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0029`).
+1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0030`).
 2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide
    confirmar); el worker parte del CV maestro, sin CV base (RF-10.3), y redacta CV y carta. En `/candidaturas`
    las ves por estado: revisas, editas, apruebas, descargas los PDF y sigues el proceso (enviada, entrevista,
@@ -137,6 +137,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 - `uv run horma ingestar <fuente> [--limite N] [--en-seco]`: `--en-seco` lee la fuente de
   `config/endpoints.json` y enseña las ofertas normalizadas sin entregarlas.
 - `uv run horma fuente calificar <url>`: pide la calificación a la API y espera el veredicto.
+- `uv run horma envios medir`: cuenta, sin enviar nada, a qué portal lleva cada oferta del catálogo y cuántas
+  exigen cuenta (por `GET /api/admin/envios/medicion`; también en Admin, pestaña «Envíos»).
 - `uv run horma flujo correr perfilar --usuaria ana --entrada cv.pdf [--paso-a-paso --traza trazas/]`
   (también `.docx` y `.md`): construye el perfil en local y no guarda nada; `--usuaria` solo
   nombra el CV en la traza.

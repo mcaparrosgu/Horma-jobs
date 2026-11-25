@@ -9,7 +9,7 @@ from sqlalchemy import text
 from horma.ingesta import leer_fuente
 from horma.tools import dominio
 from horma.tools.semilla import fuentes_semilla
-from horma.web.db import sesion_sistema
+from horma.web.db import sesion_de, sesion_sin_usuaria, sesion_sistema
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.services import ofertas as servicio_ofertas
 
@@ -103,3 +103,56 @@ def test_las_caducadas_se_borran_y_las_vigentes_se_quedan(motor_app, bd_limpia):
         assert repo_ofertas.borrar_caducadas(s) == 1
         quedan = set(s.execute(text("select id_externo from ofertas")).scalars())
     assert quedan == {"vigente", "sin_fecha"}
+
+
+def _oferta_con_nota(motor_app, usuaria, clave, caduca):
+    """Oferta del catálogo con una nota de `usuaria`, creada con la sesión de ella como hace la app."""
+    oid = servicio_ofertas.recibir(motor_app, f"Oferta {clave}", fuente="himalayas",
+                                   id_externo=clave, caduca_en=caduca)["id"]
+    with sesion_de(motor_app, usuaria) as s:
+        s.execute(text("insert into matches (usuaria_id, oferta_id, perfil_version, nota, condiciones) "
+                       "values (:u, :o, 1, 80, 'alto')"), {"u": usuaria, "o": oid})
+    return oid
+
+
+def _caducada_y_vigente(motor_app):
+    with sesion_sin_usuaria(motor_app) as s:
+        u = s.execute(text("select obtener_o_crear_usuaria('google-T08n')")).scalar_one()
+    with sesion_sistema(motor_app) as s:
+        s.execute(text("update fuentes set activa=true where nombre='himalayas'"))
+    ayer = datetime.now(UTC) - timedelta(hours=1)
+    manana = datetime.now(UTC) + timedelta(days=2)
+    return (u, _oferta_con_nota(motor_app, u, "vencida", ayer),
+            _oferta_con_nota(motor_app, u, "vigente", manana))
+
+
+@pytest.mark.bd
+def test_borrar_caducadas_con_notas_borra_la_oferta_y_su_nota(motor_app, bd_limpia):
+    u, vencida, vigente = _caducada_y_vigente(motor_app)
+    with sesion_sistema(motor_app) as s:
+        assert repo_ofertas.borrar_caducadas(s) == 1
+    with sesion_de(motor_app, u) as s:
+        assert set(s.execute(text("select oferta_id from matches")).scalars()) == {vigente}
+        assert set(s.execute(text("select id from ofertas")).scalars()) == {vigente}
+
+
+@pytest.mark.bd
+def test_el_sistema_solo_ve_las_notas_de_las_caducadas(motor_app, bd_limpia):
+    u, vencida, vigente = _caducada_y_vigente(motor_app)
+    with sesion_sistema(motor_app) as s:
+        assert set(s.execute(text("select oferta_id from matches")).scalars()) == {vencida}
+        assert s.execute(text("select count(*) from matches where oferta_id=:o"),
+                         {"o": vigente}).scalar_one() == 0
+
+
+@pytest.mark.bd
+def test_la_caducada_con_candidatura_no_se_borra(motor_app, bd_limpia):
+    u, vencida, vigente = _caducada_y_vigente(motor_app)
+    with sesion_de(motor_app, u) as s:
+        s.execute(text("insert into candidaturas (usuaria_id, oferta_id) values (:u, :o)"),
+                  {"u": u, "o": vencida})
+    with sesion_sistema(motor_app) as s:
+        assert repo_ofertas.borrar_caducadas(s) == 0
+    with sesion_de(motor_app, u) as s:
+        assert {vencida, vigente} == set(s.execute(text("select id from ofertas")).scalars())
+        assert s.execute(text("select count(*) from matches")).scalar_one() == 2

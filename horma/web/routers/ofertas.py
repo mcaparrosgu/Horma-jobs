@@ -55,16 +55,20 @@ def crear(datos: NuevaOferta, request: Request, response: Response):
 
 class NuevaUrl(BaseModel):
     url: str = Field(min_length=1, max_length=2000)
+    releer: bool = False   # «Leer de nuevo» (RF-11.29): vuelve a leer una oferta ya añadida
 
 
 @router.post("/ofertas/url", status_code=202, dependencies=[Depends(limites.limite_url)])
-def crear_desde_url(datos: NuevaUrl, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+def crear_desde_url(datos: NuevaUrl, request: Request, response: Response,
+                    usuaria_id: int = Depends(usuaria_actual)):
     """Lee la página con el proveedor y sigue como una oferta pegada, privada de la usuaria (RF-5.3f)."""
     exigir_csrf(request, usuaria_id)
     if (motivo := validar_url(datos.url)) is not None:
         raise HTTPException(status_code=422, detail=motivo)
-    importacion = servicio.pedir_lectura_url(request.app.state.engine, usuaria_id, datos.url)
-    return {"id": importacion, "estado": "pendiente"}
+    r = servicio.pedir_lectura_url(request.app.state.engine, usuaria_id, datos.url, datos.releer)
+    if r.get("repetida"):
+        response.status_code = 200   # ya estaba añadida: no se lee ni se encola nada (RF-11.29)
+    return r
 
 
 @router.get("/ofertas/url/{importacion_id}")

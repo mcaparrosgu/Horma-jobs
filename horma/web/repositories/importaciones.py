@@ -3,9 +3,17 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 
-def crear(s: Session, usuaria_id: int, url: str) -> int:
-    return s.execute(text("insert into importaciones (usuaria_id, url) values (:u, :l) returning id"),
-                     {"u": usuaria_id, "l": url}).scalar_one()
+def crear(s: Session, usuaria_id: int, url: str, oferta_id: int | None = None) -> int:
+    """Con `oferta_id` es una relectura: al terminar actualiza esa oferta (RF-11.29)."""
+    return s.execute(text("insert into importaciones (usuaria_id, url, oferta_id) "
+                                "values (:u, :l, :o) returning id"),
+                     {"u": usuaria_id, "l": url, "o": oferta_id}).scalar_one()
+
+
+def pendientes(s: Session) -> list[dict]:
+    """Las lecturas de la usuaria que aún no han terminado (la RLS deja solo las suyas)."""
+    return [dict(r) for r in s.execute(text("select id, url from importaciones where estado='pendiente' "
+                                            "order by id")).mappings()]
 
 
 def fila(s: Session, importacion_id: int) -> dict | None:

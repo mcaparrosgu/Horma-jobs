@@ -20,7 +20,7 @@ def test_sube_tu_cv_nace_oculto_y_solo_se_pinta_tras_la_respuesta():
 
 def test_la_barra_se_crea_una_vez_y_no_se_vacia_el_contenedor_mientras_dura():
     js = _leer("perfil.js")
-    assert js.count('barraAvance(estado, "Estamos leyendo tu CV")') == 1
+    assert js.count('barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV",') == 1  # noqa: E501
     # no se vacía todo el contenedor de golpe: había un `await` entre vaciar y recolocar la barra
     assert 'const estado = $("estado-perfil");\n  estado.replaceChildren();' not in js
     assert "barraLectura.caja.parentNode !== estado" in js

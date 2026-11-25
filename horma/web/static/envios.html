@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horma · Envíos</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#f6f6f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="/static/tokens.css">
+  <link rel="stylesheet" href="/static/estilo.css">
+  <script src="/static/tema.js"></script>
+</head>
+<body>
+  <header class="cabecera cabecera-admin">
+    <a class="marca" href="/">Horma</a>
+    <nav aria-label="Administración">
+      <a class="pestana activa" href="/ingesta" aria-current="page">Admin</a>
+      <a class="pestana" href="/recomendadas">Volver a Horma</a>
+    </nav>
+    <div class="derecha">
+      <button id="tema" class="secundario" type="button">Tema oscuro</button>
+      <button id="salir" class="secundario" type="button">Salir</button>
+    </div>
+  </header>
+  <main class="ancho">
+    <nav class="subpestanas" aria-label="Admin">
+      <a class="pestana" href="/ingesta">Ingesta</a>
+      <a class="pestana" href="/catalogo">Catálogo</a>
+      <a class="pestana" href="/costes">Costes</a>
+      <a class="pestana activa" href="/envios" aria-current="page">Envíos</a>
+    </nav>
+    <h1 class="titulo-pantalla">Medición de destinos</h1>
+    <p>A qué portal lleva el enlace de cada oferta del catálogo. Solo mira direcciones: no envía nada y no
+      cuesta nada. Seguir las redirecciones puede tardar un poco.</p>
+    <p><button id="medir" class="primario" type="button">Medir el catálogo</button></p>
+    <p id="aviso" role="status"></p>
+
+    <section aria-labelledby="t-resumen" id="resultado" hidden>
+      <h2 id="t-resumen">Resultado</h2>
+      <p id="resumen"></p>
+      <div class="tabla-costes" tabindex="0" role="region" aria-labelledby="t-resumen"><table id="tabla"></table></div>
+      <div id="motivos-bloque" hidden>
+        <h3>Por qué no son automáticas</h3>
+        <ul id="motivos"></ul>
+      </div>
+    </section>
+  </main>
+  <script src="/static/textos.js"></script>
+  <script src="/static/comun.js"></script>
+  <script src="/static/envios.js"></script>
+  <script src="/static/pwa.js"></script>
+</body>
+</html>

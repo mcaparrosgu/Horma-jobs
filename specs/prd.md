@@ -15,7 +15,7 @@ stale_after: null
 Documento: `specs/prd.md`
 Módulo / Asignatura: PRD Ampliaciones Horma
 Caso: Horma — proyecto propio del bootcamp de AI Engineering
-Estado: Firmado por Mar el 25-nov (D-020). Los `[pendiente]` se cierran en el paso que los cita
+Estado: Firmado por Mar el 25-nov (D-021). Los `[pendiente]` se cierran en el paso que los cita
 Autores: Mar
 
 **Cómo se usa.** Dice el qué, el porqué y el orden. El cómo está en la [constitución](./constitution.md), la
@@ -64,7 +64,7 @@ usuaria real.
 | Compatibilidad fiable | Casos del eval `recomendacion` con la nota dentro de ±10 | 0,67-0,71 (21 casos) | ≥ 0,90, estable en 3 ejecuciones |
 | Puestos sugeridos con evidencia | Precisión y cobertura sobre un set de 30 CV | N/A: nunca medido (solo se midió casar ofertas: 1,00 y 0,945) | [pendiente: umbrales al aprobar el set, spec 012] |
 | CV y carta sin inventar | Frases sin origen en el eval `cv` | 0 (33/33, 22-nov) | 0, y además el PDF final comprobado en el 100 % de las candidaturas |
-| Más ofertas de España | Ofertas vigentes de España en el catálogo | [pendiente: contar]; 2 fuentes activas | [pendiente: la fija la investigación del banco de ofertas] |
+| Más ofertas de España | Ofertas vigentes de España en el catálogo | [pendiente: contar]; 2 fuentes activas | 5.000 (D-024) |
 | Envío dentro de una regla | Envíos con una respuesta inventada o fuera de la regla | N/A: no existe | 0; porcentaje que sale sin intervención: [pendiente: tras la medición de destinos] |
 | Gasto acotado | USD por usuaria y día; USD por candidatura | Tope de 1 USD al día; 0,12-0,18 por candidatura (22-nov) | Tope diario y mensual: [pendiente: spec 017] |
 | Privacidad lista para usuarias | Hallazgos abiertos de la revisión de RGPD | 9 | 0, con la evaluación de impacto hecha |
@@ -225,7 +225,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 ### Paso 5 · Ingesta y vigilancia (spec 014)
 
 - **Por qué va ahí:** más ofertas solo sirven cuando ya se puntúan bien (paso 2). Espera a la investigación
-  del banco de ofertas (DEP-01); si llega tarde, el paso 6 pasa delante.
+  del banco de ofertas (DEP-01), entregada el 25-nov; falta su prueba práctica.
 - **Historia — US-005 [MUST HAVE / Riesgo Medio]: Más ofertas de España y vigentes.**
   Como candidata, quiero ver muchas ofertas de España que sigan abiertas, para tener donde elegir.
 
@@ -242,14 +242,18 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Comprobar con código que la oferta sigue abierta antes de puntuarla, redactar o enviar (F7-D4).
   - Cómo ampliar las ofertas (F7-D2, decidida el 25-nov): solo vías gratuitas, es decir, feeds documentados de
     ATS y datos abiertos públicos. La compra de ofertas queda para el futuro.
-  - Fuentes nuevas (punto 14): Jooble, Careerjet, EURES, SEPE, Tecnoempleo, Manfred y los ATS de F1.
+  - Workday (D-020): por el sitemap y el marcado `JobPosting` del tablón público de cada empresa y por sus
+    webs de empleo propias. Nunca por su API interna.
+  - Fuentes nuevas (punto 14; D-025): Feina Activa, Lanbide, ECyL (si se confirma su conjunto de datos) y,
+    al final, Manfred, además de los ATS de F1. Solo con permiso escrito del portal: InfoJobs, Welcome to the
+    Jungle, Turijobs, Infoempleo y Tecnoempleo. Fuera: Jooble, Adzuna, Careerjet y EURES; SEPE, en vigilancia.
     Ninguna se activa sin calificación apta. Con ella, cada fuente entra como cambio pequeño: conector, test
     y una línea en las tareas de la 014. Punto 8: todas las empresas de Greenhouse y, después, Lever.
   - Vigía semanal de portales nuevos; clasificar solas las fuentes que no están en Horma.
   - Enseñar el texto de la oferta según las condiciones de cada fuente.
   - Corrección: Admin › Fuentes enseña «sin límite» en arbeitnow.
-- **Puerta de salida:** la ingesta corre sola [pendiente: cuántos días seguidos]; meta de ofertas vigentes de
-  España [pendiente: F5]; una oferta cerrada se retira sin gastar (test); tests de RT-15 a RT-19 en verde.
+- **Puerta de salida:** la ingesta corre sola 7 días seguidos, sin la administradora; 5.000 ofertas vigentes de
+  España en el catálogo (D-024); una oferta cerrada se retira sin gastar (test); tests de RT-15 a RT-19 en verde.
 - **Depende de:** DEP-01 (F5) y el paso 2.
 
 ### Paso 6 · Entrevista por texto (spec 016; sustituye a la parte 9b de la 009)
@@ -320,8 +324,9 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   pare sin aviso. Escenario: [pendiente: tras el informe de gasto].
 - **Qué incluye** (RF-015; punto 12, obligatorio para Mar):
   - Hoy es provisional: 1 USD al día por usuaria (RF-10.9) y las reglas de cuándo se puntúa (RF-8.5).
-  - Por decidir, con el informe (F1-E1 a E5): topes por plan, qué pasa al llegar al tope, avisos, unidades
-    que la usuaria entienda y cómo encaja con la alerta de la administradora (más de 5 USD al día).
+  - Por decidir, con el informe (F1, apartado 12: E1 a E5 y E13 a E15): topes por plan, qué pasa al llegar
+    al tope, avisos, unidades que la usuaria entienda y cómo encaja con la alerta de la administradora (más de
+    5 USD al día).
   - Avisos de presupuesto pendientes de la pasada (L2 y L3).
   - Supuesto sin medir: 0,50 USD al día ≈ 150 ofertas puntuadas.
 - **Puerta de salida:** [pendiente: informe de gasto]; test del worker con tope bajo; la usuaria ve su consumo
@@ -385,7 +390,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 | NFR-04 | Privacidad | Ningún prompt lleva contacto, edad, nacionalidad ni datos del art. 9; cada usuaria solo lee lo suyo | Tests de la puerta única y de RLS |
 | NFR-05 | Control de la usuaria | «Parar todo» corta antes del envío siguiente; fuera del modo real, 0 peticiones a un portal de verdad | Tests de la tanda y del guardia de red |
 | NFR-06 | Coste | ≤ 1 USD por usuaria y día y ≤ 1 USD por candidatura; tope mensual: [pendiente: spec 017] | Tabla `llm_llamadas`; test del worker con tope bajo |
-| NFR-07 | Volumen | 5 usuarias a la vez y 5.000 ofertas vigentes en el catálogo, sin errores ni tareas perdidas. La cifra de ofertas se revisa al leer la investigación del banco de ofertas (DEP-01). Hoy sin medir; los límites de ritmo viven en la memoria de un solo proceso (el de la ingesta lo resuelve RT-16, paso 5) | Prueba de carga sencilla en el paso 9 |
+| NFR-07 | Volumen | 5 usuarias a la vez y 5.000 ofertas vigentes en el catálogo, sin errores ni tareas perdidas. La cifra de ofertas queda confirmada tras la investigación del banco de ofertas (D-024): 5.000 vigentes de España. Hoy sin medir; los límites de ritmo viven en la memoria de un solo proceso (el de la ingesta lo resuelve RT-16, paso 5) | Prueba de carga sencilla en el paso 9 |
 | NFR-08 | Latencia | [pendiente: se mide en el paso 9]. Todo lo lento corre en la cola, con su avance a la vista | [pendiente: se mide en el paso 9] |
 | NFR-09 | Usabilidad | Cada pantalla, correcta a 1280 y 390 px, en claro y oscuro; zonas táctiles de 44 px; sin jerga | Revisión en navegador por tarea; test de palabras prohibidas |
 | NFR-10 | Mantenibilidad | Agentes sin estado; una sola puerta al modelo; los routers solo llaman a servicios | `import-linter` en la CI |
@@ -468,8 +473,8 @@ Entrar en alcance desde 7.2 o 7.3 exige cambiar este PRD.
 ## 9. Dependencias Críticas
 
 - DEP-01: investigación del banco de ofertas (Fable) y prueba práctica de ingesta (Sonnet); desbloquean el paso 5 y RF-010.
-- DEP-02: investigación de los límites de gasto en la competencia y estudio de precio (Fable); desbloquean el
-  paso 8 y NFR-06.
+- DEP-02: investigación de los límites de gasto en la competencia (entregada el 25-nov) y estudio de precio,
+  pendiente (Fable); desbloquean el paso 8 y NFR-06.
 - DEP-03: evaluación de impacto en Gestiona RGPD (Mar); desbloquea los pasos 9 y 10.
 - DEP-04: asesoría legal (agente de abogacía, por crear); cierra la casilla de privacidad, la marca de
   «generado con IA» y el modo real.

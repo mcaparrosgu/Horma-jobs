@@ -268,3 +268,128 @@ def test_un_idioma_con_niveles_distintos_en_dos_cv_no_se_pierde_y_se_pregunta():
     assert pendientes[0]["campo"] == "idiomas.en.nivel" and pendientes[0]["opciones"] == ["B1", "medio"]
     assert _genero_puestos({"genero_puestos": None, "experiencias": [{}]})[0]["campo"] == "genero_puestos"
     assert _genero_puestos({"genero_puestos": "femenino", "experiencias": [{}]}) == []
+
+
+def test_quitar_un_dato_personal_deja_el_aviso_de_siempre():
+    """RF-11.25: aunque el dato quitado sea un campo suelto, la usuaria ve el aviso, siempre el mismo."""
+    cv = "Ana, 34 años, de nacionalidad colombiana\nCamarera en Bar Sol"
+    _, e = _perfilar(_extraccion(
+        resumen={"valor": "Mujer de 34 años", "origen": _o(1, "34 años, de nacionalidad colombiana")},
+        experiencias=[{"puesto": "Camarera", "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": cv}])
+    textos = [q.pregunta for q in Perfil.model_validate(e["perfil"]).preguntas_pendientes]
+    assert len(textos) == 1 and textos[0].startswith("Hemos quitado un dato personal que Horma no guarda.")
+
+
+def test_sin_dato_personal_no_hay_aviso():
+    _, e = _perfilar(
+        _extraccion(experiencias=[{"puesto": "Camarera", "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": CV1}])
+    pendientes = Perfil.model_validate(e["perfil"]).preguntas_pendientes
+    assert not any("Hemos quitado" in q.pregunta for q in pendientes)
+
+
+def test_un_rasgo_personal_en_la_descripcion_de_un_puesto_se_quita_y_avisa():
+    """M12: «Casada, con hijos» en la descripción de un puesto se quita, el puesto se queda y hay aviso."""
+    cv = "Camarera en Bar Sol. Casada, con hijos."
+    _, e = _perfilar(_extraccion(
+        experiencias=[{"puesto": "Camarera", "empresa": "Bar Sol", "descripcion": "Casada, con hijos",
+                       "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": cv}])
+    p = Perfil.model_validate(e["perfil"])
+    assert p.experiencias[0].puesto == "Camarera" and not p.experiencias[0].descripcion
+    assert any(q.pregunta.startswith("Hemos quitado un dato personal") for q in p.preguntas_pendientes)
+
+
+CV_CON_RASGOS = ("Irene Navarro. Fecha de nacimiento: 14/03/1992 · Nacionalidad: española. "
+                 "Casada, con hijos. Camarera en Bar Sol.")
+
+
+def _avisos(e):
+    return [q.pregunta for q in Perfil.model_validate(e["perfil"]).preguntas_pendientes
+            if q.pregunta.startswith("Hemos quitado un dato personal que Horma no guarda.")]
+
+
+def test_un_cv_con_fecha_de_nacimiento_y_estado_civil_avisa_aunque_el_modelo_no_los_devuelva():
+    """M12b: el modelo ya no extrae esos datos (su prompt se lo prohíbe); el aviso sale al mirar el CV."""
+    _, e = _perfilar(
+        _extraccion(experiencias=[{"puesto": "Camarera", "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": CV_CON_RASGOS}])
+    assert len(_avisos(e)) == 1
+
+
+def test_si_el_modelo_tambien_devolvio_el_rasgo_el_aviso_sale_una_sola_vez():
+    cv = CV_CON_RASGOS
+    _, e = _perfilar(_extraccion(
+        experiencias=[{"puesto": "Camarera", "empresa": "Bar Sol", "descripcion": "Casada, con hijos",
+                       "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": cv}])
+    assert len(_avisos(e)) == 1
+
+
+# --- T08m: lo que escribió la usuaria también pasa el filtro de datos personales (RF-11.25c, D-032) --------
+USUARIA = {"fuente": "usuaria", "fragmento": "lo escribí yo"}
+AVISO = "Hemos quitado un dato personal que Horma no guarda."
+
+
+def _con_lo_suyo(de_usuaria, cv=CV1, perfil_cv=None):
+    perfil_cv = perfil_cv or {"experiencias": [
+        {"puesto": "Camarera", "origen": _o(1, "Camarera en Bar Sol")}]}
+    flujo = crear_perfilar(proveedor=ProveedorSimulado([_extraccion(**perfil_cv), TAX]))
+    e = flujo.run({"cvs": [{"cv_id": 1, "nombre": "A", "texto": cv}], "de_usuaria": de_usuaria})
+    return Perfil.model_validate(e["perfil"]), e
+
+
+def _avisos_p(p):
+    return [q.pregunta for q in p.preguntas_pendientes if q.pregunta.startswith(AVISO)]
+
+
+def test_un_rasgo_personal_escrito_por_la_usuaria_se_quita_al_rehacer_y_avisa_una_vez():
+    de_usuaria = {"experiencias": [{"puesto": "Auxiliar administrativa", "descripcion": "casada con hijos",
+                                    "empresa": "Distribuciones Levante Frío", "origen": USUARIA}]}
+    p, e = _con_lo_suyo(de_usuaria)
+    aux = next(x for x in p.experiencias if x.puesto == "Auxiliar administrativa")
+    assert aux.descripcion is None and aux.empresa == "Distribuciones Levante Frío"
+    assert "casada" not in e["cv_maestro"].casefold() and "hijos" not in e["cv_maestro"]
+    assert len(_avisos_p(p)) == 1
+
+
+def test_si_quitar_sensibles_ya_avisó_sigue_habiendo_un_solo_aviso():
+    de_usuaria = {"experiencias": [{"puesto": "Auxiliar", "descripcion": "casada con hijos",
+                                    "origen": USUARIA}]}
+    p, _ = _con_lo_suyo(de_usuaria, cv=CV_CON_RASGOS)   # el CV también trae rasgos
+    assert len(_avisos_p(p)) == 1
+
+
+def test_un_elemento_de_lista_de_la_usuaria_con_rasgo_en_su_dato_principal_se_descarta():
+    de_usuaria = {"habilidades": [{"nombre": "Soltera y sin hijos", "origen": USUARIA},
+                                  {"nombre": "Catas de vino", "origen": USUARIA}],
+                  "resumen": {"valor": "Mujer de 34 años, casada", "origen": USUARIA},
+                  "nombre": "Ana, de nacionalidad colombiana"}
+    p, _ = _con_lo_suyo(de_usuaria)
+    assert [h.nombre for h in p.habilidades] == ["Catas de vino"]
+    assert p.resumen is None or "casada" not in p.resumen.valor
+    assert p.nombre is None or "colombiana" not in p.nombre
+    assert len(_avisos_p(p)) == 1
+
+
+def test_una_actividad_de_la_usuaria_con_rasgo_queda_solo_como_periodo():
+    de_usuaria = {"actividades": [{"descripcion": "Cuidado de mis hijos por mi embarazo",
+                                   "inicio": "2021-01", "fin": "2021-12", "origen": USUARIA}]}
+    p, _ = _con_lo_suyo(de_usuaria)
+    assert p.actividades == []
+    assert [(x.inicio, x.fin) for x in p.periodos_cubiertos] == [("2021-01", "2021-12")]
+    assert len(_avisos_p(p)) == 1
+
+
+def test_lo_de_la_usuaria_sin_rasgos_se_copia_igual_y_sin_aviso():
+    de_usuaria = {"experiencias": [{"puesto": "Auxiliar administrativa", "empresa": "Levante Frío",
+                                    "descripcion": "Facturación y archivo", "origen": USUARIA}],
+                  "habilidades": [{"nombre": "Excel", "origen": USUARIA}],
+                  "resumen": {"valor": "Administrativa con 7 años de experiencia", "origen": USUARIA}}
+    p, _ = _con_lo_suyo(de_usuaria)
+    aux = next(x for x in p.experiencias if x.puesto == "Auxiliar administrativa")
+    assert aux.descripcion == "Facturación y archivo" and aux.origen.fuente == "usuaria"
+    assert [h.nombre for h in p.habilidades] == ["Excel"]
+    assert p.resumen.valor == "Administrativa con 7 años de experiencia"
+    assert _avisos_p(p) == []

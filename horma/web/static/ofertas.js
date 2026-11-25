@@ -10,7 +10,9 @@ const AYUDA = [
 ];
 const CLAVE_VISTA = "horma.vista.recomendadas";   // la clave no cambia: conserva la vista de quien ya la guardó
 const VISTA_POR_DEFECTO = { min: 40, max: 100, orden: "recientes", estado: "nuevas" };
-const ESTADOS_VISTA = [["nuevas", "Nuevas"], ["candidatura", "Con candidatura"], ["descartadas", "Descartadas"]];
+// «Añadidas por mí» no es un estado: las suyas (por URL o por texto), menos las descartadas (RF-11.31, D-033).
+const ESTADOS_VISTA = [["nuevas", "Nuevas"], ["candidatura", "Con candidatura"], ["descartadas", "Descartadas"],
+                       ["propias", "Añadidas por mí"]];
 let guardadas = null;
 let opciones = null;
 let todas = [];            // lo que devuelve la API; la vista lo filtra y ordena sin volver a pedirlo
@@ -175,13 +177,21 @@ function estadoDe(o) {
   return o.candidatura ? "candidatura" : "nuevas";
 }
 
+// Si la oferta entra en lo que pide «Mostrar» (por defecto, lo elegido en la vista).
+function enVista(o, cual = vista.estado) {
+  if (cual === "propias") return !!o.propia && !o.descartada;
+  return estadoDe(o) === cual;
+}
+
 // Las propias solo llegan si ella las incluye, y entonces se ven siempre (RF-10.6g).
 function enRango(o) {
   return o.propia || o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
 }
 
+// «Más recientes» = las que llegaron a Horma hace menos, del catálogo o añadidas por ella (RF-11.32, D-034). No se usa
+// la fecha de publicación: en las añadidas es texto de la web («25/11/2026», «hace 23 horas») y las mandaba al final.
 function fechaOrden(o) {
-  return new Date(o.fecha_publicacion || o.creada_en || 0).getTime() || 0;
+  return new Date(o.creada_en || 0).getTime() || 0;
 }
 
 function ordenar(lista) {
@@ -192,14 +202,16 @@ function ordenar(lista) {
   return [...lista].sort(porFecha);
 }
 
+const pintarRango = montarRango($("rango-compat"), $("nota-min"), $("nota-max"));
+
 function pintarVista() {
   $("nota-min").value = vista.min;
   $("nota-max").value = vista.max;
+  pintarRango();
   $("orden").value = vista.orden;
   const visibles = todas.filter(enRango);
-  const n = (e) => visibles.filter((o) => estadoDe(o) === e).length;
   $("estado").replaceChildren(...ESTADOS_VISTA.map(([valor, texto]) => {
-    const op = nodo("option", `${texto} (${n(valor)})`);
+    const op = nodo("option", `${texto} (${visibles.filter((o) => enVista(o, valor)).length})`);
     op.value = valor;
     return op;
   }));
@@ -457,11 +469,11 @@ function filaOferta(o) {
 // --- Lista --------------------------------------------------------------------------------------
 function pintarLista() {
   pintarVista();
-  const lista = ordenar(todas.filter((o) => enRango(o) && estadoDe(o) === vista.estado));
+  const lista = ordenar(todas.filter((o) => enRango(o) && enVista(o)));
   if (abiertas === null) abiertas = new Set(lista.slice(0, 1).map((o) => o.id));   // la primera, abierta
   // La oferta recién descartada sigue en su sitio como aviso; no cuenta como oferta.
   const conAviso = descarteReciente === null ? lista
-    : ordenar(todas.filter((o) => (enRango(o) && estadoDe(o) === vista.estado) || (o.id === descarteReciente && o.descartada)));
+    : ordenar(todas.filter((o) => (enRango(o) && enVista(o)) || (o.id === descarteReciente && o.descartada)));
   $("filas").replaceChildren(...conAviso.flatMap((o) => (o.id === descarteReciente && o.descartada ? filaDescartada(o) : filaOferta(o))));
   $("calificar-todas").hidden = !todas.some((o) => o.sin_puntuar && !o.descartada) || barra !== null;
   $("vacio").hidden = lista.length > 0 || conAviso.length > 0;
@@ -488,7 +500,8 @@ function frasePorError(t) {
 // Sigue una tarea de puntuar: barra con su %, y la lista se recarga cada vez que sube (llegan por tandas).
 function seguirPuntuacion(tareaId) {
   if (dejarDeSeguir) dejarDeSeguir();
-  if (!barra) barra = barraAvance($("avance"), "Calculando la compatibilidad de las ofertas");
+  if (!barra) barra = barraAvance($("avance"), "Calculando la compatibilidad de las ofertas", false, DURACION_TIPICA_S.compatibilidad);
+  barra.vincular(`horma:avance:puntuar:${tareaId}`);   // al volver de otra pestaña no retrocede (RF-10.8c)
   ultimoAvance = -1;
   dejarDeSeguir = seguirTarea(tareaId, async (p) => {
     if (barra) barra.poner(p);
@@ -685,6 +698,7 @@ function mostrarSinPerfil() {
 // --- «+ Añadir oferta» (RF-10.6b): ventana con la dirección o el texto; la oferta sale en la lista -------------
 const SONDEO_MS = 3000;
 const SONDEOS_SIN_TAREA = 40;   // unos 2 min sin que empiece el análisis: se deja de esperar
+const CLAVE_LECTURA = "horma:lectura-url";   // id de la lectura por URL en curso: sobrevive a cambiar de pantalla
 let lecturaBarra = null;
 let sondeoAnadidas = null;
 let lote = new Map();           // id de oferta añadida → { pct, fin, sinTarea }
@@ -695,10 +709,22 @@ function avisarUrl(texto, error) {
   a.className = error ? "alerta" : "suave";
 }
 
-// Barra «Analizando la oferta añadida · N %». La lista se recarga en cada consulta, así la oferta aparece
+// Qué añadidas se siguen al volver a Ofertas: las que aún se analizan, las que esperan su nota y, mientras se puntúa,
+// las ya analizadas que todavía no están en la lista (sin esto, la barra y la oferta «desaparecían» al cambiar de pantalla).
+function anadidasPorRetomar(propias, todas, puntuando) {
+  return propias.filter((x) => {
+    const fila = todas.find((o) => o.id === x.id);
+    if (x.estado === "pendiente") return true;
+    if (fila) return fila.sin_puntuar && !fila.descartada;
+    return x.estado === "procesada" && puntuando;
+  }).map((x) => x.id);
+}
+
+// Barra «Analizando la oferta · N %». La lista se recarga en cada consulta, así la oferta aparece
 // en cuanto está analizada, y se sigue hasta que tiene su compatibilidad (o ya no se va a calcular).
 function seguirAnadida(id) {
   if (id === null || id === undefined) return;
+  if (lote.has(id)) return;   // la lectura retomada y la lista de añadidas pueden pedir la misma
   lote.set(id, { pct: 0, fin: false, sinTarea: 0 });
   sondearAnadidas();
 }
@@ -714,9 +740,10 @@ function pintarBarraAnadidas() {
     barraAnadidas = null;
   }
   if (!barraAnadidas) {
-    const texto = lote.size === 1 ? "Analizando la oferta añadida" : "Analizando las ofertas añadidas";
-    barraAnadidas = { n: lote.size, barra: barraAvance($("avance"), texto) };
+    const texto = lote.size === 1 ? "Analizando la oferta" : "Analizando las ofertas añadidas";
+    barraAnadidas = { n: lote.size, barra: barraAvance($("avance"), texto, false, DURACION_TIPICA_S.oferta) };
   }
+  barraAnadidas.barra.vincular(`horma:avance:anadidas:${[...lote.keys()].sort().join(",")}`);
   const pcts = [...lote.values()].map((e) => (e.fin ? 100 : e.pct));
   barraAnadidas.barra.poner(pcts.reduce((a, b) => a + b, 0) / pcts.length);
 }
@@ -767,12 +794,35 @@ async function traerPuestosNuevos() {
   avisar(TEXTOS.anadirPuesto(nuevos.join("», «")));
 }
 
+// Dos pestañas, un solo botón «Añadir oferta» a la vista: con una dirección o pegando el texto.
+function elegirPestanaAnadir(cual) {
+  for (const c of ["url", "texto"]) {
+    const activa = c === cual;
+    $(`formulario-${c}`).hidden = !activa;
+    const p = $(`pestana-${c}`);
+    p.setAttribute("aria-selected", String(activa));
+    p.classList.toggle("activa", activa);
+  }
+  limpiarRepetida();
+  $(cual === "url" ? "url" : "texto").focus();
+}
+$("pestana-url").addEventListener("click", () => elegirPestanaAnadir("url"));
+$("pestana-texto").addEventListener("click", () => elegirPestanaAnadir("texto"));
+
 function abrirAnadir() {
   $("anadir-intro").textContent = TEXTOS.anadirIntro;
   $("anadir-url-ayuda").textContent = TEXTOS.anadirUrl;
   const v = $("ventana-anadir");
-  if (!v.open) v.showModal();
-  $("url").focus();
+  if (!v.open) {
+    // Se abre limpia: sin la dirección ni el aviso de la vez anterior (T08r). Con una lectura en marcha se queda la
+    // dirección que se está leyendo y su «Leyendo la página…». «Ya añadiste…» lo quita `elegirPestanaAnadir`.
+    if (!lecturaBarra) {
+      $("url").value = "";
+      avisarUrl("");
+    }
+    v.showModal();
+  }
+  elegirPestanaAnadir("url");
 }
 $("abrir-anadir").addEventListener("click", abrirAnadir);
 $("anadir-cerrar").addEventListener("click", () => $("ventana-anadir").close());
@@ -789,6 +839,7 @@ $("formulario-texto").addEventListener("submit", async (e) => {
   const aviso = $("aviso-texto");
   if (!texto) { aviso.textContent = "Pega el texto de la oferta."; return; }
   $("enviar").disabled = true;
+  aviso.className = "suave";
   aviso.textContent = "Enviando…";
   const r = await api("/ofertas", { metodo: "POST", cuerpo: { texto } });
   $("enviar").disabled = false;
@@ -807,15 +858,61 @@ $("formulario-texto").addEventListener("submit", async (e) => {
   await cargarLista();
 });
 
+function terminarLectura() {
+  sessionStorage.removeItem(CLAVE_LECTURA);
+  if (lecturaBarra) lecturaBarra.quitar();   // también borra su clave de avance
+  lecturaBarra = null;
+  $("enviar-url").disabled = false;
+}
+
+// RF-11.29: la dirección ya estaba añadida. Fecha, «Ver oferta» y «Leer de nuevo» (dos botones secundarios en una fila).
+function limpiarRepetida() {
+  $("repetida-url").replaceChildren();
+}
+
+function avisarRepetida(url, oferta) {
+  const ver = nodo("button", "Ver oferta", "secundario");
+  ver.setAttribute("type", "button");
+  ver.addEventListener("click", () => verOriginal(oferta.oferta_id));
+  const releer = nodo("button", "Leer de nuevo", "secundario");
+  releer.setAttribute("type", "button");
+  releer.addEventListener("click", () => leerUrl(url, true));
+  const fila = nodo("div", null, "fila");
+  fila.append(ver, releer);
+  $("repetida-url").replaceChildren(nodo("p", TEXTOS.anadidaYa(fecha(oferta.anadida_en))), fila);
+}
+
+// RF-11.30: al leerse bien la página, la misma barra sigue con el análisis (sin quitarla ni bajar). Solo si no hay otras
+// añadidas en marcha; devuelve si la ha reutilizado.
+function relevarBarra(id, ofertaId) {
+  if (!lecturaBarra || ofertaId === null || ofertaId === undefined || lote.size || barraAnadidas) return false;
+  const barra = lecturaBarra;
+  lecturaBarra = null;
+  sessionStorage.removeItem(`horma:avance:lectura:${id}`);
+  sessionStorage.removeItem(CLAVE_LECTURA);
+  $("enviar-url").disabled = false;
+  if (!$("avance").contains(barra.caja)) $("avance").append(barra.caja);
+  barraAnadidas = { n: 1, barra };
+  return true;
+}
+
 async function esperarLectura(id) {
   const r = await api(`/ofertas/url/${id}`);
-  if (!r.ok) return avisarUrl(r.motivo, true);
+  if (!r.ok) {
+    terminarLectura();
+    avisarUrl(r.motivo, true);
+    if (!$("ventana-anadir").open) avisar(r.motivo, true);
+    return;
+  }
   if (r.datos.estado === "pendiente") return setTimeout(() => esperarLectura(id), SONDEO_MS);
-  $("enviar-url").disabled = false;
-  $("lectura-url").replaceChildren();
+  if (!(r.datos.estado === "leida" && relevarBarra(id, r.datos.oferta_id))) terminarLectura();
   if (r.datos.estado === "error") {
-    avisarUrl(r.datos.motivo || "La página no se ha podido leer: pega el texto de la oferta.", true);
-    $("texto").focus();
+    avisarUrl("");
+    if (!$("ventana-anadir").open) abrirAnadir();   // lectura retomada: la ventana estaba cerrada
+    elegirPestanaAnadir("texto");   // el aviso se pinta en esta pestaña, que es la que ve
+    const aviso = $("aviso-texto");
+    aviso.className = "alerta";
+    aviso.textContent = TEXTOS.anadirUrlFallida;
     return;
   }
   $("url").value = "";
@@ -826,23 +923,59 @@ async function esperarLectura(id) {
   await cargarLista();
 }
 
-$("formulario-url").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const url = $("url").value.trim();
-  if (!url) return avisarUrl("Pega la dirección de la oferta.", true);
+// Lee la dirección y sigue la lectura. Con `releer` («Leer de nuevo», RF-11.29) el servidor actualiza la oferta que ya
+// estaba añadida en vez de crear otra.
+async function leerUrl(url, releer = false) {
+  limpiarRepetida();
   $("enviar-url").disabled = true;
   avisarUrl("Leyendo la página…");
   $("lectura-url").replaceChildren();
-  lecturaBarra = barraAvance($("lectura-url"), "Analizando la oferta");
+  lecturaBarra = barraAvance($("lectura-url"), "Analizando la oferta", false, DURACION_TIPICA_S.oferta);
   lecturaBarra.poner(10);
-  const r = await api("/ofertas/url", { metodo: "POST", cuerpo: { url } });
+  const r = await api("/ofertas/url", { metodo: "POST", cuerpo: releer ? { url, releer: true } : { url } });
   if (!r.ok) {
     $("enviar-url").disabled = false;
     $("lectura-url").replaceChildren();
     return avisarUrl(r.motivo, true);
   }
+  if (r.datos.repetida) {   // ya estaba añadida: nada que leer, la barra sobra
+    lecturaBarra.quitar();
+    lecturaBarra = null;
+    $("lectura-url").replaceChildren();
+    $("enviar-url").disabled = false;
+    avisarUrl("");
+    return avisarRepetida(url, r.datos);
+  }
+  sessionStorage.setItem(CLAVE_LECTURA, String(r.datos.id));
+  lecturaBarra.vincular(`horma:avance:lectura:${r.datos.id}`);
   await esperarLectura(r.datos.id);
+}
+
+$("formulario-url").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = $("url").value.trim();
+  if (!url) return avisarUrl("Pega la dirección de la oferta.", true);
+  await leerUrl(url);
 });
+$("url").addEventListener("input", limpiarRepetida);
+
+// La ventana es modal: para ir a otra pantalla hay que cerrarla. Con la lectura en marcha, la barra sale de la ventana
+// y pasa a la página (con su valor y su clave), donde también la pone `retomarLectura` (M16).
+$("ventana-anadir").addEventListener("close", () => {
+  if (lecturaBarra && $("lectura-url").contains(lecturaBarra.caja)) $("avance").append(lecturaBarra.caja);
+});
+
+// Al volver a Ofertas con una lectura por URL en curso: barra en la página (la ventana no se reabre) y se sigue la lectura.
+async function retomarLectura() {
+  const id = sessionStorage.getItem(CLAVE_LECTURA);
+  if (!id) return;
+  lecturaBarra = barraAvance($("avance"), "Analizando la oferta", false, DURACION_TIPICA_S.oferta);
+  lecturaBarra.vincular(`horma:avance:lectura:${id}`);
+  lecturaBarra.poner(10);
+  $("enviar-url").disabled = true;
+  avisarUrl("Leyendo la página…");
+  await esperarLectura(id);
+}
 
 (async () => {
   if (!(await arrancar("/ofertas"))) return;
@@ -854,15 +987,16 @@ $("formulario-url").addEventListener("submit", async (e) => {
   guardadas = p.datos;
   opciones = o.datos;
   pintarQueBuscas();
+  // Sin esperar, antes de la lista: la barra sale enseguida con su valor guardado. Va tras las preferencias
+  // porque, si la oferta ya está lista, su seguimiento usa `guardadas` (traerPuestosNuevos).
+  retomarLectura();
   await cargarLista();
   pintarTitular();
   await retomarOLanzar();
   // Al volver a la pantalla se retoma el seguimiento de las añadidas que aún se analizan o esperan nota.
-  const propias = await api("/api/ofertas/propias");
+  const [propias, activas] = await Promise.all([api("/api/ofertas/propias"),
+                                                api("/api/tareas/activas?tipo=puntuar_propias&tipo=puntuar_una")]);
   if (propias.ok) {
-    for (const x of propias.datos) {
-      const nueva = todas.find((o) => o.id === x.id);
-      if (x.estado === "pendiente" || (nueva && nueva.sin_puntuar && !nueva.descartada)) seguirAnadida(x.id);
-    }
+    for (const id of anadidasPorRetomar(propias.datos, todas, activas.ok && activas.datos.tareas.length > 0)) seguirAnadida(id);
   }
 })();

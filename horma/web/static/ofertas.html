@@ -76,8 +76,18 @@
     </details>
 
     <form id="vista" class="vista-rejilla" aria-label="Cómo ver la lista">
-      <label>Compatibilidad mínima<input id="nota-min" type="number" min="0" max="100" inputmode="numeric"></label>
-      <label>Compatibilidad máxima<input id="nota-max" type="number" min="0" max="100" inputmode="numeric"></label>
+      <div id="rango-compat" class="rango" role="group" aria-labelledby="rango-etiqueta">
+        <span id="rango-etiqueta" class="etiqueta-mono">Compatibilidad</span>
+        <div class="rango-cuerpo">
+          <output class="rango-numero" data-rango="min" aria-hidden="true">0</output>
+          <div class="rango-pista">
+            <span class="rango-riel" aria-hidden="true"><span class="rango-tramo"></span></span>
+            <input id="nota-min" type="range" min="0" max="100" step="1" value="0" aria-label="Compatibilidad mínima">
+            <input id="nota-max" type="range" min="0" max="100" step="1" value="100" aria-label="Compatibilidad máxima">
+          </div>
+          <output class="rango-numero" data-rango="max" aria-hidden="true">100</output>
+        </div>
+      </div>
       <label>Ordenar por
         <select id="orden">
           <option value="recientes">Más recientes</option>
@@ -122,17 +132,22 @@
     </header>
     <div class="ventana-cuerpo">
       <p id="anadir-intro" class="suave"></p>
-      <form id="formulario-url">
+      <div class="pestanas pestanas-ventana" role="tablist" aria-label="Cómo añadir la oferta">
+        <button id="pestana-url" class="pestana activa" type="button" role="tab" aria-selected="true" aria-controls="formulario-url">Por URL</button>
+        <button id="pestana-texto" class="pestana" type="button" role="tab" aria-selected="false" aria-controls="formulario-texto">Por texto</button>
+      </div>
+      <form id="formulario-url" role="tabpanel" aria-labelledby="pestana-url">
         <label for="url">Dirección de la oferta</label>
         <div class="fila fila-url">
           <input id="url" type="url" maxlength="2000" placeholder="https://…" autocomplete="off">
-          <button id="enviar-url" class="secundario" type="submit">Leer oferta</button>
+          <button id="enviar-url" type="submit">Añadir oferta</button>
         </div>
         <div id="lectura-url"></div>
         <span id="aviso-url" role="status"></span>
+        <div id="repetida-url"></div>
         <p id="anadir-url-ayuda" class="suave"></p>
       </form>
-      <form id="formulario-texto">
+      <form id="formulario-texto" role="tabpanel" aria-labelledby="pestana-texto" hidden>
         <label for="texto">Texto de la oferta</label>
         <textarea id="texto" rows="8" maxlength="20000" required></textarea>
         <div class="fila">
@@ -144,6 +159,7 @@
   </dialog>
   <script src="/static/textos.js"></script>
   <script src="/static/comun.js"></script>
+  <script src="/static/rango.js"></script>
   <script src="/static/ofertas.js"></script>
   <script src="/static/pwa.js"></script>
 </body>

@@ -61,6 +61,9 @@ class ClienteApi:
         """Ofertas comunes, sin datos personales (`GET /api/catalogo`)."""
         return self._pedir("GET", "/api/catalogo").json()
 
+    def medicion_destinos(self) -> dict:
+        return self._pedir("GET", "/api/admin/envios/medicion", timeout=300).json()
+
     def calificacion(self, calificacion_id: int) -> dict:
         return self._pedir("GET", f"/api/fuentes/calificaciones/{calificacion_id}").json()
 

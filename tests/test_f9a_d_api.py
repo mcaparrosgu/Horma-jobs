@@ -199,3 +199,25 @@ def test_autocompletar_puestos_con_titulos_reales_de_las_ofertas(app, motor_migr
     assert c.get("/api/preferencias/titulos", params={"q": "data"}).json()["titulos"] == [
         "Data Analyst", "Senior Data Analyst"]
     assert c.get("/api/preferencias/titulos", params={"q": "x"}).json()["titulos"] == []
+
+
+def test_editar_una_experiencia_con_rasgo_personal_no_lo_guarda_y_avisa(app, motor_app, motor_migrador):
+    """RF-11.25 / RT-09: el dato personal escrito a mano en una experiencia tampoco se guarda."""
+    c, h = entrar(app)
+    perfil_de(motor_app, uid(motor_migrador))
+    antes = c.get("/api/perfil").json()["perfil"]["experiencias"][0]
+    r = c.patch("/api/perfil/datos", headers=h, json={"campo": "experiencias", "indice": 0, "dato": {
+        **{k: v for k, v in antes.items() if k != "origen"}, "descripcion": "Casada, con hijos"}})
+    assert r.status_code in (200, 201)
+    assert r.json()["aviso"] == "Hemos quitado un dato personal que Horma no guarda."
+    p = c.get("/api/perfil").json()["perfil"]
+    assert antes["puesto"] in [x["puesto"] for x in p["experiencias"]]
+    assert "casada" not in str(p).lower() and "hijos" not in str(p).lower()
+
+
+def test_una_experiencia_nueva_sin_rasgo_personal_no_avisa(app, motor_app, motor_migrador):
+    c, h = entrar(app)
+    perfil_de(motor_app, uid(motor_migrador))
+    r = c.patch("/api/perfil/datos", headers=h, json={"campo": "experiencias", "dato": {
+        "puesto": "Camarera", "empresa": "Bar Sol", "descripcion": "Sala y barra"}})
+    assert r.status_code in (200, 201) and "aviso" not in r.json()

@@ -10,6 +10,7 @@ Estado de salida: además, "perfil" (Perfil, versión 1: la versión real la pon
 Lo que el modelo propone, el código lo comprueba (RT-08, RT-09): un dato cuyo fragmento no está en su
 CV va a `preguntas_pendientes`; dos CV que se contradicen dejan un pendiente sin elegir; edad,
 nacionalidad y demás rasgos personales se descartan aunque el modelo los deje pasar."""
+import copy
 import re
 import unicodedata
 
@@ -24,7 +25,7 @@ from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.componer_cv_maestro import componer_cv_maestro
 from horma.tools.puestos_del_perfil import puestos_del_perfil
-from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.rasgos_personales import AVISO_DATO_PERSONAL, rasgos_personales
 from horma.tools.resumenes_cv import resumen_de, titular_de
 
 # (campo del perfil, atributo con el nombre del dato, atributos de texto opcionales)
@@ -128,6 +129,50 @@ def _actividades_sin_sensibles(actividades: list[dict]) -> tuple[list[dict], lis
     return quedan, periodos
 
 
+def _fragmento(x: dict) -> str:
+    return (x.get("origen") or {}).get("fragmento") or ""
+
+
+def _limpiar_datos(datos: dict) -> tuple[bool, list[dict]]:
+    """RT-09: quita de `datos` (el perfil del CV o lo que escribió la usuaria) lo que trae un rasgo personal.
+    Un elemento de lista con rasgo en su dato principal se descarta; un campo opcional con rasgo pasa a None;
+    una actividad con rasgo queda como periodo; `titular`/`resumen` y `nombre` con rasgo se vacían. Devuelve
+    si quitó algo y los periodos cubiertos nuevos. Tolera campos que falten."""
+    quitado = False
+    for campo, nombre, opcionales in _LISTAS:
+        limpios = []
+        for x in datos.get(campo) or []:
+            if rasgos_personales(str(x.get(nombre) or "")) or rasgos_personales(_fragmento(x)):
+                quitado = True
+                continue
+            for o in opcionales:
+                if x.get(o) and rasgos_personales(x[o]):
+                    x[o] = None
+                    quitado = True
+            limpios.append(x)
+        if campo in datos:
+            datos[campo] = limpios
+    actividades = datos.get("actividades") or []
+    datos["actividades"], periodos = _actividades_sin_sensibles(actividades)
+    quitado = quitado or len(datos["actividades"]) < len(actividades)
+    for campo in _UNICOS:
+        dato = datos.get(campo)
+        if dato and (rasgos_personales(dato.get("valor") or "") or rasgos_personales(_fragmento(dato))):
+            datos[campo] = None
+            quitado = True
+    if datos.get("nombre") and rasgos_personales(datos["nombre"]):
+        datos["nombre"] = None
+        quitado = True
+    return quitado, periodos
+
+
+def _aviso_dato_personal(perfil: dict) -> None:
+    """RF-11.25: el aviso de siempre, una sola vez por perfil aunque se quite más de un dato."""
+    pregunta = f"{AVISO_DATO_PERSONAL} Si falta algo de tu experiencia, escríbelo tú."
+    if not any(p["campo"] == "perfil" and p["pregunta"] == pregunta for p in perfil["preguntas_pendientes"]):
+        perfil["preguntas_pendientes"].append(_pendiente("perfil", "falta", pregunta))
+
+
 _VACIAS = (("experiencias", "No encuentro experiencia en tu CV. ¿Quieres añadirla?"),
            ("formacion", "No encuentro estudios en tu CV. ¿Quieres añadirlos?"),
            ("idiomas", "No encuentro idiomas en tu CV. ¿Quieres añadirlos?"))
@@ -157,6 +202,13 @@ def conservar_usuaria(perfil: dict, de_usuaria: dict | None) -> None:
     (mismo puesto y sitio, mismo título…). Lo suyo no se vuelve a comprobar contra un CV (RF-10.14)."""
     if not de_usuaria:
         return
+    de_usuaria = copy.deepcopy(de_usuaria)
+    # Lo suyo pasa el mismo filtro de datos personales que el CV (RF-11.25c): lo escrito antes de que
+    # existiera el filtro no pasa de versión en versión.
+    quitado, periodos = _limpiar_datos(de_usuaria)
+    if quitado:
+        perfil["periodos_cubiertos"] = [*(perfil.get("periodos_cubiertos") or []), *periodos]
+        _aviso_dato_personal(perfil)
     # Las propuestas que aún no ha confirmado siguen pendientes en la versión nueva (RF-10.15d).
     perfil["preguntas_pendientes"] = [*perfil["preguntas_pendientes"],
                                       *(de_usuaria.get("propuestas") or [])]
@@ -235,36 +287,16 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         return e
 
     def quitar_sensibles(e: dict) -> dict:
-        """RT-09: ni edad, ni nacionalidad, ni categorías del art. 9 llegan al perfil."""
+        """RT-09: ni edad, ni nacionalidad, ni categorías del art. 9 llegan al perfil. El aviso sale también
+        si solo está en el texto de un CV (el extractor no los anota, no hay nada que quitar): M12b."""
         perfil = e["extraccion"]["perfil"]
-        sin_dato = False
-        for campo, nombre, opcionales in _LISTAS:
-            limpios = []
-            for x in perfil[campo]:
-                if rasgos_personales(x[nombre]) or rasgos_personales(x["origen"]["fragmento"]):
-                    sin_dato = True
-                    continue
-                for o in opcionales:
-                    if x.get(o) and rasgos_personales(x[o]):
-                        x[o] = None
-                limpios.append(x)
-            perfil[campo] = limpios
-        perfil["actividades"], periodos = _actividades_sin_sensibles(perfil["actividades"])
-        perfil["periodos_cubiertos"] = periodos
-        for campo in _UNICOS:
-            dato = perfil[campo]
-            if dato and (rasgos_personales(dato["valor"]) or rasgos_personales(
-                    dato["origen"]["fragmento"])):
-                perfil[campo] = None
-        if perfil["nombre"] and rasgos_personales(perfil["nombre"]):
-            perfil["nombre"] = None
+        quitado, perfil["periodos_cubiertos"] = _limpiar_datos(perfil)
+        quitado = quitado or any(rasgos_personales(c["texto"]) for c in e["cvs"])
         perfil["preguntas_pendientes"] = [
             p for p in perfil["preguntas_pendientes"]
             if not rasgos_personales(" ".join([p["pregunta"], *p["opciones"]]))]
-        if sin_dato:
-            perfil["preguntas_pendientes"].append(_pendiente(
-                "perfil", "falta", "He descartado algún dato de tus CV que no se puede usar. "
-                                   "Si falta algo de tu experiencia, escríbelo tú."))
+        if quitado:  # RF-11.25: se le dice siempre, con el mismo texto que al editar el perfil
+            _aviso_dato_personal(perfil)
         return e
 
     def conservar(e: dict) -> dict:
