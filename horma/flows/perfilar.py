@@ -235,7 +235,8 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         return e
 
     def quitar_sensibles(e: dict) -> dict:
-        """RT-09: ni edad, ni nacionalidad, ni categorías del art. 9 llegan al perfil."""
+        """RT-09: ni edad, ni nacionalidad, ni categorías del art. 9 llegan al perfil. El aviso sale también
+        si solo está en el texto de un CV (el extractor no los anota, no hay nada que quitar): M12b."""
         perfil = e["extraccion"]["perfil"]
         sin_dato = quitado = False
         for campo, nombre, opcionales in _LISTAS:
@@ -254,6 +255,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         perfil["actividades"], periodos = _actividades_sin_sensibles(perfil["actividades"])
         perfil["periodos_cubiertos"] = periodos
         quitado = sin_dato or len(perfil["actividades"]) < antes or quitado
+        quitado = quitado or any(rasgos_personales(c["texto"]) for c in e["cvs"])
         for campo in _UNICOS:
             dato = perfil[campo]
             if dato and (rasgos_personales(dato["valor"]) or rasgos_personales(

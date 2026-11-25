@@ -299,3 +299,29 @@ def test_un_rasgo_personal_en_la_descripcion_de_un_puesto_se_quita_y_avisa():
     p = Perfil.model_validate(e["perfil"])
     assert p.experiencias[0].puesto == "Camarera" and not p.experiencias[0].descripcion
     assert any(q.pregunta.startswith("Hemos quitado un dato personal") for q in p.preguntas_pendientes)
+
+
+CV_CON_RASGOS = ("Irene Navarro. Fecha de nacimiento: 14/03/1992 · Nacionalidad: española. "
+                 "Casada, con hijos. Camarera en Bar Sol.")
+
+
+def _avisos(e):
+    return [q.pregunta for q in Perfil.model_validate(e["perfil"]).preguntas_pendientes
+            if q.pregunta.startswith("Hemos quitado un dato personal que Horma no guarda.")]
+
+
+def test_un_cv_con_fecha_de_nacimiento_y_estado_civil_avisa_aunque_el_modelo_no_los_devuelva():
+    """M12b: el modelo ya no extrae esos datos (su prompt se lo prohíbe); el aviso sale al mirar el CV."""
+    _, e = _perfilar(
+        _extraccion(experiencias=[{"puesto": "Camarera", "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": CV_CON_RASGOS}])
+    assert len(_avisos(e)) == 1
+
+
+def test_si_el_modelo_tambien_devolvio_el_rasgo_el_aviso_sale_una_sola_vez():
+    cv = CV_CON_RASGOS
+    _, e = _perfilar(_extraccion(
+        experiencias=[{"puesto": "Camarera", "empresa": "Bar Sol", "descripcion": "Casada, con hijos",
+                       "origen": _o(1, "Camarera en Bar Sol")}]),
+        cvs=[{"cv_id": 1, "nombre": "A", "texto": cv}])
+    assert len(_avisos(e)) == 1

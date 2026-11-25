@@ -60,4 +60,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_s11_retomar_lectura_url.py`.
 - [x] T08g — La barra de avance nunca parece parada (RF-10.8c; prueba de Mar del 25-nov: en Perfil, tras subir un CV y volver de otra pestaña, se quedaba quieta). Causa: entre pasos avanzaba un 2 % del hueco que le quedaba hasta 20 puntos por delante del paso real; si el paso tardaba (la tarea 512 estuvo 71 s en 0 %) se pegaba al tope sin llegar y el % dejaba de cambiar, y al volver se retomaba ya junto al tope (igual en la lectura por URL retomada de T08f). Ahora avanza un punto cada 3 s y, en el tope, el relleno late hasta el siguiente paso.
   - **Test:** `tests/test_s11_barra_nunca_parada.py` (ejecuta `barraAvance` en node).
+- [x] T08h — El aviso «Hemos quitado un dato personal» sale al subir un CV con fecha de nacimiento, nacionalidad o estado civil (M12b). Causa: solo salía si el modelo devolvía el dato y el código lo quitaba; el modelo ya no lo extrae (su prompt se lo prohíbe), así que no salía nunca. Ahora también se mira el texto de los CV.
+  - **Test:** `tests/test_f2_t08_t10_flujos.py`.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.
