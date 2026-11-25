@@ -76,8 +76,18 @@
     </details>
 
     <form id="vista" class="vista-rejilla" aria-label="Cómo ver la lista">
-      <label>Compatibilidad mínima<input id="nota-min" type="number" min="0" max="100" inputmode="numeric"></label>
-      <label>Compatibilidad máxima<input id="nota-max" type="number" min="0" max="100" inputmode="numeric"></label>
+      <div id="rango-compat" class="rango" role="group" aria-labelledby="rango-etiqueta">
+        <span id="rango-etiqueta" class="etiqueta-mono">Compatibilidad</span>
+        <div class="rango-cuerpo">
+          <output class="rango-numero" data-rango="min" aria-hidden="true">0</output>
+          <div class="rango-pista">
+            <span class="rango-riel" aria-hidden="true"><span class="rango-tramo"></span></span>
+            <input id="nota-min" type="range" min="0" max="100" step="1" value="0" aria-label="Compatibilidad mínima">
+            <input id="nota-max" type="range" min="0" max="100" step="1" value="100" aria-label="Compatibilidad máxima">
+          </div>
+          <output class="rango-numero" data-rango="max" aria-hidden="true">100</output>
+        </div>
+      </div>
       <label>Ordenar por
         <select id="orden">
           <option value="recientes">Más recientes</option>
@@ -144,6 +154,7 @@
   </dialog>
   <script src="/static/textos.js"></script>
   <script src="/static/comun.js"></script>
+  <script src="/static/rango.js"></script>
   <script src="/static/ofertas.js"></script>
   <script src="/static/pwa.js"></script>
 </body>

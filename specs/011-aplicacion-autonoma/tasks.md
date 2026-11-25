@@ -37,9 +37,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** un CV con un dato que Horma no guarda devuelve el aviso en la API y la pantalla lo pinta.
 - [x] T06 — Calificar una fuente que responde 403 da «no apta» con motivo.
   - **Test:** con un 403 simulado, la calificación termina sin error y guarda el motivo.
-- [ ] T07 — Botones de archivo con una sola norma, resaltado simétrico en «Añadir oferta» y barras sin borde.
+- [x] T07 — Botones de archivo con una sola norma, resaltado simétrico en «Añadir oferta» y barras sin borde.
   - **Navegador:** Ofertas, Perfil y la ventana «Añadir oferta» a 1280 y 390 px, claro y oscuro.
-- [ ] T08 — Barra de rango de compatibilidad, primero en la guía.
+- [x] T08 — Barra de rango de compatibilidad, primero en la guía.
   - **Test:** el mínimo no pasa del máximo; el filtro da las mismas ofertas que las dos casillas; se maneja
     con el teclado.
   - **Navegador:** 1280 y 390 px, claro y oscuro.

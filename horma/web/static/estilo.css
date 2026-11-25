@@ -202,7 +202,7 @@ details[open] > summary::after, [aria-expanded="true"] > .chevron::after, .chevr
 .tono-3{ --tono: 320; } .tono-4{ --tono: 100; } .tono-5{ --tono: 10; }
 .nota{ display: flex; align-items: center; gap: 12px; }
 .nota .numero{ font-family: var(--f-mono); font-size: var(--fs-num); font-weight: var(--fw-num); line-height: 1; }
-.barra-compat{ position: relative; flex: 1 1 auto; min-width: 60px; height: var(--bar-h); background: var(--bar-track); outline: var(--bw) solid var(--line-strong); outline-offset: -1px; }
+.barra-compat{ position: relative; flex: 1 1 auto; min-width: 60px; height: var(--bar-h); background: var(--bar-track); }
 .barra-compat > span{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
 .titulo-oferta{ font-family: var(--f-head); font-size: var(--fs-title); font-weight: var(--fw-head); letter-spacing: var(--ls-head); color: var(--ink); }
 a.titulo-oferta:hover{ color: var(--muted); }
@@ -227,7 +227,8 @@ button.ayuda:hover{ background: var(--surface-2); filter: none; color: var(--ink
 #que-buscas > summary{ font-weight: 600; min-height: var(--tap); display: flex; align-items: center; }
 /* Simetría (RF-6.4b): cada celda es etiqueta + control de 44 px, con la misma separación; el alineado es por abajo. */
 .vista-rejilla{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: end; margin: 0 0 1rem; }
-.vista-rejilla > label{ margin: 0; min-width: 0; }
+.vista-rejilla > label, .vista-rejilla > .rango{ margin: 0; min-width: 0; }
+.vista-rejilla > .rango{ grid-column: span 2; }
 .vista-rejilla label input, .vista-rejilla label select{ margin-top: 6px; width: 100%; }
 .acciones-ahora{ display: grid; gap: 6px; }
 .acciones-ahora p{ margin: 0; }
@@ -279,7 +280,7 @@ dialog.ventana{ width: min(60rem, 94vw); max-height: 88vh; padding: 1rem; backgr
 dialog.ventana.alta{ height: 88vh; }
 dialog.ventana[open]{ display: flex; flex-direction: column; gap: 0.75rem; }
 dialog.ventana > header{ justify-content: space-between; align-items: center; display: flex; gap: 1rem; padding: 0; border: 0; }
-.ventana-cuerpo{ flex: 1; min-height: 0; overflow: auto; display: grid; gap: 0.75rem; align-content: start; }
+.ventana-cuerpo{ flex: 1; min-height: 0; overflow: auto; display: grid; gap: 0.75rem; align-content: start; padding: 5px; margin: -5px; }   /* el resaltado de foco (3 px + 2 de separación) cabe por los cuatro lados */
 .ventana-cuerpo .texto-original{ overflow-wrap: anywhere; margin: 0; font-family: var(--f-body); line-height: 1.6; display: grid; gap: 0.75rem; max-width: 70ch; }
 .texto-original p{ margin: 0; }
 .texto-original .apartado-original{ margin: 0.5rem 0 0; font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--ink); border-bottom: var(--bw) solid var(--line-strong); padding-bottom: 0.25rem; }
@@ -288,7 +289,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 
 /* ── Barra de avance (RF-6.4, RF-8.7): trabajo en marcha, con el porcentaje en texto ── */
 .barra-avance{ display: grid; gap: 6px; margin: 0 0 1rem; }
-.barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); outline: var(--bw) solid var(--line-strong); outline-offset: -1px; }
+.barra-avance .pista{ position: relative; height: var(--bar-h); background: var(--bar-track); }
 .barra-avance .relleno{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
 .barra-avance .texto{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--muted); }
 .barra-avance.indeterminada .relleno{ width: 35%; }
@@ -326,6 +327,31 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .columna{ min-width: 0; }
 .columna > h2{ font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); color: var(--muted); margin: 0 0 0.5rem; padding-bottom: 6px; border-bottom: var(--bw) solid var(--line-strong); }
 .columna-cerrada .lista{ margin-top: 0.6rem; }
+
+/* ── Barra de rango (RF-11.27): dos tiradores sobre una pista, con sus dos números. Zona táctil de 44 px ── */
+.rango > .etiqueta-mono{ display: block; margin-bottom: 0.4rem; }
+.rango-cuerpo{ display: grid; grid-template-columns: 3ch minmax(0, 1fr) 3ch; align-items: center; gap: 12px; min-height: var(--tap); margin-top: 6px; }
+.rango-numero{ font-family: var(--f-mono); font-size: var(--fs-label); font-weight: 600; text-align: center; }
+.rango-pista{ position: relative; height: var(--tap); }
+.rango-riel{ position: absolute; left: calc(var(--tap) / 2); right: calc(var(--tap) / 2); top: 50%; height: var(--bar-h); transform: translateY(-50%); background: var(--bar-track); }
+.rango-tramo{ position: absolute; top: 0; bottom: 0; background: var(--bar-fill); }
+.rango-pista input[type="range"]{
+  position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; margin: 0; padding: 0;
+  background: transparent; border: 0; appearance: none; -webkit-appearance: none; pointer-events: none;
+}
+.rango-pista input[type="range"]::-webkit-slider-runnable-track{ background: transparent; height: 100%; }
+.rango-pista input[type="range"]::-moz-range-track{ background: transparent; height: 100%; }
+.rango-pista input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none; appearance: none; pointer-events: auto; cursor: pointer; box-sizing: border-box;
+  width: var(--tap); height: var(--tap); border: 14px solid transparent; background: var(--ink); background-clip: content-box; border-radius: 0;
+}
+.rango-pista input[type="range"]::-moz-range-thumb{
+  pointer-events: auto; cursor: pointer; box-sizing: border-box;
+  width: var(--tap); height: var(--tap); border: 14px solid transparent; background: var(--ink); background-clip: content-box; border-radius: 0;
+}
+.rango-pista input[type="range"]:focus-visible{ outline: none; }
+.rango-pista input[type="range"]:focus-visible::-webkit-slider-thumb{ outline: var(--focus); outline-offset: -4px; }
+.rango-pista input[type="range"]:focus-visible::-moz-range-thumb{ outline: var(--focus); outline-offset: -4px; }
 
 /* ── Tablas de datos (admin) ── */
 .tabla-datos, .tabla-costes{ overflow-x: auto; max-width: 100%; border: var(--bw) solid var(--line); background: var(--surface); }

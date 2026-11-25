@@ -158,11 +158,11 @@ def test_catalogo_es_solo_para_administradoras(app):
     assert TestClient(app, follow_redirects=False).get("/catalogo").status_code == 401
 
 
-def test_las_tres_pantallas_de_admin_llevan_las_tres_subpestanas():
-    for archivo in ("ingesta.html", "catalogo.html", "costes.html"):
+def test_las_pantallas_de_admin_llevan_las_cuatro_subpestanas():
+    for archivo in ("ingesta.html", "catalogo.html", "costes.html", "envios.html"):
         h = leer(archivo)
         sub = h[h.index('<nav class="subpestanas"'):h.index("</nav>", h.index('<nav class="subpestanas"'))]
-        assert [m for m in re.findall(r'href="(/[a-z]+)"', sub)] == ["/ingesta", "/catalogo", "/costes"], archivo  # noqa: E501
+        assert [m for m in re.findall(r'href="(/[a-z]+)"', sub)] == ["/ingesta", "/catalogo", "/costes", "/envios"], archivo  # noqa: E501
         assert sub.count("aria-current") == 1
     assert not (ESTATICOS / "app.js").exists()
     js = leer("catalogo.js")

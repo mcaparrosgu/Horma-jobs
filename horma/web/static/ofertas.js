@@ -192,9 +192,12 @@ function ordenar(lista) {
   return [...lista].sort(porFecha);
 }
 
+const pintarRango = montarRango($("rango-compat"), $("nota-min"), $("nota-max"));
+
 function pintarVista() {
   $("nota-min").value = vista.min;
   $("nota-max").value = vista.max;
+  pintarRango();
   $("orden").value = vista.orden;
   const visibles = todas.filter(enRango);
   const n = (e) => visibles.filter((o) => estadoDe(o) === e).length;
