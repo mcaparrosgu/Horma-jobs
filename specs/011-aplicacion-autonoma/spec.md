@@ -58,6 +58,9 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
   «Leer de nuevo» DEBERÁ volver a leer la página y actualizar esa misma oferta (mismo id; sus candidaturas siguen
   enlazadas), sin crear otra; SI el texto no ha cambiado, no se analiza de nuevo. SI esa dirección ya se está
   leyendo, DEBERÁ seguirse esa lectura en vez de empezar otra.
+- **RF-11.30** *(Mar, 25-nov, D-031)* Añadir una oferta DEBERÁ enseñar una sola barra «Analizando la oferta» desde
+  que se pide hasta que sale en la lista: la lectura de la página y el análisis van en la misma barra, sin cambiar
+  de frase y sin bajar nunca (RF-10.8c).
 
 ## Criterios de aceptación
 - Con el catálogo real, Admin y la consola enseñan la tabla portal · ofertas · exige cuenta, sin coste.
@@ -66,6 +69,7 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
 - Calificar Adzuna termina en «no apta» con su motivo.
 - El filtro con la barra de rango da las mismas ofertas que daban las dos casillas.
 - Añadir dos veces la misma URL, con o sin `utm_*`, no la lee ni la analiza la segunda vez.
+- Añadir por URL enseña una sola barra que nunca baja.
 
 ## Fuera de alcance
 - Enviar candidaturas, leer correo, la regla de envío y sus ajustes: parte 2.

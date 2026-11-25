@@ -711,7 +711,7 @@ function anadidasPorRetomar(propias, todas, puntuando) {
   }).map((x) => x.id);
 }
 
-// Barra «Analizando la oferta añadida · N %». La lista se recarga en cada consulta, así la oferta aparece
+// Barra «Analizando la oferta · N %». La lista se recarga en cada consulta, así la oferta aparece
 // en cuanto está analizada, y se sigue hasta que tiene su compatibilidad (o ya no se va a calcular).
 function seguirAnadida(id) {
   if (id === null || id === undefined) return;
@@ -731,7 +731,7 @@ function pintarBarraAnadidas() {
     barraAnadidas = null;
   }
   if (!barraAnadidas) {
-    const texto = lote.size === 1 ? "Analizando la oferta añadida" : "Analizando las ofertas añadidas";
+    const texto = lote.size === 1 ? "Analizando la oferta" : "Analizando las ofertas añadidas";
     barraAnadidas = { n: lote.size, barra: barraAvance($("avance"), texto) };
   }
   barraAnadidas.barra.vincular(`horma:avance:anadidas:${[...lote.keys()].sort().join(",")}`);
@@ -865,6 +865,20 @@ function avisarRepetida(url, oferta) {
   $("repetida-url").replaceChildren(nodo("p", TEXTOS.anadidaYa(fecha(oferta.anadida_en))), fila);
 }
 
+// RF-11.30: al leerse bien la página, la misma barra sigue con el análisis (sin quitarla ni bajar). Solo si no hay otras
+// añadidas en marcha; devuelve si la ha reutilizado.
+function relevarBarra(id, ofertaId) {
+  if (!lecturaBarra || ofertaId === null || ofertaId === undefined || lote.size || barraAnadidas) return false;
+  const barra = lecturaBarra;
+  lecturaBarra = null;
+  sessionStorage.removeItem(`horma:avance:lectura:${id}`);
+  sessionStorage.removeItem(CLAVE_LECTURA);
+  $("enviar-url").disabled = false;
+  if (!$("avance").contains(barra.caja)) $("avance").append(barra.caja);
+  barraAnadidas = { n: 1, barra };
+  return true;
+}
+
 async function esperarLectura(id) {
   const r = await api(`/ofertas/url/${id}`);
   if (!r.ok) {
@@ -874,7 +888,7 @@ async function esperarLectura(id) {
     return;
   }
   if (r.datos.estado === "pendiente") return setTimeout(() => esperarLectura(id), SONDEO_MS);
-  terminarLectura();
+  if (!(r.datos.estado === "leida" && relevarBarra(id, r.datos.oferta_id))) terminarLectura();
   if (r.datos.estado === "error") {
     avisarUrl("");
     if (!$("ventana-anadir").open) abrirAnadir();   // lectura retomada: la ventana estaba cerrada

@@ -57,6 +57,8 @@ const ini = comun.indexOf("const AVANCE_TICK_MS");
 const fin = comun.indexOf("// Sigue una tarea del servidor");
 eval(comun.slice(ini, fin) + "; global.barraAvance = barraAvance;");
 global.lecturaBarra = null;
+global.lote = new Map();
+global.barraAnadidas = null;
 global.SONDEO_MS = 3000;
 global.CLAVE_LECTURA = (ofertas.match(/const CLAVE_LECTURA = "([^"]+)"/) || [])[1];
 const a = ofertas.indexOf("function terminarLectura");
@@ -136,7 +138,8 @@ def test_en_pagina_nueva_se_retoma_la_barra_con_su_valor_guardado(tmp_path):
 @node
 def test_la_lectura_retomada_que_termina_limpia_las_claves_y_sigue_la_oferta(tmp_path):
     s = _ejecutar(tmp_path, "leida")
-    assert s["clave"] is None and s["avance"] is None and not s["barraViva"]
+    # la misma barra sigue con el análisis (T08l): sin las claves de la lectura, y sigue en pantalla
+    assert s["clave"] is None and s["avance"] is None and s["barraViva"]
     assert ["seguir", 42] in s["eventos"] and not s["botonDeshabilitado"]
 
 

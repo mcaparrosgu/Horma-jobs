@@ -47,7 +47,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   Rehacer el perfil con los CV que quedan es correcto (RF-10.14); el fallo era solo el texto.
   - **Test:** `tests/test_s11_borrar_cv_texto_barra.py`.
 - [x] T08c — La barra no retrocede al cambiar de pestaña y volver (RF-10.8c): se guarda en `sessionStorage` el último
-  valor mostrado de cada tarea (Perfil y «Analizando la oferta añadida»).
+  valor mostrado de cada tarea (Perfil y «Analizando la oferta»).
   - **Test:** `tests/test_s11_barra_avance_persistente.py` (ejecuta `barraAvance` en node).
 - [x] T08d — «Añadir oferta» en dos pestañas («Por URL» y «Por texto»), un solo botón «Añadir oferta» a la
   vista; desaparece «Leer oferta» (prueba de Mar: confundía con el verde de abajo).
@@ -68,4 +68,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_s11_retomar_lectura_url.py`.
 - [x] T08k — Una URL ya añadida no se vuelve a leer ni analizar: «Ya añadiste esta oferta el …» con «Ver oferta» y «Leer de nuevo», que relee y actualiza la misma oferta (RF-11.29, D-030; antes la misma URL de lifeworq creó las ofertas 200, 203 y 205, cada una pagada).
   - **Test:** `tests/test_s11_url_repetida.py` (URL canónica, API y worker con BD), `tests/test_s11_url_repetida_cliente.py` (pantalla, en node).
+- [x] T08l — Una sola barra «Analizando la oferta» de la lectura de la página al análisis, sin cambiar de frase ni bajar (RF-11.30, D-031; antes pasaba a «Analizando la oferta añadida» y bajaba, p. ej. de 15 % a 4 %).
+  - **Test:** `tests/test_s11_una_sola_barra.py` (en node); `tests/test_s11_retomar_lectura_url.py` ajustado. **Navegador:** pendiente de Opus/Mar.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.
