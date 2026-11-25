@@ -88,21 +88,10 @@ No se pierde: queda en la spec y en la bitácora, y se retoma al terminar la con
 - Modalidad «híbrido» en los filtros de Recomendadas (pedido por Mar el 16-nov-2026; **se hace después de la fase 4**). Hoy solo existe `remoto` (sí/no) y el filtro «Solo remoto». Plan: campo `modalidad` (remoto / híbrido / presencial) en la oferta, con migración; detectarla al normalizar (`normalizar_oferta`, hoy `_REMOTO_RE`); y cambiar «Solo remoto» por un selector de modalidad en Recomendadas y Preferencias. Las ofertas ya ingestadas quedan sin modalidad hasta reprocesarlas. Toca el esquema `Oferta`, `buscar_ofertas`, `evaluar_condiciones` y las dos pantallas.
 - Botón «Buscar» en Recomendadas (hecho el 16-nov-2026): los filtros ya no se aplican al marcar cada casilla, sino al pulsarlo.
 
-### Plan para perfeccionar el `matcher` (obligatorio antes de probar con usuarias reales)
-Decidido el 15-nov-2026. Se retoma **cuando todas las fases estén construidas** y **antes** de cualquier prueba con personas reales. Hoy el `matcher` supera los 20 casos inventados, pero esa muestra es pequeña y solo la han medido casos simulados; no basta para fiarse de él.
-
-1. **Medir mejor.** Ampliar `evals/recomendacion/` de 20 a unos 60 casos: más sectores, notas intermedias (40-70, donde más se duda), perfiles casi vacíos y ofertas incompletas. Incluir las correcciones de usuarias importadas con `eval importar-correccion`. Correr cada caso 3 veces con el modelo real para ver cuánto varía la nota entre ejecuciones. Medir también el orden (que la mejor oferta quede arriba), no solo el ±10. **Añadir tramos a la rúbrica de la `nota`** (indicación del profesor, 17-nov-2026): hoy el prompt solo fija 0 y 100; los tramos (0-19, 20-39, 40-59, 60-79, 80-100), aprobados por Mar el 17-nov-2026 y ya en `prompt.md` (por medir con el modelo real), harán más estable la nota y el eval.
-2. **Explicaciones fiables.** Hacer los dos apuntados de arriba: verificar que las citas existen (RF-2.12) y no nombrar las instrucciones embebidas de una oferta. Añadir el revisor solo en el eval.
-3. **Equidad.** Casos por pares que cambian solo un rasgo personal (nombre, edad, sexo, nacionalidad, foto, huecos laborales) con el resto idéntico: la nota debe ser igual (±3). Contrastarlo con la clasificación legal de la fase (`docs/03-legal.md` / AI Act y RGPD) antes de dar nada por bueno.
-4. **Robustez.** Ofertas en otro idioma, muy largas, con inyección o sin datos; tanda con fallos parciales; reintentos; el tope de 5 tandas y el de coste. Debe fallar con aviso claro, nunca con una nota inventada.
-5. **Bucle de correcciones.** Decidir con Mar si una corrección debe reordenar la lista de quien la hace (hoy no cambia la nota) y quién revisa las correcciones y con qué frecuencia.
-6. **Coste y automatización.** Retomar la decisión de «Recomendar» manual (embudo, caché de prompt, explicación bajo demanda). Preguntar a Mar antes de proponer el embudo.
-
-**Punto de partida (medido el 15-nov-2026 con el modelo real, 21 casos):** `nota` 0,67 (7 casos fuera de ±10: 02, 04, 10, 13, 15, 18, 21); `condiciones` 1,00 (ahora las calcula código); `sin_rasgos` 1,00; adversarias 0,67 (solo por la `nota` del caso 21).
-
-**Segunda medición (16-nov-2026, en CI de la fase 4):** `nota` 0,71 (6 casos fuera de ±10: 02, 03, 13, 15, 18, 21). Por eso `recomendacion` no corre con el modelo real en `evals-reales` hasta este plan; al terminarlo hay que volver a incluirlo en `.github/workflows/ci.yml`.
-
-**Puerta de salida:** ≥ 90 % de los casos dentro de ±10 con el modelo real, estable en las 3 ejecuciones; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con citas verificadas; y una revisión manual de Mar sobre una muestra de 20 recomendaciones.
+### Plan para perfeccionar el `matcher`
+Retirado el 25-nov-2026: lo sustituye el paso 2 del [PRD](../prd.md) (spec 012), con su puerta de salida.
+Mediciones de partida con el modelo real: `nota` 0,67 (15-nov, 21 casos) y 0,71 (16-nov); por eso
+`recomendacion` no corre en `evals-reales`.
 
 ## Decidido al planificar
 Al leer el esquema `Oferta` de la fase 1: `contrato`, `ubicacion` e `idiomas` son texto libre, no hay campo país y el salario no indica periodo. Se resuelve en el [plan](./plan.md): código sin IA los normaliza al guardar cada oferta (P16) y el sueldo se compara en euros brutos al año (P17).

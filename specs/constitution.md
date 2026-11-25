@@ -6,15 +6,17 @@ tags: [gobierno, sdd]
 status: draft
 sources: [https://claude.ai/artifact/XgsxiP5gLvaR34W8QeqDoj]
 generated: { by: claude-code, at: 2026-11-11 }
-verified: { by: human, at: 2026-11-22 }
+verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 
 # Horma — Constitución
 
 ## Principios
-- Primero la spec: no se escribe código de la aplicación antes de que existan su spec, su plan y sus tareas.
-- Primero aclarar: las ambigüedades se resuelven con la persona antes de especificar.
+- Primero la spec, a su medida: lo grande lleva spec, plan y tareas antes del código; lo pequeño,
+  test y una línea de tarea (umbral en AGENTS.md).
+- Aclarar lo que cambia el resultado: esas ambigüedades se resuelven con la persona antes de especificar.
+  Si la intención está clara, se toma la opción más simple, se anota el supuesto y se sigue.
 - Guiado por tests: cada tarea empieza con un test que falla; cada agente se entrega con un eval.
 - Fronteras limpias: la lógica de dominio no depende de frameworks, ORM ni E/S.
 - Una sola aplicación: los agentes son código Python dentro de la web desde la fase 0 y se pueden
@@ -41,6 +43,8 @@ stale_after: null
   El permiso de trabajo solo se guarda si lo escribe la usuaria, con su consentimiento, como sí o no
   por país; nunca se deduce ni entra en la nota.
 - Nunca se usan LinkedIn ni Indeed, ni como fuentes ni para enviar candidaturas.
+- La ingesta solo lee ofertas públicas de fuentes con calificación apta: sin iniciar sesión, sin
+  eludir protecciones (captcha, bloqueos, límites de peticiones) y sin guardar datos personales de terceros.
 - Horma solo lee el correo que la usuaria le da a leer, y solo para seguir sus candidaturas. El correo se
   clasifica; nunca desencadena otra acción.
 - Los datos de prueba son inventados hasta cerrar privacidad y RGPD; el repo nunca guarda datos
@@ -49,7 +53,10 @@ stale_after: null
 ## Restricciones
 - Stack: Python (uv) · Pydantic · SDK anthropic detrás de `horma.llm` · FastAPI + HTML/CSS/JS planos ·
   consola Typer · PostgreSQL en Docker Compose (RLS + cola de tareas; sin Neon) · LangGraph (fase 4) ·
-  Playwright (fase 11, envío con pasos fijos).
+  Playwright (spec 011, envío con pasos fijos).
+- Ingesta: Horma agrega y normaliza ofertas públicas de portales, ATS y fuentes estructuradas (PRD, 7.1).
+  `httpx` por defecto. Apify, Zyte, Scrapy, Crawlee, Firecrawl y las API de índices públicos están
+  permitidos con una línea en `tasks.md` que diga por qué `httpx` no basta; siempre bajo RT-15 a RT-19.
 - Identidad: Google OAuth 2.0 (sin email ni contraseña propios).
 - Sin RAG: ni embeddings ni búsqueda híbrida.
 - Todos los secretos viven en `.env` (nunca se versiona).
@@ -60,5 +67,5 @@ stale_after: null
 - Los artefactos de conocimiento siguen el Open Knowledge Format (OKF).
 - El comportamiento de los agentes se rige por [AGENTS.md](../AGENTS.md).
 - Cuando una petición de la persona contradiga una spec, gana la petición: se propone el cambio en
-  la spec, se enseña antes de tocar código y, con su visto bueno, se actualiza la spec y se regenera `tasks.md`.
-  Se regenera la spec en lugar de ponerle parches.
+  la spec, con recomendación, se enseña siempre antes de tocar código y, con su visto bueno, se actualiza
+  la spec y se regenera `tasks.md`. Se regenera la spec en lugar de ponerle parches.

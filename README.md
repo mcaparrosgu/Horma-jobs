@@ -4,8 +4,8 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> **Estado:** fases 0 a 10 (salvo 9b) cerradas y en `main`. Estado de cada fase y orden de las siguientes
-> (11 a 14): [`specs/index.md`](./specs/index.md). Despliegue local con Docker Compose.
+> **Estado:** fases 0 a 10 cerradas (la entrevista de la 9b pasa a la spec 016) y en `main`. Estado de cada fase: [`specs/index.md`](./specs/index.md).
+> Qué viene y por qué (specs 011 a 017): [`specs/prd.md`](./specs/prd.md). Despliegue local con Docker Compose.
 
 **Recorrido de la usuaria:** Landing → Perfil (sube su CV) → Ofertas (compatibilidad 0-100) → Candidatura
 (CV y carta que aprueba y descarga). Tres pestañas: Ofertas · Candidaturas · Perfil, más Admin. Horma gasta
@@ -20,7 +20,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 | Artefacto | Qué es |
 |---|---|
 | `specs/constitution.md` | Principios y líneas rojas |
-| `specs/system.md` | Spec de sistema: contrato, arquitectura, RT-01…RT-14 |
+| `specs/system.md` | Spec de sistema: contrato, arquitectura, RT-01…RT-19 |
 | `specs/NNN-<feature>/clarifications.md` | Preguntas del gate de Clarify y sus respuestas |
 | `…/spec.md` | Requisitos en notación EARS |
 | `…/plan.md` | Arquitectura técnica y contratos |
@@ -37,7 +37,7 @@ Desarrollo guiado por specs: los artefactos se escriben antes que el código.
 6. **Rediseño visual 2c «Editorial»** (`006-rediseno-2c`)
 7. **Ajustes de pantalla** (`007-ajustes-pantalla`)
 8. **Portada y ofertas** (`008-portada-ofertas`)
-9. **CV maestro y entrevista** (`009-cv-maestro-entrevista`; 9a hecha, 9b pendiente)
+9. **CV maestro y entrevista** (`009-cv-maestro-entrevista`; 9a hecha; la entrevista pasa a la spec 016)
 10. **Simplificación** (`010-simplificacion`; sustituye requisitos de las specs 002, 003, 005, 008 y 009)
 
 Cada fase se cierra con sus evals en verde. Estado de cada una: [`specs/index.md`](./specs/index.md).
@@ -124,8 +124,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
    correo. `LOG_LEVEL` se aplica en la API y el worker.
 7. Guardarraíles: la entrada se vigila por código (marca, no bloquea) y el set `evals/red-teaming/` debe pasar
    al 100 %. La revisión de cada prompt frente a las líneas rojas está en `docs/revision-lineas-rojas.md`.
-8. **Antes de abrir Horma a usuarias reales:** el `matcher` debe pasar su plan de perfeccionamiento
-   (`specs/002-perfil-recomendacion/spec.md`); hoy su `nota` mide 0,67 y la recomendación está fuera de
+8. **Antes de abrir Horma a usuarias reales:** el `matcher` debe pasar la puerta de salida del paso 2 del PRD
+   (`specs/prd.md`, spec 012); hoy su `nota` mide 0,67 y la recomendación está fuera de
    `evals-reales`.
 
 ## Consola

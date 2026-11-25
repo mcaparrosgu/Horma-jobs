@@ -118,7 +118,7 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   empresa» en negrita y las fechas a la derecha; las habilidades en una línea; la tipografía de la marca, en
   tinta y gris. Todo es texto real, en el orden de lectura, sin tablas ni imágenes (RF-10.4b). La carta en
   PDF y en «Ver» DEBERÁ verse como carta: párrafos, sin negritas ni secciones. Las plantillas para elegir
-  siguen en la fase 13 (calidad de CV y carta).
+  siguen en la spec 013 (calidad de CV y carta).
 - **RF-10.4e** *(22-nov, cambiado tras la prueba: I8)* Los PDF de una candidatura aprobada DEBERÁN descargarse
   como `cv_nombre-apellidos_puesto_empresa.pdf` y `carta_nombre-apellidos_puesto_empresa.pdf`: la persona que
   selecciona la encuentra por su nombre y ella ve al final para qué puesto y empresa es. Lo que no conste (p. ej.
@@ -235,6 +235,7 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   alertas.
 
 ### Fase 9b (RF-10.12)
+*Sin construir: la entrevista pasa a la spec 016 (paso 6 del [PRD](../prd.md)), que parte de estos dos requisitos.*
 - **RF-10.12** La 9b DEBERÁ hacerse solo con texto (P9): sin audio (RF-9.8 en lo del audio, RF-9.8b) ni
   `valorador_entrevista` (RF-9.9 a RF-9.9d), que quedan aplazados hasta medir el uso.
 - **RF-10.12b** La entrevista sigue siendo la sesión de 20-30 minutos de RF-9.7i (P8), en su propio bloque
@@ -452,8 +453,8 @@ Cada bloque es una rama y un PR contra `main`; Mar prueba y firma cada uno. Cada
   volver a firmar las líneas rojas.
 - Puntuar al acabar de leer el CV (P5).
 - Entrevista por tandas (P8); audio y valoración en la 9b (P9).
-- Plantillas de CV para elegir y el CV estético (fase 13). El diseño sobrio único de RF-10.4d sí entra (S7).
-- Plan de perfeccionamiento del `matcher`: sigue siendo obligatorio antes de usuarias reales.
+- Plantillas de CV para elegir y el CV estético (spec 013). El diseño sobrio único de RF-10.4d sí entra (S7).
+- Perfeccionar el `matcher` (spec 012, paso 2 del PRD): sigue siendo obligatorio antes de usuarias reales.
 - Prueba con cinco personas: las cinco las hace Mar (21-nov), con perfiles y casos distintos; no hay usuarias externas en esa prueba. Coincide con RF-4.8 y P8 de la spec 004.
 - Otras formas de entrar además de Google (tocan la constitución).
 

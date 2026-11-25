@@ -211,8 +211,8 @@ Recorrida por Claude en el navegador y la consola; K1, O4, P1, P2, P5 y N4 repet
 
 #### Correcciones finales (cruce del 22-nov con los informes de investigación)
 Lo demás de la pasada no se arregla aquí: los falsos «Dato dudoso», los recortes del extractor y «manejo de
-ordenador» como hueco van a la fase 13; el coste de editar el perfil, a la 12; «sin límite» en Admin, a la 14; los
-avisos de presupuesto, a la gestión del gasto. Ver [index.md](../index.md#lo-que-viene).
+ordenador» como hueco van a la spec 013; el coste de editar el perfil, a la 012; «sin límite» en Admin, a la 014; los
+avisos de presupuesto, a la 017. Ver el [PRD](../prd.md), sección 4.
 - [x] T63 — «Valenciano» en el CV maestro y en las ofertas.
   - **Qué se hace:** `componer_cv_maestro` escribe «Valenciano» si el idioma es `ca` y su `origen.fragmento` dice
     «valenci»; si no, «Catalán». `normalizar_oferta` añade «valenciano valencià» a `ca`.
@@ -232,7 +232,7 @@ avisos de presupuesto, a la gestión del gasto. Ver [index.md](../index.md#lo-qu
   - **Qué se hace:** la lista de `verificar_trazabilidad.py`, el prompt de `redactor_carta` (lista y ejemplo) y los
     casos de `evals/cv` usan coma tras «Hola» y dos puntos al final: «Hola, equipo:», «Estimado equipo de
     selección:», «Estimados señores:», «Buenos días:». La comprobación sigue aceptando las formas antiguas, para no
-    avisar en cartas ya guardadas. Despedidas, sin cambios. El nombre de la empresa en el saludo, en la fase 13.
+    avisar en cartas ya guardadas. Despedidas, sin cambios. El nombre de la empresa en el saludo, en la spec 013.
   - **Test:** el prompt y sus ejemplos solo traen formas nuevas; una carta con «Hola, equipo:» pasa la comprobación.
     **Real:** el eval `cv` de T50.
 - [x] T67 — El eval simulado informa 0 USD.

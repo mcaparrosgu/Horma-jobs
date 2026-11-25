@@ -1,10 +1,10 @@
 ---
 type: system
 title: Horma — Spec de sistema
-description: Contrato de esquemas, arquitectura y requisitos transversales (RT-01…RT-14) que valen en todas las fases.
+description: Contrato de esquemas, arquitectura y requisitos transversales (RT-01…RT-19) que valen en todas las fases.
 tags: [sistema, arquitectura, sdd]
 status: active
-sources: [./constitution.md, ../docs/Horma v2_ requerimientos por fases.pdf, ./000-cimientos/clarifications.md, ./001-ofertas/clarifications.md]
+sources: [./constitution.md, ./prd.md, ../docs/Horma v2_ requerimientos por fases.pdf, ./000-cimientos/clarifications.md, ./001-ofertas/clarifications.md]
 generated: { by: claude-code, at: 2026-11-12 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
@@ -13,7 +13,8 @@ stale_after: null
 # Horma — Spec de sistema
 
 Spec global (Spec-anchored). Lo que cambia en cada fase vive en `specs/NNN-<feature>/`; aquí solo
-lo que vale siempre. Los principios y las líneas rojas están en la [constitución](./constitution.md).
+lo que vale siempre. Los principios y las líneas rojas están en la [constitución](./constitution.md); el qué,
+el porqué y el orden de lo que falta por construir, en el [PRD](./prd.md).
 
 ## Visión
 Una sola aplicación. Los agentes son código Python dentro de la web desde la fase 0, se prueban
@@ -32,7 +33,7 @@ API (FastAPI) y worker.
 | `horma/flows/` | Interfaz `Flow` (con `pausas` y `reanudar`), `PlainFlow` y `LangGraphFlow` (`grafo.py`, único módulo que importa `langgraph`) | Toda la composición de agentes vive aquí |
 | `horma/llm/` | Puerta única `completar(agente, prompt, entrada, esquema_salida)` | Único módulo que importa el SDK de Anthropic |
 | `horma/cli.py` | Consola Typer | Sin lógica propia: mismo código que la API. Nunca abre la BD: lo que necesita persistir pasa por la API |
-| `horma/ingesta.py` | Ingestor de fuentes | Sin credenciales de BD: entrega las ofertas por `POST /ofertas` con una clave de API de alcance `ingesta` |
+| `horma/ingesta` | Ingestor de fuentes: conectores, parsers y cola de ejecuciones (hoy, `ingesta.py`) | Sin credenciales de BD: entrega las ofertas por `POST /ofertas` con una clave de API de alcance `ingesta`. Cumple RT-15 a RT-19 |
 | `horma/web/` | FastAPI por capas (routers, servicios, repositorios), cola en Postgres, worker, HTML/CSS/JS planos | Solo la API y el worker leen y escriben en Postgres. Los routers llaman solo a servicios (nunca a repositorios ni a la cola: contrato de import-linter) y solo los servicios encolan tareas (RF-10.11) |
 | `evals/` | Fixtures con resultado esperado y umbral por agente | Se ejecutan desde la consola y en CI |
 
@@ -59,7 +60,7 @@ Los campos concretos de cada esquema se fijan en la spec de la fase en la que en
 solo se detallan `OfertaExtraida` y `Origen`.
 
 ## Requisitos transversales (EARS)
-Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde la fase 0.
+Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde la fase 0 (RT-15 a RT-19, desde la spec 014).
 
 | ID | Requisito | Se verifica con |
 |---|---|---|
@@ -77,6 +78,13 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 | RT-12 | Los flujos DEBERÁN depender de la interfaz `Flow` y no de su implementación; la misma suite DEBERÁ pasar con `PlainFlow` y, desde la fase 4, con `LangGraphFlow`. La interfaz admite pausas: el flujo se para antes de un paso y `reanudar` lo continúa (en `candidatura`, antes de `entregar`). El checkpointer de Postgres se crea en `horma.web.checkpointer` y se inyecta. | Suite de flujos parametrizada por implementación |
 | RT-13 | Un agente NO DEBERÁ llamar a otro agente; la composición vive en los flujos. | Test de arquitectura |
 | RT-14 | CUANDO una tarea de la cola supere su tope de coste o de reintentos, el worker DEBERÁ detenerla y dejar la entidad en estado `error` con el motivo. | Test del worker con tope bajo |
+| RT-15 | El ingestor DEBERÁ leer solo ofertas públicas de fuentes activas con calificación apta, sin sesión iniciada, con un `User-Agent` que identifique a Horma y un contacto, y NO DEBERÁ eludir captchas, bloqueos ni límites. | Test: una fuente no apta o inactiva no se pide |
+| RT-16 | El ingestor DEBERÁ limitar el ritmo por dominio: una petición a la vez y una pausa mínima configurable por fuente (1 s por defecto); con Scrapy, `AutoThrottle` activado. | Test con transporte simulado y reloj falso |
+| RT-17 | CUANDO una fuente responda 429 o 503, el ingestor DEBERÁ esperar lo que indique `Retry-After` o, si falta, reintentar con espera exponencial y aleatoria, tres veces como máximo; después la ejecución queda en `error`. CUANDO responda 403, DEBERÁ parar y dejar la fuente como «no apta». | Test con respuestas simuladas |
+| RT-18 | El ingestor DEBERÁ extraer de forma incremental: respeta `cada_horas`, pide solo lo nuevo o cambiado desde la última ejecución (fecha, `id_externo`, `ETag` o `If-Modified-Since` si la fuente lo admite) y no vuelve a pedir el detalle de una oferta ya guardada. | Test: la segunda ejecución no repite peticiones de detalle |
+| RT-19 | El ingestor NO DEBERÁ guardar datos personales de terceros (nombres, correos ni teléfonos de personas): se retiran antes de `POST /ofertas`. | Fixtures con datos personales sembrados, 100 % retirados |
+
+RT-15 a RT-19 se verifican en CI desde la spec 014; hasta entonces `ingesta.py` no cumple RT-16 a RT-18.
 
 ## Decisiones de sistema
 - **Base de datos:** PostgreSQL en Docker Compose (api, worker, postgres), con RLS y cola de tareas. Neon queda fuera de la fase 0.
@@ -85,7 +93,7 @@ Valen en todas las fases. Cada uno tiene una verificación que entra en CI desde
 - **Herramientas:** `uv`, Typer, `import-linter`, `pytest`, `ruff`.
 - **Flujos desde la API:** siempre por cola y worker, con un flag de desarrollo para ejecutarlos en línea.
 - **Sin RAG:** el match es filtro duro en SQL, pre-orden por taxonomía compartida y puntuación del matcher por tandas.
-- **Fuentes:** nunca LinkedIn ni Indeed; cada fuente es una fila editable de la tabla `fuentes`, sembrada desde `config/endpoints.json`. Una fuente solo se activa con una calificación apta (condiciones de uso y `robots.txt`).
+- **Fuentes:** nunca LinkedIn ni Indeed; cada fuente es una fila editable de la tabla `fuentes`, sembrada desde `config/endpoints.json`. Una fuente solo se activa con una calificación apta (condiciones de uso y `robots.txt`). Con esa calificación, añadir su conector (API, feed, sitemap, API de índice público, Apify, Zyte, Scrapy, Crawlee o Firecrawl) no necesita más permiso que RT-15 a RT-19.
 - **Ofertas:** catálogo común (desde la fase 1). Cualquier sesión las lee; solo el modo sistema (la API al recibirlas y el worker al procesarlas) las escribe, por RLS.
 - **Administración:** el dashboard `/ingesta` y las claves de API son solo para las cuentas listadas en `HORMA_ADMINS`.
 Las decisiones de cada fase se leen junto con las siguientes: la **simplificación (fase 10)**, al final,
@@ -95,7 +103,7 @@ sustituye lo que cambia del CV base, de `generar_cv_base` y de `clasificar_respu
 - **Fase 3 (candidatura, construida):** los flujos `candidatura` y `clasificar_respuesta` corren en el worker y desde la consola (`horma flujo correr`, con `--usuaria` y `--oferta` sin base de datos). La candidatura separa `estado` (la máquina, que solo cambia la usuaria) y `preparacion` (el resultado del flujo: `lista` o `pendiente_de_ti`). Simplificada en el bloque H (16-nov-2026): el CV base de partida lo elige la herramienta `elegir_cv_base` (sin modelo; desde la fase 10 la candidatura parte del CV maestro, sin CV base) y un solo juez (`juez-candidatura`) revisa CV y carta con una vuelta como máximo (3-5 llamadas por candidatura). Un CV base editado por ella cuenta como fuente con origen «usuaria»; lo que edita en una candidatura se queda en esa candidatura, y cada CV base guarda un historial de versiones al editarlo desde su pantalla. Los errores de trazabilidad y del juez son avisos junto a su frase (pulsar Aprobar cuenta como revisarlos). El tope de coste por candidatura (1 USD) se comprueba en la puerta única, falle o no la tarea. La respuesta de la empresa se marca con dos botones («Me han llamado», «Me han rechazado»); el flujo `clasificar_respuesta` queda solo para la consola.
 - **Datos de prueba:** inventados; el repositorio versiona fixtures, nunca datos de una persona.
 
-- **Fase 4 (LangGraph, calidad y salida):** LangGraph solo para `candidatura` (`flows/grafo.py`, único módulo que importa `langgraph`; `HORMA_FLOW_IMPL` elige `plain` o `langgraph`). El flujo se para antes de `entregar` con el estado en Postgres y, al aprobar la usuaria, se reanuda y deja los PDF fijos. La puerta del modelo marca por código las órdenes a la IA en la entrada y detecta fugas del prompt en la salida; `main` está protegida (`secretos` y `calidad`; `evals-reales` solo a mano desde la fase 5). `/costes` (solo admins) y las alertas de gasto y errores (pantalla, log y correo SMTP) no llevan datos personales. El despliegue es, de momento, local con Docker Compose y PostgreSQL; Vercel, más adelante (P6, profesor, 17-nov-2026). El red-teaming no es prioritario hasta que haya usuarias reales. **Antes de usuarias reales, el `matcher` debe pasar su plan de perfeccionamiento** (spec de la fase 2).
+- **Fase 4 (LangGraph, calidad y salida):** LangGraph solo para `candidatura` (`flows/grafo.py`, único módulo que importa `langgraph`; `HORMA_FLOW_IMPL` elige `plain` o `langgraph`). El flujo se para antes de `entregar` con el estado en Postgres y, al aprobar la usuaria, se reanuda y deja los PDF fijos. La puerta del modelo marca por código las órdenes a la IA en la entrada y detecta fugas del prompt en la salida; `main` está protegida (`secretos` y `calidad`; `evals-reales` solo a mano desde la fase 5). `/costes` (solo admins) y las alertas de gasto y errores (pantalla, log y correo SMTP) no llevan datos personales. El despliegue es, de momento, local con Docker Compose y PostgreSQL; Vercel, más adelante (P6, profesor, 17-nov-2026). El red-teaming no es prioritario hasta que haya usuarias reales. **Antes de usuarias reales, el `matcher` debe pasar la puerta de salida del paso 2 del PRD** (spec 012).
 
 - **Fase 5 (correcciones del profesor, construida):** lo que edita la usuaria en el perfil manda sobre los CV subidos (CV maestro). Las ofertas que ella añade (texto o URL, leída con Apify; portales vetados en `horma/assets/portales_vetados.json`) son privadas: solo las ve quien las añadió, por RLS, y entran en Recomendadas con la marca «Añadida por ti». `validar_cv` y `muletillas_ia` son código, sin modelo; el juez revisa además coherencia y que no suene a IA. El agente `analizador_estilo` crea una guía de estilo una sola vez (más botón) que siguen los redactores. Fuentes nuevas con adaptadores de ingesta (Basic auth, detalle, `cada_horas`, atribución visible, borrado de caducadas): Himalayas y Jobicy aptas; Remotive, Adzuna e InfoJobs inactivas. `evals-reales` solo corre a mano hasta el lanzamiento.
 
