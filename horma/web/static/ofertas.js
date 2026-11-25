@@ -689,6 +689,7 @@ function mostrarSinPerfil() {
 // --- «+ Añadir oferta» (RF-10.6b): ventana con la dirección o el texto; la oferta sale en la lista -------------
 const SONDEO_MS = 3000;
 const SONDEOS_SIN_TAREA = 40;   // unos 2 min sin que empiece el análisis: se deja de esperar
+const CLAVE_LECTURA = "horma:lectura-url";   // id de la lectura por URL en curso: sobrevive a cambiar de pantalla
 let lecturaBarra = null;
 let sondeoAnadidas = null;
 let lote = new Map();           // id de oferta añadida → { pct, fin, sinTarea }
@@ -714,6 +715,7 @@ function anadidasPorRetomar(propias, todas, puntuando) {
 // en cuanto está analizada, y se sigue hasta que tiene su compatibilidad (o ya no se va a calcular).
 function seguirAnadida(id) {
   if (id === null || id === undefined) return;
+  if (lote.has(id)) return;   // la lectura retomada y la lista de añadidas pueden pedir la misma
   lote.set(id, { pct: 0, fin: false, sinTarea: 0 });
   sondearAnadidas();
 }
@@ -838,14 +840,26 @@ $("formulario-texto").addEventListener("submit", async (e) => {
   await cargarLista();
 });
 
+function terminarLectura() {
+  sessionStorage.removeItem(CLAVE_LECTURA);
+  if (lecturaBarra) lecturaBarra.quitar();   // también borra su clave de avance
+  lecturaBarra = null;
+  $("enviar-url").disabled = false;
+}
+
 async function esperarLectura(id) {
   const r = await api(`/ofertas/url/${id}`);
-  if (!r.ok) return avisarUrl(r.motivo, true);
+  if (!r.ok) {
+    terminarLectura();
+    avisarUrl(r.motivo, true);
+    if (!$("ventana-anadir").open) avisar(r.motivo, true);
+    return;
+  }
   if (r.datos.estado === "pendiente") return setTimeout(() => esperarLectura(id), SONDEO_MS);
-  $("enviar-url").disabled = false;
-  $("lectura-url").replaceChildren();
+  terminarLectura();
   if (r.datos.estado === "error") {
     avisarUrl("");
+    if (!$("ventana-anadir").open) abrirAnadir();   // lectura retomada: la ventana estaba cerrada
     elegirPestanaAnadir("texto");   // el aviso se pinta en esta pestaña, que es la que ve
     const aviso = $("aviso-texto");
     aviso.className = "alerta";
@@ -875,8 +889,22 @@ $("formulario-url").addEventListener("submit", async (e) => {
     $("lectura-url").replaceChildren();
     return avisarUrl(r.motivo, true);
   }
+  sessionStorage.setItem(CLAVE_LECTURA, String(r.datos.id));
+  lecturaBarra.vincular(`horma:avance:lectura:${r.datos.id}`);
   await esperarLectura(r.datos.id);
 });
+
+// Al volver a Ofertas con una lectura por URL en curso: barra en la página (la ventana no se reabre) y se sigue la lectura.
+async function retomarLectura() {
+  const id = sessionStorage.getItem(CLAVE_LECTURA);
+  if (!id) return;
+  lecturaBarra = barraAvance($("avance"), "Analizando la oferta");
+  lecturaBarra.vincular(`horma:avance:lectura:${id}`);
+  lecturaBarra.poner(10);
+  $("enviar-url").disabled = true;
+  avisarUrl("Leyendo la página…");
+  await esperarLectura(id);
+}
 
 (async () => {
   if (!(await arrancar("/ofertas"))) return;
@@ -888,6 +916,9 @@ $("formulario-url").addEventListener("submit", async (e) => {
   guardadas = p.datos;
   opciones = o.datos;
   pintarQueBuscas();
+  // Sin esperar, antes de la lista: la barra sale enseguida con su valor guardado. Va tras las preferencias
+  // porque, si la oferta ya está lista, su seguimiento usa `guardadas` (traerPuestosNuevos).
+  retomarLectura();
   await cargarLista();
   pintarTitular();
   await retomarOLanzar();

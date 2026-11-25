@@ -55,4 +55,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T08e — Si la URL no se puede leer, el aviso sale en «Por texto» («Estamos teniendo problemas para leer esa dirección…»);
   al volver a Ofertas se retoma la oferta ya analizada que aún no está en la lista (la barra y la oferta no desaparecen).
   - **Test:** `tests/test_s11_anadir_oferta_retomar_y_url.py`.
+- [x] T08f — La lectura de una oferta por URL se retoma al volver a Ofertas: el id se guarda en `sessionStorage` y, al recargar, vuelve la barra «Analizando la oferta»
+  (con su valor guardado) y se sigue hasta que la oferta aparece o avisa si falla (antes no había barra y la oferta salía mucho después, sin seguimiento).
+  - **Test:** `tests/test_s11_retomar_lectura_url.py`.
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.
