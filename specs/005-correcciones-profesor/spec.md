@@ -68,7 +68,7 @@ en [clarifications.md](./clarifications.md) (se citan como P1…P11).
   prepararla. La usuaria DEBERÁ poder aprobarla igualmente (P4).
 
 ### Recomendadas: fuera «Condiciones» (RF-5.2)
-- **RF-5.2** La lista de Recomendadas NO DEBERÁ mostrar la columna «Condiciones» (P5). El cálculo puede
+- **RF-5.2** *(ampliado por la spec 012, RF-12.25: las condiciones se ven como una línea junto a la nota)* La lista de Recomendadas NO DEBERÁ mostrar la columna «Condiciones» (P5). El cálculo puede
   seguir existiendo; integrarlo en la nota queda como mejora futura.
 
 ### Ofertas propias: texto o URL (RF-5.3)
