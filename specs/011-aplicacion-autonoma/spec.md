@@ -67,6 +67,10 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
 - **RF-11.31** *(Mar, 25-nov, D-033)* En Ofertas, «Mostrar» DEBERÁ ofrecer, tras los estados de RF-8.6c,
   «Añadidas por mí (N)»: las ofertas que la usuaria añadió por URL o por texto, con candidatura o sin ella. Las
   descartadas NO DEBERÁN salir ahí: siguen solo en «Descartadas».
+- **RF-11.32** *(Mar, 25-nov, D-034)* «Ordenar por: Más recientes» DEBERÁ ordenar por la llegada a Horma, de la
+  última a la primera: la fecha en que la oferta entró en el catálogo o en que la usuaria la añadió. A igual llegada
+  (un lote del catálogo), va antes la de id mayor. NO DEBERÁ usar la fecha de publicación, que en las añadidas es
+  texto de la web («25/11/2026», «hace 23 horas»).
 
 ## Criterios de aceptación
 - Con el catálogo real, Admin y la consola enseñan la tabla portal · ofertas · exige cuenta, sin coste.
@@ -77,6 +81,7 @@ Pedidas por Mar el 23-nov. No dependen de la medición.
 - Añadir dos veces la misma URL, con o sin `utm_*`, no la lee ni la analiza la segunda vez.
 - Añadir por URL enseña una sola barra que nunca baja.
 - «Mostrar: Añadidas por mí» enseña las suyas sin las descartadas, con su número.
+- Con «Más recientes», la oferta recién añadida sale la primera.
 
 ## Fuera de alcance
 - Enviar candidaturas, leer correo, la regla de envío y sus ajustes: parte 2.

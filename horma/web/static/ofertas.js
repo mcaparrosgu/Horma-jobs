@@ -188,8 +188,10 @@ function enRango(o) {
   return o.propia || o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
 }
 
+// «Más recientes» = las que llegaron a Horma hace menos, del catálogo o añadidas por ella (RF-11.32, D-034). No se usa
+// la fecha de publicación: en las añadidas es texto de la web («25/11/2026», «hace 23 horas») y las mandaba al final.
 function fechaOrden(o) {
-  return new Date(o.fecha_publicacion || o.creada_en || 0).getTime() || 0;
+  return new Date(o.creada_en || 0).getTime() || 0;
 }
 
 function ordenar(lista) {
