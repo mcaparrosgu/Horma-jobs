@@ -324,8 +324,9 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   pare sin aviso. Escenario: [pendiente: tras el informe de gasto].
 - **Qué incluye** (RF-015; punto 12, obligatorio para Mar):
   - Hoy es provisional: 1 USD al día por usuaria (RF-10.9) y las reglas de cuándo se puntúa (RF-8.5).
-  - Por decidir, con el informe (F1-E1 a E5): topes por plan, qué pasa al llegar al tope, avisos, unidades
-    que la usuaria entienda y cómo encaja con la alerta de la administradora (más de 5 USD al día).
+  - Por decidir, con el informe (F1, apartado 12: E1 a E5 y E13 a E15): topes por plan, qué pasa al llegar
+    al tope, avisos, unidades que la usuaria entienda y cómo encaja con la alerta de la administradora (más de
+    5 USD al día).
   - Avisos de presupuesto pendientes de la pasada (L2 y L3).
   - Supuesto sin medir: 0,50 USD al día ≈ 150 ofertas puntuadas.
 - **Puerta de salida:** [pendiente: informe de gasto]; test del worker con tope bajo; la usuaria ve su consumo
@@ -472,8 +473,8 @@ Entrar en alcance desde 7.2 o 7.3 exige cambiar este PRD.
 ## 9. Dependencias Críticas
 
 - DEP-01: investigación del banco de ofertas (Fable) y prueba práctica de ingesta (Sonnet); desbloquean el paso 5 y RF-010.
-- DEP-02: investigación de los límites de gasto en la competencia y estudio de precio (Fable); desbloquean el
-  paso 8 y NFR-06.
+- DEP-02: investigación de los límites de gasto en la competencia (entregada el 25-nov) y estudio de precio,
+  pendiente (Fable); desbloquean el paso 8 y NFR-06.
 - DEP-03: evaluación de impacto en Gestiona RGPD (Mar); desbloquea los pasos 9 y 10.
 - DEP-04: asesoría legal (agente de abogacía, por crear); cierra la casilla de privacidad, la marca de
   «generado con IA» y el modo real.
