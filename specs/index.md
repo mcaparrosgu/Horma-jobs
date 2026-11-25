@@ -13,11 +13,13 @@ stale_after: null
 # Índice de specs
 
 Este es el único sitio con el estado de cada fase. El README enlaza aquí; los `tasks.md` solo llevan las casillas.
-Número de fase = número de su carpeta, en orden de construcción; lo que aún no tiene spec se nombra por su tema.
+El número de una spec es su nombre fijo: no indica el orden de construcción.
 
 ## Transversales
+- [PRD](./prd.md) — qué se construye y por qué: objetivos, requisitos y fuera de alcance. **Borrador, pendiente
+  de firma.** Cada spec nueva cita los RF, NFR y US del PRD que desarrolla.
 - [Constitución](./constitution.md) — principios y líneas rojas.
-- [Spec de sistema](./system.md) — contrato, arquitectura, RT-01…RT-14. Verificada.
+- [Spec de sistema](./system.md) — contrato, arquitectura, RT-01…RT-19 (RT-15 a RT-19, de ingesta, añadidos el 25-nov).
 
 ## Features (una por fase)
 Cada carpeta lleva `clarifications.md`, `spec.md`, `plan.md` y `tasks.md`. Los requisitos que la spec 010
@@ -27,7 +29,7 @@ Formato: carpeta — qué es. **Estado.**
 - `000-cimientos/` — base, contrato y `extractor-oferta`. **Construida (16 tareas).**
 - `001-ofertas/` — fuentes, ingesta y auditoría de ofertas. **Construida y verificada; evals reales el 14-nov.**
 - `002-perfil-recomendacion/` — perfil desde el CV y recomendación. **Cerrada el 15-nov.** El `matcher` tiene
-  `nota` 0,67: antes de usuarias reales, su [plan de perfeccionamiento](./002-perfil-recomendacion/spec.md#plan-para-perfeccionar-el-matcher-obligatorio-antes-de-probar-con-usuarias-reales).
+  `nota` 0,67: se perfecciona en la spec 012 (paso 2 del [PRD](./prd.md)), antes de usuarias reales.
 - `003-candidatura/` — CV y carta adaptados y seguimiento. **Cerrada el 16-nov con el bloque H (T01-T32, P1-P17).**
 - `004-langgraph-salida/` — LangGraph, calidad, PWA y salida. **Fusionada; T24 firmada el 17-nov.** Despliegue
   local con Compose; Vercel, después (P6).
@@ -39,7 +41,7 @@ Formato: carpeta — qué es. **Estado.**
 - `008-portada-ofertas/` — landing, catálogo, puntuación sin botón y avance con %. **Fusionada (PR #25); prueba
   firmada el 21-nov.** RF-8.5 es provisional: mejorarlo antes de usuarias reales.
 - `009-cv-maestro-entrevista/` — 9a (huecos, avisos, puestos sugeridos) y 9b (entrevista). **9a fusionada
-  (PR #26) y firmada el 21-nov. 9b sin plan:** se hará solo con texto (RF-10.12).
+  (PR #26) y firmada el 21-nov. 9b sin construir y retirada:** la entrevista se especifica de nuevo en la spec 016.
 - `010-simplificacion/` — 4 pantallas y 4 clics, candidatura sin CV base, un agente por oferta, 1 USD al día,
   orden interno y correcciones. Por bloques ([tasks.md](./010-simplificacion/tasks.md)):
   - **S1-S7: fusionadas** (PR #28 a #31) y probadas por Mar; el repaso a 390 px, más adelante.
@@ -50,17 +52,17 @@ Formato: carpeta — qué es. **Estado.**
     DOM/API). Visual de Mar hecho y firmado (23-nov).
   - **S10 (subir varios documentos a la vez): fusionada en `main`** (PR #36, 23-nov; T70-T74, probada por DOM/API). Visual de Mar hecho y firmado (23-nov, T75). **Fase 10 cerrada.**
 
-## Lo que viene, en este orden
-1. **Fase 11 · Aplicación autónoma y correo** (`011-aplicacion-autonoma/`, sin spec): enviar candidaturas en
-   portales dentro de una regla de la usuaria, en modo prueba hasta las fases 12 y 13, y leer las respuestas por
-   correo reenviado. La constitución ya lo permite (firmada y fusionada el 23-nov, PR #38).
-2. **Fase 9b · Entrevista por texto** (spec en `009-…`, RF-10.12; sin plan).
-3. **Fase 12 · `matcher` y puestos afines** (`012`): el [plan del `matcher`](./002-perfil-recomendacion/spec.md#plan-para-perfeccionar-el-matcher-obligatorio-antes-de-probar-con-usuarias-reales),
-   el modelo pequeño para puntuar y el coste de editar el perfil. Espera a una investigación de puestos afines.
-4. **Fase 13 · Calidad de CV y carta** (`013`): rúbricas de CV y carta, PDF comprobado, falsos «Dato dudoso»,
-   descripciones recortadas por el extractor y huecos genéricos («manejo de ordenador»).
-5. **Fase 14 · Ingesta y vigilancia** (`014`): ingesta programada, vigía de portales y fuentes nuevas. Espera a una
-   investigación del banco de ofertas.
+## Pendiente
+Qué es cada una, por qué y en qué orden se construye: [PRD](./prd.md), sección 4. La tabla va por número de spec.
 
-**Antes de usuarias reales:** gestión del gasto (mejorar RF-8.5 y los avisos de presupuesto), `evals-reales` en la
-CI, red-teaming, RGPD y prueba con cinco personas.
+| Spec | Qué | PRD | Estado |
+|---|---|---|---|
+| `011-aplicacion-autonoma/` | Parte 1: medición de destinos y mejoras pequeñas. Partes 2 y 3 (envío y correo; envío real): se especifican al llegar su paso | US-001, US-007 · RF-001 a 005, RF-016 | **Parte 1 escrita, sin firmar** (25-nov). La spec del 23-nov, anterior al PRD, está archivada como insumo |
+| `012` | `matcher` y puestos afines | US-002 · RF-006, RF-007 | **Sin spec** |
+| `013` | Calidad de CV y carta, con PDF comprobado | US-004 · RF-008, RF-009 | **Sin spec** |
+| `014` | Ingesta programada, conectores, ritmo (RT-15 a RT-19) y vigilancia | US-005 · RF-010, RF-011 | **Sin spec;** espera a la investigación del banco de ofertas |
+| `015` | Privacidad y cuenta (RGPD y Configuración) | US-003 · RF-012, RF-013 | **Sin spec** |
+| `016` | Entrevista por texto (sustituye a la parte 9b de la 009) | US-008 · RF-014 | **Sin spec** |
+| `017` | Gasto por usuaria (sustituye a RF-8.5 y RF-10.9d) | US-006 · RF-015 | **Sin spec;** espera a su investigación |
+
+**Antes de usuarias reales, además:** `evals-reales` en la CI, red-teaming y prueba con cinco personas.

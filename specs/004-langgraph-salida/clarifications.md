@@ -82,8 +82,7 @@ migrar, la fase 3 no estaba bien cerrada.
   y su umbral se mantienen; no se invierte más tiempo en estabilizarlo (PR #8 aparcado).
 - Prueba de uso con personas que no conocen Horma (P8): antes de abrir a usuarias reales.
 - `horma flujo correr --desde <paso>` (ya diferido en la fase 3).
-- Plan para perfeccionar el `matcher` (`specs/002-perfil-recomendacion/spec.md`): obligatorio antes
-  de probar con usuarias reales, al terminar todas las fases.
+- Perfeccionar el `matcher`: obligatorio antes de probar con usuarias reales (hoy, spec 012: paso 2 del PRD).
 - Modo sin conexión completo de la PWA.
 - Después de la fase 4 sigue el plan del PDF sin cambios: portal de empresas, privacidad y RGPD, envío
   automático con supervisor (ya como grafo), entrevista del perfil, suscripciones y MCP de solo lectura.

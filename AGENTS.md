@@ -6,8 +6,12 @@ la capa operativa por encima. La arquitectura del sistema y los requisitos trans
 están en `specs/system.md`.
 
 ## Reglas de oro
-- Primero la spec: nunca se escribe código de la aplicación antes de que existan su spec, su plan
-  y sus tareas en `specs/NNN-<feature>/`.
+- Primero la spec, a su medida:
+  - Cambio grande (módulo, agente, esquema, tabla, pantalla o flujo nuevos): spec, plan y tareas en
+    `specs/NNN-<feature>/` antes del código.
+  - Cambio pequeño (corrección, refactor sin cambio de comportamiento, texto, configuración, o un
+    conector de ingesta que cumple RT-15 a RT-19 sin tocar esquemas): test que falla y una línea en
+    el `tasks.md` de la spec vigente. Sin spec nueva.
 - Aclarar antes de especificar: haz las preguntas abiertas y ESPERA las respuestas de la persona
   antes de escribir una spec.
 - TDD: un test que falla precede a cada tarea de implementación.
@@ -33,6 +37,8 @@ están en `specs/system.md`.
   `horma.llm.completar` (RT-02).
 - La composición de agentes vive solo en `horma/flows/`, detrás de la interfaz `Flow` (RT-12).
 - Solo la API y el worker leen y escriben en Postgres.
+- Ingesta: los conectores, parsers y colas de fuentes viven en `horma/ingesta`, sin credenciales de
+  BD (entregan por `POST /ofertas`) y cumplen RT-15 a RT-19.
 
 ## Frontend: simetría y alineación (prioridad alta, RF-6.4b)
 - Cada pantalla se construye con `tokens.css` y `estilo.css` (spec 006): sin colores ni medidas sueltas.
@@ -52,8 +58,9 @@ Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementació
 - Spec-anchored: la spec es la referencia viva del proyecto. Se divide en spec de sistema
   (lo global: `specs/system.md`) y spec de feature (la de cada cambio: `specs/NNN-<feature>/`).
 - Constitución mínima: solo principios y líneas rojas (`specs/constitution.md`).
-- Cuando un pedido de la persona contradiga una spec, el pedido gana. Propón el cambio en la spec
-  y enséñaselo antes de tocar código. Con su visto bueno, actualiza la spec y regenera `tasks.md`.
+- Cuando un pedido de la persona contradiga una spec, el pedido gana. Propón el cambio en la spec,
+  con tu recomendación, y enséñaselo SIEMPRE antes de tocar código. Con su visto bueno, actualiza la
+  spec y regenera `tasks.md`.
 - Regenera la spec en lugar de emparcharla.
 
 ## Git
@@ -74,6 +81,6 @@ Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementació
 - Formato profesional: concisa y bien estructurada. Un tema por documento, títulos claros, listas y
   tablas cortas, sin repetir lo que ya dice otro documento (enlázalo), sin relleno ni narración de la
   conversación, y con el estado real (qué está hecho y qué no).
-- Ante la duda de si un documento es técnico, no lo subas y pregunta.
+- Ante la duda de si un documento es técnico, no lo subas y dilo al cerrar la tarea.
 - El estado de cada fase vive solo en `specs/index.md`; los `tasks.md` llevan las casillas y el README enlaza.
   Al cambiar el estado de algo, actualiza en el mismo cambio `index.md` y las casillas.
