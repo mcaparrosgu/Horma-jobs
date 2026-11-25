@@ -120,6 +120,18 @@ function formularioDato(campoNombre, inicial, alEnviar, alCancelar, textoBoton, 
 
 const NOMBRES_SECCION = { ...Object.fromEntries(SECCIONES), genero_puestos: "Género de los puestos", nombre: "Nombre" };
 
+// El aviso de dato personal quitado se queda a la vista, pegado al borde inferior, hasta que ella lo cierra.
+function mostrarAvisoDato() {
+  const caja = $("aviso-dato");
+  caja.replaceChildren(nodo("strong", TEXTOS.datoPersonalTitulo), nodo("p", TEXTOS.datoPersonalMotivo));
+  const cerrar = nodo("button", TEXTOS.datoPersonalCerrar, "secundario");
+  cerrar.type = "button";
+  cerrar.addEventListener("click", () => { caja.hidden = true; });
+  caja.append(cerrar);
+  caja.hidden = false;
+  cerrar.focus();
+}
+
 async function cambiarPerfil(ruta, metodo, cuerpo) {
   avisar("Guardando…");
   const r = await api(ruta, { metodo, cuerpo });
@@ -129,7 +141,8 @@ async function cambiarPerfil(ruta, metodo, cuerpo) {
   }
   const c = r.datos.cambio;   // qué ha cambiado y dónde (RF-10.14e)
   const donde = c ? ` Actualizado en ${NOMBRES_SECCION[c.campo] || c.campo}: ${c.valor}.` : "";
-  avisar(`Hecho: perfil actualizado.${donde}${r.datos.aviso ? ` ${r.datos.aviso}` : ""}`);
+  avisar(`Hecho: perfil actualizado.${donde}`);
+  if (r.datos.aviso) mostrarAvisoDato();
   await cargarPerfil();
 }
 

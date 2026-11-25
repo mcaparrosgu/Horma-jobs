@@ -39,6 +39,12 @@ const TEXTOS = {
   sinCompatibilidad: "Sin compatibilidad",
   sinPerfil: "Sube tu CV para ver qué ofertas encajan contigo",
   sinPerfilBoton: "Subir mi CV",
+  // Al quitar un dato personal (RF-11.25): sale junto a lo que ella ve, sin ventana emergente.
+  datoPersonalTitulo: "Hemos quitado un dato personal",
+  datoPersonalMotivo: "Datos como la edad, el estado civil, los hijos o la salud no deben usarse para elegir a una persona: " +
+    "lo prohíben la normativa de protección de datos y la de igualdad de trato. Por eso Horma no los guarda ni los comparte. " +
+    "Si falta algo de tu experiencia, escríbelo sin ese dato.",
+  datoPersonalCerrar: "Entendido",
   usasVacio: "Aún no lo sabemos.",
   evitasVacio: "Aún no lo sabemos: sube una carta tuya.",   // RF-10.14l
   // Explicaciones de cada bloque, dentro de su ayuda «?» (RF-10.14m)

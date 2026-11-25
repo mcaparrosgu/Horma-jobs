@@ -122,6 +122,12 @@ label input.corto{ width: 7rem; }
 .editor.fila{ display: flex; }
 .rango{ display: block; }
 
+/* Aviso que se queda a la vista (sin ventana emergente): pegado abajo mientras ella edita. */
+.aviso-dato{ position: sticky; bottom: 16px; z-index: 5; display: grid; gap: 8px; justify-items: start; margin: 1rem 0;
+  padding: 16px; background: var(--surface); border: var(--bw) solid var(--ink); border-left: 8px solid var(--accent); }
+.aviso-dato p{ margin: 0; }
+.aviso-dato[hidden]{ display: none; }
+
 /* ── Avisos y estados (siempre con texto) ── */
 #aviso, .aviso{ min-height: 1.5rem; margin: 0.5rem 0; color: var(--muted); white-space: pre-line; }
 #aviso.error, .aviso.error, .error{ color: var(--error); font-weight: 600; }
