@@ -72,4 +72,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_s11_una_sola_barra.py` (en node); `tests/test_s11_retomar_lectura_url.py` ajustado. **Navegador:** 1280 px comprobado; 390 px, pendiente de Mar.
 - [x] T08m — Al rehacer el perfil, lo que escribió la usuaria pasa el filtro de datos personales y, si se quita algo, sale el aviso (RF-11.25c, D-032; un «casada con hijos» escrito antes de T05 pasaba de versión en versión).
   - **Test:** `tests/test_f2_t08_t10_flujos.py`.
+- [x] T08n — Borrar las ofertas caducadas del catálogo ya no falla si tienen notas de compatibilidad (RF-5.5d, spec 005; el cierre de la ingesta se deshacía por `matches_oferta_id_fkey`). Causa: un DELETE exige también ver las filas y el sistema no veía `matches` ni `candidaturas`. Migración 0030: política SELECT solo para las notas de caducadas del catálogo y función `oferta_con_candidatura` (la candidatura sigue frenando el borrado).
+  - **Test:** `tests/test_f5_t30_fuentes_nuevas.py` (con BD: borra oferta y nota, vigente intacta; el sistema solo ve las notas de caducadas; con candidatura no se borra).
 - [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR.

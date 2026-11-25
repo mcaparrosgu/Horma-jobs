@@ -107,8 +107,9 @@ def crear(s: Session, texto: str, *, fuente_id: int | None = None, clave_id: int
 def borrar_caducadas(s: Session) -> int:
     """Borra del catálogo las ofertas cuya fuente las da por caducadas (RF-5.5d, Himalayas), con sus
     notas. Se conservan las que ya tienen una candidatura: son trabajo de una usuaria."""
-    ids = ("(select id from ofertas o where usuaria_id is null and caduca_en < now() and not exists "
-           "(select 1 from candidaturas c where c.oferta_id = o.id))")
+    # La sesión de sistema no ve `candidaturas` (RLS): se pregunta por una función que solo devuelve si hay.
+    ids = ("(select id from ofertas o where usuaria_id is null and caduca_en < now() "
+           "and not oferta_con_candidatura(o.id))")
     s.execute(text(f"delete from matches where oferta_id in {ids}"))
     return s.execute(text(f"delete from ofertas where id in {ids}")).rowcount
 
