@@ -59,6 +59,7 @@ const TEXTOS = {
   preguntaTipoHueco: "¿Fue un empleo u otra cosa?",   // RF-10.14i
   resumenesPorCv: "Horma guarda el resumen de cada CV. Tu CV completo usa el del más reciente; al redactar un CV para una oferta, elige el que mejor encaja.",   // RF-10.14d
   maxLote: "Puedes subir hasta 5 archivos a la vez. Elige 5 o menos.",   // RF-10.18b
+  actualizandoPerfil: "Actualizando tu perfil con los CV que quedan",   // tras borrar un CV (RF-10.14)
   leyendoArchivos: (n) => `Leyendo ${n} archivos`,   // RF-10.18h
   perfilAplazado: "Tus archivos están guardados; rehacemos el perfil cuando haya presupuesto.",   // RF-10.18g
   dudososSinResponder: (nombres) => `No se han guardado, porque no dijiste qué eran: ${nombres.join(", ")}.`,   // RF-10.18e

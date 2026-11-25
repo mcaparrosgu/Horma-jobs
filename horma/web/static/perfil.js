@@ -35,7 +35,8 @@ let temporizador = null;
 let leyendo = false;   // ya se enseñó la barra «Estamos leyendo tu CV»
 let barraLectura = null;   // esa barra, que se conserva entre consultas
 let subiendoLote = false;   // hay un lote en camino: la barra no se quita aunque aún no haya tarea (RF-10.18h)
-let notaLote = "";   // el resultado del lote, que sale junto al «Listo» (RF-10.18i)
+let notaLote = "";
+const CLAVE_REHACIENDO = "horma:perfil-rehaciendo";   // borró un CV: la barra dice «Actualizando», no «leyendo»; sobrevive a cambiar de pestaña   // el resultado del lote, que sale junto al «Listo» (RF-10.18i)
 
 const CAMPOS_FECHA = ["inicio", "fin", "fecha"];
 const periodoVisto = (d) => [d.inicio, d.fin].filter(Boolean).map(fechaVista).join(" – ");
@@ -505,6 +506,7 @@ async function cargarPerfil() {
   }
   // se quita todo menos la barra viva: vaciar el contenedor y recolocarla tras un `await` la hacía parpadear
   for (const hijo of [...estado.children]) if (!(barraLectura && hijo === barraLectura.caja)) hijo.remove();
+  if (!construyendo) sessionStorage.removeItem(CLAVE_REHACIENDO);
   if (construyendo) leyendo = true;
   else if (leyendo && perfil) {   // acaba de terminar: ahora sí el mensaje siguiente (RF-10.14n)
     leyendo = false;
@@ -515,7 +517,8 @@ async function cargarPerfil() {
     const activas = await api("/api/tareas/activas?tipo=perfilar");   // una sola barra, con su % (RF-10.8)
     const progreso = activas.ok && activas.datos.tareas.length ? activas.datos.tareas[0].progreso : 0;
     // la misma barra en cada consulta: sigue rellenándose en vez de empezar de cero (RF-10.8c)
-    if (!barraLectura) barraLectura = barraAvance(estado, "Estamos leyendo tu CV");
+    const rehaciendo = sessionStorage.getItem(CLAVE_REHACIENDO) === "1";
+    if (!barraLectura) barraLectura = barraAvance(estado, rehaciendo ? TEXTOS.actualizandoPerfil : "Estamos leyendo tu CV");
     else if (barraLectura.caja.parentNode !== estado) estado.append(barraLectura.caja);
     barraLectura.poner(progreso);
     temporizador = setTimeout(cargarPerfil, 3000);
@@ -660,6 +663,7 @@ function tarjetaCv(c, _i, todos) {
     si.addEventListener("click", async () => {
       const r = await api(`/api/cv/${c.id}`, { metodo: "DELETE" });
       if (!r.ok) return avisar(r.motivo, true);
+      if (esCv && !ultimoCv) sessionStorage.setItem(CLAVE_REHACIENDO, "1");
       avisar(!esCv ? TEXTOS.cartaEliminada : ultimoCv ? TEXTOS.ultimoCvEliminado : TEXTOS.cvEliminado);
       await cargarCvs();
       await cargarPerfil();   // el perfil se rehace con los CV que quedan (RF-10.14)
@@ -739,6 +743,7 @@ async function enviarLote(archivos, { clases = null, cerrar = false } = {}) {
   for (const c of clases || []) datos.append("clases", c);
   if (cerrar) datos.append("cerrar", "true");
   avisar("");
+  sessionStorage.removeItem(CLAVE_REHACIENDO);   // subir un CV es leer, no rehacer
   $("pregunta-clase").hidden = true;
   // una sola barra continua, creada ahora: `cargarPerfil` la reutiliza en vez de pintar otra (RF-10.18h)
   subiendoLote = true;
