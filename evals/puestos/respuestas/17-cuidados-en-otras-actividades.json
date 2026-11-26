@@ -1,0 +1,80 @@
+{
+  "base": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar de enfermería",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Auxiliar de clínica",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Auxiliar sanitario",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Auxiliar de geriatría",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería en Residencia Sol"
+      },
+      {
+        "titulo": "Gerocultor",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería en Residencia Sol"
+      },
+      {
+        "titulo": "Auxiliar de residencia",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería en Residencia Sol"
+      },
+      {
+        "titulo": "Cuidador de personas dependientes",
+        "idioma": "es",
+        "dato": "Cuidado de una persona dependiente"
+      },
+      {
+        "titulo": "Auxiliar de ayuda a domicilio",
+        "idioma": "es",
+        "dato": "Cuidado de una persona dependiente"
+      },
+      {
+        "titulo": "Nursing Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Healthcare Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Nursing Aide",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Geriatric Nursing Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería en Residencia Sol"
+      },
+      {
+        "titulo": "Patient Care Assistant",
+        "idioma": "en",
+        "dato": "Cuidado de una persona dependiente"
+      },
+      {
+        "titulo": "Home Care Aide",
+        "idioma": "en",
+        "dato": "Cuidado de una persona dependiente"
+      }
+    ]
+  }
+}

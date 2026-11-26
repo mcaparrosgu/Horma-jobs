@@ -1,0 +1,128 @@
+{
+  "base": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Camarero de sala",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Camarero de barra",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Ayudante de camarero",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Ayudante de cocina",
+        "idioma": "es",
+        "dato": "Ayudante de cocina"
+      },
+      {
+        "titulo": "Auxiliar de cocina",
+        "idioma": "es",
+        "dato": "Ayudante de cocina"
+      },
+      {
+        "titulo": "Técnico en Servicios de Restauración",
+        "idioma": "es",
+        "dato": "Técnico en Servicios de Restauración"
+      },
+      {
+        "titulo": "Waiter",
+        "idioma": "en",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Server",
+        "idioma": "en",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Commis Chef",
+        "idioma": "en",
+        "dato": "Ayudante de cocina"
+      },
+      {
+        "titulo": "Kitchen Assistant",
+        "idioma": "en",
+        "dato": "Ayudante de cocina"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Camarero",
+        "idioma": "es",
+        "dato": "Camarero"
+      },
+      {
+        "titulo": "Camarero de sala",
+        "idioma": "es",
+        "dato": "Camarero"
+      },
+      {
+        "titulo": "Camarero de barra",
+        "idioma": "es",
+        "dato": "Camarero"
+      },
+      {
+        "titulo": "Ayudante de camarero",
+        "idioma": "es",
+        "dato": "Camarero"
+      },
+      {
+        "titulo": "Ayudante de cocina",
+        "idioma": "es",
+        "dato": "Ayudante de cocina"
+      },
+      {
+        "titulo": "Auxiliar de cocina",
+        "idioma": "es",
+        "dato": "Ayudante de cocina"
+      },
+      {
+        "titulo": "Técnico en servicios de restauración",
+        "idioma": "es",
+        "dato": "Técnico en Servicios de Restauración"
+      },
+      {
+        "titulo": "Auxiliar de restauración",
+        "idioma": "es",
+        "dato": "Técnico en Servicios de Restauración"
+      },
+      {
+        "titulo": "Waiter",
+        "idioma": "en",
+        "dato": "Camarero"
+      },
+      {
+        "titulo": "Restaurant Server",
+        "idioma": "en",
+        "dato": "Camarero"
+      },
+      {
+        "titulo": "Kitchen Assistant",
+        "idioma": "en",
+        "dato": "Ayudante de cocina"
+      },
+      {
+        "titulo": "Commis Chef",
+        "idioma": "en",
+        "dato": "Ayudante de cocina"
+      }
+    ]
+  }
+}

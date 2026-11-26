@@ -1,0 +1,62 @@
+{
+  "base": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [
+      "opera pms"
+    ],
+    "puestos": [
+      {
+        "titulo": "Recepcionista de hotel",
+        "idioma": "es",
+        "dato": "Recepcionista"
+      },
+      {
+        "titulo": "Hotel Receptionist",
+        "idioma": "en",
+        "dato": "Recepcionista"
+      },
+      {
+        "titulo": "Front Desk Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent"
+      },
+      {
+        "titulo": "Front Desk Associate",
+        "idioma": "en",
+        "dato": "Front Desk Agent"
+      },
+      {
+        "titulo": "Agente de recepción",
+        "idioma": "es",
+        "dato": "Front Desk Agent"
+      },
+      {
+        "titulo": "Guest Services Agent",
+        "idioma": "en",
+        "dato": "Recepcionista"
+      },
+      {
+        "titulo": "Agente de atención al cliente",
+        "idioma": "es",
+        "dato": "Recepcionista"
+      },
+      {
+        "titulo": "Reservations Agent",
+        "idioma": "en",
+        "dato": "Opera PMS"
+      },
+      {
+        "titulo": "Agente de reservas",
+        "idioma": "es",
+        "dato": "Opera PMS"
+      },
+      {
+        "titulo": "Asistente de turismo",
+        "idioma": "es",
+        "dato": "BA in Tourism Management"
+      }
+    ]
+  }
+}

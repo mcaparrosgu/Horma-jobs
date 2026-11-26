@@ -1,0 +1,63 @@
+{
+  "base": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": [
+      "carné de conducir c",
+      "carnet de carretillero"
+    ],
+    "puestos": [
+      {
+        "titulo": "Conductor repartidor",
+        "idioma": "es",
+        "dato": "Conductor repartidor"
+      },
+      {
+        "titulo": "Repartidor",
+        "idioma": "es",
+        "dato": "Conductor repartidor"
+      },
+      {
+        "titulo": "Conductor de reparto",
+        "idioma": "es",
+        "dato": "carné de conducir C"
+      },
+      {
+        "titulo": "Delivery Driver",
+        "idioma": "en",
+        "dato": "Conductor repartidor"
+      },
+      {
+        "titulo": "Courier",
+        "idioma": "en",
+        "dato": "Conductor repartidor"
+      },
+      {
+        "titulo": "Carretillero",
+        "idioma": "es",
+        "dato": "Carnet de carretillero"
+      },
+      {
+        "titulo": "Forklift Operator",
+        "idioma": "en",
+        "dato": "Carnet de carretillero"
+      },
+      {
+        "titulo": "Electricista",
+        "idioma": "es",
+        "dato": "Electricista"
+      },
+      {
+        "titulo": "Técnico en instalaciones eléctricas",
+        "idioma": "es",
+        "dato": "Técnico en Instalaciones Eléctricas y Automáticas"
+      },
+      {
+        "titulo": "Electrician",
+        "idioma": "en",
+        "dato": "Electricista"
+      }
+    ]
+  }
+}

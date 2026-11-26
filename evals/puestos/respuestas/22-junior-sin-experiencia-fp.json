@@ -1,0 +1,69 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "sistemas_redes",
+    "nivel": "sin_especificar",
+    "stack": [
+      "windows server",
+      "linux",
+      "cableado"
+    ],
+    "puestos": [
+      {
+        "titulo": "Técnico de sistemas",
+        "idioma": "es",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+      },
+      {
+        "titulo": "Técnico informático",
+        "idioma": "es",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+      },
+      {
+        "titulo": "Técnico de soporte informático",
+        "idioma": "es",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+      },
+      {
+        "titulo": "Técnico de microinformática",
+        "idioma": "es",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+      },
+      {
+        "titulo": "Técnico de redes",
+        "idioma": "es",
+        "dato": "cableado"
+      },
+      {
+        "titulo": "Técnico de cableado",
+        "idioma": "es",
+        "dato": "cableado"
+      },
+      {
+        "titulo": "Administrador de sistemas junior",
+        "idioma": "es",
+        "dato": "Windows Server"
+      },
+      {
+        "titulo": "IT Support Technician",
+        "idioma": "en",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+      },
+      {
+        "titulo": "Help Desk Technician",
+        "idioma": "en",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+      },
+      {
+        "titulo": "Network Technician",
+        "idioma": "en",
+        "dato": "cableado"
+      },
+      {
+        "titulo": "Junior System Administrator",
+        "idioma": "en",
+        "dato": "Windows Server"
+      }
+    ]
+  }
+}

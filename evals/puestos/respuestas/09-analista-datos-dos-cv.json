@@ -1,0 +1,126 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "intermedio",
+    "stack": [
+      "sql",
+      "python",
+      "power bi"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Analista de datos"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos"
+      },
+      {
+        "titulo": "Analista de business intelligence",
+        "idioma": "es",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Analista de reporting",
+        "idioma": "es",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Reporting Analyst",
+        "idioma": "en",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Analista SQL",
+        "idioma": "es",
+        "dato": "SQL"
+      },
+      {
+        "titulo": "Científico de datos",
+        "idioma": "es",
+        "dato": "Máster en Ciencia de Datos"
+      },
+      {
+        "titulo": "Data Scientist",
+        "idioma": "en",
+        "dato": "Máster en Ciencia de Datos"
+      },
+      {
+        "titulo": "Estadístico",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "intermedio",
+    "stack": [
+      "sql",
+      "python",
+      "power bi"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Analista de datos"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos"
+      },
+      {
+        "titulo": "Analista de business intelligence",
+        "idioma": "es",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Analista de reporting",
+        "idioma": "es",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Business Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos"
+      },
+      {
+        "titulo": "Científico de datos",
+        "idioma": "es",
+        "dato": "Máster en Ciencia de Datos"
+      },
+      {
+        "titulo": "Data Scientist",
+        "idioma": "en",
+        "dato": "Máster en Ciencia de Datos"
+      },
+      {
+        "titulo": "Analista estadístico",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística"
+      }
+    ]
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "base": {
+    "sector": "medios_marketing",
+    "familia": "diseno_creatividad",
+    "nivel": "intermedio",
+    "stack": [
+      "lightroom",
+      "photoshop"
+    ],
+    "puestos": [
+      {
+        "titulo": "Fotógrafa freelance",
+        "idioma": "es",
+        "dato": "Fotógrafa freelance"
+      },
+      {
+        "titulo": "Freelance Photographer",
+        "idioma": "en",
+        "dato": "Fotógrafa freelance"
+      },
+      {
+        "titulo": "Fotógrafa",
+        "idioma": "es",
+        "dato": "Fotógrafa freelance"
+      },
+      {
+        "titulo": "Photographer",
+        "idioma": "en",
+        "dato": "Fotógrafa freelance"
+      },
+      {
+        "titulo": "Editora de fotografía",
+        "idioma": "es",
+        "dato": "Photoshop"
+      },
+      {
+        "titulo": "Photo Editor",
+        "idioma": "en",
+        "dato": "Lightroom"
+      },
+      {
+        "titulo": "Retoucher",
+        "idioma": "en",
+        "dato": "Photoshop"
+      },
+      {
+        "titulo": "Profesora de inglés",
+        "idioma": "es",
+        "dato": "Profesora de inglés"
+      },
+      {
+        "titulo": "English Teacher",
+        "idioma": "en",
+        "dato": "Profesora de inglés"
+      },
+      {
+        "titulo": "Profesora de idiomas",
+        "idioma": "es",
+        "dato": "Profesora de inglés"
+      },
+      {
+        "titulo": "English Tutor",
+        "idioma": "en",
+        "dato": "Profesora de inglés"
+      },
+      {
+        "titulo": "Traductora",
+        "idioma": "es",
+        "dato": "Grado en Estudios Ingleses"
+      },
+      {
+        "titulo": "Translator",
+        "idioma": "en",
+        "dato": "Grado en Estudios Ingleses"
+      }
+    ]
+  }
+}

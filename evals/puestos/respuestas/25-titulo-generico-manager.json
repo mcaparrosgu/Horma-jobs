@@ -1,0 +1,127 @@
+{
+  "base": {
+    "sector": "otros",
+    "familia": "atencion_cliente",
+    "nivel": "senior",
+    "stack": [
+      "zendesk"
+    ],
+    "puestos": [
+      {
+        "titulo": "Responsable de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Jefe de equipo de atención al cliente",
+        "idioma": "es",
+        "dato": "gestión de equipos"
+      },
+      {
+        "titulo": "Responsable de servicio al cliente",
+        "idioma": "es",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Responsable de operaciones de atención al cliente",
+        "idioma": "es",
+        "dato": "Zendesk"
+      },
+      {
+        "titulo": "Customer Service Manager",
+        "idioma": "en",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Customer Service Team Leader",
+        "idioma": "en",
+        "dato": "gestión de equipos"
+      },
+      {
+        "titulo": "Customer Care Manager",
+        "idioma": "en",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Support Operations Manager",
+        "idioma": "en",
+        "dato": "Zendesk"
+      },
+      {
+        "titulo": "Customer Success Manager",
+        "idioma": "en",
+        "dato": "Zendesk"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "otros",
+    "familia": "atencion_cliente",
+    "nivel": "intermedio",
+    "stack": [
+      "zendesk"
+    ],
+    "puestos": [
+      {
+        "titulo": "Responsable de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Customer Service Manager",
+        "idioma": "en",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Jefe de equipo de atención al cliente",
+        "idioma": "es",
+        "dato": "gestión de equipos"
+      },
+      {
+        "titulo": "Customer Support Team Lead",
+        "idioma": "en",
+        "dato": "gestión de equipos"
+      },
+      {
+        "titulo": "Supervisor de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Customer Support Supervisor",
+        "idioma": "en",
+        "dato": "Manager"
+      },
+      {
+        "titulo": "Responsable de soporte al cliente",
+        "idioma": "es",
+        "dato": "Zendesk"
+      },
+      {
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Zendesk"
+      },
+      {
+        "titulo": "Responsable de helpdesk",
+        "idioma": "es",
+        "dato": "Zendesk"
+      },
+      {
+        "titulo": "Customer Experience Manager",
+        "idioma": "en",
+        "dato": "Grado en Psicología"
+      },
+      {
+        "titulo": "Responsable de experiencia de cliente",
+        "idioma": "es",
+        "dato": "Grado en Psicología"
+      }
+    ]
+  }
+}

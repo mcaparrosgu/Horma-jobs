@@ -1,0 +1,64 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "intermedio",
+    "stack": [
+      "sql",
+      "excel",
+      "power bi"
+    ],
+    "puestos": [
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos"
+      },
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Analista de datos"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Analista de Business Intelligence",
+        "idioma": "es",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "BI Analyst",
+        "idioma": "en",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Analista BI",
+        "idioma": "es",
+        "dato": "Power BI"
+      },
+      {
+        "titulo": "Reporting Analyst",
+        "idioma": "en",
+        "dato": "Excel"
+      },
+      {
+        "titulo": "Analista de reporting",
+        "idioma": "es",
+        "dato": "Excel"
+      },
+      {
+        "titulo": "Analista estadístico",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística"
+      }
+    ]
+  }
+}

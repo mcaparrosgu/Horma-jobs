@@ -1,0 +1,65 @@
+{
+  "base": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar de enfermería",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Técnico en Cuidados Auxiliares de Enfermería",
+        "idioma": "es",
+        "dato": "Técnico en Cuidados Auxiliares de Enfermería"
+      },
+      {
+        "titulo": "Auxiliar sanitario",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Auxiliar de clínica",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Auxiliar de residencia",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería en Residencia Los Olmos"
+      },
+      {
+        "titulo": "Gerocultor/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería en Residencia Los Olmos"
+      },
+      {
+        "titulo": "Cuidador de personas dependientes",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Auxiliar de ayuda a domicilio",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Nursing assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Healthcare assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería"
+      },
+      {
+        "titulo": "Certified nursing assistant",
+        "idioma": "en",
+        "dato": "Técnico en Cuidados Auxiliares de Enfermería"
+      }
+    ]
+  }
+}

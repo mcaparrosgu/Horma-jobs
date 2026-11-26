@@ -1,0 +1,68 @@
+{
+  "base": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [
+      "códigos qr",
+      "carnet de conducir b"
+    ],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Runner de sala",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Ayudante de cocina",
+        "idioma": "es",
+        "dato": "Manipulador de alimentos"
+      },
+      {
+        "titulo": "Auxiliar de cocina",
+        "idioma": "es",
+        "dato": "Manipulador de alimentos"
+      },
+      {
+        "titulo": "Waiter",
+        "idioma": "en",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Waitress",
+        "idioma": "en",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Server",
+        "idioma": "en",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Food and Beverage Attendant",
+        "idioma": "en",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Kitchen Assistant",
+        "idioma": "en",
+        "dato": "Manipulador de alimentos"
+      }
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "base": {
+    "sector": "comercio_retail",
+    "familia": "ventas_comercial",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Dependiente",
+        "idioma": "es",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Dependiente de comercio",
+        "idioma": "es",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Vendedor/a",
+        "idioma": "es",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Asesor/a de ventas",
+        "idioma": "es",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Auxiliar de tienda",
+        "idioma": "es",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Reponedor/a",
+        "idioma": "es",
+        "dato": "Dependiente en Hipermercado Costa"
+      },
+      {
+        "titulo": "Promotor/a de ventas",
+        "idioma": "es",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Sales Assistant",
+        "idioma": "en",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Retail Sales Associate",
+        "idioma": "en",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Store Assistant",
+        "idioma": "en",
+        "dato": "Dependiente"
+      },
+      {
+        "titulo": "Sales Advisor",
+        "idioma": "en",
+        "dato": "Dependiente"
+      }
+    ]
+  }
+}

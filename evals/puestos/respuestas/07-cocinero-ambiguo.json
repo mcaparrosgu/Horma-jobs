@@ -1,0 +1,70 @@
+{
+  "base": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Cocinero",
+        "idioma": "es",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Cook",
+        "idioma": "en",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Line Cook",
+        "idioma": "en",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Cocinero de hotel",
+        "idioma": "es",
+        "dato": "Cocinero en Hotel Marina"
+      },
+      {
+        "titulo": "Hotel Cook",
+        "idioma": "en",
+        "dato": "Cocinero en Hotel Marina"
+      },
+      {
+        "titulo": "Cocinero de restaurante",
+        "idioma": "es",
+        "dato": "Cocinero en Restaurante El Puerto"
+      },
+      {
+        "titulo": "Restaurant Cook",
+        "idioma": "en",
+        "dato": "Cocinero en Restaurante El Puerto"
+      },
+      {
+        "titulo": "Ayudante de cocina",
+        "idioma": "es",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Auxiliar de cocina",
+        "idioma": "es",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Kitchen Assistant",
+        "idioma": "en",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Prep Cook",
+        "idioma": "en",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Manipulador de alimentos",
+        "idioma": "es",
+        "dato": "Curso de manipulador de alimentos"
+      }
+    ]
+  }
+}

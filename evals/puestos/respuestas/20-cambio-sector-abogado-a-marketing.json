@@ -1,0 +1,83 @@
+{
+  "base": {
+    "sector": "servicios_profesionales",
+    "familia": "marketing_comunicacion",
+    "nivel": "intermedio",
+    "stack": [
+      "google analytics",
+      "meta ads"
+    ],
+    "puestos": [
+      {
+        "titulo": "Responsable de redes sociales",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales"
+      },
+      {
+        "titulo": "Community Manager",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales"
+      },
+      {
+        "titulo": "Social Media Manager",
+        "idioma": "en",
+        "dato": "Responsable de redes sociales"
+      },
+      {
+        "titulo": "Especialista en marketing digital",
+        "idioma": "es",
+        "dato": "Máster en Marketing Digital"
+      },
+      {
+        "titulo": "Digital Marketing Specialist",
+        "idioma": "en",
+        "dato": "Máster en Marketing Digital"
+      },
+      {
+        "titulo": "Especialista en Meta Ads",
+        "idioma": "es",
+        "dato": "Meta Ads"
+      },
+      {
+        "titulo": "Paid Social Specialist",
+        "idioma": "en",
+        "dato": "Meta Ads"
+      },
+      {
+        "titulo": "Analista web",
+        "idioma": "es",
+        "dato": "Google Analytics"
+      },
+      {
+        "titulo": "Web Analyst",
+        "idioma": "en",
+        "dato": "Google Analytics"
+      },
+      {
+        "titulo": "Redactor de contenidos",
+        "idioma": "es",
+        "dato": "redacción"
+      },
+      {
+        "titulo": "Content Writer",
+        "idioma": "en",
+        "dato": "redacción"
+      },
+      {
+        "titulo": "Abogado laboralista",
+        "idioma": "es",
+        "dato": "Abogado laboralista"
+      },
+      {
+        "titulo": "Asesor jurídico laboral",
+        "idioma": "es",
+        "dato": "Grado en Derecho"
+      },
+      {
+        "titulo": "Labor Lawyer",
+        "idioma": "en",
+        "dato": "Abogado laboralista"
+      }
+    ]
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "base": {
+    "sector": "industria",
+    "familia": "recursos_humanos",
+    "nivel": "direccion",
+    "stack": [
+      "sap successfactors"
+    ],
+    "puestos": [
+      {
+        "titulo": "Directora de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Directora de Recursos Humanos"
+      },
+      {
+        "titulo": "Jefa de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Directora de Recursos Humanos"
+      },
+      {
+        "titulo": "Responsable de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Directora de Recursos Humanos"
+      },
+      {
+        "titulo": "Responsable de Relaciones Laborales",
+        "idioma": "es",
+        "dato": "negociación colectiva"
+      },
+      {
+        "titulo": "Responsable de Selección",
+        "idioma": "es",
+        "dato": "Técnica de selección"
+      },
+      {
+        "titulo": "Técnica de selección",
+        "idioma": "es",
+        "dato": "Técnica de selección"
+      },
+      {
+        "titulo": "Psicóloga de recursos humanos",
+        "idioma": "es",
+        "dato": "Licenciatura en Psicología"
+      },
+      {
+        "titulo": "Human Resources Director",
+        "idioma": "en",
+        "dato": "Directora de Recursos Humanos"
+      },
+      {
+        "titulo": "Human Resources Manager",
+        "idioma": "en",
+        "dato": "Directora de Recursos Humanos"
+      },
+      {
+        "titulo": "HR Business Partner",
+        "idioma": "en",
+        "dato": "Directora de Recursos Humanos"
+      },
+      {
+        "titulo": "Labor Relations Manager",
+        "idioma": "en",
+        "dato": "negociación colectiva"
+      },
+      {
+        "titulo": "Talent Acquisition Specialist",
+        "idioma": "en",
+        "dato": "Técnica de selección"
+      },
+      {
+        "titulo": "Recruiter",
+        "idioma": "en",
+        "dato": "Técnica de selección"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "industria",
+    "familia": "recursos_humanos",
+    "nivel": "direccion",
+    "stack": [
+      "sap successfactors"
+    ],
+    "puestos": [
+      {
+        "titulo": "Director de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "Director de RRHH",
+        "idioma": "es",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "Responsable de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "HR Director",
+        "idioma": "en",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "Head of Human Resources",
+        "idioma": "en",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "HR Manager",
+        "idioma": "en",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "HR Business Partner",
+        "idioma": "en",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "Responsable de relaciones laborales",
+        "idioma": "es",
+        "dato": "negociación colectiva"
+      },
+      {
+        "titulo": "Talent Acquisition Manager",
+        "idioma": "en",
+        "dato": "Técnico de selección"
+      },
+      {
+        "titulo": "Responsable de talento",
+        "idioma": "es",
+        "dato": "Técnico de selección"
+      },
+      {
+        "titulo": "Consultor de recursos humanos",
+        "idioma": "es",
+        "dato": "Director de Recursos Humanos"
+      },
+      {
+        "titulo": "HRIS Specialist",
+        "idioma": "en",
+        "dato": "SAP SuccessFactors"
+      },
+      {
+        "titulo": "Organizational Psychologist",
+        "idioma": "en",
+        "dato": "Licenciatura en Psicología"
+      },
+      {
+        "titulo": "Psicólogo organizacional",
+        "idioma": "es",
+        "dato": "Licenciatura en Psicología"
+      }
+    ]
+  }
+}

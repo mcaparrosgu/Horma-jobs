@@ -1,0 +1,62 @@
+{
+  "base": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "junior",
+    "stack": [
+      "excel avanzado"
+    ],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Asistente administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Operador de introducción de datos",
+        "idioma": "es",
+        "dato": "Excel avanzado"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Office Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Administrative Clerk",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo"
+      },
+      {
+        "titulo": "Data Entry Clerk",
+        "idioma": "en",
+        "dato": "Excel avanzado"
+      }
+    ]
+  }
+}

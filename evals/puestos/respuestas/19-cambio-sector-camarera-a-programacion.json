@@ -1,0 +1,65 @@
+{
+  "base": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "junior",
+    "stack": [
+      "javascript",
+      "html",
+      "css",
+      "git"
+    ],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Camarero de sala",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Waiter",
+        "idioma": "en",
+        "dato": "Camarera"
+      },
+      {
+        "titulo": "Desarrollador web junior",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web"
+      },
+      {
+        "titulo": "Desarrollador front-end",
+        "idioma": "es",
+        "dato": "JavaScript"
+      },
+      {
+        "titulo": "Programador web",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web"
+      },
+      {
+        "titulo": "Maquetador web",
+        "idioma": "es",
+        "dato": "CSS"
+      },
+      {
+        "titulo": "Junior Web Developer",
+        "idioma": "en",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web"
+      },
+      {
+        "titulo": "Frontend Developer",
+        "idioma": "en",
+        "dato": "JavaScript"
+      }
+    ]
+  }
+}

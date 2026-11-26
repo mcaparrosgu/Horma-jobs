@@ -1,0 +1,75 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "java",
+      "spring",
+      "postgresql",
+      "aws"
+    ],
+    "puestos": [
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Software Engineer"
+      },
+      {
+        "titulo": "Ingeniero de software",
+        "idioma": "es",
+        "dato": "Software Engineer"
+      },
+      {
+        "titulo": "Software Developer",
+        "idioma": "en",
+        "dato": "Software Engineer"
+      },
+      {
+        "titulo": "Desarrollador de software",
+        "idioma": "es",
+        "dato": "Software Engineer"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Desarrollador backend",
+        "idioma": "es",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Ingeniero backend",
+        "idioma": "es",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Java Developer",
+        "idioma": "en",
+        "dato": "Java"
+      },
+      {
+        "titulo": "Desarrollador Java",
+        "idioma": "es",
+        "dato": "Java"
+      },
+      {
+        "titulo": "Cloud Engineer",
+        "idioma": "en",
+        "dato": "AWS"
+      },
+      {
+        "titulo": "Ingeniero cloud",
+        "idioma": "es",
+        "dato": "AWS"
+      }
+    ]
+  }
+}

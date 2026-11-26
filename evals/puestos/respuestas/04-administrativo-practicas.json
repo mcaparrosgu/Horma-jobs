@@ -1,0 +1,68 @@
+{
+  "base": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "practicas",
+    "stack": [
+      "word",
+      "excel"
+    ],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo en prácticas"
+      },
+      {
+        "titulo": "Administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo en prácticas"
+      },
+      {
+        "titulo": "Asistente administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo en prácticas"
+      },
+      {
+        "titulo": "Administrativo de facturación",
+        "idioma": "es",
+        "dato": "facturación"
+      },
+      {
+        "titulo": "Auxiliar de facturación",
+        "idioma": "es",
+        "dato": "facturación"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Grado Superior en Administración y Finanzas"
+      },
+      {
+        "titulo": "Administrativo contable",
+        "idioma": "es",
+        "dato": "Grado Superior en Administración y Finanzas"
+      },
+      {
+        "titulo": "Auxiliar administrativo de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo en prácticas"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo en prácticas"
+      },
+      {
+        "titulo": "Billing Clerk",
+        "idioma": "en",
+        "dato": "facturación"
+      },
+      {
+        "titulo": "Accounting Assistant",
+        "idioma": "en",
+        "dato": "Grado Superior en Administración y Finanzas"
+      }
+    ]
+  }
+}

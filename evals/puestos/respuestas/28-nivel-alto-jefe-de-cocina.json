@@ -1,0 +1,154 @@
+{
+  "base": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "senior",
+    "stack": [
+      "escandallos",
+      "appcc"
+    ],
+    "puestos": [
+      {
+        "titulo": "Jefe de cocina",
+        "idioma": "es",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Cocinero",
+        "idioma": "es",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Chef de cocina",
+        "idioma": "es",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Jefe de partida",
+        "idioma": "es",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Responsable de cocina",
+        "idioma": "es",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Encargado de cocina",
+        "idioma": "es",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Cocinero de restaurante",
+        "idioma": "es",
+        "dato": "Cocinero"
+      },
+      {
+        "titulo": "Técnico en APPCC",
+        "idioma": "es",
+        "dato": "APPCC"
+      },
+      {
+        "titulo": "Head Chef",
+        "idioma": "en",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Executive Chef",
+        "idioma": "en",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Sous Chef",
+        "idioma": "en",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Kitchen Manager",
+        "idioma": "en",
+        "dato": "Jefe de cocina"
+      },
+      {
+        "titulo": "Chef",
+        "idioma": "en",
+        "dato": "Cocinero"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "senior",
+    "stack": [
+      "escandallos",
+      "appcc"
+    ],
+    "puestos": [
+      {
+        "titulo": "Jefe de cocina",
+        "idioma": "es",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Chef de cocina",
+        "idioma": "es",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Responsable de cocina",
+        "idioma": "es",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Encargado de cocina",
+        "idioma": "es",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Director de cocina",
+        "idioma": "es",
+        "dato": "Técnico Superior en Dirección de Cocina"
+      },
+      {
+        "titulo": "Cocinera",
+        "idioma": "es",
+        "dato": "Cocinera"
+      },
+      {
+        "titulo": "Responsable APPCC",
+        "idioma": "es",
+        "dato": "APPCC"
+      },
+      {
+        "titulo": "Executive Chef",
+        "idioma": "en",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Head Chef",
+        "idioma": "en",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Kitchen Manager",
+        "idioma": "en",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Sous Chef",
+        "idioma": "en",
+        "dato": "Jefa de cocina"
+      },
+      {
+        "titulo": "Cook",
+        "idioma": "en",
+        "dato": "Cocinera"
+      },
+      {
+        "titulo": "Food Safety Manager",
+        "idioma": "en",
+        "dato": "APPCC"
+      }
+    ]
+  }
+}

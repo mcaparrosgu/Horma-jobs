@@ -1,0 +1,68 @@
+{
+  "base": {
+    "sector": "construccion",
+    "familia": "construccion_oficios",
+    "nivel": "intermedio",
+    "stack": [
+      "carné de conducir b",
+      "carné de gases fluorados"
+    ],
+    "puestos": [
+      {
+        "titulo": "Técnico de climatización",
+        "idioma": "es",
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
+      },
+      {
+        "titulo": "Instalador de climatización",
+        "idioma": "es",
+        "dato": "instalación de aire acondicionado"
+      },
+      {
+        "titulo": "Técnico instalador de aire acondicionado",
+        "idioma": "es",
+        "dato": "instalación de aire acondicionado"
+      },
+      {
+        "titulo": "Técnico frigorista",
+        "idioma": "es",
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
+      },
+      {
+        "titulo": "Técnico de instalaciones frigoríficas",
+        "idioma": "es",
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
+      },
+      {
+        "titulo": "Técnico de mantenimiento de climatización",
+        "idioma": "es",
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
+      },
+      {
+        "titulo": "Técnico de aire acondicionado",
+        "idioma": "es",
+        "dato": "Técnico"
+      },
+      {
+        "titulo": "HVAC Technician",
+        "idioma": "en",
+        "dato": "instalación de aire acondicionado"
+      },
+      {
+        "titulo": "Air Conditioning Technician",
+        "idioma": "en",
+        "dato": "instalación de aire acondicionado"
+      },
+      {
+        "titulo": "HVAC Installer",
+        "idioma": "en",
+        "dato": "instalación de aire acondicionado"
+      },
+      {
+        "titulo": "Refrigeration Technician",
+        "idioma": "en",
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
+      }
+    ]
+  }
+}

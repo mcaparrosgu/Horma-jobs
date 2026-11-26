@@ -1,0 +1,138 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "python",
+      "fastapi",
+      "postgresql",
+      "docker"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador backend",
+        "idioma": "es",
+        "dato": "Desarrolladora backend"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrolladora backend"
+      },
+      {
+        "titulo": "Ingeniero backend",
+        "idioma": "es",
+        "dato": "Desarrolladora backend"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrolladora backend"
+      },
+      {
+        "titulo": "Desarrollador Python",
+        "idioma": "es",
+        "dato": "Desarrolladora Python"
+      },
+      {
+        "titulo": "Python Developer",
+        "idioma": "en",
+        "dato": "Desarrolladora Python"
+      },
+      {
+        "titulo": "Python Backend Developer",
+        "idioma": "en",
+        "dato": "Python"
+      },
+      {
+        "titulo": "Ingeniero de software backend",
+        "idioma": "es",
+        "dato": "FastAPI"
+      },
+      {
+        "titulo": "Ingeniero de software",
+        "idioma": "es",
+        "dato": "Ingeniería Informática"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Ingeniería Informática"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "python",
+      "fastapi",
+      "postgresql",
+      "docker"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador backend",
+        "idioma": "es",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Desarrollador Python",
+        "idioma": "es",
+        "dato": "Desarrollador Python"
+      },
+      {
+        "titulo": "Python Developer",
+        "idioma": "en",
+        "dato": "Desarrollador Python"
+      },
+      {
+        "titulo": "Ingeniero backend",
+        "idioma": "es",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrollador backend"
+      },
+      {
+        "titulo": "Desarrollador de software",
+        "idioma": "es",
+        "dato": "Ingeniería Informática"
+      },
+      {
+        "titulo": "Software Developer",
+        "idioma": "en",
+        "dato": "Ingeniería Informática"
+      },
+      {
+        "titulo": "Ingeniero de software",
+        "idioma": "es",
+        "dato": "Ingeniería Informática"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Ingeniería Informática"
+      },
+      {
+        "titulo": "Desarrollador de APIs",
+        "idioma": "es",
+        "dato": "FastAPI"
+      },
+      {
+        "titulo": "API Developer",
+        "idioma": "en",
+        "dato": "FastAPI"
+      }
+    ]
+  }
+}

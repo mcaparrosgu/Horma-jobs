@@ -1,0 +1,65 @@
+{
+  "base": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "junior",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativa"
+      },
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativa"
+      },
+      {
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativa"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Auxiliar administrativa en Gestoría Costa"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativa"
+      },
+      {
+        "titulo": "Office Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativa"
+      },
+      {
+        "titulo": "Dependiente/a",
+        "idioma": "es",
+        "dato": "Dependienta"
+      },
+      {
+        "titulo": "Auxiliar de tienda",
+        "idioma": "es",
+        "dato": "Dependienta"
+      },
+      {
+        "titulo": "Auxiliar de atención al cliente",
+        "idioma": "es",
+        "dato": "Dependienta"
+      },
+      {
+        "titulo": "Sales Assistant",
+        "idioma": "en",
+        "dato": "Dependienta"
+      },
+      {
+        "titulo": "Retail Sales Associate",
+        "idioma": "en",
+        "dato": "Dependienta"
+      }
+    ]
+  }
+}

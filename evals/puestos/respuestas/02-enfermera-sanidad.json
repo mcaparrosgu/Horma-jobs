@@ -1,0 +1,128 @@
+{
+  "base": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Enfermera",
+        "idioma": "es",
+        "dato": "Enfermera"
+      },
+      {
+        "titulo": "Enfermero/a",
+        "idioma": "es",
+        "dato": "Enfermera"
+      },
+      {
+        "titulo": "Enfermera de Atención Primaria",
+        "idioma": "es",
+        "dato": "Enfermera"
+      },
+      {
+        "titulo": "Enfermera comunitaria",
+        "idioma": "es",
+        "dato": "Enfermera"
+      },
+      {
+        "titulo": "Enfermera de Hospitalización",
+        "idioma": "es",
+        "dato": "Enfermera"
+      },
+      {
+        "titulo": "Enfermera de Cuidados Críticos",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos"
+      },
+      {
+        "titulo": "Enfermero/a de UCI",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos"
+      },
+      {
+        "titulo": "Enfermero/a de Urgencias",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos"
+      },
+      {
+        "titulo": "Registered Nurse",
+        "idioma": "en",
+        "dato": "Enfermera"
+      },
+      {
+        "titulo": "Primary Care Nurse",
+        "idioma": "en",
+        "dato": "Enfermera"
+      },
+      {
+        "titulo": "Critical Care Nurse",
+        "idioma": "en",
+        "dato": "Máster en Cuidados Críticos"
+      },
+      {
+        "titulo": "Enfermero/a generalista",
+        "idioma": "es",
+        "dato": "Grado en Enfermería"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Enfermero",
+        "idioma": "es",
+        "dato": "Enfermero"
+      },
+      {
+        "titulo": "Enfermero/a de Atención Primaria",
+        "idioma": "es",
+        "dato": "Enfermero"
+      },
+      {
+        "titulo": "Enfermero/a hospitalario",
+        "idioma": "es",
+        "dato": "Enfermero"
+      },
+      {
+        "titulo": "Enfermero de Cuidados Críticos",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos"
+      },
+      {
+        "titulo": "Enfermero de UCI",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos"
+      },
+      {
+        "titulo": "Registered Nurse",
+        "idioma": "en",
+        "dato": "Enfermero"
+      },
+      {
+        "titulo": "Primary Care Nurse",
+        "idioma": "en",
+        "dato": "Enfermero"
+      },
+      {
+        "titulo": "Hospital Nurse",
+        "idioma": "en",
+        "dato": "Enfermero"
+      },
+      {
+        "titulo": "Critical Care Nurse",
+        "idioma": "en",
+        "dato": "Máster en Cuidados Críticos"
+      },
+      {
+        "titulo": "Intensive Care Unit Nurse",
+        "idioma": "en",
+        "dato": "Máster en Cuidados Críticos"
+      }
+    ]
+  }
+}

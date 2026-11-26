@@ -1,0 +1,65 @@
+{
+  "base": {
+    "sector": "finanzas_seguros",
+    "familia": "administracion_oficina",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Auxiliar administrativo",
+        "idioma": "es",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Auxiliar de seguros",
+        "idioma": "es",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Asistente administrativo",
+        "idioma": "es",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Administrativo de seguros",
+        "idioma": "es",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Back office de seguros",
+        "idioma": "es",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Analista administrativo",
+        "idioma": "es",
+        "dato": "Grado en Administración de Empresas"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Administrative Officer",
+        "idioma": "en",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Office Administrator",
+        "idioma": "en",
+        "dato": "Administrativa"
+      },
+      {
+        "titulo": "Insurance Administrator",
+        "idioma": "en",
+        "dato": "Administrativa"
+      }
+    ]
+  }
+}

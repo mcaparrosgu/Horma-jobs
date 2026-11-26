@@ -1,0 +1,153 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "sin_especificar",
+    "stack": [
+      "r",
+      "python",
+      "sql",
+      "excel"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Analista de datos junior",
+        "idioma": "es",
+        "dato": "R"
+      },
+      {
+        "titulo": "Junior Data Analyst",
+        "idioma": "en",
+        "dato": "R"
+      },
+      {
+        "titulo": "Analista estadístico",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Científico de datos junior",
+        "idioma": "es",
+        "dato": "Python"
+      },
+      {
+        "titulo": "Junior Data Scientist",
+        "idioma": "en",
+        "dato": "Python"
+      },
+      {
+        "titulo": "Analista de business intelligence",
+        "idioma": "es",
+        "dato": "SQL"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "SQL"
+      },
+      {
+        "titulo": "Analista de reporting",
+        "idioma": "es",
+        "dato": "Excel"
+      },
+      {
+        "titulo": "Reporting Analyst",
+        "idioma": "en",
+        "dato": "Excel"
+      },
+      {
+        "titulo": "Becario de análisis de datos",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Data Analyst Intern",
+        "idioma": "en",
+        "dato": "Grado en Estadística"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "sin_especificar",
+    "stack": [
+      "r",
+      "python",
+      "sql",
+      "excel"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "SQL"
+      },
+      {
+        "titulo": "Junior Data Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Analista de datos junior",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Analista estadístico",
+        "idioma": "es",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística"
+      },
+      {
+        "titulo": "Junior Data Scientist",
+        "idioma": "en",
+        "dato": "Python"
+      },
+      {
+        "titulo": "Analista de Business Intelligence",
+        "idioma": "es",
+        "dato": "SQL"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "SQL"
+      },
+      {
+        "titulo": "Analista de reporting",
+        "idioma": "es",
+        "dato": "Excel"
+      },
+      {
+        "titulo": "Reporting Analyst",
+        "idioma": "en",
+        "dato": "Excel"
+      }
+    ]
+  }
+}
