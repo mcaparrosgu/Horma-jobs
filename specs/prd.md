@@ -182,16 +182,17 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     selección es un agente pequeño nuevo, `lector-ia` (D-041); ella ve tres líneas en la candidatura (D-042).
   - Comprobación del PDF final y puerta de hechos sin modelo antes del PDF: cifras, fechas y nombres (F7-D3). Sin
     listas de verbos ni de cargos: se puede decir con más fuerza lo que la descripción respalda, como liderar sin
-    el cargo o un «nivel medio» como B2 (D-053).
+    el cargo o un «nivel medio» como B2 (D-054).
   - Contacto (correo, teléfono, ciudad y LinkedIn) en Perfil; lo pone el código en el PDF y nunca llega al modelo
     (D-039).
   - CV: experiencias con tareas y logros (el perfil no cambia: el redactor los distingue, D-040); ideas para
-    medir los logros en el aviso «Sin cifras», con un agente pequeño nuevo, `ideas-logros` (D-054); mejor
+    medir los logros en el aviso «Sin cifras», con un agente pequeño nuevo, `ideas-logros` (D-055); mejor
     redacción; diseños aptos para ATS, elegibles.
   - Carta: mejor redacción y diseño; tono formal o informal según la oferta; carta honesta y simple como seña
-    de Horma; reglas de las mejores guías de cartas (D-055); saludo a la persona de selección si la oferta da su
-    nombre y, si no, al equipo de selección de la empresa (D-056).
-  - Requisitos eliminatorios: avisan y no frenan; ella puede enviar la candidatura igual (D-057).
+    de Horma; reglas de las mejores guías de cartas (D-056); saludo a la persona de selección si la oferta da su
+    nombre, con «Sr.» o «Sra.» si la oferta lo deja claro, y, si no, al equipo de selección de la empresa (D-057 y
+    D-060).
+  - Requisitos eliminatorios: avisan y no frenan; ella puede enviar la candidatura igual (D-058).
   - Editor tipo procesador de texto (negrita, listas, títulos), sin Markdown a la vista.
   - Del cruce del 22-nov: falsos «Dato dudoso», recortes del extractor (eval `perfil`) y «manejo de
     ordenador» como hueco (F2-D3).

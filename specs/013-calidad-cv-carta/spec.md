@@ -29,8 +29,8 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
 
 ## Requisitos (EARS)
 
-### A · Hechos exactos, forma flexible (F7-D3 y D-053; PRD NFR-01)
-- **RF-13.1** *(D-053; cambia F7-D3 en cargos y verbos.)* Horma NO DEBERÁ rechazar una línea del CV o de la carta
+### A · Hechos exactos, forma flexible (F7-D3 y D-054; PRD NFR-01)
+- **RF-13.1** *(D-054; cambia F7-D3 en cargos y verbos.)* Horma NO DEBERÁ rechazar una línea del CV o de la carta
   por decir con otras palabras, o con más fuerza, lo que la descripción respalda en el fondo. Quien coordinaba a sus
   compañeras sin tener el cargo puede escribir «Lideré un equipo de 4 personas» si la descripción lo cuenta, y un
   «nivel medio» de inglés puede salir como «B2». No hay listas de verbos ni de cargos; los niveles de idioma se
@@ -51,7 +51,7 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
   unir cada tarea con el logro que la respalda cuando la descripción lo dice («Coordiné la recepción de unos 400
   pedidos al día con un equipo de 10 personas»). Un logro que la descripción no dice NUNCA DEBERÁ escribirse. El
   perfil no cambia.
-- **RF-13.4b** *(D-054; amplía RF-10.14k.)* El aviso «Sin cifras» de Perfil DEBERÁ ofrecer en cada experiencia
+- **RF-13.4b** *(D-055; amplía RF-10.14k.)* El aviso «Sin cifras» de Perfil DEBERÁ ofrecer en cada experiencia
   «Ideas para medirlo», con dos partes (S18):
   - preguntas generales, en código («¿A cuántas personas atendías en un día?», «¿Te renovaron o te ascendieron?»);
   - lo que suele medirse en ese puesto, escrito como preguntas («¿Cuántas mesas llevabas por turno?»). Lo da un
@@ -68,7 +68,7 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
   exacto de la oferta para lo que ella tiene; y cada sigla con su forma completa. La cobertura se sigue midiendo y se
   informa, sin umbral (S16).
 - **RF-13.7** Un requisito genérico de la lista cerrada («manejo de ordenador»…) NO DEBERÁ salir como hueco (S17).
-- **RF-13.8** *(D-055; amplía RF-10.3g.)* `redactor-carta` DEBERÁ seguir la rúbrica de la carta de F2 (apartado 4),
+- **RF-13.8** *(D-056; amplía RF-10.3g.)* `redactor-carta` DEBERÁ seguir la rúbrica de la carta de F2 (apartado 4),
   su ejemplo ideal y las reglas de 15 guías de referencia («Guías de la carta», en las aclaraciones), sin saltarse
   las de Horma:
   - 120-250 palabras en 3-4 párrafos, nunca más de una página (S5);
@@ -85,15 +85,16 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
 - **RF-13.9** El código DEBERÁ decidir el tratamiento por la oferta (tú si tutea; si no, el registro del sector) y
   pasárselo al redactor; la guía de estilo de la usuaria manda (F2-D8, S6). La carta NO DEBERÁ mezclar
   tratamientos.
-- **RF-13.10** *(D-056; cambia los saludos de la lista cerrada de RF-3.6.)* SI la oferta da el nombre de la persona
-  de selección, el saludo DEBERÁ ir a ella, con el nombre tal cual («Hola, Laura García:»). SI no, DEBERÁ ir al
-  equipo de selección con el nombre exacto de la empresa («Hola, equipo de selección de Transportes Ebro:»), o
+- **RF-13.10** *(D-057; cambia los saludos de la lista cerrada de RF-3.6.)* SI la oferta da el nombre de la persona
+  de selección, el saludo DEBERÁ ir a ella, con el nombre tal cual y «Sr.» o «Sra.» delante («Hola, Sra. Laura
+  García:») cuando la oferta deja claro cuál es; si no lo deja claro, sin él («Hola, Alex Martín:») (D-060). SI la
+  oferta no da el nombre, el saludo DEBERÁ ir al equipo de selección con el nombre exacto de la empresa («Hola, equipo de selección de Transportes Ebro:»), o
   «Hola, equipo de selección:» si la oferta no la nombra. La carta DEBERÁ llevar el nombre exacto de la empresa y del puesto. El nombre
   de la persona lo saca `extractor-oferta` y el código comprueba que está tal cual en la oferta (S19).
 - **RF-13.11** El código DEBERÁ comprobar la carta y mandar a la vuelta lo que falle: longitud (K1), párrafo de más
   de 90 palabras o frase media de 25 o más (K2), nombre de la empresa y del puesto (K3), copia de 6 o más palabras de
   la oferta o de una línea del CV (K5), tratamientos mezclados (K7), todos los párrafos empezando igual (K9), un
-  cierre con horarios, sueldo o condiciones (K10) y una frase de la lista negra de las guías (K12, D-055).
+  cierre con horarios, sueldo o condiciones (K10) y una frase de la lista negra de las guías (K12, D-056).
 - **RF-13.12** SI la oferta dice que no quiere carta, Horma NO DEBERÁ redactarla (una llamada menos) y la candidatura
   DEBERÁ decir «Esta oferta no pide carta».
 
@@ -135,7 +136,7 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
 - **RF-13.22** La candidatura DEBERÁ enseñar los eliminatorios arriba, antes de «Cómo lo leerán» y de «Revisa esto»:
   «Suele ser eliminatorio: la oferta pide inglés C1 y no consta en tu perfil». No se repiten en «No consta en tu CV».
   El permiso de trabajo nunca se deduce: «La oferta pide permiso de trabajo en España. Horma no lo sabe:
-  confírmalo tú». *(D-057)* Los eliminatorios avisan y NO DEBERÁN frenar: ella puede aprobar, descargar y, cuando
+  confírmalo tú». *(D-058)* Los eliminatorios avisan y NO DEBERÁN frenar: ella puede aprobar, descargar y, cuando
   Horma envíe (paso 5), enviar la candidatura igual.
 - **RF-13.23** El detalle de una oferta en Ofertas DEBERÁ enseñar la misma línea junto a las condiciones
   (RF-12.25), calculada al pedirla, sin modelo. No impide pedir la candidatura.
@@ -183,7 +184,8 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
   caso del recorte del 22-nov.
 - **RF-13.33b** Un set pequeño, `ideas-logros`, DEBERÁ medir con código el agente en unos 10 puestos de sectores
   distintos: todo son preguntas, ninguna afirma un dato de ella y las instrucciones ocultas no tienen efecto (umbral
-  1,0). Los casos de `extractor-oferta` DEBERÁN ganar una oferta con persona de selección y otra sin ella.
+  1,0). Los casos de `extractor-oferta` DEBERÁN ganar tres ofertas: con persona de selección y su tratamiento claro,
+  con persona y sin él, y sin persona.
 
 ### I · Pantallas y mensaje
 - **RF-13.34** Los cambios de Candidatura, Perfil y Ofertas DEBERÁN usar componentes de la guía (uno nuevo se añade
@@ -196,8 +198,8 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
 - Una línea que dice con más fuerza lo que la descripción respalda («nivel medio» → «B2») pasa; una cifra, una fecha
   o un nombre que no están en las fuentes no pasan.
 - El aviso «Sin cifras» da ideas para medir cada experiencia, y ninguna entra en el CV.
-- Una oferta con el nombre de la persona de selección da una carta que la saluda por su nombre; sin él, al «equipo de
-  selección de» la empresa.
+- Una oferta con el nombre de la persona de selección da una carta que la saluda por su nombre, con «Sr.» o «Sra.»
+  solo si la oferta lo deja claro; sin nombre, al «equipo de selección de» la empresa.
 - El PDF de cada candidatura y de «Tu CV completo», con los tres diseños, pasa el lector de programas: texto entero
   con tildes, orden lineal, contacto en la primera página, nada oculto.
 - Una oferta que pide inglés C1, sin inglés en el perfil, enseña «Suele ser eliminatorio» arriba de la candidatura y
@@ -214,7 +216,7 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
   gasto ([plan](./plan.md), Costes).
 - **Más reglas de código, más vueltas:** cada vuelta cuesta 0,04-0,06 USD. Lo que no es mecánico va como sugerencia,
   no como error (S3); si el eval enseña muchas vueltas por una regla, esa regla baja a sugerencia.
-- **Sin listas de verbos ni de cargos (D-053),** un verbo o un cargo inflado sin respaldo solo lo frena el juez, que
+- **Sin listas de verbos ni de cargos (D-054),** un verbo o un cargo inflado sin respaldo solo lo frena el juez, que
   es un modelo. Los sembrados de cargo subido del eval `cv` lo miden; si fallan, se vuelve a hablar con Mar.
 - **Un lector IA que se equivoca** desinforma: por eso cita y el código comprueba la cita, y tiene su propio set.
 - **Workday no lee bien las fechas** (prueba propia del PDF, DEP-05, 26-nov): falla igual con guion que con barra,

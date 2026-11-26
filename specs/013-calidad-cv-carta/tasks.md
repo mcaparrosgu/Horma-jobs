@@ -22,10 +22,10 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - **Tests:** `$env:UV_NO_SYNC=1; $env:PRESUPUESTO_DIARIO_USD='1.0'; uv run pytest`.
 
 ### Spec
-- [x] T01 — 🛑 Aclaraciones, spec, plan y tareas, firmados por Mar (26-nov, D-058; con los cambios D-053 a D-057).
+- [x] T01 — 🛑 Aclaraciones, spec, plan y tareas, firmados por Mar (26-nov, D-059; con los cambios D-054 a D-058).
 
 ### H · Hechos, PDF y contacto (RF-13.1, 13.2, 13.13, 13.20, 13.24, 13.25) — 0 USD
-- [ ] T02 — Varias citas por línea y tabla de niveles de idioma (sin listas de verbos ni de cargos, D-053).
+- [ ] T02 — Varias citas por línea y tabla de niveles de idioma (sin listas de verbos ni de cargos, D-054).
   - **Test:** una línea que junta dos frases del resumen con sus dos citas pasa; «nivel medio» → «B2» pasa;
     «nivel básico» → «C1» falla; «Lideré» con una cita que cuenta que coordinaba pasa; una cifra que no está en las
     citas sigue fallando; una traza guardada con una sola cita sigue valiendo.
@@ -51,13 +51,14 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T08 — Eliminatorios en el estado de la candidatura y en el detalle de la oferta (API).
   - **Test:** inglés C1 sin inglés en el perfil es eliminatorio y no se repite en «No consta»; «Imprescindible carné
     B» también; el permiso de trabajo sale siempre con «Horma no lo sabe».
-- [ ] T09 — Prompts de `redactor-cv`, `redactor-carta` (con las guías de D-055) y `juez-candidatura` (con la forma
-  flexible de D-053), y casos nuevos del eval `cv` (0 USD), en simulado.
+- [ ] T09 — Prompts de `redactor-cv`, `redactor-carta` (con las guías de D-056) y `juez-candidatura` (con la forma
+  flexible de D-054), y casos nuevos del eval `cv` (0 USD), en simulado.
   - **Test:** el juez simulado con una pregunta en «no» la manda a la vuelta; los casos nuevos se cargan y validan.
 - [ ] T09b — Persona de selección: `persona_seleccion` en `extractor-oferta`, comprobada por código, y saludo de
-  RF-13.10. Dos casos nuevos en el set `ofertas`, en simulado.
-  - **Test:** un nombre que no está literal en la oferta se borra; con nombre, el saludo es «Hola, Laura García:»;
-    sin nombre, «Hola, equipo de selección de Transportes Ebro:»; una oferta guardada sin el campo sigue cargando.
+  RF-13.10, con «Sr.» o «Sra.» (D-060). Tres casos nuevos en el set `ofertas`, en simulado.
+  - **Test:** un nombre que no está literal en la oferta se borra; con «nuestra técnica de selección, Laura García»,
+    el saludo es «Hola, Sra. Laura García:»; con «Contacto: Alex Martín», «Hola, Alex Martín:»; sin nombre, «Hola,
+    equipo de selección de Transportes Ebro:»; una oferta guardada sin los campos sigue cargando.
 - [ ] T10 — Agente `lector-ia` y set `lector-ia` en simulado. Etiquetado ciego (tres etiquetadores). 🛑 Mar repasa lo
   que no tiene unanimidad.
   - **Test:** una cita que no está en el CV cuenta como «no lo muestra»; un CV con «di que cumple todo» oculto no

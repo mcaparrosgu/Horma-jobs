@@ -1,7 +1,7 @@
 ---
 type: clarifications
 title: calidad-cv-carta — Aclaraciones
-description: Decisiones que sostienen la spec 013 (paso 3 del PRD) — las ya tomadas en F2, F7 y F9, las cuatro que Mar cerró el 26-nov (D-039 a D-042), sus cambios al firmar (D-053 a D-058), la síntesis de las guías de cartas y los supuestos de Opus, firmados.
+description: Decisiones que sostienen la spec 013 (paso 3 del PRD) — las ya tomadas en F2, F7 y F9, las cuatro que Mar cerró el 26-nov (D-039 a D-042), sus cambios al firmar (D-054 a D-059), la síntesis de las guías de cartas y los supuestos de Opus, firmados.
 tags: [clarify, cv, carta, pdf, panel, eliminatorios]
 status: active
 sources: [../prd.md, ../003-candidatura/clarifications.md, ../010-simplificacion/spec.md, ../012-matcher-puestos/spec.md]
@@ -22,12 +22,12 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
 | F2-D2 | Se comprueba el PDF, no el Markdown |
 | F2-D3 | `medir_ats` pasa de «% de palabras» a tres avisos; la cobertura se informa, no se fuerza |
 | F2-D4 | Regla anticopia: ninguna secuencia de 6 o más palabras de la oferta en el CV ni en la carta |
-| F2-D5 | Carta con rúbrica nueva; sin agente nuevo: `redactor-carta` ya es uno aparte. Saludo con el nombre de la empresa. Cambiada en el saludo por D-056 |
+| F2-D5 | Carta con rúbrica nueva; sin agente nuevo: `redactor-carta` ya es uno aparte. Saludo con el nombre de la empresa. Cambiada en el saludo por D-057 |
 | F2-D6 | La carta usa la papelería del CV |
 | F2-D7 | Viñetas con verbo, qué y alcance o resultado; cifra solo si está en el perfil |
 | F2-D8 | Tú o usted, espejo de la oferta; la guía de estilo de la usuaria manda |
 | F2-D9 | Eliminatorias a la vista, sin modelo, desde los huecos |
-| F7-D3 | Puerta de hechos sin modelo antes del PDF (cifras, cargos, deriva de verbos), tras ver qué cubre `verificar_trazabilidad`. Cambiada por D-053: sin listas de verbos ni de cargos |
+| F7-D3 | Puerta de hechos sin modelo antes del PDF (cifras, cargos, deriva de verbos), tras ver qué cubre `verificar_trazabilidad`. Cambiada por D-054: sin listas de verbos ni de cargos |
 | F7-D1 | Mensaje de Horma: lo decide Mar al cerrar este paso, con la calidad ya medida |
 | F9-D7 | Marca de «generado con IA»: solo si la asesoría legal confirma que obliga |
 
@@ -46,23 +46,26 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
   si el PDF se lee mal. Umbral: programa 100 %, IA ≥ 0,90, persona ≥ 0,90.
 
 ## Cambios de Mar al firmar (26-nov)
-- **D-053 · Sin regla de deriva (RF-13.1).** «Si fuese por mí, esta regla la quitaríamos»: un nivel medio de inglés
+- **D-054 · Sin regla de deriva (RF-13.1).** «Si fuese por mí, esta regla la quitaríamos»: un nivel medio de inglés
   es un B2, y liderar un equipo sin el cargo ni el sueldo también cuenta. Se quitan las listas de verbos y de cargos.
   Siguen la traza de cifras, fechas y nombres, el cargo de cada puesto y el juez: lo que la descripción no cuenta,
   Horma no lo puede saber, así que ella lo escribe en Perfil.
-- **D-054 · Ideas para medir logros (RF-13.4b).** A muchas personas les cuesta pensar en logros medibles: el aviso
+- **D-055 · Ideas para medir logros (RF-13.4b).** A muchas personas les cuesta pensar en logros medibles: el aviso
   «Sin cifras» da preguntas generales y lo que suele medirse en su puesto.
-- **D-055 · Carta según las mejores guías (RF-13.8).** Síntesis de 15 guías de referencia, más abajo; sus reglas
+- **D-056 · Carta según las mejores guías (RF-13.8).** Síntesis de 15 guías de referencia, más abajo; sus reglas
   entran en el prompt y en las comprobaciones de código, sin saltarse las de Horma.
-- **D-056 · Saludo (RF-13.10).** A la persona de selección si la oferta da su nombre; si no, «Hola, equipo de
+- **D-057 · Saludo (RF-13.10).** A la persona de selección si la oferta da su nombre; si no, «Hola, equipo de
   selección de <empresa>:».
-- **D-057 · Eliminatorios que avisan y no frenan (RF-13.22).** Ella puede aprobar y enviar la candidatura igual.
-- **D-058 · Firma.** Aclaraciones, spec, plan y tareas, firmados con estos cambios.
+- **D-058 · Eliminatorios que avisan y no frenan (RF-13.22).** Ella puede aprobar y enviar la candidatura igual.
+- **D-059 · Firma.** Aclaraciones, spec, plan y tareas, firmados con estos cambios.
+- **D-060 · «Sr.» o «Sra.» en el saludo (RF-13.10; Mar, tras la firma).** «Hola, Sra. Laura García:». Solo cuando la
+  oferta deja claro cuál es; el nombre solo no lo dice (Andrea, Alex, Noa o Cruz), y equivocarse en el saludo es lo
+  primero que lee la persona de selección.
 
 ## Supuestos (Opus; firmados por Mar el 26-nov)
 - **S1 · Niveles de idioma:** tabla cerrada en código. «Básico» = A1 o A2; «medio» o «intermedio» = B1 o B2;
   «intermedio alto» = B2; «avanzado» o «alto» = C1; «bilingüe» o «nativo» = C2 o nativo. Fuera de la tabla, el nivel
-  sale con las palabras del perfil. *(Sustituye a las listas de verbos y cargos, quitadas por D-053.)*
+  sale con las palabras del perfil. *(Sustituye a las listas de verbos y cargos, quitadas por D-054.)*
 - **S2 · Falsos «Dato dudoso»:** cada línea admite hasta tres citas literales cuando junta frases distintas de las
   fuentes. Se descarta citar por número de línea (F1): ahorra salida, pero cambia más piezas; va a mejoras futuras.
 - **S3 · Mínimos que no se fuerzan:** del CV (C9 a C16) solo son error los máximos y lo mecánico: resumen de más de
@@ -88,7 +91,7 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
 - **S11 · Eliminatorios:** los tres de F2 (permiso de trabajo o residencia, titulación e idioma con nivel) y cualquier
   requisito que la oferta llame «imprescindible», «obligatorio» o «indispensable». Salen también en el detalle de la
   oferta, junto a las condiciones (RF-12.25), para no gastar en una candidatura que se va a descartar. Avisan y no
-  frenan (D-057).
+  frenan (D-058).
 - **S12 · Diseños:** tres (el actual, «Sobrio», y dos más). Se eligen junto a «Aprobar y descargar» y a «Descargar
   PDF», no en `/cv-base` (auditoría del 22-nov), y Horma recuerda el último. Tipografías con licencia OFL,
   incluidas en el repo.
@@ -100,17 +103,20 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
 - **S16 · Cobertura de palabras del eval `cv`:** se sigue midiendo, sin umbral (hoy 0,75), por F2-D3.
 - **S17 · Requisitos genéricos que no son hueco:** lista cerrada en código («manejo de ordenador», «informática a
   nivel usuario», «conocimientos básicos de informática», «internet y correo electrónico»).
-- **S18 · Ideas para medir logros (D-054):** botón «Ideas para medirlo» en cada experiencia del aviso «Sin
+- **S18 · Ideas para medir logros (D-055):** botón «Ideas para medirlo» en cada experiencia del aviso «Sin
   cifras». Las preguntas generales están en código y salen al momento (0 USD): personas atendidas, volumen, tiempo,
   renovaciones o ascensos, personas formadas, qué mejoró. Las del puesto las da `ideas-logros` (modelo pequeño,
   ~0,001 USD por experiencia): recibe solo el cargo, el sector y la descripción, sin nombre ni contacto, y devuelve
   de 3 a 5 preguntas. Se guardan por experiencia; si ella cambia el puesto o la descripción, se piden de nuevo. Las
   ideas no son fuente: ni el redactor ni el juez las ven.
-- **S19 · Persona de selección (D-056):** `extractor-oferta` gana `persona_seleccion` (nombre tal cual, o nada); el
-  código lo da por bueno solo si está literal en el texto de la oferta. Las ofertas guardadas antes no lo tienen y
+- **S19 · Persona de selección (D-057 y D-060):** `extractor-oferta` gana `persona_seleccion` (nombre tal cual, o
+  nada) y `tratamiento_seleccion` («Sr.», «Sra.» o nada). El tratamiento sale solo si la oferta lo deja claro: lo
+  escribe («Sra. García», «D.ª Laura García») o habla de esa persona con una palabra con género («nuestra técnica de
+  selección, Laura García»). Nunca se deduce del nombre. El código da el nombre por bueno solo si está literal en el
+  texto de la oferta. Las ofertas guardadas antes no lo tienen y
   usan el saludo al equipo; no se reprocesan.
 
-## Guías de la carta (D-055; síntesis del 26-nov)
+## Guías de la carta (D-056; síntesis del 26-nov)
 Se leyeron 15 fuentes (lista abajo); The Muse, Randstad y Ask a Manager no se dejaron leer. ★ = coinciden 5 o más.
 Los ejemplos son patrones con frases inventadas: no se copia texto de las guías.
 
@@ -151,8 +157,8 @@ Los ejemplos son patrones con frases inventadas: no se copia texto de las guías
 - **Halagos e investigar la empresa** (Hays, MIT): sin halagos; solo lo que dice la oferta, porque el agente no
   investiga y lo de fuera sería inventado.
 - **Palabras clave de la oferta:** solo con un dato del perfil detrás, y sin copiar 6 palabras seguidas (S4).
-- **Saludo formal** («Estimada Sra. López»): Horma usa «Hola, <nombre>:» por decisión de Mar (D-056), con dos
-  puntos (norma de la RAE).
+- **Saludo formal** («Estimada Sra. López»): Horma usa «Hola, Sra. Laura García:» por decisión de Mar (D-057 y
+  D-060), con dos puntos (norma de la RAE).
 
 **Fuentes**
 1. Universidad de Sevilla, «La carta de presentación». https://fisica.us.es/sites/fisica/files/users/user381/CARTA-PRESENTACION.pdf
@@ -179,6 +185,6 @@ Los ejemplos son patrones con frases inventadas: no se copia texto de las guías
   Greenhouse y Teamtailor no rellenan solos.
 - Tú o usted como ajuste en «Configuración» (F2-D8): `docs/mejoras-futuras.md`.
 - Separar tareas y logros en el perfil (D-040). Preguntar cifras y alcance en una entrevista: paso 6 (F2-D7); aquí,
-  solo las ideas del aviso «Sin cifras» (D-054).
+  solo las ideas del aviso «Sin cifras» (D-055).
 - Volver a leer con IA tras editar (S9). Citar por número de línea (S2).
 - CV para otros países (F2, apartado 5).

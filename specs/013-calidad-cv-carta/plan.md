@@ -19,12 +19,12 @@ Dos agentes nuevos de modelo pequeño (`lector-ia` e `ideas-logros`), sin tablas
 **Simple primero.** Descartado: tres agentes nuevos para el panel (F2-D1: el programa es código y la persona es el
 juez); el `matcher` como lector IA (solo lee un perfil y lo rehace el paso 2, D-041); un agente solo para la carta
 (F2-D5); cambiar el esquema del perfil para tareas y logros (D-040); una librería de editor (RES-01); listas de
-verbos y de cargos (D-053); una tabla fija de ideas por familia de puestos (D-054: el agente da preguntas del puesto
+verbos y de cargos (D-054); una tabla fija de ideas por familia de puestos (D-055: el agente da preguntas del puesto
 concreto por ~0,001 USD).
 
 ## H · Hechos, PDF y contacto (RF-13.1, 13.2, 13.13, 13.20, 13.24, 13.25) — rama `calidad-h`, 0 USD
 - **Niveles de idioma:** `tools/verificar_trazabilidad.py` gana la tabla de S1: un nivel de la línea vale si es el
-  de la cita o su equivalente. Sin listas de verbos ni de cargos (D-053); las cabeceras, como hoy.
+  de la cita o su equivalente. Sin listas de verbos ni de cargos (D-054); las cabeceras, como hoy.
 - **Varias citas:** `TrazaFrase` (`schemas/candidatura.py`) gana `fragmentos` (hasta 3); `fragmento` se conserva y
   las trazas guardadas siguen valiendo. El verificador comprueba cada cita y compara la línea con su unión. Los
   prompts que lo piden van en el bloque R.
@@ -48,8 +48,9 @@ concreto por ~0,001 USD).
   errores (a la vuelta) y sugerencias (a la vuelta, sin forzar) según S3.
 - **`medir_ats`:** las tres sugerencias de F2-D3; la cobertura queda como dato. Los genéricos de S17, en una lista
   junto a `_respaldada`.
-- **Persona de selección:** `OfertaExtraida` gana `persona_seleccion` (opcional) y `agents/extractor_oferta/prompt.md`,
-  la regla para sacarla tal cual; el código la borra si no está literal en el texto de la oferta (S19). Sin migración
+- **Persona de selección:** `OfertaExtraida` gana `persona_seleccion` y `tratamiento_seleccion` (opcionales) y
+  `agents/extractor_oferta/prompt.md`, la regla para sacar el nombre tal cual y el tratamiento solo si la oferta lo
+  deja claro (D-060); el código la borra si no está literal en el texto de la oferta (S19). Sin migración
   si la oferta se guarda como JSON; si no, una columna nueva (se comprueba antes de tocar).
 - **Tratamiento y carta que no se pide:** `tools/tratamiento.py` (tú o usted por la oferta, S6) y una regla que detecta
   «sin carta de presentación» y similares; con ella, el flujo salta `redactar_carta`.
@@ -57,10 +58,10 @@ concreto por ~0,001 USD).
   candidatura gana `eliminatorios`; el detalle de la oferta en Ofertas los calcula al pedirlo, como las condiciones
   de RF-12.25.
 - **Prompts:** `redactor-cv` (rúbrica, tareas y logros de D-040, varias citas y el ejemplo de viñeta de F2);
-  `redactor-carta` (rúbrica, las reglas y los patrones de las guías de clarifications, D-055, el ejemplo ideal de F2
+  `redactor-carta` (rúbrica, las reglas y los patrones de las guías de clarifications, D-056, el ejemplo ideal de F2
   en lugar del de hoy, saludo de RF-13.10 en lugar de los de hoy y tratamiento; sigue sin firmar: el nombre lo pone
   el código). La lista negra de las guías (K12) va a `tools/rubrica_carta.py`. `juez-candidatura`: E1-E10 y la forma flexible de
-  D-053 (otras palabras para lo que la descripción respalda no es inventar). `SalidaJuezCandidatura` gana `persona`:
+  D-054 (otras palabras para lo que la descripción respalda no es inventar). `SalidaJuezCandidatura` gana `persona`:
   pregunta, documento, sí o no y motivo.
 - **`lector-ia`:** `agents/lector_ia/` (`prompt.md`, esquemas y `run`, `modelo = "pequeno"`), en el registro. Salida:
   criterios por orden, cada uno con `muestra`, `cita` y si la cita existe (lo comprueba `tools/verificar_citas.py`
