@@ -63,7 +63,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   RF-9.3e; SI la cobertura baja de 0,90, 🛑 se para y se propone la prueba de embeddings (F4-D6). Hecho (26-nov):
   0,58 con texto; se midieron tres vías y entran tabla y modelo (D-053, D-061).
   Set de 202 pares: cumple RF-9.3e; en 80 pares nuevos, cobertura 0,68 y precisión 1,0.
-- [ ] T07b — Las otras formas que da el modelo (RF-12.4c): agente pequeño, guardadas con las preferencias y pedidas
+- [x] T07b — Las otras formas que da el modelo (RF-12.4c): agente pequeño, guardadas con las preferencias y pedidas
   en el worker al clasificar y al guardar un puesto escrito a mano. Con T08: «También busco: …» bajo cada puesto
   marcado, sin editar.
   - **Test:** guardar «Peluquera» pide sus formas una vez y la búsqueda las usa; la API las enseña.

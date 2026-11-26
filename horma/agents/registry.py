@@ -13,12 +13,13 @@ from horma.agents.juez_candidatura.agent import JuezCandidatura
 from horma.agents.matcher.agent import Matcher
 from horma.agents.redactor_carta.agent import RedactorCarta
 from horma.agents.redactor_cv.agent import RedactorCv
+from horma.agents.sinonimos_puestos.agent import SinonimosPuestos
 
 AGENTES: dict[str, type[Agente]] = {
     a.nombre: a for a in (ExtractorOferta, AuditorOferta, ClasificadorOferta, AuditorFuentes,
                           ExtractorPerfil, ClasificadorPostulante, Matcher,
                           RedactorCv, RedactorCarta, JuezCandidatura,
-                          AnalizadorEstilo, AnalizadorOferta)
+                          AnalizadorEstilo, AnalizadorOferta, SinonimosPuestos)
 }
 # Aparcados (RF-10.11d, 21-nov-2026): el código se conserva, pero no están activos ni en la CI.
 APARCADOS: dict[str, type[Agente]] = {a.nombre: a for a in (GeneradorCvBase, ClasificadorRespuesta)}

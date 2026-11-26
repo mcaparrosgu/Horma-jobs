@@ -188,12 +188,13 @@ def contadores(s: Session) -> tuple[int, dict[str, dict[str, int]]]:
     return total, grupos
 
 
-def contar_por_puesto(s: Session, titulos: list[str], familia_perfil: str | None = None) -> dict[str, int]:
+def contar_por_puesto(s: Session, titulos: list[str], familia_perfil: str | None = None,
+                      sinonimos: dict[str, list[str]] | None = None) -> dict[str, int]:
     """Cuántas ofertas recomendables casan con cada puesto (frase completa del título, RF-9.3d); un
     genérico, solo las de la familia del perfil (RF-12.9)."""
     cuentas = {}
     for t in titulos:
-        formas = [n for f in otras_formas(t) if (n := normalizar_titulo(f))]
+        formas = [n for f in otras_formas(t, (sinonimos or {}).get(t, ())) if (n := normalizar_titulo(f))]
         familia = familia_perfil if es_generico(t) else None
         cuentas[t] = 0 if not formas else s.execute(text(
             f"select count(*) {_BASE} and (' ' || coalesce(titulo_norm, '') || ' ') like any(:p)"

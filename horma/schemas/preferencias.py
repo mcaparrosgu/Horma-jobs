@@ -41,6 +41,8 @@ class Preferencias(BaseModel):
     familias: list[Familia] = Field(default_factory=list, description="Puestos (familias de la taxonomía).")
     puestos: list[str] = Field(default_factory=list, description="Títulos de puesto marcados (RF-9.3b).")
     puestos_sugeridos: list[PuestoSugerido] = Field(default_factory=list)
+    # Puesto → otras formas que dio el modelo (RF-12.4c); solo las escribe el worker.
+    sinonimos: dict[str, list[str]] = Field(default_factory=dict)
     excluidos: list[str] = Field(default_factory=list, description="Términos que sacan una oferta.")
     sectores: list[Sector] = Field(default_factory=list)
     contratos: list[Contrato] = Field(default_factory=list)

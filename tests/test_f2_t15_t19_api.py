@@ -552,6 +552,7 @@ def test_de_la_subida_al_perfil_y_la_recomendacion_con_el_worker(app, motor_app)
         "origen": {"fuente": "cv", "cv_id": cv["id"], "fragmento": "Camarera en Bar Sol, 2020-2023"}}]},
         "cv_maestro": "# Ana\nCamarera en Bar Sol, 2020-2023"}
     assert worker.procesar_una(motor_app, ProveedorSimulado([extraccion, TAX])) == "hecha"
+    worker.procesar_una(motor_app, ProveedorSimulado([]))  # sus sinónimos (RF-12.4c)
     assert c.get("/api/perfil").json()["perfil"]["experiencias"][0]["puesto"] == "Camarera"
     assert c.get("/api/preferencias").json()["familias"] == []   # el área ya no se rellena desde el CV
     oferta = _oferta(motor_app, titulo="Camarera de sala")

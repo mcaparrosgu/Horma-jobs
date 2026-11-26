@@ -16,7 +16,8 @@ from horma.tools.visibilidad_cv import clave_experiencia, nombre_experiencia
 
 _j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
 GRUPOS_DEL_CV = ("puestos", "sectores", "idiomas")   # el área ya no se rellena ni se elige
-_COLUMNAS_PREFS = ("familias", "puestos", "puestos_sugeridos", "excluidos", "sectores", "contratos",
+_COLUMNAS_PREFS = ("familias", "puestos", "puestos_sugeridos", "sinonimos", "excluidos", "sectores",
+                   "contratos",
                    "niveles", "paises", "idiomas", "solo_remoto",
                    "solo_salario", "sueldo_minimo", "incluir_propias", "orden", "rango_min", "rango_max",
                    "origen")
@@ -228,8 +229,9 @@ def guardar_preferencias(s: Session, usuaria_id: int, p: Preferencias) -> None:
     valores = p.model_dump(mode="json")
     valores["origen"] = _j(valores["origen"])
     valores["puestos_sugeridos"] = _j(valores["puestos_sugeridos"])
+    valores["sinonimos"] = _j(valores["sinonimos"])
     columnas = ", ".join(_COLUMNAS_PREFS)
-    marcas = ", ".join(f"cast(:{c} as jsonb)" if c == "origen" or c == "puestos_sugeridos" else
+    marcas = ", ".join(f"cast(:{c} as jsonb)" if c in ("origen", "puestos_sugeridos", "sinonimos") else
                        f"cast(:{c} as text[])" if isinstance(valores[c], list) else f":{c}"
                        for c in _COLUMNAS_PREFS)
     cambios = ", ".join(f"{c} = excluded.{c}" for c in _COLUMNAS_PREFS)
@@ -284,7 +286,8 @@ def anadir_puesto_de_oferta(s: Session, usuaria_id: int, titulo: str | None,
     actual = preferencias(s)
     fila = vigente(s)
     if (not titulo or not actual.puestos or len(actual.puestos) >= MAX_TERMINOS
-            or casa_con_puestos(titulo, actual.puestos, familia_perfil=fila and fila["familia"],
+            or casa_con_puestos(titulo, actual.puestos, sinonimos=actual.sinonimos,
+                                familia_perfil=fila and fila["familia"],
                                 familia_oferta=familia)):
         return False
     actual.puestos = [*actual.puestos, titulo]

@@ -1,4 +1,4 @@
-"""T23 (RF-4.8b): los 12 prompts de los agentes activos cumplen las líneas rojas que se pueden
+"""T23 (RF-4.8b): los 13 prompts de los agentes activos cumplen las líneas rojas que se pueden
 comprobar en el texto del prompt. La tabla completa está en docs/revision-lineas-rojas.md."""
 import re
 from pathlib import Path
@@ -12,8 +12,8 @@ PROMPTS = {n: (Path(__import__(a.__module__, fromlist=["x"]).__file__).parent / 
            .read_text(encoding="utf-8") for n, a in {**AGENTES, **APARCADOS}.items()}
 
 
-def test_estan_los_12_agentes_activos_y_los_2_aparcados():
-    assert len(AGENTES) == 12 and len(APARCADOS) == 2 and len(PROMPTS) == 14  # S5 +1; S6 aparca 2 (RF-10.11d)
+def test_estan_los_13_agentes_activos_y_los_2_aparcados():
+    assert len(AGENTES) == 13 and len(APARCADOS) == 2 and len(PROMPTS) == 15  # S12 +1 (RF-12.4c)
 
 
 @pytest.mark.parametrize("nombre", sorted(PROMPTS))

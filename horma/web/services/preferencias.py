@@ -2,9 +2,11 @@
 from sqlalchemy import Engine
 
 from horma.schemas.preferencias import GRUPOS_CON_ORIGEN, Preferencias
+from horma.tools.sinonimos_puestos import otras_formas
 from horma.web.db import sesion_de
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles
+from horma.web.services import sinonimos as servicio_sinonimos
 
 
 def ver(engine: Engine, usuaria_id: int) -> Preferencias:
@@ -21,8 +23,10 @@ def guardar(engine: Engine, usuaria_id: int, nuevas: Preferencias) -> Preferenci
             if getattr(nuevas, grupo) != getattr(actual, grupo):
                 origen[grupo] = "usuaria"
         # Los puestos sugeridos salen del CV: ella marca o quita, no los reescribe.
-        nuevas = nuevas.model_copy(update={"origen": origen, "puestos_sugeridos": actual.puestos_sugeridos})
+        nuevas = nuevas.model_copy(update={"origen": origen, "puestos_sugeridos": actual.puestos_sugeridos,
+                                           "sinonimos": actual.sinonimos})
         perfiles.guardar_preferencias(s, usuaria_id, nuevas)
+        servicio_sinonimos.encolar_si_faltan(s, usuaria_id)
     return nuevas
 
 
@@ -37,8 +41,10 @@ def _puestos_con_cuenta(s, prefs: Preferencias) -> list[dict]:
     dato = {p.titulo: p.dato for p in prefs.puestos_sugeridos}
     titulos = list(dict.fromkeys([*dato, *prefs.puestos]))
     fila = perfiles.vigente(s)
-    cuentas = repo_ofertas.contar_por_puesto(s, titulos, fila and fila["familia"])
-    return [{"valor": t, "dato": dato.get(t), "n": cuentas.get(t, 0), "marcado": t in prefs.puestos}
+    cuentas = repo_ofertas.contar_por_puesto(s, titulos, fila and fila["familia"], prefs.sinonimos)
+    return [{"valor": t, "dato": dato.get(t), "n": cuentas.get(t, 0), "marcado": t in prefs.puestos,
+             # RF-12.4d: «También busco: …», solo en los marcados.
+             "tambien": otras_formas(t, prefs.sinonimos.get(t, ()))[1:] if t in prefs.puestos else []}
             for t in titulos]
 
 

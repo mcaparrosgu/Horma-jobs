@@ -71,6 +71,7 @@ allow_indirect_imports = true
 name = "Los agentes no se importan entre sí (RT-13)"
 type = "independence"
 modules = [
+  "horma.agents.sinonimos_puestos",
   "horma.agents.extractor_oferta",
   "horma.agents.auditor_oferta",
   "horma.agents.clasificador_oferta",

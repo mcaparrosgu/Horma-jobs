@@ -55,7 +55,7 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
         return f"((' ' || coalesce(titulo_norm, '') || ' ') LIKE ANY(CAST(:{nombre} AS text[])))"
 
     # RF-12.4c: también sus otras formas (no las de los excluidos); las genéricas, con RF-12.9.
-    buscados = [f for puesto in prefs.puestos for f in otras_formas(puesto)]
+    buscados = [f for puesto in prefs.puestos for f in otras_formas(puesto, prefs.sinonimos.get(puesto, ()))]
     concretos = frases("puestos", [t for t in buscados if not es_generico(t)])
     genericos = frases("genericos", [t for t in buscados if es_generico(t)])
     if genericos and taxonomia is not None:
