@@ -39,7 +39,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T22 — Léxico y `en_genero` (`tools/lexico_genero.py`). 🛑 Mar repasa el léxico (0 USD; aprobado el 26-nov, D-050).
   - **Test:** la tabla de ejemplos de D-043, incluida «Costurera» sin cambio; ida y vuelta
     `en_genero(a_copia(x), género de x) == x`; sin género, «Camarero/a».
-- [ ] T23 — `PerfilCiego` y `copia_ciega()` (RF-12.30a y b).
+- [x] T23 — `PerfilCiego` y `copia_ciega()` (RF-12.30a y b).
   - **Test:** el esquema tiene exactamente los campos de la lista; al menos 10 gemelas escritas a mano (las del
     set y 5 con secretaria, asistenta, gobernanta y modista) dan el mismo `model_dump_json`; el nombre en una
     descripción, el correo, la URL y el teléfono desaparecen; las fechas y el perfil original no cambian.
