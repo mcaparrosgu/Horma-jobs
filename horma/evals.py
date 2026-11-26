@@ -31,6 +31,9 @@ Sets:
   activar un envío o sacar datos (`casos/<id>/entrada.json`, con `tipo` oferta o correo; tres ofertas pasan
   también por `candidatura`). Todo al 100 %: `sin_efecto`, `registrada`, `marcada`, `sin_fuga`,
   `estado_intacto`.
+- `puestos` (spec 012): clasificador y puerta de puestos sobre un perfil; métricas de todo el set
+  (`horma/evals_puestos.py`). Con el modelo real guarda sus respuestas en `puestos/respuestas/` y con
+  `grabadas` las repite sin gasto.
 Un caso es adversario si su esperado tiene instrucciones embebidas: debe acertar TODOS los campos
 (adversarias al 100 %, RT-07). Cada set puede exigir además campos al 100 % (`exigidos`).
 
@@ -51,6 +54,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from horma import evals_puestos
 from horma.agents.juez_candidatura.agent import JuezCandidatura
 from horma.agents.juez_candidatura.schemas import EntradaJuezCandidatura
 from horma.config import ajustes
@@ -94,6 +98,9 @@ class SetEval:
     # Compara lo obtenido con lo esperado y devuelve los campos que fallan. Sin él: campo a campo.
     comparar: Callable[[dict, dict], list[str]] | None = None
     exigidos: frozenset[str] = field(default=frozenset({"instrucciones_embebidas"}))  # al 100 %
+    # Métricas de todo el set (con sus umbrales en `metricas` de umbrales.json) y si las cumple.
+    medir: Callable[[list[tuple[str, dict, dict]]], dict] | None = None
+    cumple: Callable[[dict, dict], bool] | None = None
 
 
 def _no_descargar(url: str) -> str:
@@ -706,6 +713,11 @@ def _respuestas_red(e: EsperadoRedTeaming, entrada: dict) -> list[dict]:
 
 
 NUEVOS: dict[str, SetEval] = {
+    "puestos": SetEval(
+        esperado=evals_puestos.EsperadoPuestos, campos=evals_puestos.CAMPOS, entrada=evals_puestos.entrada,
+        correr=evals_puestos.correr, simuladas=evals_puestos.simuladas, comparar=evals_puestos.comparar,
+        exigidos=frozenset(evals_puestos.CAMPOS), medir=evals_puestos.medir, cumple=evals_puestos.cumple,
+    ),
     "perfil": SetEval(
         esperado=Perfil,
         campos=["cargos", "empresas", "fechas", "titulaciones", "idiomas", "sector", "familia",
@@ -818,9 +830,11 @@ def casos_de(raiz: Path, nombre: str, solo: str | None = None) -> list[Path]:
 
 def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                solo: str | None = None, simulado: bool = False, tope_coste: float | None = None,
-               flujo: str | None = None, ruta_umbrales: Path | None = None) -> dict:
+               flujo: str | None = None, ruta_umbrales: Path | None = None,
+               grabadas: bool = False) -> dict:
     """Con `simulado`, cada caso responde con su propio esperado: solo prueba el harness.
-    Con `tope_coste` (en USD), deja de correr casos en cuanto el coste acumulado lo supera."""
+    Con `tope_coste` (en USD), deja de correr casos en cuanto el coste acumulado lo supera.
+    Con `grabadas`, cada caso repite las respuestas guardadas en `<set>/respuestas/` (0 USD)."""
     s = SETS[nombre]
     umbrales = cargar_umbrales(nombre, ruta_umbrales)
     umbral = umbrales["campos"]
@@ -828,6 +842,8 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
     casos = casos_de(raiz, nombre, solo)
     aciertos = dict.fromkeys(s.campos, 0)
     detalle = []
+    medibles: list[tuple[str, dict, dict]] = []
+    respuestas = raiz / nombre / "respuestas"
     adversarias = adversarias_ok = 0
     detenido = False
     with metricas.capturar() as llamadas:
@@ -837,11 +853,22 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
             esperado_d = esperado.model_dump(mode="json")
             try:
                 entrada = s.entrada(caso)
-                prov = ProveedorSimulado(s.simuladas(esperado, entrada)) if simulado else proveedor
+                if grabadas:
+                    guardada = json.loads((respuestas / f"{caso.name}.json").read_text(encoding="utf-8"))
+                    prov = ProveedorSimulado(list(guardada.values()))
+                else:
+                    prov = ProveedorSimulado(s.simuladas(esperado, entrada)) if simulado else proveedor
                 obtenido = correr(entrada, prov)
                 fallos = (s.comparar(obtenido, esperado_d) if s.comparar else
                           [c for c in s.campos if _valor(obtenido, c) != _valor(esperado_d, c)])
                 error = None
+                if s.medir:
+                    medibles.append((caso.name, obtenido, esperado_d))
+                    if not simulado and not grabadas:  # para medir variantes de la puerta sin gasto
+                        respuestas.mkdir(parents=True, exist_ok=True)
+                        (respuestas / f"{caso.name}.json").write_text(
+                            json.dumps(obtenido["respuestas"], ensure_ascii=False, indent=2) + "\n",
+                            encoding="utf-8")
             except Exception as e:  # noqa: BLE001 - un caso que revienta falla todos sus campos
                 causa = getattr(e, "causa", e)
                 if isinstance(causa, RuntimeError):  # configuración (p. ej. falta ANTHROPIC_API_KEY)
@@ -858,7 +885,7 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
             if tope_coste is not None and sum(x.coste for x in llamadas) > tope_coste:
                 detenido = True
                 break
-        coste = 0.0 if simulado else round(sum(x.coste for x in llamadas), 6)  # T67
+        coste = 0.0 if simulado or grabadas else round(sum(x.coste for x in llamadas), 6)  # T67
     n = len(detalle)
     campos = {c: round(aciertos[c] / n, 4) for c in s.campos}
     tasa_adversarias = round(adversarias_ok / adversarias, 4) if adversarias else 1.0
@@ -869,13 +896,16 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                 and all(campos[k] == 1.0 for k in s.exigidos if k in campos)
                 and tasa_adversarias == 1.0
                 and cobertura_suficiente(cobertura_media, umbrales.get("cobertura_ats_media")))
+    medidas_set = s.medir(medibles) if s.medir else None
+    if s.cumple:
+        aprobado = aprobado and s.cumple(medidas_set, umbrales["metricas"])
     res = {"set": nombre, "fecha": datetime.now().isoformat(timespec="seconds"),
            "simulado": simulado, "umbral": umbral, "casos": len(casos), "casos_ejecutados": n,
            "campos": campos, "adversarias": tasa_adversarias, "coste": coste,
            "tope_coste": tope_coste, "detenido_por_coste": detenido, "aprobado": aprobado,
            "cobertura_ats_media": cobertura_media,
            "umbral_cobertura_ats_media": umbrales.get("cobertura_ats_media"),
-           "detalle": detalle}
+           "detalle": detalle, **({"metricas": medidas_set} if medidas_set else {})}
     destino = raiz / "resultados"
     destino.mkdir(parents=True, exist_ok=True)
     (destino / f"{datetime.now():%Y-%m-%dT%H%M%S}-{nombre}.json").write_text(

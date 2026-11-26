@@ -1,0 +1,81 @@
+{
+  "perfil": {
+    "nombre": "Andrés Soto",
+    "experiencias": [
+      {
+        "puesto": "Abogado laboralista",
+        "empresa": "Bufete Ríos",
+        "inicio": "2015",
+        "fin": "2022",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Abogado laboralista en Bufete Ríos, 2015-2022"
+        }
+      },
+      {
+        "puesto": "Responsable de redes sociales",
+        "empresa": "Asociación Barrio Vivo",
+        "inicio": "2022",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Responsable de redes sociales en Asociación Barrio Vivo, 2022-2024"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Derecho",
+        "centro": "Universidad de Valencia",
+        "inicio": "2009",
+        "fin": "2014",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Derecho, Universidad de Valencia, 2009-2014"
+        }
+      },
+      {
+        "titulo": "Máster en Marketing Digital",
+        "centro": "ESIC",
+        "inicio": "2022",
+        "fin": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Máster en Marketing Digital, ESIC, 2022-2023"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Google Analytics",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Google Analytics"
+        }
+      },
+      {
+        "nombre": "Meta Ads",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Meta Ads"
+        }
+      },
+      {
+        "nombre": "redacción",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "redacción"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": []
+  }
+}

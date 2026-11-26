@@ -1,0 +1,47 @@
+{
+  "perfil": {
+    "nombre": "Iván Cruz",
+    "experiencias": [],
+    "formacion": [
+      {
+        "titulo": "Técnico en Sistemas Microinformáticos y Redes",
+        "centro": "IES La Mar",
+        "inicio": "2023",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico en Sistemas Microinformáticos y Redes, IES La Mar, 2023-2025"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Windows Server",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Windows Server"
+        }
+      },
+      {
+        "nombre": "Linux",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Linux"
+        }
+      },
+      {
+        "nombre": "cableado",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "cableado"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": []
+  }
+}

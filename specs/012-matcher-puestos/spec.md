@@ -36,7 +36,8 @@ pauta de Mar.
 - **RF-12.3** Umbrales del set `puestos`: 0 puestos «ajenos» entre los marcados; precisión de los marcados
   ≥ 0,95; precisión de los no marcados («afín» o mejor) ≥ 0,85; cobertura de los imprescindibles ≥ 0,80; y los
   mismos puestos al cambiar solo el nombre y el género de un CV, al 100 %. Se informa el acuerdo entre
-  etiquetadores (kappa).
+  etiquetadores (kappa). En un CV sin ninguna experiencia, un puesto marcado «afín» cuenta como acierto en la
+  precisión de los marcados (D-036); un «ajeno» marcado sigue suspendiendo el set.
 - **RF-12.4** El set de títulos de 9a (RF-9.3e) DEBERÁ repasarlo Mar en los pares sin unanimidad y en los que
   difieren del código, y ampliarse con unos 50 pares de sinónimos sin palabras en común. Después se vuelve a
   medir RF-9.3e. SI la cobertura baja de 0,90, ENTONCES se para y se propone a Mar la prueba de embeddings, solo

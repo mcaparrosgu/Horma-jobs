@@ -1,0 +1,106 @@
+{
+  "perfil": {
+    "nombre": "Karim Haddad",
+    "experiencias": [
+      {
+        "puesto": "Software Engineer",
+        "empresa": "Northwind Labs, Dublin",
+        "inicio": "2019",
+        "fin": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Software Engineer en Northwind Labs, Dublin, 2019-2023"
+        }
+      },
+      {
+        "puesto": "Desarrollador backend",
+        "empresa": "Datalia",
+        "inicio": "2023",
+        "fin": "actual",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Desarrollador backend en Datalia, 2023-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "BSc in Computer Science",
+        "centro": "Trinity College",
+        "inicio": "2015",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "BSc in Computer Science, Trinity College, 2015-2019"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Java",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Java"
+        }
+      },
+      {
+        "nombre": "Spring",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Spring"
+        }
+      },
+      {
+        "nombre": "PostgreSQL",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "PostgreSQL"
+        }
+      },
+      {
+        "nombre": "AWS",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "AWS"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "C2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en C2"
+        }
+      },
+      {
+        "idioma": "fr",
+        "nivel": "nativo",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "fr nativo"
+        }
+      },
+      {
+        "idioma": "es",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "es B2"
+        }
+      }
+    ]
+  }
+}

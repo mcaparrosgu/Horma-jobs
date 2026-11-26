@@ -1,0 +1,54 @@
+{
+  "perfil": {
+    "nombre": "Álvaro Peña",
+    "titular": null,
+    "resumen": null,
+    "experiencias": [
+      {
+        "puesto": "Cocinero",
+        "empresa": "Hotel Marina",
+        "inicio": null,
+        "fin": null,
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Cocinero en Hotel Marina, Cádiz, varios años"
+        }
+      },
+      {
+        "puesto": "Cocinero",
+        "empresa": "Restaurante El Puerto",
+        "inicio": "2013",
+        "fin": "2017",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Cocinero en Restaurante El Puerto, Cádiz, 2013-2017"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "medio",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Nivel medio de inglés"
+        }
+      }
+    ],
+    "habilidades": [],
+    "certificaciones": [
+      {
+        "nombre": "Curso de manipulador de alimentos",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Curso de manipulador de alimentos"
+        }
+      }
+    ]
+  }
+}

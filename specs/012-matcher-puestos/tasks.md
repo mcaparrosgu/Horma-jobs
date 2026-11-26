@@ -23,7 +23,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T01 — Aclaraciones, spec, plan y tareas, firmados por Mar (25-nov).
 
 ### P · Puestos (RF-12.1 a 12.10)
-- [ ] T02 — Set `puestos`: 12 CV difíciles nuevos y el harness con sus métricas, en simulado.
+- [x] T02 — Set `puestos`: 12 CV difíciles nuevos y el harness con sus métricas, en simulado.
   - **Test:** con respuestas simuladas, cada métrica da lo esperado; un puesto «ajeno» marcado hace fallar el set.
 - [ ] T03 — 🛑 OK al gasto (~0,1 USD). Pasada real del `clasificador_postulante` actual; respuestas guardadas.
 - [ ] T04 — Etiquetado ciego (tres etiquetadores) e imprescindibles. 🛑 Mar repasa lo que no tiene unanimidad.
