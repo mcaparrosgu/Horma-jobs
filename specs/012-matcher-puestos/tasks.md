@@ -52,11 +52,12 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** «Gobernanta» casa con «Gobernante/a de pisos»; «Actor» con «Actriz»;
     `canonico("Asistenta") != canonico("Asistente")`.
 - T26 — Retirada (D-048): los modelos de Horma no admiten `temperature`.
-- [ ] T27 — Métricas de equidad (sobre las copias) y estabilidad (`--veces 3`).
+- [x] T27 — Métricas de equidad (sobre las copias) y estabilidad (`--veces 3`).
   - **Test:** una gemela con una palabra fuera del léxico hace fallar la equidad; tres pasadas simuladas
     distintas bajan la estabilidad.
   - 🛑 OK al gasto (~0,5-0,8 USD): 3 pasadas reales del set `puestos` y eval `perfil`.
-  - 🛑 Mar fija el umbral de estabilidad (D-NNN). Después se etiquetan los puestos nuevos (126 pendientes de la
+  - 🛑 Mar fija el umbral de estabilidad (26-nov: 0,50 USD, estabilidad 0,52, `perfil` aprobado; D-052: sin
+    umbral y sus puestos, por código). Después se etiquetan los puestos nuevos (126 pendientes de la
     pasada anterior; la copia cambia las respuestas).
 - [ ] T07 — Set de títulos de 9a: ~50 pares de sinónimos. 🛑 Mar firma los pares dudosos. Se vuelve a medir
   RF-9.3e; SI la cobertura baja de 0,90, 🛑 se para y se propone la prueba de embeddings (F4-D6).

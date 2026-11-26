@@ -6,6 +6,7 @@ from sqlalchemy import text
 from horma import config
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.perfil import Perfil
+from horma.tools.normalizar_titulo import normalizar_titulo
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.main import crear_app
 from horma.web.queue import worker
@@ -353,6 +354,7 @@ def _oferta(motor, **campos):
             "nivel": "junior", "fantasma": False, "fraude": False, "salario_publicado": False,
             "pais": "ES", "tipo_contrato": "indefinido", "idiomas_norm": ["es"]}
     base.update(campos)
+    base["titulo_norm"] = normalizar_titulo(base["titulo"])  # como la ingesta
     columnas, marcas = ", ".join(base), ", ".join(
         f"cast(:{k} as text[])" if k == "idiomas_norm" else f":{k}" for k in base)
     with sesion_sistema(motor) as s:

@@ -35,8 +35,7 @@ pauta de Mar.
   variantes de la puerta se comparan en código sobre esas mismas respuestas, sin volver a llamar al modelo.
 - **RF-12.3** Umbrales del set `puestos`: 0 puestos «ajenos» entre los marcados; precisión de los marcados
   ≥ 0,95; precisión de los no marcados («afín» o mejor) ≥ 0,85; cobertura de los imprescindibles ≥ 0,80; equidad
-  al 100 % (RF-12.30d) y estabilidad ≥ 0,90 (RF-12.30e), provisional hasta que Mar la fije tras la primera medida
-  (D-046). Se informa el acuerdo entre etiquetadores (kappa). En un CV sin ninguna experiencia, un puesto marcado
+  al 100 % (RF-12.30d). La estabilidad (RF-12.30e) se informa y no suspende el set (D-052). Se informa el acuerdo entre etiquetadores (kappa). En un CV sin ninguna experiencia, un puesto marcado
   «afín» cuenta como acierto en la precisión de los marcados (D-036); un «ajeno» marcado sigue suspendiendo el set.
 - **RF-12.4** El set de títulos de 9a (RF-9.3e) DEBERÁ repasarlo Mar en los pares sin unanimidad y en los que
   difieren del código, y ampliarse con unos 50 pares de sinónimos sin palabras en común. Después se vuelve a
@@ -54,6 +53,8 @@ pauta de Mar.
   - **Fuera:** el `dato` es solo una habilidad, el titular, el resumen o un trozo de un campo.
 - **RF-12.6** En «Qué buscas», solo el nivel 1 DEBERÁ llegar marcado. El nivel 2 DEBERÁ llegar sin marcar y con
   su porqué a la vista («Por tu grado en Estadística»). Lo de fuera NO DEBERÁ enseñarse. *(Cambia RF-9.3b.)*
+- **RF-12.6b** Los puestos de las experiencias del perfil DEBERÁN sugerirse siempre, de nivel 1 y marcados,
+  puestos por código aunque el modelo no los devuelva (D-052).
 - **RF-12.7** SI el CV no tiene ninguna experiencia, ENTONCES los puestos por titulación DEBERÁN llegar marcados,
   con el porqué «Para empezar, por tu grado en…» (F4-D7, S4).
 - **RF-12.8** La puerta NO DEBERÁ sugerir un puesto cuyo título indique un nivel superior al del perfil
@@ -144,8 +145,8 @@ pauta de Mar.
     copias idénticas, carácter a carácter. Las gemelas se escriben a mano, no con el léxico. Umbral: 100 %, en la
     suite de tests (D-046).
   - **RF-12.30e** Estabilidad: cada CV del set `puestos` DEBERÁ pasarse 3 veces con el modelo real. Por CV,
-    «puestos marcados en las tres pasadas / puestos marcados en alguna». La media DEBERÁ ser ≥ 0,90 (provisional,
-    D-046).
+    «puestos marcados en las tres pasadas / puestos marcados en alguna». Se informa la media; no hay umbral (D-052;
+    primera medida, 26-nov: 0,52).
   - **RF-12.30f** Los títulos que devuelva el clasificador DEBERÁN pasar a la forma de la copia y enseñarse con
     `en_genero` según `genero_puestos`; sin él, en «/a». El género NUNCA DEBERÁ deducirse del nombre. El `dato`
     que se guarda y se enseña DEBERÁ ser el texto original del perfil. CUANDO cambie `genero_puestos`, los

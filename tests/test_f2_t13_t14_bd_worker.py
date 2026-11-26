@@ -9,6 +9,7 @@ from sqlalchemy.exc import DBAPIError
 
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.oferta import Oferta
+from horma.tools.normalizar_titulo import normalizar_titulo
 from horma.web.db import sesion_de, sesion_sin_usuaria, sesion_sistema
 from horma.web.queue import worker
 from horma.web.repositories import ofertas as repo_ofertas
@@ -128,6 +129,7 @@ def _oferta_procesada(motor, **campos):
             "sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
             "fantasma": False, "fraude": False, "salario_publicado": False}
     base.update(campos)
+    base["titulo_norm"] = normalizar_titulo(base["titulo"])  # como la ingesta
     cols = ", ".join(base)
     marcas = ", ".join(f":{k}" for k in base)
     with sesion_sistema(motor) as s:
@@ -199,7 +201,7 @@ def test_las_preferencias_que_escribio_la_usuaria_no_se_pisan(motor_app, bd_limp
         prefs = s.execute(text("select familias, sectores, origen from preferencias")).one()
     assert prefs.familias == ["ventas_comercial"] and prefs.sectores == ["hosteleria_turismo"]
     # lo antiguo no se toca
-    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv"}
+    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv", "puestos": "cv"}
 
 
 def test_perfilar_sin_cv_falla_con_motivo(motor_app, bd_limpia):

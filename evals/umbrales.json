@@ -18,8 +18,7 @@
       "precision_marcados": 0.95,
       "precision_sin_marcar": 0.85,
       "cobertura": 0.8,
-      "equidad": 1.0,
-      "estabilidad": 0.9
+      "equidad": 1.0
     }
   },
   "recomendacion": {

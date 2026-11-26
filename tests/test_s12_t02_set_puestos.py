@@ -98,13 +98,13 @@ def test_una_gemela_con_una_palabra_fuera_del_lexico_hace_fallar_la_equidad(tmp_
     assert "equidad" in r["detalle"][0]["fallos"]
 
 
-def test_tres_pasadas_distintas_bajan_la_estabilidad(tmp_path):
+def test_tres_pasadas_distintas_bajan_la_estabilidad_sin_suspender(tmp_path):
     _caso(tmp_path, "uno", _perfil(), {"Camarera": "lo_ha_sido", "Barman": "lo_ha_sido"})
     prov = ProveedorSimulado([_respuesta(("Camarera", "Camarera"), ("Barman", "Camarera")),
                               _respuesta(("Camarera", "Camarera")),
                               _respuesta(("Camarera", "Camarera"))])
     r = correr_set("puestos", raiz=tmp_path, proveedor=prov, veces=3)
-    assert r["metricas"]["estabilidad"] == 0.5 and not r["aprobado"]
+    assert r["metricas"]["estabilidad"] == 0.5 and r["aprobado"]
     repetido = correr_set("puestos", raiz=tmp_path, grabadas=True, veces=3)
     assert repetido["metricas"]["estabilidad"] == 0.5 and repetido["coste"] == 0
 
@@ -128,7 +128,7 @@ def test_las_respuestas_reales_se_guardan_y_se_repiten_sin_llamar_al_modelo(tmp_
 def test_los_umbrales_son_los_de_rf_12_3():
     assert cargar_umbrales("puestos")["metricas"] == {
         "ajenos_marcados": 0, "precision_marcados": 0.95, "precision_sin_marcar": 0.85,
-        "cobertura": 0.8, "equidad": 1.0, "estabilidad": 0.9}
+        "cobertura": 0.8, "equidad": 1.0}  # la estabilidad solo se informa (D-052)
 
 
 def test_el_set_tiene_30_cv_los_18_de_perfil_y_12_dificiles_con_10_parejas():

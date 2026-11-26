@@ -4,12 +4,13 @@ El nivel lo decide el campo del que sale el `dato`, comparado entero (un trozo n
 - puesto de una experiencia y el título es ese mismo puesto (`relacion`) → nivel 1, «lo has sido»;
 - titulación, certificación o puesto con un título distinto → nivel 2, «afín»;
 - habilidad, titular, resumen o trozo → fuera.
-Nunca se sugiere por encima del nivel del perfil, salvo un puesto que ya ha tenido (D-038).
+Nunca se sugiere por encima del nivel del perfil, salvo un puesto que ya ha tenido (D-038). Los que ya ha
+tenido van siempre, marcados, aunque el modelo no los devuelva (D-052).
 
 El modelo lee la copia ciega, así que el `dato` se compara con los campos de la copia (RF-12.30g); se
 guarda el texto original y el título se escribe en el género que ella eligió (RF-12.30f)."""
 from horma.schemas.perfil import Perfil
-from horma.schemas.preferencias import Preferencias, PuestoSugerido
+from horma.schemas.preferencias import MAX_LARGO_TERMINO, Preferencias, PuestoSugerido
 from horma.tools.copia_ciega import copia_ciega
 from horma.tools.lexico_genero import a_copia, en_genero
 from horma.tools.normalizar_titulo import canonico, supera_nivel
@@ -53,6 +54,12 @@ def puestos_del_perfil(perfil: Perfil, candidatos: list,
     tenidos = {canonico(c.puesto) for c in copia_ciega(perfil).experiencias}
     salida: list[PuestoSugerido] = []
     vistos: set[str] = set()
+    for x in perfil.experiencias:  # RF-12.6b: los suyos no dependen del modelo
+        titulo = _titulo(x.puesto, perfil.genero_puestos)
+        if titulo and len(titulo) <= MAX_LARGO_TERMINO and normalizar(titulo) not in vistos:
+            vistos.add(normalizar(titulo))
+            salida.append(PuestoSugerido(titulo=titulo, dato=x.puesto, nivel=1, tipo_dato="puesto",
+                                         marcado=True))
     for c in candidatos:
         titulo = _titulo(c.titulo, perfil.genero_puestos)
         hallado = campos.get(normalizar(a_copia(c.dato.strip(), titulo=True)))

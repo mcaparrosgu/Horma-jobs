@@ -27,7 +27,8 @@ def _clasificar(perfil: Perfil, titulo="Camarero/a de sala", dato="Camarero/a"):
     prov = ProveedorSimulado([{**TAX, "puestos": [
         {"titulo": titulo, "idioma": "es", "dato": dato, "relacion": "mismo"}]}])
     e = crear(proveedor=prov).run({"perfil": perfil.model_dump(mode="json")})
-    return e["puestos"], prov.llamadas[0]["usuario"]
+    return [p for p in e["puestos"] if p["titulo"] not in ("Camarera", "Camarero", "Camarero/a")], \
+        prov.llamadas[0]["usuario"]
 
 
 def test_el_modelo_no_recibe_el_nombre_ni_el_genero():
@@ -48,6 +49,14 @@ def test_el_titulo_sale_en_su_genero_y_el_dato_es_el_del_perfil(genero, titulo):
 def test_un_titulo_que_el_modelo_devuelve_en_un_genero_pasa_al_de_ella():
     puestos, _ = _clasificar(_perfil("masculino"), titulo="Camarera de sala", dato="Camarera")
     assert puestos[0]["titulo"] == "Camarero de sala"
+
+
+def test_su_puesto_sale_marcado_aunque_el_modelo_no_lo_devuelva():
+    """RF-12.6b (D-052)."""
+    prov = ProveedorSimulado([{**TAX, "puestos": []}])
+    e = crear(proveedor=prov).run({"perfil": _perfil("femenino").model_dump(mode="json")})
+    assert e["puestos"] == [{"titulo": "Camarera", "dato": "Camarera", "nivel": 1, "tipo_dato": "puesto",
+                             "marcado": True}]
 
 
 def test_la_huella_de_clasificacion_ignora_nombre_genero_y_titular_pero_no_una_certificacion():

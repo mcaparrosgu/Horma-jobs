@@ -35,7 +35,7 @@ def test_una_habilidad_suelta_el_titular_o_un_trozo_quedan_fuera():
     salida = _puerta(perfil, ("Controller financiero", "Excel"),
                      ("Controller", "Controller financiero con Excel"), ("Camarera", "Camarera"),
                      ("Estadística", "Estadística"))
-    assert salida == {}
+    assert set(salida) == {"Camarero/a de sala"}  # solo el que ha tenido (RF-12.6b)
 
 
 def test_el_puesto_entero_de_una_experiencia_es_nivel_1_y_llega_marcado():
@@ -48,7 +48,7 @@ def test_titulacion_y_certificacion_enteras_son_nivel_2_sin_marcar():
     salida = _puerta(perfil, ("Analista de datos", "Grado en Estadística"),
                      ("Ayudante de cocina", "Manipulador de alimentos"))
     datos = {t: (p.nivel, p.tipo_dato, p.marcado) for t, p in salida.items()}
-    assert datos == {"Analista de datos": (2, "titulacion", False),
+    assert datos == {"Camarero/a": (1, "puesto", True), "Analista de datos": (2, "titulacion", False),
                      "Ayudante de cocina": (2, "certificacion", False)}
 
 
@@ -63,12 +63,13 @@ def test_nunca_sugiere_por_encima_del_nivel_del_perfil_d038():
     perfil = _perfil()
     titulos = [("Senior Waitress", "Camarera"), ("Jefa de sala", "Camarera"), ("Team Lead", "Camarera"),
                ("Head Waiter", "Camarera"), ("Directora de sala", "Camarera")]
-    assert _puerta(perfil, *titulos, nivel="junior") == {}
-    assert set(_puerta(perfil, *titulos, nivel="intermedio")) == set()
+    suyo = {"Camarero/a"}  # va siempre (RF-12.6b)
+    assert set(_puerta(perfil, *titulos, nivel="junior")) == suyo
+    assert set(_puerta(perfil, *titulos, nivel="intermedio")) == suyo
     senior = {"Senior Waiter/waitress", "Jefe/a de sala", "Team Lead"}
-    assert set(_puerta(perfil, *titulos, nivel="senior")) == senior
-    assert len(_puerta(perfil, *titulos, nivel="direccion")) == 5
-    assert len(_puerta(perfil, *titulos, nivel="sin_especificar")) == 5  # sin nivel no hay con qué comparar
+    assert set(_puerta(perfil, *titulos, nivel="senior")) == senior | suyo
+    assert len(_puerta(perfil, *titulos, nivel="direccion")) == 6
+    assert len(_puerta(perfil, *titulos, nivel="sin_especificar")) == 6  # sin nivel no hay con qué comparar
 
 
 def test_un_puesto_que_ya_ha_tenido_nunca_se_bloquea_d038():
@@ -116,14 +117,14 @@ def test_el_filtro_sql_aplica_la_familia_solo_a_los_genericos(motor_migrador, bd
 # --- T06: `relacion` (S1) solo baja de nivel ---------------------------------------------------
 def test_un_titulo_afin_a_un_puesto_que_tuvo_es_nivel_2_sin_marcar():
     candidatos = [PuestoCandidato(titulo="Recepcionista", idioma="es", dato="Camarera", relacion="afin")]
-    (p,) = puestos_del_perfil(_perfil(), candidatos, "junior")
+    _, p = puestos_del_perfil(_perfil(), candidatos, "junior")
     assert (p.nivel, p.tipo_dato, p.marcado) == (2, "puesto", False)
 
 
 def test_decir_mismo_no_sube_una_titulacion_a_nivel_1():
     candidatos = [PuestoCandidato(titulo="Estadística", idioma="es", dato="Grado en Estadística",
                                   relacion="mismo")]
-    assert puestos_del_perfil(_perfil(), candidatos, "junior")[0].nivel == 2
+    assert puestos_del_perfil(_perfil(), candidatos, "junior")[-1].nivel == 2  # el primero es el suyo
 
 
 def test_el_clasificador_pide_relacion_y_no_propone_desde_una_habilidad():
