@@ -71,6 +71,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 4. `uv run alembic upgrade head` (migraciones con el rol `horma_migrador`).
 5. `docker compose up -d --build` levanta también la API (http://localhost:8000) y el worker.
 6. `uv run pytest` (los tests de base de datos necesitan el paso 3), `uv run ruff check .` y `uv run lint-imports`.
+   Pantallas a 390 y 1280 px, en claro y oscuro: con la app levantada (paso 5), `node tests/capturas.js` (necesita
+   Node, Chrome y Playwright en la caché de `npx`).
 
 ### Fase 1: fuentes e ingesta
 
