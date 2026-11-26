@@ -2,12 +2,12 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from horma.schemas.perfil import Perfil
+from horma.schemas.perfil_ciego import PerfilCiego
 from horma.schemas.taxonomia import Taxonomia
 
 
 class EntradaClasificadorPostulante(BaseModel):
-    perfil: Perfil
+    perfil: PerfilCiego
 
 
 class PuestoCandidato(BaseModel):

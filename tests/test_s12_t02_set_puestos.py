@@ -75,7 +75,7 @@ def test_sin_experiencia_un_marcado_afin_acierta_d036(tmp_path):
 def test_un_puesto_sin_etiquetar_no_aprueba(tmp_path):
     _caso(tmp_path, "uno", _perfil(), {})
     r = _correr(tmp_path, _respuesta(("Camarera", "Camarera")))
-    assert r["metricas"]["sin_etiquetar"] == ["uno: Camarera"] and not r["aprobado"]
+    assert r["metricas"]["sin_etiquetar"] == ["uno: Camarero/a"] and not r["aprobado"]
 
 
 def test_equidad_los_mismos_puestos_al_cambiar_nombre_y_genero(tmp_path):
@@ -93,15 +93,14 @@ def test_equidad_los_mismos_puestos_al_cambiar_nombre_y_genero(tmp_path):
     assert "equidad" in r["detalle"][0]["fallos"]
 
 
-def test_la_variante_llega_al_modelo_con_su_nombre_y_sus_puestos(tmp_path):
+def test_la_variante_y_el_original_llegan_al_modelo_como_la_misma_copia(tmp_path):
     variante = {"nombre": "Lucas Ferrer", "genero_puestos": "masculino",
                 "reemplazos": {"Camarera": "Camarero"}}
     _caso(tmp_path, "uno", _perfil(), {}, variante=variante)
     prov = ProveedorSimulado([_respuesta(), _respuesta()])
     correr_set("puestos", raiz=tmp_path, proveedor=prov)
     base, otra = (x["usuario"] for x in prov.llamadas)
-    assert "Lucía Ferrer" in base and "Lucas Ferrer" in otra
-    assert "Camarero" in otra and "Camarera" not in otra
+    assert base == otra and "Ferrer" not in base and "Camarero/a" in base  # RF-12.30d
 
 
 def test_las_respuestas_reales_se_guardan_y_se_repiten_sin_llamar_al_modelo(tmp_path):

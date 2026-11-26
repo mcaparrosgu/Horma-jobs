@@ -39,7 +39,7 @@ def test_una_habilidad_suelta_el_titular_o_un_trozo_quedan_fuera():
 
 
 def test_el_puesto_entero_de_una_experiencia_es_nivel_1_y_llega_marcado():
-    p = _puerta(_perfil(), ("Waitress", "camarera"))["Waitress"]
+    p = _puerta(_perfil(), ("Sala", "camarera"))["Sala"]
     assert (p.nivel, p.tipo_dato, p.marcado) == (1, "puesto", True)
 
 
@@ -65,14 +65,15 @@ def test_nunca_sugiere_por_encima_del_nivel_del_perfil_d038():
                ("Head Waiter", "Camarera"), ("Directora de sala", "Camarera")]
     assert _puerta(perfil, *titulos, nivel="junior") == {}
     assert set(_puerta(perfil, *titulos, nivel="intermedio")) == set()
-    assert set(_puerta(perfil, *titulos, nivel="senior")) == {"Senior Waitress", "Jefa de sala", "Team Lead"}
+    senior = {"Senior Waiter/waitress", "Jefe/a de sala", "Team Lead"}
+    assert set(_puerta(perfil, *titulos, nivel="senior")) == senior
     assert len(_puerta(perfil, *titulos, nivel="direccion")) == 5
     assert len(_puerta(perfil, *titulos, nivel="sin_especificar")) == 5  # sin nivel no hay con qué comparar
 
 
 def test_un_puesto_que_ya_ha_tenido_nunca_se_bloquea_d038():
     perfil = _perfil(experiencias=("Jefe de cocina",))
-    assert "Jefa de cocina" in _puerta(perfil, ("Jefa de cocina", "Jefe de cocina"), nivel="junior")
+    assert "Jefe/a de cocina" in _puerta(perfil, ("Jefa de cocina", "Jefe de cocina"), nivel="junior")
 
 
 def test_los_puestos_guardados_sin_nivel_son_de_nivel_2():

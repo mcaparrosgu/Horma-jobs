@@ -24,6 +24,7 @@ from horma.schemas.perfil import Perfil, PeriodoCubierto, PreguntaPendiente
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.componer_cv_maestro import componer_cv_maestro
+from horma.tools.copia_ciega import copia_ciega
 from horma.tools.puestos_del_perfil import puestos_del_perfil
 from horma.tools.rasgos_personales import AVISO_DATO_PERSONAL, rasgos_personales
 from horma.tools.resumenes_cv import resumen_de, titular_de
@@ -305,9 +306,9 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         return e
 
     def clasificar(e: dict) -> dict:
-        perfil = Perfil.model_validate(e["extraccion"]["perfil"]).model_copy(
-            update={"instrucciones_embebidas": []})
-        r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=perfil), proveedor=proveedor)
+        perfil = Perfil.model_validate(e["extraccion"]["perfil"])
+        r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=copia_ciega(perfil)),
+                                       proveedor=proveedor)
         e["taxonomia"] = r.model_dump(mode="json", exclude={"puestos"})
         e["puestos"] = [p.model_dump(mode="json") for p in puestos_del_perfil(perfil, r.puestos, r.nivel)]
         return e

@@ -11,6 +11,7 @@ from horma.schemas.taxonomia import Taxonomia
 from horma.tools.comparar_versiones import comparar_versiones
 from horma.tools.cv_base_afectado import lineas_cambiadas
 from horma.tools.normalizar_titulo import casa_con_puestos
+from horma.tools.puestos_del_perfil import en_su_genero
 from horma.tools.visibilidad_cv import clave_experiencia, nombre_experiencia
 
 _j = lambda v: json.dumps(v, ensure_ascii=False)  # noqa: E731
@@ -268,6 +269,11 @@ def aplicar_puestos_del_cv(s: Session, usuaria_id: int, sugeridos: list[dict]) -
         else:
             actual.origen.pop("puestos", None)
     guardar_preferencias(s, usuaria_id, actual)
+
+
+def reescribir_puestos(s: Session, usuaria_id: int, genero: str | None) -> None:
+    """Al cambiar el género de sus puestos, los sugeridos se reescriben sin modelo (spec 012, RF-12.30f)."""
+    guardar_preferencias(s, usuaria_id, en_su_genero(preferencias(s), genero))
 
 
 def anadir_puesto_de_oferta(s: Session, usuaria_id: int, titulo: str | None,

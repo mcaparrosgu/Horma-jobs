@@ -70,7 +70,7 @@ def test_clasificar_perfil_devuelve_puestos_respaldados():
         {"titulo": "Camarera de sala", "idioma": "es", "dato": "Camarera"},
         {"titulo": "Chef", "idioma": "en", "dato": "Cocinero"}]}]))
     e = flujo.run({"perfil": perfil.model_dump(mode="json")})
-    assert [p["titulo"] for p in e["puestos"]] == ["Camarera de sala"]
+    assert [p["titulo"] for p in e["puestos"]] == ["Camarero/a de sala"]  # sin género elegido, en «/a»
 
 
 def test_un_cv_sin_experiencia_formacion_ni_idiomas_pregunta_por_cada_seccion():

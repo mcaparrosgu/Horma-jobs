@@ -98,12 +98,15 @@ def _nueva_version(engine: Engine, usuaria_id: int, cambio: Callable[[dict], str
         except ValidationError as e:
             raise DatoNoValido("El dato no es válido: " + "; ".join(
                 f"{'.'.join(map(str, x['loc']))}: {x['msg']}" for x in e.errors()[:3])) from e
-        antes = huella_clasificacion(perfiles.perfil_modelo(fila))
+        anterior = perfiles.perfil_modelo(fila)
+        antes = huella_clasificacion(anterior)
         cambia_clasificacion = antes != huella_clasificacion(perfil)
         perfil_id, version = perfiles.nueva_version(s, usuaria_id)
         perfiles.guardar_perfil(s, usuaria_id, perfil_id, perfil.model_copy(update={"version": version}),
                                 componer_cv_maestro(perfil))
-        if cambia_clasificacion:  # RF-10.10d: solo si cambia la experiencia, la formación o el titular
+        if perfil.genero_puestos != anterior.genero_puestos:
+            perfiles.reescribir_puestos(s, usuaria_id, perfil.genero_puestos)
+        if cambia_clasificacion:  # RF-10.10d y RF-12.30h: solo si cambia lo que lee el clasificador
             try:  # sin presupuesto la edición se guarda y la clasificación espera a otro cambio (RF-10.9c)
                 presupuesto.encolar(s, usuaria_id, "clasificar_perfil", perfil_id, a.tope_coste_perfilar,
                                     a.tope_reintentos_tarea)

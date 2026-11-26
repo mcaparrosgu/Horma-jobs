@@ -43,7 +43,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** el esquema tiene exactamente los campos de la lista; al menos 10 gemelas escritas a mano (las del
     set y 5 con secretaria, asistenta, gobernanta y modista) dan el mismo `model_dump_json`; el nombre en una
     descripción, el correo, la URL y el teléfono desaparecen; las fechas y el perfil original no cambian.
-- [ ] T24 — El clasificador con la copia, puerta y huella de clasificación (RF-12.30f a h). Ejemplos del prompt en «/a».
+- [x] T24 — El clasificador con la copia, puerta y huella de clasificación (RF-12.30f a h). Ejemplos del prompt en «/a».
   - **Test:** el proveedor simulado no recibe el nombre ni «Camarera»; un `dato` «Camarero/a» da nivel 1 y se
     guarda «Camarera»; con género femenino se ve «Camarera» y sin género «Camarero/a»; cambiar el nombre o
     `genero_puestos` no cambia `huella_clasificacion` y añadir una certificación sí; cambiar `genero_puestos`

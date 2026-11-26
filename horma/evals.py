@@ -80,8 +80,10 @@ from horma.schemas.oferta import Auditoria, Oferta, OfertaExtraida, Taxonomia
 from horma.schemas.perfil import Perfil
 from horma.tools.depurar_guia import motivos_de_rechazo
 from horma.tools.estructura_carta import errores_estructura_carta
+from horma.tools.lexico_genero import a_copia
 from horma.tools.medir_ats import errores_ats  # noqa: F401  (movida a tools; se reexporta)
 from horma.tools.muletillas_ia import errores_muletillas
+from horma.tools.normalizar_titulo import normalizar_titulo
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.validar_cv import validar_cv
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, frases, verificar_trazabilidad
@@ -153,6 +155,10 @@ def _resumen_perfil(p: dict) -> dict:
             "sector": tax.get("sector"), "familia": tax.get("familia")}
 
 
+def _puesto(titulo: str) -> str:
+    return normalizar_titulo(a_copia(titulo, titulo=True))
+
+
 def _comparar_perfil(obtenido: dict, esperado: dict) -> list[str]:
     perfil = obtenido["perfil"]
     o, e = _resumen_perfil(perfil), _resumen_perfil(esperado)
@@ -162,8 +168,9 @@ def _comparar_perfil(obtenido: dict, esperado: dict) -> list[str]:
     if not {p["campo"].split(".")[0] for p in esperado.get("preguntas_pendientes") or []} <= campos:
         fallos.append("pendientes")
     # Puestos (RF-9.3): cada término esperado (en castellano o en inglés) está en alguno de los que salen.
-    obtenidos = [_lista([p["titulo"]])[0] for p in obtenido.get("puestos") or []]
-    for esperado_p in _lista(obtenido.get("puestos_esperados") or []):
+    # Los títulos salen en «/a» o en el género de ella (RF-12.30f): se comparan sin marcas de género.
+    obtenidos = [_puesto(p["titulo"]) for p in obtenido.get("puestos") or []]
+    for esperado_p in [_puesto(x) for x in obtenido.get("puestos_esperados") or []]:
         if not any(esperado_p in p or p in esperado_p for p in obtenidos):
             fallos.append("puestos")
             break

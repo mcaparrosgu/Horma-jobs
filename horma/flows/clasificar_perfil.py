@@ -8,14 +8,16 @@ from horma.agents.clasificador_postulante.schemas import EntradaClasificadorPost
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
 from horma.schemas.perfil import Perfil
+from horma.tools.copia_ciega import copia_ciega
 from horma.tools.puestos_del_perfil import puestos_del_perfil
 
 
 def crear(proveedor: Proveedor | None = None) -> PlainFlow:
 
     def clasificar(e: dict) -> dict:
-        perfil = Perfil.model_validate(e["perfil"]).model_copy(update={"instrucciones_embebidas": []})
-        r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=perfil), proveedor=proveedor)
+        perfil = Perfil.model_validate(e["perfil"])
+        r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=copia_ciega(perfil)),
+                                       proveedor=proveedor)
         e["taxonomia"] = r.model_dump(mode="json", exclude={"puestos"})
         e["puestos"] = [p.model_dump(mode="json") for p in puestos_del_perfil(perfil, r.puestos, r.nivel)]
         return e

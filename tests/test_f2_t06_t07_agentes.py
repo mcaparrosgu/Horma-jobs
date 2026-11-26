@@ -19,6 +19,7 @@ from horma.schemas.oferta import Auditoria, Oferta
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
+from horma.tools.copia_ciega import copia_ciega
 
 TAX = {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
        "stack": ["tpv"]}
@@ -60,8 +61,8 @@ def test_extractor_rechaza_una_salida_con_edad_o_sin_origen():
 
 
 def test_clasificador_postulante_devuelve_la_misma_taxonomia():
-    r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=Perfil.model_validate(PERFIL)),
-                                   proveedor=ProveedorSimulado([TAX]))
+    entrada = EntradaClasificadorPostulante(perfil=copia_ciega(Perfil.model_validate(PERFIL)))
+    r = ClasificadorPostulante.run(entrada, proveedor=ProveedorSimulado([TAX]))
     assert isinstance(r, Taxonomia) and r.familia == "hosteleria_restauracion"
 
 
