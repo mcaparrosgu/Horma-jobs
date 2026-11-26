@@ -67,7 +67,7 @@ Están en los informes F4 (`docs/investigacion/f4-puestos-afines.md`, apartado 8
 - **S12 · La lista blanca se cumple por esquema** (`PerfilCiego`).
 
 ## Copia ciega (26-nov)
-Requisito de Mar: el género no influye en los puestos sugeridos ni en la nota (D-047). Decisiones D-043 a D-050.
+Requisito de Mar: el género no influye en los puestos sugeridos ni en la nota (D-047). Decisiones D-043 a D-051.
 
 ## Fuera de alcance
 - ESCO y otras taxonomías (F4-D6). Embeddings, salvo la prueba condicionada de F4-D6.

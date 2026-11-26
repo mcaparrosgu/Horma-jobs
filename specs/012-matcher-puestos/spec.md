@@ -127,7 +127,8 @@ pauta de Mar.
     centro de estudios, las actividades, los periodos cubiertos, las preguntas pendientes ni las instrucciones
     embebidas.
   - **RF-12.30b** En todo texto de la copia, el sistema DEBERÁ borrar el nombre de la usuaria (cada palabra de 3
-    o más letras, entera), los correos, las URL y los teléfonos, y cambiar cada palabra del léxico por su forma
+    o más letras, entera; nunca «del», «las», «los», «van», «von» ni «san», y no dentro del puesto, la
+    titulación o la certificación, D-051), los correos, las URL y los teléfonos, y cambiar cada palabra del léxico por su forma
     de la copia (D-043). Las fechas NO DEBERÁN cambiar (D-044). Las descripciones DEBERÁN entrar, pasadas por el
     léxico (D-045).
   - **RF-12.30c** Léxico: cerrado, en código y sin reglas de sufijos. Cada entrada DEBERÁ dar la forma de la
