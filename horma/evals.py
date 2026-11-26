@@ -838,7 +838,7 @@ def casos_de(raiz: Path, nombre: str, solo: str | None = None) -> list[Path]:
 def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                solo: str | None = None, simulado: bool = False, tope_coste: float | None = None,
                flujo: str | None = None, ruta_umbrales: Path | None = None,
-               grabadas: bool = False) -> dict:
+               grabadas: bool = False, veces: int = 1) -> dict:
     """Con `simulado`, cada caso responde con su propio esperado: solo prueba el harness.
     Con `tope_coste` (en USD), deja de correr casos en cuanto el coste acumulado lo supera.
     Con `grabadas`, cada caso repite las respuestas guardadas en `<set>/respuestas/` (0 USD)."""
@@ -846,6 +846,8 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
     umbrales = cargar_umbrales(nombre, ruta_umbrales)
     umbral = umbrales["campos"]
     correr = functools.partial(_correr_cv, impl=flujo) if nombre == "cv" else s.correr
+    if veces > 1:  # solo `puestos` repite pasadas (RF-12.30e)
+        correr = functools.partial(correr, veces=veces)
     casos = casos_de(raiz, nombre, solo)
     aciertos = dict.fromkeys(s.campos, 0)
     detalle = []

@@ -464,6 +464,7 @@ def correr_eval(
     flujo_impl: str | None = typer.Option(None, "--flujo", help="Implementación del flujo `candidatura` "
                                           "(plain o langgraph); por defecto, HORMA_FLOW_IMPL."),
     grabadas: bool = typer.Option(False, help="`puestos`: repite las respuestas guardadas, sin gasto."),
+    veces: int = typer.Option(1, min=1, help="`puestos`: pasadas por CV, para medir la estabilidad."),
 ) -> None:
     """Corre un set de evals y deja la ejecución en evals/resultados/."""
     from horma.evals import SETS, correr_set
@@ -478,7 +479,10 @@ def correr_eval(
         raise typer.Exit(2)
     if not simulado and not grabadas:
         _sin_clave_de_anthropic()
-    res = correr_set(conjunto, raiz=raiz, solo=solo, simulado=simulado,
+    if veces > 1 and conjunto != "puestos":
+        typer.echo("--veces solo vale para el set `puestos`.", err=True)
+        raise typer.Exit(2)
+    res = correr_set(conjunto, raiz=raiz, solo=solo, simulado=simulado, veces=veces,
                      tope_coste=tope_coste, flujo=flujo_impl, grabadas=grabadas)
     for campo, valor in res["campos"].items():
         typer.echo(f"{campo:<30}{valor:.2f}")

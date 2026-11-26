@@ -65,14 +65,18 @@ def _clasificar(perfil: dict, prov: Proveedor | None) -> dict:
             "sugeridos": [x["titulo"] for x in sugeridos], "familia": r.familia}
 
 
-def correr(estado: dict, prov: Proveedor | None) -> dict:
-    base = _clasificar(estado["perfil"], prov)
-    obtenido = {**base, "sin_experiencia": not estado["perfil"].get("experiencias"),
-                "respuestas": {"base": base["respuesta"]}}
+def correr(estado: dict, prov: Proveedor | None, veces: int = 1) -> dict:
+    """`veces`: pasadas del mismo CV para medir la estabilidad (RF-12.30e). La equidad no llama al modelo:
+    compara las copias ciegas de las dos gemelas (RF-12.30d)."""
+    pasadas = [_clasificar(estado["perfil"], prov) for _ in range(veces)]
+    nombres = ["base"] + [f"base_{i}" for i in range(2, veces + 1)]
+    obtenido = {**pasadas[0], "pasadas": pasadas,
+                "sin_experiencia": not estado["perfil"].get("experiencias"),
+                "respuestas": {n: p["respuesta"] for n, p in zip(nombres, pasadas, strict=True)}}
     if estado.get("variante"):
-        otra = _clasificar(_variante(estado["perfil"], estado["variante"]), prov)
-        obtenido["variante"] = otra
-        obtenido["respuestas"]["variante"] = otra["respuesta"]
+        otra = _variante(estado["perfil"], estado["variante"])
+        obtenido["copias_iguales"] = (copia_ciega(Perfil.model_validate(estado["perfil"]))
+                                      == copia_ciega(Perfil.model_validate(otra)))
     return obtenido
 
 
@@ -81,19 +85,25 @@ def _etiqueta(titulo: str, esperado: dict) -> str | None:
     return por_puesto.get(_canonico(titulo))
 
 
-def _misma_pareja(obtenido: dict) -> bool:
-    otra = obtenido["variante"]
-    return all({_canonico(t) for t in obtenido[c]} == {_canonico(t) for t in otra[c]}
-               for c in ("sugeridos", "marcados"))
+def _todos(obtenido: dict, campo: str) -> list[str]:
+    """Lo que sale en alguna de las pasadas, sin repetir."""
+    return list({_canonico(t): t for p in obtenido["pasadas"] for t in p[campo]}.values())
+
+
+def _estabilidad(obtenido: dict) -> float:
+    """Puestos marcados en todas las pasadas / puestos marcados en alguna (RF-12.30e)."""
+    marcados = [{_canonico(t) for t in p["marcados"]} for p in obtenido["pasadas"]]
+    alguna = set.union(*marcados)
+    return len(set.intersection(*marcados)) / len(alguna) if alguna else 1.0
 
 
 def comparar(obtenido: dict, esperado: dict) -> list[str]:
     fallos = []
-    if any(_etiqueta(t, esperado) == "ajeno" for t in obtenido["marcados"]):
+    if any(_etiqueta(t, esperado) == "ajeno" for t in _todos(obtenido, "marcados")):
         fallos.append("ajenos")
-    if any(_etiqueta(t, esperado) is None for t in obtenido["sugeridos"]):
+    if any(_etiqueta(t, esperado) is None for t in _todos(obtenido, "sugeridos")):
         fallos.append("etiquetado")
-    if obtenido.get("variante") and not _misma_pareja(obtenido):
+    if obtenido.get("copias_iguales") is False:
         fallos.append("equidad")
     return fallos
 
@@ -119,16 +129,20 @@ def medir(casos: list[tuple[str, dict, dict]]) -> dict:
     ajenos = marcados_ok = marcados = otros_ok = otros = cubiertos = imprescindibles = 0
     iguales = parejas = familias_ok = familias = 0
     sin_etiquetar: list[str] = []
+    estables: list[float] = []
     votos: list[list[str]] = []
     for nombre, o, e in casos:
         marcadas = {_canonico(t) for t in o["marcados"]}
-        for titulo in o["sugeridos"]:
+        sin_etiquetar += [f"{nombre}: {t}" for t in _todos(o, "sugeridos") if _etiqueta(t, e) is None]
+        ajenos += sum(_etiqueta(t, e) == "ajeno" for t in _todos(o, "marcados"))
+        if len(o["pasadas"]) > 1:
+            estables.append(_estabilidad(o))
+        for titulo in o["sugeridos"]:  # las precisiones y la cobertura, sobre la primera pasada
             etiqueta = _etiqueta(titulo, e)
             if etiqueta is None:
-                sin_etiquetar.append(f"{nombre}: {titulo}")
-            elif _canonico(titulo) in marcadas:
+                continue
+            if _canonico(titulo) in marcadas:
                 marcados += 1
-                ajenos += etiqueta == "ajeno"
                 # D-036: sin experiencia, marcar por la titulación (RF-12.7) es acertar.
                 marcados_ok += etiqueta == "lo_ha_sido" or (o["sin_experiencia"] and etiqueta == "afin")
             else:
@@ -137,9 +151,9 @@ def medir(casos: list[tuple[str, dict, dict]]) -> dict:
         for formas in e["imprescindibles"]:
             imprescindibles += 1
             cubiertos += any(casa_con_puestos(t, formas) for t in o["sugeridos"])
-        if o.get("variante"):
+        if "copias_iguales" in o:
             parejas += 1
-            iguales += _misma_pareja(o)
+            iguales += o["copias_iguales"]
         if e.get("familia"):
             familias += 1
             familias_ok += o["familia"] == e["familia"]
@@ -147,6 +161,7 @@ def medir(casos: list[tuple[str, dict, dict]]) -> dict:
     return {"ajenos_marcados": ajenos, "precision_marcados": _parte(marcados_ok, marcados),
             "precision_sin_marcar": _parte(otros_ok, otros),
             "cobertura": _parte(cubiertos, imprescindibles), "equidad": _parte(iguales, parejas),
+            "estabilidad": round(sum(estables) / len(estables), 4) if estables else None,
             "familia": _parte(familias_ok, familias), "kappa": kappa(votos), "sin_etiquetar": sin_etiquetar}
 
 
@@ -167,19 +182,11 @@ def simuladas(esperado: EsperadoPuestos, datos: dict) -> list[dict]:
     titulos = [t for t, e in esperado.etiquetas.items() if e.final == quiere and dato]
     familia = esperado.familia or "otros"
 
-    def respuesta(d: str, reemplazos: dict) -> dict:
+    def respuesta(d: str) -> dict:
         puestos = []
         for t in titulos:
-            for antes, despues in reemplazos.items():
-                t = t.replace(antes, despues)
             puestos.append({"titulo": t, "idioma": "es", "dato": d})
         return {"sector": "otros", "familia": familia, "nivel": "sin_especificar", "stack": [],
                 "puestos": puestos}
 
-    salida = [respuesta(dato, {})]
-    if datos.get("variante"):
-        reemplazos = datos["variante"].get("reemplazos") or {}
-        for antes, despues in reemplazos.items():
-            dato = dato.replace(antes, despues)
-        salida.append(respuesta(dato, reemplazos))
-    return salida
+    return [respuesta(dato)]
