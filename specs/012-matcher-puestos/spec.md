@@ -133,7 +133,8 @@ pauta de Mar.
   - **RF-12.30c** Léxico: cerrado, en código y sin reglas de sufijos. Cada entrada DEBERÁ dar la forma de la
     copia («Camarero/a», «Actor/actriz», «Modista») y las formas femenina y masculina; reconoce con y sin tilde,
     en plural y sin distinguir mayúsculas. Una palabra marcada como ambigua («técnica», «química»…) solo DEBERÁ
-    cambiar si es la primera de un puesto, una titulación o una certificación. SI delante de una palabra del
+    cambiar si es la primera de un puesto, una titulación o una certificación. Un adjetivo («administrativa»,
+    «jurídico», «titulada») DEBERÁ cambiar solo si va justo detrás de una palabra de persona (D-049). SI delante de una palabra del
     léxico o de un epiceno listado («responsable», «gerente», «asistente») va un artículo, ENTONCES el artículo
     DEBERÁ pasar a su doble forma. Una palabra que no esté en el léxico NO DEBERÁ cambiar.
   - **RF-12.30d** Equidad: dos perfiles gemelos que solo cambian el nombre y el género gramatical DEBERÁN dar
