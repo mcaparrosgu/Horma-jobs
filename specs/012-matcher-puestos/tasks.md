@@ -112,3 +112,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T20 — Landing revisada: promete solo lo que funciona.
 - [ ] T21 — Cierre del paso. 🛑 Revisión de Mar sobre 20 recomendaciones y prueba manual (sección en
   `docs/plan-pruebas-manuales.md`); `specs/index.md`, PRD y pauta al día; PR.
+
+### Cambios pequeños
+- [x] 390 px: botones de la portada a todo el ancho, sin «Calificar todas» cuando no hay CV, y `tests/capturas.js` para
+  comprobar pantallas. Test: `tests/test_s12_portada_movil_calificar.py`.

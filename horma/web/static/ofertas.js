@@ -475,7 +475,7 @@ function pintarLista() {
   const conAviso = descarteReciente === null ? lista
     : ordenar(todas.filter((o) => (enRango(o) && enVista(o)) || (o.id === descarteReciente && o.descartada)));
   $("filas").replaceChildren(...conAviso.flatMap((o) => (o.id === descarteReciente && o.descartada ? filaDescartada(o) : filaOferta(o))));
-  $("calificar-todas").hidden = !todas.some((o) => o.sin_puntuar && !o.descartada) || barra !== null;
+  $("calificar-todas").hidden = !todas.some((o) => o.sin_puntuar && !o.descartada) || barra !== null || !$("sin-perfil").hidden;
   $("vacio").hidden = lista.length > 0 || conAviso.length > 0;
   // RF-10.14q: si los puestos marcados dejan la lista sin nada, se dice por qué y qué hacer.
   $("vacio").textContent = !todas.length && puestos.some((p) => p.marcado) ? TEXTOS.listaVaciaPorPuestos : "Ninguna oferta cumple estos filtros.";
@@ -687,7 +687,7 @@ function mostrarSinPerfil() {
   $("sin-perfil-texto").textContent = TEXTOS.sinPerfil;
   $("sin-perfil-boton").textContent = TEXTOS.sinPerfilBoton;
   $("sin-perfil").hidden = false;
-  for (const id of ["entradilla", "que-buscas", "vista", "tabla", "vacio", "contador"]) {
+  for (const id of ["entradilla", "que-buscas", "vista", "tabla", "vacio", "contador", "calificar-todas"]) {
     const el = $(id);
     if (el) el.hidden = true;
   }

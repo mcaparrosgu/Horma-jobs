@@ -63,6 +63,9 @@ están en `specs/system.md`.
 - Incluye los controles nativos (`input[type=file]`, `select`, casillas): se estilan para que encajen.
 - Una tarea de frontend no está hecha hasta comprobarla en el navegador a 1280 y 390 px, en claro y
   en oscuro, mirando expresamente alineación y simetría. Si no se ha podido comprobar, se dice.
+- El agente hace esa comprobación: `docker compose up -d --build` y `node tests/capturas.js` (Playwright con el
+  Chrome instalado; la extensión de Chrome no baja a 390 px). Mira las imágenes, no solo el «ok». Cubre las
+  pantallas sin datos; las que necesitan datos o clics, se amplían en el script o se declaran sin comprobar.
 
 ## Flujo de trabajo
 Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementación (TDD) → Validación → Cambio

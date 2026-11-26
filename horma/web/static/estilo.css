@@ -450,6 +450,12 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   .barra-contador .derecha{ margin-left: 0; width: 100%; }
 }
 
+/* Portada en móvil: sin menú, los dos botones de la cabecera ocupan todo el ancho a partes iguales (RF-6.4b). */
+@media (max-width: 520px){
+  .cabecera:not(:has(nav)) .derecha{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(max-content, 1fr); width: 100%; padding-bottom: 8px; }
+  .cabecera:not(:has(nav)) .derecha > *{ justify-content: center; text-align: center; white-space: nowrap; padding-inline: 8px; }
+}
+
 @media (max-width: 760px){
   .tablero{ grid-template-columns: 1fr; }
 }
