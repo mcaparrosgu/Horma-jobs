@@ -225,6 +225,7 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   (experiencia, formación, habilidades, idiomas, titular). Corregir una errata en otra parte NO DEBERÁ obligar
   a volver a puntuar.
 - **RF-10.10d** `clasificar_perfil` DEBERÁ lanzarse solo SI cambia la experiencia, la formación o el titular.
+  *(Los campos de RF-10.10c y 10.10d cambian con la spec 012, RF-12.30h.)*
 
 ### Orden interno (RF-10.11)
 - **RF-10.11** Solo los servicios DEBERÁN encolar tareas; los routers DEBERÁN llamar solo a servicios, nunca a

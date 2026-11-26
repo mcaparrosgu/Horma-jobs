@@ -40,6 +40,18 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
 - **Pantalla «Qué buscas»** (`ofertas.html`, `ofertas.js`): el nivel 2 sin marcar, con su porqué en texto suave
   bajo la casilla. Primero en la guía.
 
+## G · Copia ciega (RF-12.30 a 12.32)
+- **Léxico:** `tools/lexico_genero.py` (`a_copia`, `en_genero`), lista cerrada. Arranca con los puestos y
+  titulaciones de los sets `puestos`, `perfil` y 9a; cada palabra nueva entra con su test.
+- **Copia:** `PerfilCiego` (`extra="forbid"`) y `copia_ciega(perfil)`; es lo único que reciben el clasificador
+  (rama `matcher-p`) y el `matcher` (rama `matcher-n`).
+- **Clasificador:** `flows/clasificar_perfil.py`, `flows/perfilar.py`, `tools/puestos_del_perfil.py` y
+  `tools/huella_perfil.py`.
+- **Búsqueda:** pares irregulares en `tools/normalizar_titulo.py`.
+- **Huella de compatibilidad:** con migración, en `matcher-n`.
+- **Fuera:** `extractor_perfil`, `generador_cv_base` y `analizador-oferta` (necesitan el original o no leen el
+  perfil), lo que ve la empresa, quitar edad y huecos (D-044) y `temperature` (D-048).
+
 ## N · Nota y explicación (RF-12.11 a 12.24) — rama `matcher-n`
 - **Eval ampliado:** casos nuevos en `evals/recomendacion/casos/`. Los de orden llevan varias ofertas
   (`entrada.json` con `ofertas`); los de equidad van en pareja (`pareja` en `esperado.json`). `horma/evals.py`
@@ -84,7 +96,9 @@ suelen costar más de lo estimado: cada gasto se confirma con Mar antes.
 | Repetir solo los casos que fallan, 3 a 5 veces | mayor | ~0,5-1,5 USD |
 | Puerta: 3 ejecuciones seguidas | mayor | ~2,4-3 USD |
 | Modelo pequeño: 3 ejecuciones | pequeño | ~0,15-0,3 USD |
-| **Total del paso** | | **~4,5-6,5 USD, en varias veces** |
+| Set `puestos`, 3 pasadas (estabilidad, T27) | pequeño | ~0,15 USD |
+| Eval `perfil`, regresión con la copia (T27) | mayor y pequeño | ~0,35-0,45 USD |
+| **Total del paso** | | **~5-7,3 USD, en varias veces** |
 
 - **El tope de 1 USD por ejecución (RF-2.17) queda justo** para ~60 casos. Si salta, el eval se para sin daño y
   se pide a Mar subirlo para esa ejecución.

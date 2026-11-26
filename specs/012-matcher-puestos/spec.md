@@ -34,10 +34,10 @@ pauta de Mar.
 - **RF-12.2** El set DEBERÁ medirse con el `clasificador_postulante` actual antes de cambiar la puerta. Las
   variantes de la puerta se comparan en código sobre esas mismas respuestas, sin volver a llamar al modelo.
 - **RF-12.3** Umbrales del set `puestos`: 0 puestos «ajenos» entre los marcados; precisión de los marcados
-  ≥ 0,95; precisión de los no marcados («afín» o mejor) ≥ 0,85; cobertura de los imprescindibles ≥ 0,80; y los
-  mismos puestos al cambiar solo el nombre y el género de un CV, al 100 %. Se informa el acuerdo entre
-  etiquetadores (kappa). En un CV sin ninguna experiencia, un puesto marcado «afín» cuenta como acierto en la
-  precisión de los marcados (D-036); un «ajeno» marcado sigue suspendiendo el set.
+  ≥ 0,95; precisión de los no marcados («afín» o mejor) ≥ 0,85; cobertura de los imprescindibles ≥ 0,80; equidad
+  al 100 % (RF-12.30d) y estabilidad ≥ 0,90 (RF-12.30e), provisional hasta que Mar la fije tras la primera medida
+  (D-046). Se informa el acuerdo entre etiquetadores (kappa). En un CV sin ninguna experiencia, un puesto marcado
+  «afín» cuenta como acierto en la precisión de los marcados (D-036); un «ajeno» marcado sigue suspendiendo el set.
 - **RF-12.4** El set de títulos de 9a (RF-9.3e) DEBERÁ repasarlo Mar en los pares sin unanimidad y en los que
   difieren del código, y ampliarse con unos 50 pares de sinónimos sin palabras en común. Después se vuelve a
   medir RF-9.3e. SI la cobertura baja de 0,90, ENTONCES se para y se propone a Mar la prueba de embeddings, solo
@@ -88,16 +88,16 @@ pauta de Mar.
   50-69, por qué tienes opciones; 30-49, por qué no te la recomendamos, aunque puedes intentarlo; 0-29, por qué
   no te la recomendamos.
 - **RF-12.19** `cita_perfil` y `cita_oferta` DEBERÁN ser fragmentos literales, y un verificador en código DEBERÁ
-  comprobar que existen en el perfil y en la oferta. SI alguna no existe, ENTONCES se piden otra vez, una sola
-  vez, solo esas ofertas. SI vuelve a fallar, ENTONCES la explicación se retira y la nota se conserva con el
-  aviso «Sin explicación comprobada» (S6).
+  comprobar que existen en la copia del perfil (RF-12.30) y en la oferta; lo que vaya en «/a» se enseña con
+  `en_genero`. SI alguna no existe, ENTONCES se piden otra vez, una sola vez, solo esas ofertas. SI vuelve a
+  fallar, ENTONCES la explicación se retira y la nota se conserva con el aviso «Sin explicación comprobada» (S6).
 - **RF-12.20** La explicación NO DEBERÁ nombrar las instrucciones embebidas de una oferta, ni siquiera para
   decir que las ignora (NFR-03).
 - **RF-12.21** Un revisor con el modelo pequeño, solo dentro del eval, DEBERÁ juzgar si cada explicación se apoya
   en sus citas. Umbral: 100 %.
-- **RF-12.22** En los pares de equidad, que cambian un solo rasgo personal (nombre, sexo, edad, nacionalidad o un
-  hueco laboral), la nota DEBERÁ ser la misma ±3 y ninguna explicación DEBERÁ citar el rasgo. Umbral: 100 %
-  (NFR-04, RT-09).
+- **RF-12.22** El `matcher` DEBERÁ recibir solo la copia de RF-12.30; la equidad de nombre y género la cubre
+  RF-12.30d. En los pares que cambian la edad, la nacionalidad o un hueco laboral, la mediana de 3 ejecuciones
+  DEBERÁ coincidir ±3, y ninguna explicación DEBERÁ citar el rasgo. Umbral: 100 % (NFR-04, RT-09).
 - **RF-12.23** Con ofertas en otro idioma, muy largas, con instrucciones embebidas o sin datos, y con tandas que
   fallan en parte, el `matcher` DEBERÁ fallar con un aviso y NUNCA dar una nota inventada. Una oferta sin
   resultado queda «sin puntuar».
@@ -116,6 +116,47 @@ pauta de Mar.
 - **RF-12.27** Mar DEBERÁ revisar las correcciones antes de cada medición del eval, con
   `horma eval importar-correccion`. Ninguna entra en `evals/` sin su revisión (RF-2.13).
 
+### G · Copia ciega: el género no influye (D-043 a D-048)
+- **RF-12.30** ANTES DE llamar a `clasificador_postulante` o al `matcher`, el sistema DEBERÁ construir en código,
+  sin modelo, una copia del perfil (`PerfilCiego`) y enviar solo esa copia. El perfil y el CV NO DEBERÁN cambiar
+  (D-047).
+  - **RF-12.30a** La copia DEBERÁ llevar solo los campos de su esquema (S12): de cada experiencia, puesto,
+    empresa, inicio, fin y descripción; de cada formación, título, inicio y fin; idiomas y su nivel,
+    habilidades, proyectos, certificaciones (nombre, entidad y fecha) y `otros`; la taxonomía, solo para el
+    `matcher`. NO DEBERÁN entrar el nombre, `genero_puestos`, los titulares, los resúmenes, los orígenes, el
+    centro de estudios, las actividades, los periodos cubiertos, las preguntas pendientes ni las instrucciones
+    embebidas.
+  - **RF-12.30b** En todo texto de la copia, el sistema DEBERÁ borrar el nombre de la usuaria (cada palabra de 3
+    o más letras, entera), los correos, las URL y los teléfonos, y cambiar cada palabra del léxico por su forma
+    de la copia (D-043). Las fechas NO DEBERÁN cambiar (D-044). Las descripciones DEBERÁN entrar, pasadas por el
+    léxico (D-045).
+  - **RF-12.30c** Léxico: cerrado, en código y sin reglas de sufijos. Cada entrada DEBERÁ dar la forma de la
+    copia («Camarero/a», «Actor/actriz», «Modista») y las formas femenina y masculina; reconoce con y sin tilde,
+    en plural y sin distinguir mayúsculas. Una palabra marcada como ambigua («técnica», «química»…) solo DEBERÁ
+    cambiar si es la primera de un puesto, una titulación o una certificación. SI delante de una palabra del
+    léxico o de un epiceno listado («responsable», «gerente», «asistente») va un artículo, ENTONCES el artículo
+    DEBERÁ pasar a su doble forma. Una palabra que no esté en el léxico NO DEBERÁ cambiar.
+  - **RF-12.30d** Equidad: dos perfiles gemelos que solo cambian el nombre y el género gramatical DEBERÁN dar
+    copias idénticas, carácter a carácter. Las gemelas se escriben a mano, no con el léxico. Umbral: 100 %, en la
+    suite de tests (D-046).
+  - **RF-12.30e** Estabilidad: cada CV del set `puestos` DEBERÁ pasarse 3 veces con el modelo real. Por CV,
+    «puestos marcados en las tres pasadas / puestos marcados en alguna». La media DEBERÁ ser ≥ 0,90 (provisional,
+    D-046).
+  - **RF-12.30f** Los títulos que devuelva el clasificador DEBERÁN pasar a la forma de la copia y enseñarse con
+    `en_genero` según `genero_puestos`; sin él, en «/a». El género NUNCA DEBERÁ deducirse del nombre. El `dato`
+    que se guarda y se enseña DEBERÁ ser el texto original del perfil. CUANDO cambie `genero_puestos`, los
+    títulos sugeridos DEBERÁN reescribirse en código, sin llamar al modelo.
+  - **RF-12.30g** La puerta (RF-12.5) DEBERÁ comparar el `dato` con los campos de la copia.
+  - **RF-12.30h** Las huellas (RF-10.10c y 10.10d) DEBERÁN calcularse sobre la copia, así que ya no incluyen el
+    titular: la de compatibilidad, experiencia, formación, habilidades e idiomas; la de clasificación,
+    experiencia, formación y certificaciones. Cambiar el nombre o `genero_puestos` NO DEBERÁ volver a clasificar
+    ni a puntuar.
+  - **RF-12.30i** La búsqueda por puesto DEBERÁ casar también con las formas irregulares del léxico («Gobernanta»
+    con «Gobernante/a»). «Asistenta» y «Asistente» NO DEBERÁN dar la misma clave.
+- **RF-12.31** El `matcher` NO DEBERÁ recibir las condiciones de la usuaria (D-026).
+- **RF-12.32** La explicación DEBERÁ hablar de la experiencia y de la oferta, no de la persona: sin adjetivos ni
+  sustantivos que concuerden con ella («tu experiencia en sala encaja», no «eres una candidata ideal»).
+
 ### F · Pantallas
 - **RF-12.28** Los cambios de Ofertas y de «Qué buscas» DEBERÁN usar componentes de la guía (uno nuevo se añade
   antes a la guía, RF-6.9), sin las palabras de RF-6.8, y comprobarse a 1280 y 390 px, en claro y en oscuro,
@@ -125,7 +166,7 @@ pauta de Mar.
 ## Criterios de aceptación (puerta de salida del paso 2)
 - Un CV que solo nombra «Excel» como habilidad no trae «Controller financiero» marcado. Cada puesto marcado cita
   un puesto que la persona ya ha tenido.
-- Set `puestos` en sus umbrales (RF-12.3); set de títulos de 9a con cobertura ≥ 0,90 y precisión ≥ 0,95.
+- Set `puestos` en sus umbrales (RF-12.3), con copias idénticas entre gemelas (RF-12.30d); set de títulos de 9a con cobertura ≥ 0,90 y precisión ≥ 0,95.
 - Eval `recomendacion` ≥ 0,90 dentro de ±10 en 3 ejecuciones seguidas con el modelo real, y de vuelta en
   `evals-reales` (NFR-02).
 - 100 %: sin rasgos personales, pares de equidad dentro de ±3 y explicaciones con citas verificadas.

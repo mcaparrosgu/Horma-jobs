@@ -36,6 +36,28 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T06 — `relacion` en el clasificador. 🛑 OK al gasto (~0,4-0,7 USD): segunda pasada del set y eval `perfil`
   (26-nov: 0,44 USD; `perfil` aprobado al 100 %; ajenos 0, marcados 0,98, no marcados 0,99, cobertura 0,94,
   equidad 0; 126 puestos nuevos por etiquetar).
+- [ ] T22 — Léxico y `en_genero` (`tools/lexico_genero.py`). 🛑 Mar repasa el léxico (0 USD).
+  - **Test:** la tabla de ejemplos de D-043, incluida «Costurera» sin cambio; ida y vuelta
+    `en_genero(a_copia(x), género de x) == x`; sin género, «Camarero/a».
+- [ ] T23 — `PerfilCiego` y `copia_ciega()` (RF-12.30a y b).
+  - **Test:** el esquema tiene exactamente los campos de la lista; al menos 10 gemelas escritas a mano (las del
+    set y 5 con secretaria, asistenta, gobernanta y modista) dan el mismo `model_dump_json`; el nombre en una
+    descripción, el correo, la URL y el teléfono desaparecen; las fechas y el perfil original no cambian.
+- [ ] T24 — El clasificador con la copia, puerta y huella de clasificación (RF-12.30f a h). Ejemplos del prompt en «/a».
+  - **Test:** el proveedor simulado no recibe el nombre ni «Camarera»; un `dato` «Camarero/a» da nivel 1 y se
+    guarda «Camarera»; con género femenino se ve «Camarera» y sin género «Camarero/a»; cambiar el nombre o
+    `genero_puestos` no cambia `huella_clasificacion` y añadir una certificación sí; cambiar `genero_puestos`
+    reescribe los títulos sin llamar al modelo.
+- [ ] T25 — Pares irregulares en `variantes_genero` y `canonico` (RF-12.30i).
+  - **Test:** «Gobernanta» casa con «Gobernante/a de pisos»; «Actor» con «Actriz»;
+    `canonico("Asistenta") != canonico("Asistente")`.
+- T26 — Retirada (D-048): los modelos de Horma no admiten `temperature`.
+- [ ] T27 — Métricas de equidad (sobre las copias) y estabilidad (`--veces 3`).
+  - **Test:** una gemela con una palabra fuera del léxico hace fallar la equidad; tres pasadas simuladas
+    distintas bajan la estabilidad.
+  - 🛑 OK al gasto (~0,5-0,8 USD): 3 pasadas reales del set `puestos` y eval `perfil`.
+  - 🛑 Mar fija el umbral de estabilidad (D-NNN). Después se etiquetan los puestos nuevos (126 pendientes de la
+    pasada anterior; la copia cambia las respuestas).
 - [ ] T07 — Set de títulos de 9a: ~50 pares de sinónimos. 🛑 Mar firma los pares dudosos. Se vuelve a medir
   RF-9.3e; SI la cobertura baja de 0,90, 🛑 se para y se propone la prueba de embeddings (F4-D6).
 - [ ] T08 — «Qué buscas»: nivel 1 marcado, nivel 2 sin marcar con su porqué y junior sin experiencia (RF-12.7).
@@ -43,7 +65,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Navegador:** 1280 y 390 px, claro y oscuro.
 - [ ] T09 — Cierre de P: set `puestos` en umbral, suite verde, `specs/index.md` al día y PR.
 
-### N · Nota y explicación (RF-12.11 a 12.24)
+### N · Nota y explicación (RF-12.11 a 12.24, 12.31 y 12.32)
 - [ ] T10 — Eval `recomendacion` a ~60 casos, con orden y pares de equidad (0 USD). 🛑 Mar repasa los casos con más
   de 10 puntos entre etiquetadores y cualquier cambio de una nota esperada existente (RF-12.14).
 - [ ] T11 — Harness: `--veces 3`, variación por caso, `orden`, `equidad`, `citas` y el revisor, en simulado.
@@ -59,6 +81,16 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   (🛑 OK a cada tanda, ~0,1-0,3 USD), hasta que el `matcher` llegue.
 - [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor.
 - [ ] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).
+- [ ] T28 — Con T12 y antes de T14: el `matcher` con la copia y sin condiciones (RF-12.31), RF-12.32 en el prompt y
+  `huella_compatibilidad` sobre la copia, con una migración que reescriba las huellas guardadas (sin ella se
+  vuelve a puntuar todo).
+  - **Test:** el proveedor simulado no recibe el nombre, «Camarera» ni las condiciones; cambiar el nombre no
+    cambia la huella; la migración conserva las notas.
+- [ ] T29 — Con T12: citas contra la copia.
+  - **Test:** «encargado/a de turno» existe en la copia y se enseña «encargada de turno»; una cita con el nombre
+    de la usuaria no existe y se pide otra vez.
+- [ ] T30 — Con T11: pares de RF-12.22 solo para edad, hueco y nacionalidad.
+  - **Test:** dos medianas a más de 3 puntos hacen fallar la equidad.
 - [ ] T17 — `recomendacion` de vuelta en `evals-reales`. Cierre de N: suite verde, `specs/index.md` al día y PR.
 
 ### V · Lo que ve la usuaria (RF-12.25 a 12.29)
