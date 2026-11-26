@@ -1,5 +1,73 @@
 {
   "familia": "sanidad_cuidados",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Auxiliar de enfermería": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Auxiliar de clínica": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Auxiliar sanitario": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Nursing Assistant": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Healthcare Assistant": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Nursing Aide": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Auxiliar de enfermería",
+      "Nursing Assistant"
+    ],
+    [
+      "Cuidadora de personas dependientes",
+      "Caregiver"
+    ],
+    [
+      "Auxiliar de clínica",
+      "Healthcare Assistant"
+    ]
+  ]
 }

@@ -1,5 +1,112 @@
 {
   "familia": "hosteleria_restauracion",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Camarero de sala": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Camarero de barra": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Ayudante de camarero": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Ayudante de cocina": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Auxiliar de cocina": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Técnico en Servicios de Restauración": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Waiter": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Server": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Commis Chef": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Kitchen Assistant": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Camarera",
+      "Waitress"
+    ],
+    [
+      "Ayudante de cocina",
+      "Kitchen Assistant"
+    ],
+    [
+      "Ayudante de camarera",
+      "Assistant Waitress",
+      "Ayudante de camarero",
+      "Busser",
+      "Assistant Waiter"
+    ]
+  ]
 }

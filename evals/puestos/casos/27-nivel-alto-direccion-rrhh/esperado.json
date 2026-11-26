@@ -1,5 +1,137 @@
 {
   "familia": "recursos_humanos",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Directora de Recursos Humanos": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Jefa de Recursos Humanos": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Responsable de Recursos Humanos": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Responsable de Relaciones Laborales": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Responsable de Selección": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Técnica de selección": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Psicóloga de recursos humanos": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Human Resources Director": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Human Resources Manager": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "HR Business Partner": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Labor Relations Manager": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Talent Acquisition Specialist": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Recruiter": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Directora de Recursos Humanos",
+      "Human Resources Director"
+    ],
+    [
+      "Responsable de Recursos Humanos",
+      "Human Resources Manager"
+    ],
+    [
+      "Responsable de relaciones laborales",
+      "Labor Relations Manager",
+      "Responsable de Relaciones Laborales"
+    ]
+  ]
 }

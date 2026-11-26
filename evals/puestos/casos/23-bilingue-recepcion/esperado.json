@@ -1,5 +1,109 @@
 {
   "familia": "hosteleria_restauracion",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Recepcionista de hotel": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Hotel Receptionist": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Front Desk Agent": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Front Desk Associate": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Agente de recepción": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Guest Services Agent": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Agente de atención al cliente": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Reservations Agent": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Agente de reservas": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Asistente de turismo": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Recepcionista de hotel",
+      "Hotel Receptionist"
+    ],
+    [
+      "Agente de recepción",
+      "Front Desk Agent"
+    ],
+    [
+      "Agente de reservas",
+      "Reservations Agent"
+    ]
+  ]
 }

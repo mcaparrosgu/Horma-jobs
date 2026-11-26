@@ -1,5 +1,110 @@
 {
   "familia": "ventas_comercial",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Dependiente": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Dependiente de comercio": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Vendedor/a": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Asesor/a de ventas": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Auxiliar de tienda": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Promotor/a de ventas": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Sales Assistant": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Retail Sales Associate": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Store Assistant": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Sales Advisor": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Dependiente",
+      "Sales Assistant",
+      "Dependienta"
+    ],
+    [
+      "Vendedor",
+      "Salesperson"
+    ],
+    [
+      "Auxiliar de tienda",
+      "Store Assistant"
+    ]
+  ]
 }

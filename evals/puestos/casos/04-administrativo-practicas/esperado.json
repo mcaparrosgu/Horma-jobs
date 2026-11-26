@@ -1,5 +1,119 @@
 {
   "familia": "administracion_oficina",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Auxiliar administrativo": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Administrativo": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Asistente administrativo": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Administrativo de facturación": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Auxiliar de facturación": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Auxiliar contable": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Administrativo contable": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Auxiliar administrativo de gestoría": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Administrative Assistant": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Billing Clerk": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Accounting Assistant": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Auxiliar administrativa",
+      "Administrative Assistant",
+      "Auxiliar administrativo"
+    ],
+    [
+      "Auxiliar contable",
+      "Accounting Assistant"
+    ],
+    [
+      "Auxiliar de facturación",
+      "Billing Clerk"
+    ]
+  ]
 }

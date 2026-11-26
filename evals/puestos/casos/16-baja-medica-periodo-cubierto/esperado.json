@@ -1,5 +1,18 @@
 {
   "familia": "hosteleria_restauracion",
   "etiquetas": {},
-  "imprescindibles": []
+  "imprescindibles": [
+    [
+      "Camarera",
+      "Waitress"
+    ],
+    [
+      "Camarera de hotel",
+      "Hotel Waitress"
+    ],
+    [
+      "Ayudante de camarera",
+      "Assistant Waitress"
+    ]
+  ]
 }

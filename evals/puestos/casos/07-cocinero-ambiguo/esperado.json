@@ -1,5 +1,92 @@
 {
   "familia": "hosteleria_restauracion",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Cocinero": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Cook": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Line Cook": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Ayudante de cocina": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Auxiliar de cocina": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Kitchen Assistant": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Prep Cook": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Manipulador de alimentos": {
+      "final": "ajeno",
+      "votos": [
+        "ajeno",
+        "ajeno",
+        "ajeno"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Cocinero",
+      "Cook"
+    ],
+    [
+      "Ayudante de cocina",
+      "Kitchen Assistant"
+    ],
+    [
+      "Cocinero de partida",
+      "Line Cook",
+      "Cocinero de línea"
+    ]
+  ]
 }

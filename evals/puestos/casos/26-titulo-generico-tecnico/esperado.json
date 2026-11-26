@@ -1,5 +1,73 @@
 {
   "familia": "construccion_oficios",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Técnico de climatización": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Técnico frigorista": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Técnico de instalaciones frigoríficas": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Técnico de mantenimiento de climatización": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "afin",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Técnico de aire acondicionado": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Refrigeration Technician": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    }
+  },
+  "imprescindibles": [
+    [
+      "Técnico de climatización",
+      "HVAC Technician"
+    ],
+    [
+      "Técnico frigorista",
+      "Refrigeration Technician"
+    ],
+    [
+      "Instalador de aire acondicionado",
+      "Air Conditioning Installer"
+    ]
+  ]
 }

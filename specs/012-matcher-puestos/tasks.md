@@ -26,7 +26,8 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T02 — Set `puestos`: 12 CV difíciles nuevos y el harness con sus métricas, en simulado.
   - **Test:** con respuestas simuladas, cada métrica da lo esperado; un puesto «ajeno» marcado hace fallar el set.
 - [x] T03 — 🛑 OK al gasto (~0,1 USD). Pasada real del `clasificador_postulante` actual; respuestas guardadas (26-nov: 40 llamadas, 0,05 USD).
-- [ ] T04 — Etiquetado ciego (tres etiquetadores) e imprescindibles. 🛑 Mar repasa lo que no tiene unanimidad.
+- [x] T04 — Etiquetado ciego (tres etiquetadores) e imprescindibles. 🛑 Mar repasa lo que no tiene unanimidad
+  (26-nov: 296 puestos, kappa 0,77, 53 repasados; D-037).
 - [ ] T05 — Puerta por niveles, tope de nivel y genéricos con familia, medidos sobre las respuestas de T03 (0 USD).
   - **Test:** «Controller financiero» citando «Excel» queda fuera; el puesto entero de una experiencia da nivel 1;
     una titulación da nivel 2; «Senior …» no sale para un perfil junior; «Manager» no casa con una oferta de

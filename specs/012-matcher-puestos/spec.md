@@ -49,6 +49,8 @@ pauta de Mar.
     también traducido, en otro género o con un sinónimo.
   - **Nivel 2 · «Afín»:** el `dato` es una titulación o una certificación entera, o un puesto entero con un
     título distinto.
+  - Una especialidad del mismo puesto («Camarero de barra» para una camarera) cuenta como el mismo puesto;
+    un puesto de otro escalón («Jefa de RRHH» para una directora), no: es nivel 2 (D-037).
   - **Fuera:** el `dato` es solo una habilidad, el titular, el resumen o un trozo de un campo.
 - **RF-12.6** En «Qué buscas», solo el nivel 1 DEBERÁ llegar marcado. El nivel 2 DEBERÁ llegar sin marcar y con
   su porqué a la vista («Por tu grado en Estadística»). Lo de fuera NO DEBERÁ enseñarse. *(Cambia RF-9.3b.)*

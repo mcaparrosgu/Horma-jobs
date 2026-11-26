@@ -1,5 +1,129 @@
 {
   "familia": "sanidad_cuidados",
-  "etiquetas": {},
-  "imprescindibles": []
+  "etiquetas": {
+    "Enfermera": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Enfermero/a": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Enfermera de Atención Primaria": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Enfermera comunitaria": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Enfermera de Hospitalización": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "afin",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Enfermera de Cuidados Críticos": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Enfermero/a de UCI": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Enfermero/a de Urgencias": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Registered Nurse": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Primary Care Nurse": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Critical Care Nurse": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "afin"
+      ],
+      "repaso_mar": false
+    },
+    "Enfermero/a generalista": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    }
+  },
+  "imprescindibles": [
+    [
+      "Enfermera",
+      "Registered Nurse"
+    ],
+    [
+      "Enfermera de cuidados críticos",
+      "Critical Care Nurse",
+      "Enfermera de Cuidados Críticos"
+    ],
+    [
+      "Enfermera de atención primaria",
+      "Primary Care Nurse",
+      "Enfermera de Atención Primaria"
+    ]
+  ]
 }
