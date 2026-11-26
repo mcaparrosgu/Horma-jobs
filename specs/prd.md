@@ -180,14 +180,18 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     con evals. Sin agente solo para la carta: `redactor-carta` ya lo es (F2-D5).
   - Panel de tres lectores (ATS, IA de selección y recruiter), sin inventar: **primordial para Mar.** La IA de
     selección es un agente pequeño nuevo, `lector-ia` (D-041); ella ve tres líneas en la candidatura (D-042).
-  - Comprobación del PDF final y puerta de hechos sin modelo antes del PDF: cifras, cargos y deriva de verbos
-    (F7-D3). Antes, ver qué cubre ya `verificar_trazabilidad`.
+  - Comprobación del PDF final y puerta de hechos sin modelo antes del PDF: cifras, fechas y nombres (F7-D3). Sin
+    listas de verbos ni de cargos: se puede decir con más fuerza lo que la descripción respalda, como liderar sin
+    el cargo o un «nivel medio» como B2 (D-053).
   - Contacto (correo, teléfono, ciudad y LinkedIn) en Perfil; lo pone el código en el PDF y nunca llega al modelo
     (D-039).
-  - CV: experiencias con tareas y logros (el perfil no cambia: el redactor los distingue, D-040); mejor
+  - CV: experiencias con tareas y logros (el perfil no cambia: el redactor los distingue, D-040); ideas para
+    medir los logros en el aviso «Sin cifras», con un agente pequeño nuevo, `ideas-logros` (D-054); mejor
     redacción; diseños aptos para ATS, elegibles.
   - Carta: mejor redacción y diseño; tono formal o informal según la oferta; carta honesta y simple como seña
-    de Horma; saludo con el nombre de la empresa (F2-D5).
+    de Horma; reglas de las mejores guías de cartas (D-055); saludo a la persona de selección si la oferta da su
+    nombre y, si no, al equipo de selección de la empresa (D-056).
+  - Requisitos eliminatorios: avisan y no frenan; ella puede enviar la candidatura igual (D-057).
   - Editor tipo procesador de texto (negrita, listas, títulos), sin Markdown a la vista.
   - Del cruce del 22-nov: falsos «Dato dudoso», recortes del extractor (eval `perfil`) y «manejo de
     ordenador» como hueco (F2-D3).
@@ -198,8 +202,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 - **Puerta de salida:** eval `cv` con 0 frases sin origen (NFR-01); el PDF, comprobado en el 100 % de las
   candidaturas; eval `perfil` en su umbral; panel de lectores: programas 100 %, IA ≥ 0,90 y persona ≥ 0,90
   (D-042; spec 013, RF-13.32).
-- **Depende de:** el paso 2 y DEP-05. Gasto real: ~3,5-5 USD en todo el paso, en varias veces (evals `cv`,
-  `perfil` y `lector-ia`; detalle en el plan de la spec 013), cada vez con el OK de Mar.
+- **Depende de:** el paso 2 y DEP-05. Gasto real: ~3,6-5,2 USD en todo el paso, en varias veces (evals `cv`,
+  `perfil`, `ofertas`, `lector-ia` e `ideas-logros`; detalle en el plan de la spec 013), cada vez con el OK de Mar.
 
 ### Paso 4 · Privacidad y cuenta (spec 015)
 

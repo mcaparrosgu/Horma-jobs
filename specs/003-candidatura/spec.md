@@ -69,7 +69,7 @@ requisitos transversales (RT-xx) están en [system.md](../system.md) y las respu
   de la vuelta única, aunque el juez lo apruebe todo (P13); las que no tengan origen DEBERÁN quedar
   en `huecos` y NO DEBERÁN insertarse. La cobertura se mide y se guarda; su umbral se fija en la
   fase 4 (RF-4.4).
-- **RF-3.6** *(ampliado por la spec 013, RF-13.10: saludo con el nombre de la empresa)* `redactor-carta` DEBERÁ escribir la carta a partir del CV maestro, el CV adaptado, la
+- **RF-3.6** *(saludos cambiados por la spec 013, RF-13.10: a la persona de selección o al equipo de selección de la empresa)* `redactor-carta` DEBERÁ escribir la carta a partir del CV maestro, el CV adaptado, la
   oferta y el sector, sin carta base (P1). NO DEBERÁ repetir el CV. Cada frase con un dato DEBERÁ
   llevar su fragmento en la traza; el saludo y la despedida DEBERÁN salir de una lista cerrada de
   fórmulas.

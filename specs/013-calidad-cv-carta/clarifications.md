@@ -1,12 +1,12 @@
 ---
 type: clarifications
 title: calidad-cv-carta — Aclaraciones
-description: Decisiones que sostienen la spec 013 (paso 3 del PRD) — las ya tomadas en F2, F7 y F9, las cuatro que Mar cerró el 26-nov (D-039 a D-042) y los supuestos de Opus, pendientes de su firma.
+description: Decisiones que sostienen la spec 013 (paso 3 del PRD) — las ya tomadas en F2, F7 y F9, las cuatro que Mar cerró el 26-nov (D-039 a D-042), sus cambios al firmar (D-053 a D-058), la síntesis de las guías de cartas y los supuestos de Opus, firmados.
 tags: [clarify, cv, carta, pdf, panel, eliminatorios]
-status: draft
+status: active
 sources: [../prd.md, ../003-candidatura/clarifications.md, ../010-simplificacion/spec.md, ../012-matcher-puestos/spec.md]
 generated: { by: claude-code, at: 2026-11-26 }
-verified: null
+verified: { by: human, at: 2026-11-26 }
 stale_after: null
 ---
 
@@ -22,12 +22,12 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
 | F2-D2 | Se comprueba el PDF, no el Markdown |
 | F2-D3 | `medir_ats` pasa de «% de palabras» a tres avisos; la cobertura se informa, no se fuerza |
 | F2-D4 | Regla anticopia: ninguna secuencia de 6 o más palabras de la oferta en el CV ni en la carta |
-| F2-D5 | Carta con rúbrica nueva; sin agente nuevo: `redactor-carta` ya es uno aparte. Saludo con el nombre de la empresa |
+| F2-D5 | Carta con rúbrica nueva; sin agente nuevo: `redactor-carta` ya es uno aparte. Saludo con el nombre de la empresa. Cambiada en el saludo por D-056 |
 | F2-D6 | La carta usa la papelería del CV |
 | F2-D7 | Viñetas con verbo, qué y alcance o resultado; cifra solo si está en el perfil |
 | F2-D8 | Tú o usted, espejo de la oferta; la guía de estilo de la usuaria manda |
 | F2-D9 | Eliminatorias a la vista, sin modelo, desde los huecos |
-| F7-D3 | Puerta de hechos sin modelo antes del PDF (cifras, cargos, deriva de verbos), tras ver qué cubre `verificar_trazabilidad` |
+| F7-D3 | Puerta de hechos sin modelo antes del PDF (cifras, cargos, deriva de verbos), tras ver qué cubre `verificar_trazabilidad`. Cambiada por D-053: sin listas de verbos ni de cargos |
 | F7-D1 | Mensaje de Horma: lo decide Mar al cerrar este paso, con la calidad ya medida |
 | F9-D7 | Marca de «generado con IA»: solo si la asesoría legal confirma que obliga |
 
@@ -45,11 +45,24 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
   clave (señal de IA para el 39 % de RR. HH., F2). → **D-042: tres líneas en la candidatura.** Solo frena la descarga
   si el PDF se lee mal. Umbral: programa 100 %, IA ≥ 0,90, persona ≥ 0,90.
 
-## Supuestos (Opus; pendientes de la firma de Mar)
-- **S1 · Deriva de verbos y cargos:** dos listas cerradas en código. Verbos por rango («participé», «colaboré»,
-  «ayudé» < «gestioné», «coordiné», «organicé» < «dirigí», «lideré», «supervisé»); palabras de cargo («jefe/a»,
-  «responsable», «director/a», «coordinador/a», «encargado/a», «gerente», «supervisor/a», «senior», «lead», «head»,
-  «manager»). Una línea no puede subir de rango ni traer un cargo que su cita no tenga.
+## Cambios de Mar al firmar (26-nov)
+- **D-053 · Sin regla de deriva (RF-13.1).** «Si fuese por mí, esta regla la quitaríamos»: un nivel medio de inglés
+  es un B2, y liderar un equipo sin el cargo ni el sueldo también cuenta. Se quitan las listas de verbos y de cargos.
+  Siguen la traza de cifras, fechas y nombres, el cargo de cada puesto y el juez: lo que la descripción no cuenta,
+  Horma no lo puede saber, así que ella lo escribe en Perfil.
+- **D-054 · Ideas para medir logros (RF-13.4b).** A muchas personas les cuesta pensar en logros medibles: el aviso
+  «Sin cifras» da preguntas generales y lo que suele medirse en su puesto.
+- **D-055 · Carta según las mejores guías (RF-13.8).** Síntesis de 15 guías de referencia, más abajo; sus reglas
+  entran en el prompt y en las comprobaciones de código, sin saltarse las de Horma.
+- **D-056 · Saludo (RF-13.10).** A la persona de selección si la oferta da su nombre; si no, «Hola, equipo de
+  selección de <empresa>:».
+- **D-057 · Eliminatorios que avisan y no frenan (RF-13.22).** Ella puede aprobar y enviar la candidatura igual.
+- **D-058 · Firma.** Aclaraciones, spec, plan y tareas, firmados con estos cambios.
+
+## Supuestos (Opus; firmados por Mar el 26-nov)
+- **S1 · Niveles de idioma:** tabla cerrada en código. «Básico» = A1 o A2; «medio» o «intermedio» = B1 o B2;
+  «intermedio alto» = B2; «avanzado» o «alto» = C1; «bilingüe» o «nativo» = C2 o nativo. Fuera de la tabla, el nivel
+  sale con las palabras del perfil. *(Sustituye a las listas de verbos y cargos, quitadas por D-053.)*
 - **S2 · Falsos «Dato dudoso»:** cada línea admite hasta tres citas literales cuando junta frases distintas de las
   fuentes. Se descarta citar por número de línea (F1): ahorra salida, pero cambia más piezas; va a mejoras futuras.
 - **S3 · Mínimos que no se fuerzan:** del CV (C9 a C16) solo son error los máximos y lo mecánico: resumen de más de
@@ -74,7 +87,8 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
   no se descarga, se dice qué falla y salta la alerta de la administradora: es un fallo de Horma, no de ella.
 - **S11 · Eliminatorios:** los tres de F2 (permiso de trabajo o residencia, titulación e idioma con nivel) y cualquier
   requisito que la oferta llame «imprescindible», «obligatorio» o «indispensable». Salen también en el detalle de la
-  oferta, junto a las condiciones (RF-12.25), para no gastar en una candidatura que se va a descartar.
+  oferta, junto a las condiciones (RF-12.25), para no gastar en una candidatura que se va a descartar. Avisan y no
+  frenan (D-057).
 - **S12 · Diseños:** tres (el actual, «Sobrio», y dos más). Se eligen junto a «Aprobar y descargar» y a «Descargar
   PDF», no en `/cv-base` (auditoría del 22-nov), y Horma recuerda el último. Tipografías con licencia OFL,
   incluidas en el repo.
@@ -86,6 +100,76 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
 - **S16 · Cobertura de palabras del eval `cv`:** se sigue midiendo, sin umbral (hoy 0,75), por F2-D3.
 - **S17 · Requisitos genéricos que no son hueco:** lista cerrada en código («manejo de ordenador», «informática a
   nivel usuario», «conocimientos básicos de informática», «internet y correo electrónico»).
+- **S18 · Ideas para medir logros (D-054):** botón «Ideas para medirlo» en cada experiencia del aviso «Sin
+  cifras». Las preguntas generales están en código y salen al momento (0 USD): personas atendidas, volumen, tiempo,
+  renovaciones o ascensos, personas formadas, qué mejoró. Las del puesto las da `ideas-logros` (modelo pequeño,
+  ~0,001 USD por experiencia): recibe solo el cargo, el sector y la descripción, sin nombre ni contacto, y devuelve
+  de 3 a 5 preguntas. Se guardan por experiencia; si ella cambia el puesto o la descripción, se piden de nuevo. Las
+  ideas no son fuente: ni el redactor ni el juez las ven.
+- **S19 · Persona de selección (D-056):** `extractor-oferta` gana `persona_seleccion` (nombre tal cual, o nada); el
+  código lo da por bueno solo si está literal en el texto de la oferta. Las ofertas guardadas antes no lo tienen y
+  usan el saludo al equipo; no se reprocesan.
+
+## Guías de la carta (D-055; síntesis del 26-nov)
+Se leyeron 15 fuentes (lista abajo); The Muse, Randstad y Ask a Manager no se dejaron leer. ★ = coinciden 5 o más.
+Los ejemplos son patrones con frases inventadas: no se copia texto de las guías.
+
+**Lo que entra en `redactor-carta`**
+- ★ Estructura: saludo, apertura, cuerpo, cierre con el siguiente paso y despedida; 3-4 párrafos y una página como
+  máximo. Una idea o un requisito por párrafo.
+- ★ Apertura con el puesto (y su referencia, si la tiene) y por qué interesa, con algo concreto y no con elogios.
+- ★ Cuerpo: los requisitos más importantes de la oferta, cada uno con un ejemplo concreto (dónde y con qué
+  resultado); cifras si las hay; una historia breve mejor que una lista; lo que aporta, no lo que recibe.
+- ★ Cierre: interés y petición de entrevista; agradecer la lectura cabe en la despedida («Gracias por tu tiempo»).
+- ★ Saludo a la persona si la oferta da su nombre (11 fuentes), escrito tal cual; nunca un genérico vacío.
+- ★ Nada de repetir el CV, de carta genérica ni de faltas.
+- Tono breve, directo y natural; sin jerga, sin nada negativo sobre una misma y sin abusar del «yo».
+- Seguir las instrucciones de la oferta (referencia, asunto). Lo que la IA escribe debe poder defenderse en la
+  entrevista (Harvard): refuerza «no inventar».
+
+**Patrones** (frases inventadas)
+1. Puesto y un hecho que lo une: «El puesto de Analista de Datos pide automatizar informes con Python; en mi último
+   trabajo automaticé 12 informes semanales.»
+2. Lo que atrae de la oferta, con un hecho: «Me interesa que la atención sea en tres idiomas: llevo 4 años atendiendo
+   en español, inglés y francés.»
+3. Requisito, prueba y resultado: «La oferta pide SQL. Diseñé una base de datos de más de 30 tablas para los pedidos
+   de mi equipo. Hoy la usan 15 personas a diario.»
+4. Lo que falta y lo más cercano: «No he trabajado con Salesforce. He gestionado 400 cuentas en HubSpot durante 2
+   años.»
+5. Cierre: «Quiero aprender a llevar un proyecto de datos de principio a fin, y este puesto me lo permite. Me
+   gustaría contarlo en una entrevista.»
+
+**Choques con las reglas de Horma, y cómo se resuelven**
+- **Fórmulas rancias** de los modelos españoles: van a la lista negra (K12): «me dirijo a usted», «me es grato»,
+  «a la espera de sus noticias», «se despide atentamente», «quedo a su disposición», «espero tener la oportunidad»,
+  «profesional proactivo», «empresa líder», «mi perfil encaja perfectamente», «mis habilidades encajarían»,
+  «pasión», «entusiasmo». Riesgo: abundan en la web y el modelo tiende a usarlas; por eso las comprueba el código.
+- **Abrir presentándose** (MIT, Michael Page, Yale): la primera frase es puesto y hecho; quién es se deduce del hecho.
+- **Callar lo que falta** (Hays, Sevilla, UC3M): es el choque más serio. Se dice una vez, sin disculpa, solo si la
+  oferta lo pide, y seguido de lo más cercano que sí tiene (patrón 4; Hays sí avala explicar cómo se cubre).
+- **Entusiasmo y adjetivos:** la motivación se demuestra con un hecho, no se declara.
+- **Halagos e investigar la empresa** (Hays, MIT): sin halagos; solo lo que dice la oferta, porque el agente no
+  investiga y lo de fuera sería inventado.
+- **Palabras clave de la oferta:** solo con un dato del perfil detrás, y sin copiar 6 palabras seguidas (S4).
+- **Saludo formal** («Estimada Sra. López»): Horma usa «Hola, <nombre>:» por decisión de Mar (D-056), con dos
+  puntos (norma de la RAE).
+
+**Fuentes**
+1. Universidad de Sevilla, «La carta de presentación». https://fisica.us.es/sites/fisica/files/users/user381/CARTA-PRESENTACION.pdf
+2. UC3M, «Carta de presentación. Tips para destacar» (2026). https://www.uc3m.es/empleoyaccesoalmercadolaboral/media/empleoyaccesoalmercadolaboral/doc/archivo/doc_carta/carta-de-presentacion.pdf
+3. Lanbide, «Carta de presentación». https://www.lanbide.euskadi.eus/informacion/carta-de-presentacion/weblan00-orientacion/es/
+4. SEPE, «La carta de presentación, una herramienta para presentar nuestra candidatura» (2017). https://www.sepe.es/HomeSepe/que-es-el-sepe/comunicacion-institucional/noticias/detalle-noticia?folder=%2FSEPE%2F2017%2FNoviembre%2F&detail=carta-presentacion
+5. EURES, «Want to improve your odds of getting hired? Get your cover letter right» (2025). https://eures.europa.eu/want-improve-your-odds-getting-hired-get-your-cover-letter-right-2025-09-19_en
+6. InfoJobs, tres artículos (2021-2026). https://orientacion-laboral.infojobs.net/que-debe-incluir-y-que-no-una-carta-de-presentacion/ · https://orientacion-laboral.infojobs.net/5-consejos-crear-carta-presentacion-perfecta/ · https://orientacion-laboral.infojobs.net/la-carta-de-presentacion-como-herramienta-de-storytelling/
+7. Michael Page España, dos artículos (2016). https://www.michaelpage.es/advice/candidatos/prepara-tu-cv/c%C3%B3mo-redactar-una-carta-de-presentaci%C3%B3n · https://www.michaelpage.es/advice/candidatos/prepara-tu-cv/la-importancia-de-una-carta-de-presentaci%C3%B3n
+8. Hays España, dos artículos. https://www.hays.es/consejos-de-carrera/articulo/tips-para-redactar-una-buena-carta-de-presentacion · https://www.hays.es/consejos-de-carrera/articulo/debo-presentarme-a-un-trabajo-si-no-cumplo-todos-los-requisitos
+9. Adecco España, «Cómo usar la IA para que tu carta de presentación suene natural» (2026). https://www.adecco.com/es-es/encuentra-trabajo/orientacion-laboral/carta-de-presentacion
+10. Harvard FAS, Mignone Center for Career Success: guía del CV (Cover Letter Tips) y «AI for Resumes and Cover Letters». https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/ · https://careerservices.fas.harvard.edu/ai-resumes-and-cover-letters/
+11. MIT CAPD, «How to write an effective cover letter». https://capd.mit.edu/resources/how-to-write-an-effective-cover-letter/
+12. Yale SOM, «Your Cover Letter» (2022). https://som.yale.edu/sites/default/files/2022-01/Your%20Cover%20Letter%20Guide.pdf
+13. Indeed Career Guide, «How to Write a Cover Letter» (2026). https://www.indeed.com/career-advice/resumes-cover-letters/how-to-write-a-cover-letter
+14. Purdue OWL, «Quick Content Tips for Cover Letters». https://owl.purdue.edu/owl/job_search_writing/job_search_letters/cover_letters_1_quick_tips/quick_content_tips.html
+15. Harvard Business Review, «Cover Letters Still Matter. Write One That Works.» (2025; solo la parte abierta). https://hbr.org/tip/2025/04/cover-letters-still-matter-write-one-that-works
 
 ## Fuera de alcance
 - Marca de «generado con IA» en el PDF (F9-D7): espera a la asesoría legal (DEP-04).
@@ -94,6 +178,7 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
   SuccessFactors lee todo bien; Workday falla en las fechas con los dos y mete las certificaciones en formación;
   Greenhouse y Teamtailor no rellenan solos.
 - Tú o usted como ajuste en «Configuración» (F2-D8): `docs/mejoras-futuras.md`.
-- Separar tareas y logros en el perfil (D-040). Pedir cifras y alcance: entrevista, paso 6 (F2-D7).
+- Separar tareas y logros en el perfil (D-040). Preguntar cifras y alcance en una entrevista: paso 6 (F2-D7); aquí,
+  solo las ideas del aviso «Sin cifras» (D-054).
 - Volver a leer con IA tras editar (S9). Citar por número de línea (S2).
 - CV para otros países (F2, apartado 5).

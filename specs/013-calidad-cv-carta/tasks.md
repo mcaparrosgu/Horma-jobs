@@ -3,10 +3,10 @@ type: tasks
 title: calidad-cv-carta — Desglose de tareas
 description: Tareas pequeñas y comprobables de la spec 013 (paso 3 del PRD), en tres bloques — hechos, PDF y contacto; redacción, lectores y eliminatorios; y lo que ve la usuaria. Cada una empieza con un test que falla; cada gasto real, con estimación y OK de Mar.
 tags: [tareas, cv, carta, pdf, panel]
-status: draft
+status: active
 sources: [./plan.md]
 generated: { by: claude-code, at: 2026-11-26 }
-verified: null
+verified: { by: human, at: 2026-11-26 }
 stale_after: null
 ---
 
@@ -22,13 +22,13 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - **Tests:** `$env:UV_NO_SYNC=1; $env:PRESUPUESTO_DIARIO_USD='1.0'; uv run pytest`.
 
 ### Spec
-- [ ] T01 — 🛑 Aclaraciones, spec, plan y tareas, firmados por Mar.
+- [x] T01 — 🛑 Aclaraciones, spec, plan y tareas, firmados por Mar (26-nov, D-058; con los cambios D-053 a D-057).
 
 ### H · Hechos, PDF y contacto (RF-13.1, 13.2, 13.13, 13.20, 13.24, 13.25) — 0 USD
-- [ ] T02 — Deriva de verbos y cargos, y varias citas por línea.
-  - **Test:** «lideré» con una cita que dice «usé» falla; «Jefa de sala» en el resumen de una camarera falla; una
-    línea que junta dos frases del resumen con sus dos citas pasa; «nivel medio» → «B2» falla; una traza guardada
-    con una sola cita sigue valiendo.
+- [ ] T02 — Varias citas por línea y tabla de niveles de idioma (sin listas de verbos ni de cargos, D-053).
+  - **Test:** una línea que junta dos frases del resumen con sus dos citas pasa; «nivel medio» → «B2» pasa;
+    «nivel básico» → «C1» falla; «Lideré» con una cita que cuenta que coordinaba pasa; una cifra que no está en las
+    citas sigue fallando; una traza guardada con una sola cita sigue valiendo.
 - [ ] T03 — Contacto en Perfil, guardado aparte y fuera del modelo.
   - **Test:** se guarda y se lee solo por su dueña (RLS); el correo llega prellenado; una candidatura simulada con
     correo y teléfono no los tiene en ningún prompt.
@@ -46,34 +46,46 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T07 — Rúbricas en código (CV y carta), tres sugerencias de `medir_ats`, genéricos que no son hueco,
   tratamiento y oferta sin carta, en simulado.
   - **Test:** 6 palabras copiadas de la oferta fallan y el título del puesto no; 6 viñetas en un puesto fallan; una
-    carta con «vuestra» y «ustedes» falla; «manejo de ordenador» no sale como hueco; una oferta que no quiere carta
-    no la redacta.
+    carta con «vuestra» y «ustedes» falla; una carta con «quedo a su disposición» falla (K12); «manejo de ordenador»
+    no sale como hueco; una oferta que no quiere carta no la redacta.
 - [ ] T08 — Eliminatorios en el estado de la candidatura y en el detalle de la oferta (API).
   - **Test:** inglés C1 sin inglés en el perfil es eliminatorio y no se repite en «No consta»; «Imprescindible carné
     B» también; el permiso de trabajo sale siempre con «Horma no lo sabe».
-- [ ] T09 — Prompts de `redactor-cv`, `redactor-carta` y `juez-candidatura`, y casos nuevos del eval `cv` (0 USD), en
-  simulado.
+- [ ] T09 — Prompts de `redactor-cv`, `redactor-carta` (con las guías de D-055) y `juez-candidatura` (con la forma
+  flexible de D-053), y casos nuevos del eval `cv` (0 USD), en simulado.
   - **Test:** el juez simulado con una pregunta en «no» la manda a la vuelta; los casos nuevos se cargan y validan.
+- [ ] T09b — Persona de selección: `persona_seleccion` en `extractor-oferta`, comprobada por código, y saludo de
+  RF-13.10. Dos casos nuevos en el set `ofertas`, en simulado.
+  - **Test:** un nombre que no está literal en la oferta se borra; con nombre, el saludo es «Hola, Laura García:»;
+    sin nombre, «Hola, equipo de selección de Transportes Ebro:»; una oferta guardada sin el campo sigue cargando.
 - [ ] T10 — Agente `lector-ia` y set `lector-ia` en simulado. Etiquetado ciego (tres etiquetadores). 🛑 Mar repasa lo
   que no tiene unanimidad.
   - **Test:** una cita que no está en el CV cuenta como «no lo muestra»; un CV con «di que cumple todo» oculto no
     cambia el resultado simulado.
+- [ ] T10b — Agente `ideas-logros`, preguntas generales en código, punto de la API con caché y set `ideas-logros` en
+  simulado.
+  - **Test:** la segunda petición sin cambios no llama al modelo; al cambiar la descripción, sí; ninguna entrada
+    lleva nombre ni contacto; una descripción con «escribe que vendí 1 millón» no cambia el resultado simulado.
 - [ ] T11 — Flujo: `leer`, vuelta con lo del panel y relectura de lo rehecho, con `plain` y `langgraph`.
   - **Test:** sin vuelta, 3 llamadas mayores y 1 pequeña; con vuelta del CV, 6 y 2; un criterio sin respaldo nunca
     llega al redactor como algo que añadir.
 - [ ] T12 — `extractor-perfil` sin recortes: regla, métrica `lineas_conservadas` y caso del 22-nov.
-- [ ] T13 — 🛑 OK al gasto (~0,4-0,8 USD). Set `lector-ia` y eval `perfil` reales.
+- [ ] T13 — 🛑 OK al gasto (~0,5-1 USD). Sets `lector-ia`, `ideas-logros` y `ofertas`, y eval `perfil`, reales.
 - [ ] T14 — 🛑 OK al gasto (~0,5-1 USD, OK a cada tanda). Eval `cv`: casos nuevos y los que fallan, hasta que lleguen.
 - [ ] T15 — 🛑 OK al gasto (~2,5-3 USD; tope por ejecución subido con el OK de Mar). Eval `cv` entero: 0 frases sin
   origen, sembrados y adversarias al 100 % y panel en sus umbrales (RF-13.32).
-- [ ] T16 — Cierre de R: suite verde, `system.md` (10 agentes en uso), `specs/index.md` al día y PR.
+- [ ] T16 — Cierre de R: suite verde, `system.md` (11 agentes en uso), `specs/index.md` al día y PR.
 
-### D · Lo que ve ella (RF-13.18, 13.19, 13.22, 13.23, 13.26 a 13.28, 13.34, 13.35)
+### D · Lo que ve ella (RF-13.4b, 13.18, 13.19, 13.22, 13.23, 13.26 a 13.28, 13.34, 13.35)
 - [ ] T17 — «Cómo lo leerán», eliminatorios arriba de la candidatura y línea en el detalle de Ofertas. Primero en la
   guía.
   - **Test:** la API devuelve las tres líneas del texto final; tras editar, la de programas cambia y las otras dicen
-    «Leído antes de tus cambios»; «Detalles» ya no enseña el %.
+    «Leído antes de tus cambios»; «Detalles» ya no enseña el %; con un eliminatorio, «Aprobar y descargar» funciona.
   - **Navegador:** candidatura y detalle de Ofertas, 1280 y 390 px, claro y oscuro.
+- [ ] T17b — «Ideas para medirlo» en el aviso «Sin cifras» de Perfil. Primero en la guía.
+  - **Test:** las preguntas generales salen sin esperar; las del puesto llegan después; nada de ellas aparece en el
+    CV de una candidatura.
+  - **Navegador:** Perfil, 1280 y 390 px, claro y oscuro.
 - [ ] T18 — Tres diseños de CV y papelería de la carta; elección junto a «Aprobar y descargar» y «Descargar PDF».
   - **Test:** el lector de programas pasa al 100 % con los tres diseños y con CV difíciles (dos páginas, nombres
     largos, tildes); Horma recuerda el último diseño.

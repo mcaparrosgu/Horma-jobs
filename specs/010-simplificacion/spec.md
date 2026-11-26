@@ -295,6 +295,7 @@ y E6.
 - **RF-10.14k** El aviso «Sin cifras» DEBERÁ tener un «Corregir» por experiencia, que abra directamente la caja
   de «Modificar» de ese puesto, y dar ejemplos de logros medibles sin ventas (mesas o cubiertos por servicio,
   aforo, caja diaria, personas formadas, temporadas repetidas, ascensos, idiomas con los que atendió).
+  *(Ampliado por la spec 013, RF-13.4b: «Ideas para medirlo», con preguntas generales y del puesto.)*
 
 **Cómo escribes**
 - **RF-10.14l** «Usas» y «Evitas» DEBERÁN verse como listas, un rasgo por viñeta. SI «Evitas» está vacío, DEBERÁ
