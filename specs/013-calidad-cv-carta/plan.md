@@ -13,8 +13,8 @@ stale_after: null
 # calidad-cv-carta — Plan
 
 Un agente nuevo (`lector-ia`, modelo pequeño), sin tablas nuevas y sin pantallas nuevas. Las rutas son las del
-26-nov: se comprueban antes de tocar. Se construye al cerrar el paso 2 (spec 012 fusionada) y con la prueba propia
-del PDF hecha (DEP-05).
+26-nov: se comprueban antes de tocar. Se construye al cerrar el paso 2 (spec 012 fusionada); la prueba propia del PDF
+(DEP-05) está hecha (26-nov).
 
 **Simple primero.** Descartado: tres agentes nuevos para el panel (F2-D1: el programa es código y la persona es el
 juez); el `matcher` como lector IA (solo lee un perfil y lo rehace el paso 2, D-041); un agente solo para la carta

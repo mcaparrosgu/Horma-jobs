@@ -90,8 +90,9 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
 ## Fuera de alcance
 - Marca de «generado con IA» en el PDF (F9-D7): espera a la asesoría legal (DEP-04).
 - Quitar el nombre antes del modelo: paso 4, spec 015 (F7-D7). El contacto nuevo nunca llega al modelo (D-039).
-- Formato de fecha MM-AAAA: no cambia hasta la prueba propia del PDF (DEP-05). Si la prueba dice otra cosa, se
-  anota como D-NNN y cambia esta spec antes de construir.
+- Formato de fecha MM-AAAA: no cambia. Prueba propia del PDF (DEP-05, 26-nov): guion y barra dan lo mismo.
+  SuccessFactors lee todo bien; Workday falla en las fechas con los dos y mete las certificaciones en formación;
+  Greenhouse y Teamtailor no rellenan solos.
 - Tú o usted como ajuste en «Configuración» (F2-D8): `docs/mejoras-futuras.md`.
 - Separar tareas y logros en el perfil (D-040). Pedir cifras y alcance: entrevista, paso 6 (F2-D7).
 - Volver a leer con IA tras editar (S9). Citar por número de línea (S2).

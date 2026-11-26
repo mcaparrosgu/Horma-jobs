@@ -194,7 +194,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Mensaje de Horma (F7-D1): [pendiente: lo decide Mar en este paso]. Propuesta: «CV y carta con cita, en
     español y para cualquier sector».
   - Marca de «generado con IA» en el PDF (F9-D7): [pendiente: solo si la asesoría legal confirma que obliga].
-  - Las fechas MM-AAAA no se tocan hasta la prueba propia del PDF (DEP-05).
+  - Las fechas MM-AAAA no cambian: en la prueba propia del PDF (DEP-05, 26-nov), guion y barra dieron lo mismo.
 - **Puerta de salida:** eval `cv` con 0 frases sin origen (NFR-01); el PDF, comprobado en el 100 % de las
   candidaturas; eval `perfil` en su umbral; panel de lectores: programas 100 %, IA ≥ 0,90 y persona ≥ 0,90
   (D-042; spec 013, RF-13.32).
@@ -486,7 +486,7 @@ Entrar en alcance desde 7.2 o 7.3 exige cambiar este PRD.
 - DEP-03: evaluación de impacto en Gestiona RGPD (Mar); desbloquea los pasos 9 y 10.
 - DEP-04: asesoría legal (agente de abogacía, por crear); cierra la casilla de privacidad, la marca de
   «generado con IA» y el modo real.
-- DEP-05: prueba propia del PDF en cuatro formularios reales (Mar, 30 min); desbloquea el paso 3.
+- DEP-05: prueba propia del PDF en cuatro formularios reales (Mar, 30 min): hecha (26-nov); ya no frena el paso 3.
 - DEP-06: dominio y correo entrante (Mar, ~10-15 € al año); desbloquea RF-005 y da la dirección de contacto del `User-Agent` del ingestor (RT-15).
 - DEP-07: condiciones de uso del primer portal real, leídas (Teamtailor o Personio); desbloquean el paso 10.
 - DEP-08: el profesor revisa el RGPD y este PRD.

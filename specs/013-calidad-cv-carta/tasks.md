@@ -15,8 +15,8 @@ stale_after: null
 El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 
 ## Forma de trabajo
-- **Antes de empezar:** paso 2 cerrado (spec 012 fusionada) y prueba propia del PDF hecha (DEP-05). Si la prueba
-  cambia el formato de fecha, se anota como D-NNN y cambia esta spec antes del código.
+- **Antes de empezar:** paso 2 cerrado (spec 012 fusionada). La prueba propia del PDF (DEP-05) está hecha
+  (26-nov): el formato de fecha no cambia.
 - **Ramas:** `calidad-h`, `calidad-r` y `calidad-d`, un PR cada una y en ese orden.
 - **Gasto:** solo en las tareas con 🛑 de gasto. Estimación antes y OK de Mar ([plan](./plan.md), Costes).
 - **Tests:** `$env:UV_NO_SYNC=1; $env:PRESUPUESTO_DIARIO_USD='1.0'; uv run pytest`.

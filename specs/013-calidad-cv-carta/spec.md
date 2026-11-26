@@ -180,4 +180,5 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
 - **Más reglas de código, más vueltas:** cada vuelta cuesta 0,04-0,06 USD. Lo que no es mecánico va como sugerencia,
   no como error (S3); si el eval enseña muchas vueltas por una regla, esa regla baja a sugerencia.
 - **Un lector IA que se equivoca** desinforma: por eso cita y el código comprueba la cita, y tiene su propio set.
-- **El formato de fecha** puede cambiar con la prueba propia del PDF (DEP-05): se hace antes de construir.
+- **Workday no lee bien las fechas** (prueba propia del PDF, DEP-05, 26-nov): falla igual con guion que con barra,
+  así que MM-AAAA no cambia. La causa no está medida.
