@@ -116,3 +116,5 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 ### Cambios pequeños
 - [x] 390 px: botones de la portada a todo el ancho, sin «Calificar todas» cuando no hay CV, y `tests/capturas.js` para
   comprobar pantallas. Test: `tests/test_s12_portada_movil_calificar.py`.
+- [x] `/favicon.ico` con el cuadrado de la marca. Test: `tests/test_s12_favicon.py`.
+- [x] Iconos de la app instalable (192, 512 y maskable) con el cuadrado de la marca sobre fondo oscuro.
