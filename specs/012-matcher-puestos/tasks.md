@@ -48,7 +48,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
     guarda «Camarera»; con género femenino se ve «Camarera» y sin género «Camarero/a»; cambiar el nombre o
     `genero_puestos` no cambia `huella_clasificacion` y añadir una certificación sí; cambiar `genero_puestos`
     reescribe los títulos sin llamar al modelo.
-- [ ] T25 — Pares irregulares en `variantes_genero` y `canonico` (RF-12.30i).
+- [x] T25 — Pares irregulares en `variantes_genero` y `canonico` (RF-12.30i).
   - **Test:** «Gobernanta» casa con «Gobernante/a de pisos»; «Actor» con «Actriz»;
     `canonico("Asistenta") != canonico("Asistente")`.
 - T26 — Retirada (D-048): los modelos de Horma no admiten `temperature`.

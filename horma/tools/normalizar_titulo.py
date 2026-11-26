@@ -17,11 +17,22 @@ def _singular(palabra: str) -> str:
 
 
 _MARCA_GENERO = re.compile(
-    r"(?<=[^\W\d_])(?:\s*/\s*(?:as|os|a|o)(?![^\W\d_])|"
+    r"(?<=[^\W\d_])(?:\s*/\s*(?:actriz|waitress|as|os|a|o)(?![^\W\d_])|"
     r"\((?:as|os|a|o)\))", re.IGNORECASE)
 
 
+# Pares del léxico que las reglas no sacan (RF-12.30i), ya normalizados: masculino → femenino.
+_FEMENINO = {"actor": "actriz", "waiter": "waitress", "gobernante": "gobernanta", "juez": "jueza",
+             "matron": "matrona", "aprendiz": "aprendiza"}
+_MASCULINO = {f: m for m, f in _FEMENINO.items()}
+_SOLAS = {"asistente", "asistenta"}  # oficios distintos: una no es el femenino de la otra
+
+
 def _a_femenino(p: str) -> str | None:
+    if p in _FEMENINO:
+        return _FEMENINO[p]
+    if p in _SOLAS or p in _MASCULINO:
+        return None
     if p == "jefe":
         return "jefa"
     if len(p) > 4 and p.endswith("ente"):
@@ -34,6 +45,10 @@ def _a_femenino(p: str) -> str | None:
 
 
 def _a_masculino(p: str) -> str | None:
+    if p in _MASCULINO:
+        return _MASCULINO[p]
+    if p in _SOLAS or p in _FEMENINO:
+        return None
     if p == "jefa":
         return "jefe"
     if len(p) > 5 and p.endswith("enta"):
