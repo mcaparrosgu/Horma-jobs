@@ -1,12 +1,14 @@
 // Capturas de las pantallas a 390 y 1280 px, en claro y en oscuro (RF-6.4b), contra la Horma local.
 // Uso: node tests/capturas.js [carpeta]   (antes: docker compose up -d --build)
-// Entra con una cuenta vacía de prueba y la borra al terminar. Solo en local: no gasta API.
+// Levanta una copia temporal de la API en el puerto 8010 con una cuenta de prueba (también admin), la llena
+// con datos inventados y lo borra todo al terminar. Solo deja pasar peticiones GET: no encola ni gasta API.
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-const BASE = 'http://localhost:8000';
+const BASE = 'http://localhost:8010';
+const COPIA = 'horma-capturas';
 const salida = process.argv[2] || path.join(os.tmpdir(), 'horma-capturas');
 
 function playwright() {
@@ -20,38 +22,58 @@ function playwright() {
   throw new Error('Falta Playwright: ejecuta una vez «npx playwright --version»');
 }
 
-const compose = (args, input) => execFileSync('docker', ['compose', 'exec', '-T', ...args], { input, encoding: 'utf8' }).trim();
+const docker = (args, input) => execFileSync('docker', args, { input, encoding: 'utf8' }).trim();
+const pulsar = (selector) => async (p) => { await p.locator(selector).first().click(); await p.waitForTimeout(800); };
 
-const SESION = `
-import base64, json, os
-from itsdangerous import TimestampSigner
-from sqlalchemy import create_engine, text
-from horma.web.db import sesion_sin_usuaria
-with sesion_sin_usuaria(create_engine(os.environ["DATABASE_URL"])) as s:
-    u = s.execute(text("select obtener_o_crear_usuaria('prueba-capturas')")).scalar_one()
-d = base64.b64encode(json.dumps({"usuaria_id": u, "sub": "prueba-capturas", "csrf": "prueba"}).encode())
-print(u, TimestampSigner(os.environ["SESSION_SECRET"]).sign(d).decode())
-`;
+const pantallas = (candidatura) => [
+  ['portada', '/', { anonima: true }],
+  ['perfil', '/perfil'],
+  ['perfil-ver-cv', '/perfil', { accion: pulsar('#cvs-subidos button:has-text("Ver")'), ventana: true }],
+  ['ofertas', '/ofertas'],
+  ['ofertas-que-buscas', '/ofertas', { accion: pulsar('#que-buscas > summary') }],
+  ['ofertas-anadir', '/ofertas', { accion: pulsar('#abrir-anadir'), ventana: true }],
+  ['candidaturas', '/candidaturas'],
+  ['candidatura', `/candidaturas/${candidatura}`],
+  ['admin-ingesta', '/ingesta'],
+  ['admin-catalogo', '/catalogo'],
+  ['admin-costes', '/costes'],
+  ['admin-envios', '/envios'],
+];
 
 (async () => {
   const { chromium } = playwright();
   fs.mkdirSync(salida, { recursive: true });
-  const [id, cookie] = compose(['api', 'python', '-'], SESION).split(' ');
-  let navegador;
+  let navegador, id, fichero;
   try {
+    docker(['compose', 'run', '-d', '--rm', '--no-deps', '--name', COPIA, '-p', '127.0.0.1:8010:8000',
+      '-e', 'HORMA_ADMINS=prueba-capturas', 'api']);
+    const [uid, cookie, candidatura, pdf] = docker(['exec', '-i', COPIA, 'python', '-'],
+      fs.readFileSync(path.join(__dirname, 'capturas_datos.py'), 'utf8')).split(' ');
+    id = uid;
+    fichero = pdf;
+    for (let i = 0; i < 40; i++) {
+      try { if ((await fetch(BASE + '/salud')).ok) break; } catch {}
+      await new Promise((r) => setTimeout(r, 500));
+    }
     navegador = await chromium.launch({ channel: 'chrome' });
     for (const ancho of [390, 1280]) {
       for (const tema of ['light', 'dark']) {
-        for (const ruta of ['portada', '/perfil', '/ofertas', '/candidaturas']) {
+        for (const [nombre, ruta, { anonima, accion, ventana } = {}] of pantallas(candidatura)) {
           const ctx = await navegador.newContext({ viewport: { width: ancho, height: 844 }, colorScheme: tema,
-            isMobile: ancho < 900, hasTouch: ancho < 900 });
-          if (ruta !== 'portada') await ctx.addCookies([{ name: 'horma_sesion', value: cookie, url: BASE }]);
+            isMobile: ancho < 900, hasTouch: ancho < 900, serviceWorkers: 'block' });
+          await ctx.route('**/*', (r) => (r.request().method() === 'GET' ? r.continue() : r.abort()));
+          if (!anonima) await ctx.addCookies([{ name: 'horma_sesion', value: cookie, url: BASE }]);
           const p = await ctx.newPage();
-          await p.goto(BASE + (ruta === 'portada' ? '/' : ruta), { waitUntil: 'networkidle' });
-          const total = await p.evaluate(() => document.documentElement.scrollWidth);
-          const nombre = `${ruta.replace('/', '')}-${ancho}-${tema}.png`;
-          await p.screenshot({ path: path.join(salida, nombre), fullPage: true });
-          console.log(total > ancho ? `DESBORDA (${total} px)` : 'ok', nombre);
+          const archivo = `${nombre}-${ancho}-${tema}.png`;
+          try {
+            await p.goto(BASE + ruta, { waitUntil: 'networkidle' });
+            if (accion) await accion(p);
+            const total = await p.evaluate(() => document.documentElement.scrollWidth);
+            await p.screenshot({ path: path.join(salida, archivo), fullPage: !ventana });
+            console.log(total > ancho ? `DESBORDA (${total} px)` : 'ok', archivo);
+          } catch (e) {
+            console.log('FALLA', archivo, e.message.split('\n')[0]);
+          }
           await ctx.close();
         }
       }
@@ -59,8 +81,12 @@ print(u, TimestampSigner(os.environ["SESSION_SECRET"]).sign(d).decode())
   } finally {
     if (navegador) await navegador.close();
     if (/^\d+$/.test(id)) {
-      compose(['postgres', 'sh', '-c', `psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "delete from usuarias where id=${id}"`]);
+      docker(['exec', COPIA, 'rm', '-f', fichero]);
+      docker(['compose', 'exec', '-T', 'postgres', 'sh', '-c',
+        'psql -v ON_ERROR_STOP=1 -q -U "$POSTGRES_USER" -d "$POSTGRES_DB"'],
+        fs.readFileSync(path.join(__dirname, 'capturas_borrar.sql'), 'utf8'));
     }
+    try { docker(['rm', '-f', COPIA]); } catch {}
   }
   console.log(salida);
 })();

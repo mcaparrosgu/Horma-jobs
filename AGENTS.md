@@ -65,7 +65,8 @@ están en `specs/system.md`.
   en oscuro, mirando expresamente alineación y simetría. Si no se ha podido comprobar, se dice.
 - El agente hace esa comprobación: `docker compose up -d --build` y `node tests/capturas.js` (Playwright con el
   Chrome instalado; la extensión de Chrome no baja a 390 px). Mira las imágenes, no solo el «ok». Cubre las
-  pantallas sin datos; las que necesitan datos o clics, se amplían en el script o se declaran sin comprobar.
+  pantallas de usuaria y de admin con datos inventados (`tests/capturas_datos.py`) y algunas ventanas; lo que
+  falte se añade al script o se declara sin comprobar.
 
 ## Flujo de trabajo
 Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementación (TDD) → Validación → Cambio

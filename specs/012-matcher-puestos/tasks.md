@@ -117,4 +117,8 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] 390 px: botones de la portada a todo el ancho, sin «Calificar todas» cuando no hay CV, y `tests/capturas.js` para
   comprobar pantallas. Test: `tests/test_s12_portada_movil_calificar.py`.
 - [x] `/favicon.ico` con el cuadrado de la marca. Test: `tests/test_s12_favicon.py`.
+- [x] «Ver» un PDF en el móvil: cada página como imagen (`pypdfium2`; prueba M19 de Mar). Test:
+  `tests/test_s12_visor_pdf_movil.py`.
+- [x] Simetría a 390 px: paneles de Perfil a todo el ancho, ventanas con «Cerrar» junto al título, filas de
+  botones en columnas iguales y sin la caja vacía en Candidatura. Test: `tests/test_s12_simetria_movil.py`.
 - [x] Iconos de la app instalable (192, 512 y maskable) con el cuadrado de la marca sobre fondo oscuro.

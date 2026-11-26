@@ -692,6 +692,22 @@ async function abrirVisor(c) {
     $("visor").showModal();
     return;
   }
+  // El móvil no pinta un PDF dentro de la página (M19): cada página, como imagen.
+  if (c.tipo === "pdf" && (window.matchMedia("(max-width: 900px)").matches || navigator.pdfViewerEnabled === false)) {
+    const r = await api(`/api/cv/${c.id}/paginas`);
+    if (!r.ok) return avisar(r.motivo, true);
+    const hojas = Array.from({ length: r.datos.paginas }, (_, i) => {
+      const n = i + 1;
+      const img = nodo("img", null, "visor-pagina");
+      img.src = `/api/cv/${c.id}/paginas/${n}`;
+      img.alt = `${c.nombre}, página ${n} de ${r.datos.paginas}`;
+      return img;
+    });
+    $("visor-titulo").textContent = c.nombre;
+    $("visor-cuerpo").replaceChildren(...hojas);
+    $("visor").showModal();
+    return;
+  }
   const marco = nodo("iframe", null, "visor-marco");
   marco.src = `/api/cv/${c.id}/ver`;
   marco.title = c.nombre;
