@@ -11,57 +11,74 @@
       {
         "titulo": "Técnico de climatización",
         "idioma": "es",
-        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
-      },
-      {
-        "titulo": "Instalador de climatización",
-        "idioma": "es",
-        "dato": "instalación de aire acondicionado"
-      },
-      {
-        "titulo": "Técnico instalador de aire acondicionado",
-        "idioma": "es",
-        "dato": "instalación de aire acondicionado"
-      },
-      {
-        "titulo": "Técnico frigorista",
-        "idioma": "es",
-        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
-      },
-      {
-        "titulo": "Técnico de instalaciones frigoríficas",
-        "idioma": "es",
-        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
-      },
-      {
-        "titulo": "Técnico de mantenimiento de climatización",
-        "idioma": "es",
-        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
+        "dato": "Técnico",
+        "relacion": "mismo"
       },
       {
         "titulo": "Técnico de aire acondicionado",
         "idioma": "es",
-        "dato": "Técnico"
+        "dato": "Técnico",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Técnico instalador de climatización",
+        "idioma": "es",
+        "dato": "Técnico",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Técnico de instalaciones de climatización",
+        "idioma": "es",
+        "dato": "Técnico",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Instalador de aire acondicionado",
+        "idioma": "es",
+        "dato": "Técnico",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico de mantenimiento de climatización",
+        "idioma": "es",
+        "dato": "Técnico",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico de mantenimiento de instalaciones térmicas",
+        "idioma": "es",
+        "dato": "Técnico",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico frigorista",
+        "idioma": "es",
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico en climatización y refrigeración",
+        "idioma": "es",
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización",
+        "relacion": "afin"
       },
       {
         "titulo": "HVAC Technician",
         "idioma": "en",
-        "dato": "instalación de aire acondicionado"
-      },
-      {
-        "titulo": "Air Conditioning Technician",
-        "idioma": "en",
-        "dato": "instalación de aire acondicionado"
+        "dato": "Técnico",
+        "relacion": "mismo"
       },
       {
         "titulo": "HVAC Installer",
         "idioma": "en",
-        "dato": "instalación de aire acondicionado"
+        "dato": "Técnico",
+        "relacion": "afin"
       },
       {
         "titulo": "Refrigeration Technician",
         "idioma": "en",
-        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización"
+        "dato": "Técnico en Instalaciones Frigoríficas y de Climatización",
+        "relacion": "afin"
       }
     ]
   }

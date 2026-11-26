@@ -4,64 +4,81 @@
     "familia": "hosteleria_restauracion",
     "nivel": "intermedio",
     "stack": [
-      "códigos qr",
-      "carnet de conducir b"
+      "carnet de conducir b",
+      "códigos qr"
     ],
     "puestos": [
       {
-        "titulo": "Camarero/a",
+        "titulo": "Camarera",
         "idioma": "es",
-        "dato": "Camarera"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Camarero/a de sala",
+        "titulo": "Camarero",
         "idioma": "es",
-        "dato": "Camarera"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Ayudante de camarero/a",
+        "titulo": "Camarero de sala",
         "idioma": "es",
-        "dato": "Camarera"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Runner de sala",
+        "titulo": "Camarero de barra",
         "idioma": "es",
-        "dato": "Camarera"
-      },
-      {
-        "titulo": "Ayudante de cocina",
-        "idioma": "es",
-        "dato": "Manipulador de alimentos"
-      },
-      {
-        "titulo": "Auxiliar de cocina",
-        "idioma": "es",
-        "dato": "Manipulador de alimentos"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Waiter",
         "idioma": "en",
-        "dato": "Camarera"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Waitress",
         "idioma": "en",
-        "dato": "Camarera"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Server",
-        "idioma": "en",
-        "dato": "Camarera"
+        "titulo": "Ayudante de camarero",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "afin"
       },
       {
-        "titulo": "Food and Beverage Attendant",
-        "idioma": "en",
-        "dato": "Camarera"
+        "titulo": "Runner de restaurante",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "afin"
       },
       {
-        "titulo": "Kitchen Assistant",
+        "titulo": "Auxiliar de cafetería",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Barista",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Camarero de catering",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Food Runner",
         "idioma": "en",
-        "dato": "Manipulador de alimentos"
+        "dato": "Camarera",
+        "relacion": "afin"
       }
     ]
   }

@@ -33,7 +33,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** «Controller financiero» citando «Excel» queda fuera; el puesto entero de una experiencia da nivel 1;
     una titulación da nivel 2; «Senior …» no sale para un perfil junior; «Manager» no casa con una oferta de
     otra familia y sí con una sin familia.
-- [ ] T06 — `relacion` en el clasificador. 🛑 OK al gasto (~0,4-0,7 USD): segunda pasada del set y eval `perfil`.
+- [x] T06 — `relacion` en el clasificador. 🛑 OK al gasto (~0,4-0,7 USD): segunda pasada del set y eval `perfil`
+  (26-nov: 0,44 USD; `perfil` aprobado al 100 %; ajenos 0, marcados 0,98, no marcados 0,99, cobertura 0,94,
+  equidad 0; 126 puestos nuevos por etiquetar).
 - [ ] T07 — Set de títulos de 9a: ~50 pares de sinónimos. 🛑 Mar firma los pares dudosos. Se vuelve a medir
   RF-9.3e; SI la cobertura baja de 0,90, 🛑 se para y se propone la prueba de embeddings (F4-D6).
 - [ ] T08 — «Qué buscas»: nivel 1 marcado, nivel 2 sin marcar con su porqué y junior sin experiencia (RF-12.7).

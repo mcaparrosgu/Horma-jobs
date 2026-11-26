@@ -2,63 +2,68 @@
   "base": {
     "sector": "comercio_retail",
     "familia": "ventas_comercial",
-    "nivel": "intermedio",
+    "nivel": "junior",
     "stack": [],
     "puestos": [
       {
         "titulo": "Dependiente",
         "idioma": "es",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
         "titulo": "Dependiente de comercio",
         "idioma": "es",
-        "dato": "Dependiente"
-      },
-      {
-        "titulo": "Vendedor/a",
-        "idioma": "es",
-        "dato": "Dependiente"
-      },
-      {
-        "titulo": "Asesor/a de ventas",
-        "idioma": "es",
-        "dato": "Dependiente"
-      },
-      {
-        "titulo": "Auxiliar de tienda",
-        "idioma": "es",
-        "dato": "Dependiente"
-      },
-      {
-        "titulo": "Reponedor/a",
-        "idioma": "es",
-        "dato": "Dependiente en Hipermercado Costa"
-      },
-      {
-        "titulo": "Promotor/a de ventas",
-        "idioma": "es",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
         "titulo": "Sales Assistant",
         "idioma": "en",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Shop Assistant",
+        "idioma": "en",
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
         "titulo": "Retail Sales Associate",
         "idioma": "en",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Store Assistant",
-        "idioma": "en",
-        "dato": "Dependiente"
+        "titulo": "Vendedor",
+        "idioma": "es",
+        "dato": "Dependiente",
+        "relacion": "afin"
       },
       {
-        "titulo": "Sales Advisor",
+        "titulo": "Asesor de ventas",
+        "idioma": "es",
+        "dato": "Dependiente",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reponedor",
+        "idioma": "es",
+        "dato": "Dependiente",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cajero",
+        "idioma": "es",
+        "dato": "Dependiente",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cashier",
         "idioma": "en",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "afin"
       }
     ]
   }

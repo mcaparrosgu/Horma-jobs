@@ -8,62 +8,68 @@
       {
         "titulo": "Camarera",
         "idioma": "es",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
+        "dato": "Camarera",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Camarero de sala",
         "idioma": "es",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de bar",
+        "titulo": "Camarera de sala",
         "idioma": "es",
-        "dato": "Camarera en Bar Luna, Valencia, 2015-2018"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de hotel",
+        "titulo": "Camarero de barra",
         "idioma": "es",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
-      },
-      {
-        "titulo": "Ayudante de camarero",
-        "idioma": "es",
-        "dato": "Camarera en Bar Luna, Valencia, 2015-2018"
-      },
-      {
-        "titulo": "Auxiliar de sala",
-        "idioma": "es",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
-      },
-      {
-        "titulo": "Personal de sala",
-        "idioma": "es",
-        "dato": "Camarera en Bar Luna, Valencia, 2015-2018"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Camarero de restaurante",
         "idioma": "es",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Waiter",
         "idioma": "en",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Waitress",
         "idioma": "en",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Server",
+        "titulo": "Restaurant Server",
         "idioma": "en",
-        "dato": "Camarera en Bar Luna, Valencia, 2015-2018"
+        "dato": "Camarera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Restaurant server",
-        "idioma": "en",
-        "dato": "Camarera en Hotel Mar, 2021-2024"
+        "titulo": "Ayudante de camarero",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de sala",
+        "idioma": "es",
+        "dato": "Camarera",
+        "relacion": "afin"
       }
     ]
   }

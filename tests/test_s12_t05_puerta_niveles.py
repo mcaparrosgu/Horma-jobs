@@ -110,3 +110,26 @@ def test_el_filtro_sql_aplica_la_familia_solo_a_los_genericos(motor_migrador, bd
         ids = [f.id for f in c.execute(text(consulta.sql), consulta.parametros)]
         titulos = {r for (r,) in c.execute(text("select titulo from ofertas where id = any(:i)"), {"i": ids})}
     assert titulos == {"Manager de soporte", "Manager de tienda", "Camarera"}
+
+
+# --- T06: `relacion` (S1) solo baja de nivel ---------------------------------------------------
+def test_un_titulo_afin_a_un_puesto_que_tuvo_es_nivel_2_sin_marcar():
+    candidatos = [PuestoCandidato(titulo="Recepcionista", idioma="es", dato="Camarera", relacion="afin")]
+    (p,) = puestos_del_perfil(_perfil(), candidatos, "junior")
+    assert (p.nivel, p.tipo_dato, p.marcado) == (2, "puesto", False)
+
+
+def test_decir_mismo_no_sube_una_titulacion_a_nivel_1():
+    candidatos = [PuestoCandidato(titulo="Estadística", idioma="es", dato="Grado en Estadística",
+                                  relacion="mismo")]
+    assert puestos_del_perfil(_perfil(), candidatos, "junior")[0].nivel == 2
+
+
+def test_el_clasificador_pide_relacion_y_no_propone_desde_una_habilidad():
+    from pathlib import Path
+
+    prompt = (Path(__file__).parent.parent / "horma/agents/clasificador_postulante/prompt.md").read_text(
+        encoding="utf-8")
+    assert "`relacion`" in prompt and "«mismo»" in prompt and "«afin»" in prompt
+    assert "una habilidad no justifica" in prompt
+    assert "relacion" in PuestoCandidato.model_json_schema()["properties"]

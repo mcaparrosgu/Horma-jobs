@@ -6,59 +6,70 @@
     "stack": [],
     "puestos": [
       {
-        "titulo": "Administrativo/a",
+        "titulo": "Administrativa",
         "idioma": "es",
-        "dato": "Administrativa"
+        "dato": "Administrativa",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Auxiliar administrativo",
+        "titulo": "Administrativo",
         "idioma": "es",
-        "dato": "Administrativa"
-      },
-      {
-        "titulo": "Auxiliar de seguros",
-        "idioma": "es",
-        "dato": "Administrativa"
-      },
-      {
-        "titulo": "Asistente administrativo",
-        "idioma": "es",
-        "dato": "Administrativa"
+        "dato": "Administrativa",
+        "relacion": "mismo"
       },
       {
         "titulo": "Administrativo de seguros",
         "idioma": "es",
-        "dato": "Administrativa"
-      },
-      {
-        "titulo": "Back office de seguros",
-        "idioma": "es",
-        "dato": "Administrativa"
-      },
-      {
-        "titulo": "Analista administrativo",
-        "idioma": "es",
-        "dato": "Grado en Administración de Empresas"
+        "dato": "Administrativa",
+        "relacion": "mismo"
       },
       {
         "titulo": "Administrative Assistant",
         "idioma": "en",
-        "dato": "Administrativa"
+        "dato": "Administrativa",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Insurance Administrative Assistant",
+        "idioma": "en",
+        "dato": "Administrativa",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar administrativo",
+        "idioma": "es",
+        "dato": "Administrativa",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asistente administrativo",
+        "idioma": "es",
+        "dato": "Administrativa",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de seguros",
+        "idioma": "es",
+        "dato": "Administrativa",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Back Office Administrator",
+        "idioma": "en",
+        "dato": "Administrativa",
+        "relacion": "afin"
       },
       {
         "titulo": "Administrative Officer",
         "idioma": "en",
-        "dato": "Administrativa"
+        "dato": "Administrativa",
+        "relacion": "afin"
       },
       {
-        "titulo": "Office Administrator",
-        "idioma": "en",
-        "dato": "Administrativa"
-      },
-      {
-        "titulo": "Insurance Administrator",
-        "idioma": "en",
-        "dato": "Administrativa"
+        "titulo": "Administrativo de back office",
+        "idioma": "es",
+        "dato": "Administrativa",
+        "relacion": "afin"
       }
     ]
   }

@@ -10,67 +10,74 @@
       {
         "titulo": "Directora de Recursos Humanos",
         "idioma": "es",
-        "dato": "Directora de Recursos Humanos"
+        "dato": "Directora de Recursos Humanos",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Jefa de Recursos Humanos",
-        "idioma": "es",
-        "dato": "Directora de Recursos Humanos"
+        "titulo": "HR Director",
+        "idioma": "en",
+        "dato": "Directora de Recursos Humanos",
+        "relacion": "mismo"
       },
       {
         "titulo": "Responsable de Recursos Humanos",
         "idioma": "es",
-        "dato": "Directora de Recursos Humanos"
+        "dato": "Directora de Recursos Humanos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Responsable de Relaciones Laborales",
-        "idioma": "es",
-        "dato": "negociación colectiva"
-      },
-      {
-        "titulo": "Responsable de Selección",
-        "idioma": "es",
-        "dato": "Técnica de selección"
-      },
-      {
-        "titulo": "Técnica de selección",
-        "idioma": "es",
-        "dato": "Técnica de selección"
-      },
-      {
-        "titulo": "Psicóloga de recursos humanos",
-        "idioma": "es",
-        "dato": "Licenciatura en Psicología"
-      },
-      {
-        "titulo": "Human Resources Director",
+        "titulo": "HR Manager",
         "idioma": "en",
-        "dato": "Directora de Recursos Humanos"
-      },
-      {
-        "titulo": "Human Resources Manager",
-        "idioma": "en",
-        "dato": "Directora de Recursos Humanos"
+        "dato": "Directora de Recursos Humanos",
+        "relacion": "afin"
       },
       {
         "titulo": "HR Business Partner",
         "idioma": "en",
-        "dato": "Directora de Recursos Humanos"
+        "dato": "Directora de Recursos Humanos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Labor Relations Manager",
+        "titulo": "Head of HR",
         "idioma": "en",
-        "dato": "negociación colectiva"
+        "dato": "Directora de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnica de selección",
+        "idioma": "es",
+        "dato": "Técnica de selección",
+        "relacion": "mismo"
       },
       {
         "titulo": "Talent Acquisition Specialist",
         "idioma": "en",
-        "dato": "Técnica de selección"
+        "dato": "Técnica de selección",
+        "relacion": "mismo"
       },
       {
         "titulo": "Recruiter",
         "idioma": "en",
-        "dato": "Técnica de selección"
+        "dato": "Técnica de selección",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Reclutadora",
+        "idioma": "es",
+        "dato": "Técnica de selección",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de Selección",
+        "idioma": "es",
+        "dato": "Técnica de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Psicóloga de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Licenciatura en Psicología",
+        "relacion": "afin"
       }
     ]
   },
@@ -85,72 +92,80 @@
       {
         "titulo": "Director de Recursos Humanos",
         "idioma": "es",
-        "dato": "Director de Recursos Humanos"
+        "dato": "Director de Recursos Humanos",
+        "relacion": "mismo"
       },
       {
         "titulo": "Director de RRHH",
         "idioma": "es",
-        "dato": "Director de Recursos Humanos"
-      },
-      {
-        "titulo": "Responsable de Recursos Humanos",
-        "idioma": "es",
-        "dato": "Director de Recursos Humanos"
+        "dato": "Director de Recursos Humanos",
+        "relacion": "mismo"
       },
       {
         "titulo": "HR Director",
         "idioma": "en",
-        "dato": "Director de Recursos Humanos"
+        "dato": "Director de Recursos Humanos",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Head of Human Resources",
+        "titulo": "Human Resources Director",
         "idioma": "en",
-        "dato": "Director de Recursos Humanos"
+        "dato": "Director de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Técnico de selección",
+        "idioma": "es",
+        "dato": "Técnico de selección",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de selección",
+        "idioma": "es",
+        "dato": "Técnico de selección",
+        "relacion": "afin"
       },
       {
         "titulo": "HR Manager",
         "idioma": "en",
-        "dato": "Director de Recursos Humanos"
+        "dato": "Director de Recursos Humanos",
+        "relacion": "afin"
       },
       {
-        "titulo": "HR Business Partner",
+        "titulo": "Human Resources Manager",
         "idioma": "en",
-        "dato": "Director de Recursos Humanos"
+        "dato": "Director de Recursos Humanos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Responsable de relaciones laborales",
-        "idioma": "es",
-        "dato": "negociación colectiva"
-      },
-      {
-        "titulo": "Talent Acquisition Manager",
+        "titulo": "Talent Acquisition Specialist",
         "idioma": "en",
-        "dato": "Técnico de selección"
+        "dato": "Técnico de selección",
+        "relacion": "afin"
       },
       {
-        "titulo": "Responsable de talento",
+        "titulo": "Reclutador",
         "idioma": "es",
-        "dato": "Técnico de selección"
+        "dato": "Técnico de selección",
+        "relacion": "afin"
       },
       {
-        "titulo": "Consultor de recursos humanos",
-        "idioma": "es",
-        "dato": "Director de Recursos Humanos"
-      },
-      {
-        "titulo": "HRIS Specialist",
+        "titulo": "Recruiter",
         "idioma": "en",
-        "dato": "SAP SuccessFactors"
+        "dato": "Técnico de selección",
+        "relacion": "afin"
       },
       {
-        "titulo": "Organizational Psychologist",
-        "idioma": "en",
-        "dato": "Licenciatura en Psicología"
-      },
-      {
-        "titulo": "Psicólogo organizacional",
+        "titulo": "Psicólogo del trabajo",
         "idioma": "es",
-        "dato": "Licenciatura en Psicología"
+        "dato": "Licenciatura en Psicología",
+        "relacion": "afin"
       }
     ]
   }

@@ -4,69 +4,74 @@
     "familia": "logistica_transporte",
     "nivel": "intermedio",
     "stack": [
-      "carné c+e",
-      "cap en vigor"
+      "carné c+e"
     ],
     "puestos": [
       {
         "titulo": "Conductor de camión",
         "idioma": "es",
-        "dato": "Conductor de camión"
+        "dato": "Conductor de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camionero",
+        "idioma": "es",
+        "dato": "Conductor de camión",
+        "relacion": "mismo"
       },
       {
         "titulo": "Truck Driver",
         "idioma": "en",
-        "dato": "Conductor de camión"
-      },
-      {
-        "titulo": "Conductor profesional de transporte",
-        "idioma": "es",
-        "dato": "CAP en vigor"
-      },
-      {
-        "titulo": "Conductor de transporte de mercancías",
-        "idioma": "es",
-        "dato": "carné C+E"
-      },
-      {
-        "titulo": "HGV Driver",
-        "idioma": "en",
-        "dato": "carné C+E"
-      },
-      {
-        "titulo": "Logistics Driver",
-        "idioma": "en",
-        "dato": "Conductor de camión"
+        "dato": "Conductor de camión",
+        "relacion": "mismo"
       },
       {
         "titulo": "Repartidor",
         "idioma": "es",
-        "dato": "Repartidor"
-      },
-      {
-        "titulo": "Conductor de reparto",
-        "idioma": "es",
-        "dato": "Repartidor"
-      },
-      {
-        "titulo": "Mensajero",
-        "idioma": "es",
-        "dato": "Repartidor"
+        "dato": "Repartidor",
+        "relacion": "mismo"
       },
       {
         "titulo": "Delivery Driver",
         "idioma": "en",
-        "dato": "Repartidor"
+        "dato": "Repartidor",
+        "relacion": "mismo"
       },
       {
         "titulo": "Courier",
         "idioma": "en",
-        "dato": "Repartidor"
+        "dato": "Repartidor",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Conductor repartidor",
+        "idioma": "es",
+        "dato": "Repartidor",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor de reparto",
+        "idioma": "es",
+        "dato": "Repartidor",
+        "relacion": "afin"
       },
       {
         "titulo": "Conductor de distribución",
         "idioma": "es",
-        "dato": "Repartidor"
+        "dato": "Conductor de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor de tráiler",
+        "idioma": "es",
+        "dato": "Conductor de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "HGV Driver",
+        "idioma": "en",
+        "dato": "Conductor de camión",
+        "relacion": "afin"
       }
     ]
   },
@@ -75,73 +80,75 @@
     "familia": "logistica_transporte",
     "nivel": "intermedio",
     "stack": [
-      "carné c+e"
+      "carné c+e",
+      "cap en vigor"
     ],
     "puestos": [
       {
+        "titulo": "Conductora de camión",
+        "idioma": "es",
+        "dato": "Conductora de camión",
+        "relacion": "mismo"
+      },
+      {
         "titulo": "Conductor de camión",
         "idioma": "es",
-        "dato": "Conductora de camión"
-      },
-      {
-        "titulo": "Conductor de tráiler",
-        "idioma": "es",
-        "dato": "Conductora de camión"
-      },
-      {
-        "titulo": "Conductor de transporte de mercancías",
-        "idioma": "es",
-        "dato": "Conductora de camión en Transportes Levante"
-      },
-      {
-        "titulo": "Conductor profesional de mercancías",
-        "idioma": "es",
-        "dato": "CAP en vigor"
-      },
-      {
-        "titulo": "Conductor de camión C+E",
-        "idioma": "es",
-        "dato": "Carné C+E"
-      },
-      {
-        "titulo": "Conductor de reparto",
-        "idioma": "es",
-        "dato": "Repartidora"
-      },
-      {
-        "titulo": "Repartidor",
-        "idioma": "es",
-        "dato": "Repartidora"
-      },
-      {
-        "titulo": "Conductor de distribución",
-        "idioma": "es",
-        "dato": "Repartidora"
-      },
-      {
-        "titulo": "Mensajero",
-        "idioma": "es",
-        "dato": "Repartidora en Mensajería Rápida"
+        "dato": "Conductora de camión",
+        "relacion": "mismo"
       },
       {
         "titulo": "Truck Driver",
         "idioma": "en",
-        "dato": "Conductora de camión"
+        "dato": "Conductora de camión",
+        "relacion": "mismo"
       },
       {
-        "titulo": "HGV Driver",
-        "idioma": "en",
-        "dato": "Carné C+E"
+        "titulo": "Conductor de tráiler",
+        "idioma": "es",
+        "dato": "Conductora de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Repartidora",
+        "idioma": "es",
+        "dato": "Repartidora",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor",
+        "idioma": "es",
+        "dato": "Repartidora",
+        "relacion": "mismo"
       },
       {
         "titulo": "Delivery Driver",
         "idioma": "en",
-        "dato": "Repartidora"
+        "dato": "Repartidora",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Conductor de reparto",
+        "idioma": "es",
+        "dato": "Repartidora",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor de furgoneta",
+        "idioma": "es",
+        "dato": "Repartidora",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Mensajera",
+        "idioma": "es",
+        "dato": "Repartidora",
+        "relacion": "afin"
       },
       {
         "titulo": "Courier",
         "idioma": "en",
-        "dato": "Repartidora en Mensajería Rápida"
+        "dato": "Repartidora",
+        "relacion": "afin"
       }
     ]
   }

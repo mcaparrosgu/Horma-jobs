@@ -2,7 +2,7 @@
   "base": {
     "sector": "servicios_profesionales",
     "familia": "administracion_oficina",
-    "nivel": "junior",
+    "nivel": "intermedio",
     "stack": [
       "excel avanzado"
     ],
@@ -10,52 +10,62 @@
       {
         "titulo": "Auxiliar administrativo",
         "idioma": "es",
-        "dato": "Auxiliar administrativo"
+        "dato": "Auxiliar administrativo",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Administrativo",
+        "titulo": "Auxiliar administrativa",
         "idioma": "es",
-        "dato": "Auxiliar administrativo"
-      },
-      {
-        "titulo": "Auxiliar de oficina",
-        "idioma": "es",
-        "dato": "Auxiliar administrativo"
-      },
-      {
-        "titulo": "Asistente administrativo",
-        "idioma": "es",
-        "dato": "Auxiliar administrativo"
-      },
-      {
-        "titulo": "Auxiliar contable",
-        "idioma": "es",
-        "dato": "Auxiliar administrativo"
-      },
-      {
-        "titulo": "Operador de introducción de datos",
-        "idioma": "es",
-        "dato": "Excel avanzado"
+        "dato": "Auxiliar administrativo",
+        "relacion": "mismo"
       },
       {
         "titulo": "Administrative Assistant",
         "idioma": "en",
-        "dato": "Auxiliar administrativo"
-      },
-      {
-        "titulo": "Office Assistant",
-        "idioma": "en",
-        "dato": "Auxiliar administrativo"
+        "dato": "Auxiliar administrativo",
+        "relacion": "mismo"
       },
       {
         "titulo": "Administrative Clerk",
         "idioma": "en",
-        "dato": "Auxiliar administrativo"
+        "dato": "Auxiliar administrativo",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Data Entry Clerk",
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asistente administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrativo",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Office Assistant",
         "idioma": "en",
-        "dato": "Excel avanzado"
+        "dato": "Excel avanzado",
+        "relacion": "afin"
       }
     ]
   }

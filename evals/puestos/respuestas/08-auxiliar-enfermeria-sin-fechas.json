@@ -8,57 +8,62 @@
       {
         "titulo": "Auxiliar de enfermería",
         "idioma": "es",
-        "dato": "Auxiliar de enfermería"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Técnico en Cuidados Auxiliares de Enfermería",
-        "idioma": "es",
-        "dato": "Técnico en Cuidados Auxiliares de Enfermería"
+        "titulo": "Nursing Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Auxiliar sanitario",
+        "titulo": "Nursing Aide",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Técnico en cuidados auxiliares de enfermería",
         "idioma": "es",
-        "dato": "Auxiliar de enfermería"
+        "dato": "Técnico en Cuidados Auxiliares de Enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de geriatría",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Gerocultor",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cuidador de personas mayores",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
       },
       {
         "titulo": "Auxiliar de clínica",
         "idioma": "es",
-        "dato": "Auxiliar de enfermería"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Healthcare Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
       },
       {
         "titulo": "Auxiliar de residencia",
         "idioma": "es",
-        "dato": "Auxiliar de enfermería en Residencia Los Olmos"
-      },
-      {
-        "titulo": "Gerocultor/a",
-        "idioma": "es",
-        "dato": "Auxiliar de enfermería en Residencia Los Olmos"
-      },
-      {
-        "titulo": "Cuidador de personas dependientes",
-        "idioma": "es",
-        "dato": "Auxiliar de enfermería"
-      },
-      {
-        "titulo": "Auxiliar de ayuda a domicilio",
-        "idioma": "es",
-        "dato": "Auxiliar de enfermería"
-      },
-      {
-        "titulo": "Nursing assistant",
-        "idioma": "en",
-        "dato": "Auxiliar de enfermería"
-      },
-      {
-        "titulo": "Healthcare assistant",
-        "idioma": "en",
-        "dato": "Auxiliar de enfermería"
-      },
-      {
-        "titulo": "Certified nursing assistant",
-        "idioma": "en",
-        "dato": "Técnico en Cuidados Auxiliares de Enfermería"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
       }
     ]
   }

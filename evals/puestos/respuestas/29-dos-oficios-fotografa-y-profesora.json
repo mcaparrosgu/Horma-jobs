@@ -11,67 +11,74 @@
       {
         "titulo": "Fotógrafa freelance",
         "idioma": "es",
-        "dato": "Fotógrafa freelance"
+        "dato": "Fotógrafa freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Fotógrafo freelance",
+        "idioma": "es",
+        "dato": "Fotógrafa freelance",
+        "relacion": "mismo"
       },
       {
         "titulo": "Freelance Photographer",
         "idioma": "en",
-        "dato": "Fotógrafa freelance"
-      },
-      {
-        "titulo": "Fotógrafa",
-        "idioma": "es",
-        "dato": "Fotógrafa freelance"
-      },
-      {
-        "titulo": "Photographer",
-        "idioma": "en",
-        "dato": "Fotógrafa freelance"
-      },
-      {
-        "titulo": "Editora de fotografía",
-        "idioma": "es",
-        "dato": "Photoshop"
-      },
-      {
-        "titulo": "Photo Editor",
-        "idioma": "en",
-        "dato": "Lightroom"
-      },
-      {
-        "titulo": "Retoucher",
-        "idioma": "en",
-        "dato": "Photoshop"
+        "dato": "Fotógrafa freelance",
+        "relacion": "mismo"
       },
       {
         "titulo": "Profesora de inglés",
         "idioma": "es",
-        "dato": "Profesora de inglés"
+        "dato": "Profesora de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Profesor de inglés",
+        "idioma": "es",
+        "dato": "Profesora de inglés",
+        "relacion": "mismo"
       },
       {
         "titulo": "English Teacher",
         "idioma": "en",
-        "dato": "Profesora de inglés"
+        "dato": "Profesora de inglés",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Profesora de idiomas",
+        "titulo": "English Language Teacher",
+        "idioma": "en",
+        "dato": "Profesora de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Profesora particular de inglés",
         "idioma": "es",
-        "dato": "Profesora de inglés"
+        "dato": "Profesora de inglés",
+        "relacion": "afin"
       },
       {
         "titulo": "English Tutor",
         "idioma": "en",
-        "dato": "Profesora de inglés"
+        "dato": "Profesora de inglés",
+        "relacion": "afin"
       },
       {
-        "titulo": "Traductora",
+        "titulo": "Traductora de inglés",
         "idioma": "es",
-        "dato": "Grado en Estudios Ingleses"
+        "dato": "Grado en Estudios Ingleses",
+        "relacion": "afin"
       },
       {
-        "titulo": "Translator",
+        "titulo": "Retocadora fotográfica",
+        "idioma": "es",
+        "dato": "Fotógrafa freelance",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Photo Retoucher",
         "idioma": "en",
-        "dato": "Grado en Estudios Ingleses"
+        "dato": "Fotógrafa freelance",
+        "relacion": "afin"
       }
     ]
   }

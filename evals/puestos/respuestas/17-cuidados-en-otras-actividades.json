@@ -8,72 +8,74 @@
       {
         "titulo": "Auxiliar de enfermería",
         "idioma": "es",
-        "dato": "Auxiliar de enfermería"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
       },
       {
         "titulo": "Auxiliar de clínica",
         "idioma": "es",
-        "dato": "Auxiliar de enfermería"
-      },
-      {
-        "titulo": "Auxiliar sanitario",
-        "idioma": "es",
-        "dato": "Auxiliar de enfermería"
-      },
-      {
-        "titulo": "Auxiliar de geriatría",
-        "idioma": "es",
-        "dato": "Auxiliar de enfermería en Residencia Sol"
-      },
-      {
-        "titulo": "Gerocultor",
-        "idioma": "es",
-        "dato": "Auxiliar de enfermería en Residencia Sol"
-      },
-      {
-        "titulo": "Auxiliar de residencia",
-        "idioma": "es",
-        "dato": "Auxiliar de enfermería en Residencia Sol"
-      },
-      {
-        "titulo": "Cuidador de personas dependientes",
-        "idioma": "es",
-        "dato": "Cuidado de una persona dependiente"
-      },
-      {
-        "titulo": "Auxiliar de ayuda a domicilio",
-        "idioma": "es",
-        "dato": "Cuidado de una persona dependiente"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
       },
       {
         "titulo": "Nursing Assistant",
         "idioma": "en",
-        "dato": "Auxiliar de enfermería"
-      },
-      {
-        "titulo": "Healthcare Assistant",
-        "idioma": "en",
-        "dato": "Auxiliar de enfermería"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
       },
       {
         "titulo": "Nursing Aide",
         "idioma": "en",
-        "dato": "Auxiliar de enfermería"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Geriatric Nursing Assistant",
+        "titulo": "Healthcare Assistant",
         "idioma": "en",
-        "dato": "Auxiliar de enfermería en Residencia Sol"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Gerocultor/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de geriatría",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cuidador/a de personas dependientes",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar sanitario/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
       },
       {
         "titulo": "Patient Care Assistant",
         "idioma": "en",
-        "dato": "Cuidado de una persona dependiente"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
       },
       {
-        "titulo": "Home Care Aide",
+        "titulo": "Care Assistant",
         "idioma": "en",
-        "dato": "Cuidado de una persona dependiente"
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Geriatric Nursing Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
       }
     ]
   }

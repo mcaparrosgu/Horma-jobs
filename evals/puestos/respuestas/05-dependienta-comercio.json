@@ -1,71 +1,81 @@
 {
   "base": {
     "sector": "comercio_retail",
-    "familia": "atencion_cliente",
+    "familia": "ventas_comercial",
     "nivel": "junior",
-    "stack": [
-      "manejo de caja"
-    ],
+    "stack": [],
     "puestos": [
       {
-        "titulo": "Dependiente/a de tienda",
+        "titulo": "Dependienta",
         "idioma": "es",
-        "dato": "Dependienta"
+        "dato": "Dependienta",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Dependiente/a de tienda de moda",
+        "titulo": "Dependiente",
         "idioma": "es",
-        "dato": "Dependienta"
+        "dato": "Dependienta",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Cajero/a de supermercado",
+        "titulo": "Cajera",
         "idioma": "es",
-        "dato": "Cajera"
+        "dato": "Cajera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Cajero/a",
+        "titulo": "Cajero de supermercado",
         "idioma": "es",
-        "dato": "Cajera"
-      },
-      {
-        "titulo": "Auxiliar de ventas",
-        "idioma": "es",
-        "dato": "Dependienta"
-      },
-      {
-        "titulo": "Asistente de tienda",
-        "idioma": "es",
-        "dato": "Dependienta"
-      },
-      {
-        "titulo": "Agente de atención al cliente",
-        "idioma": "es",
-        "dato": "Atención al cliente"
-      },
-      {
-        "titulo": "Teleoperador/a de atención al cliente",
-        "idioma": "es",
-        "dato": "Atención al cliente"
+        "dato": "Cajera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Sales Assistant",
         "idioma": "en",
-        "dato": "Dependienta"
+        "dato": "Dependienta",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Retail Sales Associate",
+        "titulo": "Retail Sales Assistant",
         "idioma": "en",
-        "dato": "Dependienta"
+        "dato": "Dependienta",
+        "relacion": "mismo"
       },
       {
         "titulo": "Cashier",
         "idioma": "en",
-        "dato": "Cajera"
+        "dato": "Cajera",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asesora de ventas",
+        "idioma": "es",
+        "dato": "Dependienta",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de atención al cliente",
+        "idioma": "es",
+        "dato": "Dependienta",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reponedora",
+        "idioma": "es",
+        "dato": "Dependienta",
+        "relacion": "afin"
       },
       {
         "titulo": "Customer Service Representative",
         "idioma": "en",
-        "dato": "Atención al cliente"
+        "dato": "Dependienta",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Sales Associate",
+        "idioma": "en",
+        "dato": "Dependienta",
+        "relacion": "afin"
       }
     ]
   },
@@ -78,67 +88,74 @@
       {
         "titulo": "Dependiente",
         "idioma": "es",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Dependiente de tienda de ropa",
+        "titulo": "Dependiente de tienda de moda",
         "idioma": "es",
-        "dato": "Dependiente"
-      },
-      {
-        "titulo": "Vendedor de tienda",
-        "idioma": "es",
-        "dato": "Dependiente"
-      },
-      {
-        "titulo": "Asistente de tienda",
-        "idioma": "es",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
         "titulo": "Cajero",
         "idioma": "es",
-        "dato": "Cajero"
+        "dato": "Cajero",
+        "relacion": "mismo"
       },
       {
         "titulo": "Cajero de supermercado",
         "idioma": "es",
-        "dato": "Cajero"
+        "dato": "Cajero",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Operador de caja",
-        "idioma": "es",
-        "dato": "manejo de caja"
-      },
-      {
-        "titulo": "Agente de atención al cliente",
-        "idioma": "es",
-        "dato": "Atención al cliente"
-      },
-      {
-        "titulo": "Auxiliar de atención al cliente",
-        "idioma": "es",
-        "dato": "Atención al cliente"
-      },
-      {
-        "titulo": "Sales Assistant",
+        "titulo": "Retail Sales Assistant",
         "idioma": "en",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Shop Assistant",
+        "titulo": "Sales Associate",
         "idioma": "en",
-        "dato": "Dependiente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
       },
       {
         "titulo": "Cashier",
         "idioma": "en",
-        "dato": "Cajero"
+        "dato": "Cajero",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Customer Service Representative",
+        "titulo": "Shop Assistant",
         "idioma": "en",
-        "dato": "Atención al cliente"
+        "dato": "Dependiente",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Reponedor",
+        "idioma": "es",
+        "dato": "Dependiente",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de tienda",
+        "idioma": "es",
+        "dato": "Dependiente",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Vendedor de tienda",
+        "idioma": "es",
+        "dato": "Dependiente",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de caja",
+        "idioma": "es",
+        "dato": "Cajero",
+        "relacion": "afin"
       }
     ]
   }

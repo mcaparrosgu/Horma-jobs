@@ -8,62 +8,74 @@
       {
         "titulo": "Enfermera",
         "idioma": "es",
-        "dato": "Enfermera"
+        "dato": "Enfermera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Enfermero/a",
-        "idioma": "es",
-        "dato": "Enfermera"
-      },
-      {
-        "titulo": "Enfermera de Atención Primaria",
-        "idioma": "es",
-        "dato": "Enfermera"
-      },
-      {
-        "titulo": "Enfermera comunitaria",
-        "idioma": "es",
-        "dato": "Enfermera"
-      },
-      {
-        "titulo": "Enfermera de Hospitalización",
-        "idioma": "es",
-        "dato": "Enfermera"
-      },
-      {
-        "titulo": "Enfermera de Cuidados Críticos",
-        "idioma": "es",
-        "dato": "Máster en Cuidados Críticos"
-      },
-      {
-        "titulo": "Enfermero/a de UCI",
-        "idioma": "es",
-        "dato": "Máster en Cuidados Críticos"
-      },
-      {
-        "titulo": "Enfermero/a de Urgencias",
-        "idioma": "es",
-        "dato": "Máster en Cuidados Críticos"
+        "titulo": "Nurse",
+        "idioma": "en",
+        "dato": "Enfermera",
+        "relacion": "mismo"
       },
       {
         "titulo": "Registered Nurse",
         "idioma": "en",
-        "dato": "Enfermera"
+        "dato": "Enfermera",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Primary Care Nurse",
+        "titulo": "Enfermera de atención primaria",
+        "idioma": "es",
+        "dato": "Enfermera",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Staff Nurse",
         "idioma": "en",
-        "dato": "Enfermera"
+        "dato": "Enfermera",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Enfermera de hospitalización",
+        "idioma": "es",
+        "dato": "Enfermera",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Enfermera de salud comunitaria",
+        "idioma": "es",
+        "dato": "Enfermera",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Enfermera de cuidados críticos",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Enfermera de UCI",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Enfermera de cuidados intensivos",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
       },
       {
         "titulo": "Critical Care Nurse",
         "idioma": "en",
-        "dato": "Máster en Cuidados Críticos"
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Enfermero/a generalista",
+        "titulo": "Enfermera de urgencias",
         "idioma": "es",
-        "dato": "Grado en Enfermería"
+        "dato": "Soporte Vital Avanzado",
+        "relacion": "afin"
       }
     ]
   },
@@ -76,52 +88,74 @@
       {
         "titulo": "Enfermero",
         "idioma": "es",
-        "dato": "Enfermero"
+        "dato": "Enfermero",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Enfermero/a de Atención Primaria",
+        "titulo": "Enfermero de Atención Primaria",
         "idioma": "es",
-        "dato": "Enfermero"
+        "dato": "Enfermero",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Enfermero/a hospitalario",
-        "idioma": "es",
-        "dato": "Enfermero"
-      },
-      {
-        "titulo": "Enfermero de Cuidados Críticos",
-        "idioma": "es",
-        "dato": "Máster en Cuidados Críticos"
-      },
-      {
-        "titulo": "Enfermero de UCI",
-        "idioma": "es",
-        "dato": "Máster en Cuidados Críticos"
+        "titulo": "Nurse",
+        "idioma": "en",
+        "dato": "Enfermero",
+        "relacion": "mismo"
       },
       {
         "titulo": "Registered Nurse",
         "idioma": "en",
-        "dato": "Enfermero"
+        "dato": "Enfermero",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Staff Nurse",
+        "idioma": "en",
+        "dato": "Enfermero",
+        "relacion": "mismo"
       },
       {
         "titulo": "Primary Care Nurse",
         "idioma": "en",
-        "dato": "Enfermero"
+        "dato": "Enfermero",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Hospital Nurse",
-        "idioma": "en",
-        "dato": "Enfermero"
+        "titulo": "Enfermero de Cuidados Críticos",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Enfermero de Cuidados Intensivos",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Enfermero de UCI",
+        "idioma": "es",
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
       },
       {
         "titulo": "Critical Care Nurse",
         "idioma": "en",
-        "dato": "Máster en Cuidados Críticos"
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Intensive Care Unit Nurse",
+        "titulo": "ICU Nurse",
         "idioma": "en",
-        "dato": "Máster en Cuidados Críticos"
+        "dato": "Máster en Cuidados Críticos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Enfermero Comunitario",
+        "idioma": "es",
+        "dato": "Enfermero",
+        "relacion": "afin"
       }
     ]
   }

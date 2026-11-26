@@ -10,59 +10,88 @@
     ],
     "puestos": [
       {
-        "titulo": "Técnico de sistemas",
+        "titulo": "Técnico de soporte informático",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
         "titulo": "Técnico informático",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
-        "titulo": "Técnico de soporte informático",
+        "titulo": "Técnico de sistemas",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes"
-      },
-      {
-        "titulo": "Técnico de microinformática",
-        "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
         "titulo": "Técnico de redes",
         "idioma": "es",
-        "dato": "cableado"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
-        "titulo": "Técnico de cableado",
+        "titulo": "Técnico de help desk",
         "idioma": "es",
-        "dato": "cableado"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
-        "titulo": "Administrador de sistemas junior",
+        "titulo": "Técnico de microinformática",
         "idioma": "es",
-        "dato": "Windows Server"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico de mantenimiento informático",
+        "idioma": "es",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico de infraestructuras de red",
+        "idioma": "es",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
         "titulo": "IT Support Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
         "titulo": "Help Desk Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
         "titulo": "Network Technician",
         "idioma": "en",
-        "dato": "cableado"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       },
       {
-        "titulo": "Junior System Administrator",
+        "titulo": "Systems Technician",
         "idioma": "en",
-        "dato": "Windows Server"
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "IT Technician",
+        "idioma": "en",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desktop Support Technician",
+        "idioma": "en",
+        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
       }
     ]
   }

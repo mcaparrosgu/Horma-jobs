@@ -2,125 +2,158 @@
   "base": {
     "sector": "otros",
     "familia": "atencion_cliente",
-    "nivel": "senior",
-    "stack": [
-      "zendesk"
-    ],
-    "puestos": [
-      {
-        "titulo": "Responsable de atención al cliente",
-        "idioma": "es",
-        "dato": "Manager"
-      },
-      {
-        "titulo": "Jefe de equipo de atención al cliente",
-        "idioma": "es",
-        "dato": "gestión de equipos"
-      },
-      {
-        "titulo": "Responsable de servicio al cliente",
-        "idioma": "es",
-        "dato": "Manager"
-      },
-      {
-        "titulo": "Responsable de operaciones de atención al cliente",
-        "idioma": "es",
-        "dato": "Zendesk"
-      },
-      {
-        "titulo": "Customer Service Manager",
-        "idioma": "en",
-        "dato": "Manager"
-      },
-      {
-        "titulo": "Customer Support Manager",
-        "idioma": "en",
-        "dato": "Manager"
-      },
-      {
-        "titulo": "Customer Service Team Leader",
-        "idioma": "en",
-        "dato": "gestión de equipos"
-      },
-      {
-        "titulo": "Customer Care Manager",
-        "idioma": "en",
-        "dato": "Manager"
-      },
-      {
-        "titulo": "Support Operations Manager",
-        "idioma": "en",
-        "dato": "Zendesk"
-      },
-      {
-        "titulo": "Customer Success Manager",
-        "idioma": "en",
-        "dato": "Zendesk"
-      }
-    ]
-  },
-  "variante": {
-    "sector": "otros",
-    "familia": "atencion_cliente",
     "nivel": "intermedio",
     "stack": [
       "zendesk"
     ],
     "puestos": [
       {
-        "titulo": "Responsable de atención al cliente",
-        "idioma": "es",
-        "dato": "Manager"
-      },
-      {
         "titulo": "Customer Service Manager",
         "idioma": "en",
-        "dato": "Manager"
+        "dato": "Manager",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Jefe de equipo de atención al cliente",
+        "titulo": "Responsable de atención al cliente",
         "idioma": "es",
-        "dato": "gestión de equipos"
-      },
-      {
-        "titulo": "Customer Support Team Lead",
-        "idioma": "en",
-        "dato": "gestión de equipos"
-      },
-      {
-        "titulo": "Supervisor de atención al cliente",
-        "idioma": "es",
-        "dato": "Manager"
-      },
-      {
-        "titulo": "Customer Support Supervisor",
-        "idioma": "en",
-        "dato": "Manager"
-      },
-      {
-        "titulo": "Responsable de soporte al cliente",
-        "idioma": "es",
-        "dato": "Zendesk"
+        "dato": "Manager",
+        "relacion": "mismo"
       },
       {
         "titulo": "Customer Support Manager",
         "idioma": "en",
-        "dato": "Zendesk"
+        "dato": "Manager",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Responsable de helpdesk",
+        "titulo": "Responsable de servicio al cliente",
         "idioma": "es",
-        "dato": "Zendesk"
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Care Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
       },
       {
         "titulo": "Customer Experience Manager",
         "idioma": "en",
-        "dato": "Grado en Psicología"
+        "dato": "Manager",
+        "relacion": "afin"
       },
       {
-        "titulo": "Responsable de experiencia de cliente",
+        "titulo": "Jefa de equipo de atención al cliente",
         "idioma": "es",
-        "dato": "Grado en Psicología"
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Service Team Leader",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Coordinadora de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Success Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnica de selección de personal",
+        "idioma": "es",
+        "dato": "Grado en Psicología",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Recruiter",
+        "idioma": "en",
+        "dato": "Grado en Psicología",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "variante": {
+    "sector": "otros",
+    "familia": "atencion_cliente",
+    "nivel": "senior",
+    "stack": [
+      "zendesk"
+    ],
+    "puestos": [
+      {
+        "titulo": "Customer Service Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Jefe de equipo de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Experience Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Success Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Supervisor de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Team Leader Customer Service",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Coordinador de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Especialista en selección de personal",
+        "idioma": "es",
+        "dato": "Grado en Psicología",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico de recursos humanos",
+        "idioma": "es",
+        "dato": "Grado en Psicología",
+        "relacion": "afin"
       }
     ]
   }

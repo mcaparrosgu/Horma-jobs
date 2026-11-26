@@ -11,64 +11,70 @@
     ],
     "puestos": [
       {
-        "titulo": "Software Engineer",
-        "idioma": "en",
-        "dato": "Software Engineer"
-      },
-      {
-        "titulo": "Ingeniero de software",
+        "titulo": "Desarrollador backend",
         "idioma": "es",
-        "dato": "Software Engineer"
-      },
-      {
-        "titulo": "Software Developer",
-        "idioma": "en",
-        "dato": "Software Engineer"
-      },
-      {
-        "titulo": "Desarrollador de software",
-        "idioma": "es",
-        "dato": "Software Engineer"
+        "dato": "Desarrollador backend",
+        "relacion": "mismo"
       },
       {
         "titulo": "Backend Developer",
         "idioma": "en",
-        "dato": "Desarrollador backend"
-      },
-      {
-        "titulo": "Desarrollador backend",
-        "idioma": "es",
-        "dato": "Desarrollador backend"
-      },
-      {
-        "titulo": "Backend Engineer",
-        "idioma": "en",
-        "dato": "Desarrollador backend"
+        "dato": "Desarrollador backend",
+        "relacion": "mismo"
       },
       {
         "titulo": "Ingeniero backend",
         "idioma": "es",
-        "dato": "Desarrollador backend"
+        "dato": "Desarrollador backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrollador backend",
+        "relacion": "mismo"
       },
       {
         "titulo": "Java Developer",
         "idioma": "en",
-        "dato": "Java"
+        "dato": "Desarrollador backend",
+        "relacion": "mismo"
       },
       {
         "titulo": "Desarrollador Java",
         "idioma": "es",
-        "dato": "Java"
+        "dato": "Desarrollador backend",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Cloud Engineer",
+        "titulo": "Software Engineer",
         "idioma": "en",
-        "dato": "AWS"
+        "dato": "Software Engineer",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Ingeniero cloud",
+        "titulo": "Ingeniero de software",
         "idioma": "es",
-        "dato": "AWS"
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador de software",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Software Developer",
+        "idioma": "en",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ingeniero informático",
+        "idioma": "es",
+        "dato": "BSc in Computer Science",
+        "relacion": "afin"
       }
     ]
   }

@@ -11,57 +11,74 @@
       {
         "titulo": "Auxiliar administrativo",
         "idioma": "es",
-        "dato": "Auxiliar administrativo en prácticas"
+        "dato": "Auxiliar administrativo en prácticas",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Administrativo",
-        "idioma": "es",
-        "dato": "Auxiliar administrativo en prácticas"
+        "titulo": "Administrative Clerk",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo en prácticas",
+        "relacion": "mismo"
       },
       {
         "titulo": "Asistente administrativo",
         "idioma": "es",
-        "dato": "Auxiliar administrativo en prácticas"
-      },
-      {
-        "titulo": "Administrativo de facturación",
-        "idioma": "es",
-        "dato": "facturación"
-      },
-      {
-        "titulo": "Auxiliar de facturación",
-        "idioma": "es",
-        "dato": "facturación"
-      },
-      {
-        "titulo": "Auxiliar contable",
-        "idioma": "es",
-        "dato": "Grado Superior en Administración y Finanzas"
-      },
-      {
-        "titulo": "Administrativo contable",
-        "idioma": "es",
-        "dato": "Grado Superior en Administración y Finanzas"
-      },
-      {
-        "titulo": "Auxiliar administrativo de gestoría",
-        "idioma": "es",
-        "dato": "Auxiliar administrativo en prácticas"
+        "dato": "Auxiliar administrativo en prácticas",
+        "relacion": "afin"
       },
       {
         "titulo": "Administrative Assistant",
         "idioma": "en",
-        "dato": "Auxiliar administrativo en prácticas"
+        "dato": "Auxiliar administrativo en prácticas",
+        "relacion": "afin"
       },
       {
-        "titulo": "Billing Clerk",
-        "idioma": "en",
-        "dato": "facturación"
+        "titulo": "Administrativo de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo en prácticas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de contabilidad",
+        "idioma": "es",
+        "dato": "Grado Superior en Administración y Finanzas",
+        "relacion": "afin"
       },
       {
         "titulo": "Accounting Assistant",
         "idioma": "en",
-        "dato": "Grado Superior en Administración y Finanzas"
+        "dato": "Grado Superior en Administración y Finanzas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Grado Superior en Administración y Finanzas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrativo de contabilidad",
+        "idioma": "es",
+        "dato": "Grado Superior en Administración y Finanzas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrativo de facturación",
+        "idioma": "es",
+        "dato": "Grado Superior en Administración y Finanzas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de facturación",
+        "idioma": "es",
+        "dato": "Grado Superior en Administración y Finanzas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Billing Clerk",
+        "idioma": "en",
+        "dato": "Grado Superior en Administración y Finanzas",
+        "relacion": "afin"
       }
     ]
   }

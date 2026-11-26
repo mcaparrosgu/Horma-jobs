@@ -12,52 +12,56 @@
       {
         "titulo": "Analista de datos",
         "idioma": "es",
-        "dato": "Analista de datos"
+        "dato": "Analista de datos",
+        "relacion": "mismo"
       },
       {
         "titulo": "Data Analyst",
         "idioma": "en",
-        "dato": "Analista de datos"
+        "dato": "Analista de datos",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Analista de business intelligence",
+        "titulo": "Analista de Business Intelligence",
         "idioma": "es",
-        "dato": "Power BI"
+        "dato": "Analista de datos",
+        "relacion": "afin"
       },
       {
         "titulo": "Business Intelligence Analyst",
         "idioma": "en",
-        "dato": "Power BI"
+        "dato": "Analista de datos",
+        "relacion": "afin"
       },
       {
         "titulo": "Analista de reporting",
         "idioma": "es",
-        "dato": "Power BI"
-      },
-      {
-        "titulo": "Reporting Analyst",
-        "idioma": "en",
-        "dato": "Power BI"
-      },
-      {
-        "titulo": "Analista SQL",
-        "idioma": "es",
-        "dato": "SQL"
+        "dato": "Analista de datos",
+        "relacion": "afin"
       },
       {
         "titulo": "Científico de datos",
         "idioma": "es",
-        "dato": "Máster en Ciencia de Datos"
+        "dato": "Máster en Ciencia de Datos",
+        "relacion": "afin"
       },
       {
         "titulo": "Data Scientist",
         "idioma": "en",
-        "dato": "Máster en Ciencia de Datos"
+        "dato": "Máster en Ciencia de Datos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Estadístico",
+        "titulo": "Analista estadístico",
         "idioma": "es",
-        "dato": "Grado en Estadística"
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Statistician",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
       }
     ]
   },
@@ -74,52 +78,62 @@
       {
         "titulo": "Analista de datos",
         "idioma": "es",
-        "dato": "Analista de datos"
+        "dato": "Analista de datos",
+        "relacion": "mismo"
       },
       {
         "titulo": "Data Analyst",
         "idioma": "en",
-        "dato": "Analista de datos"
+        "dato": "Analista de datos",
+        "relacion": "mismo"
       },
       {
         "titulo": "Analista de business intelligence",
         "idioma": "es",
-        "dato": "Power BI"
+        "dato": "Analista de datos",
+        "relacion": "afin"
       },
       {
         "titulo": "Business Intelligence Analyst",
         "idioma": "en",
-        "dato": "Power BI"
+        "dato": "Analista de datos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Analista de reporting",
+        "titulo": "Analista de BI",
         "idioma": "es",
-        "dato": "Power BI"
-      },
-      {
-        "titulo": "Business Analyst",
-        "idioma": "en",
-        "dato": "Analista de datos"
+        "dato": "Analista de datos",
+        "relacion": "afin"
       },
       {
         "titulo": "Científico de datos",
         "idioma": "es",
-        "dato": "Máster en Ciencia de Datos"
+        "dato": "Máster en Ciencia de Datos",
+        "relacion": "afin"
       },
       {
         "titulo": "Data Scientist",
         "idioma": "en",
-        "dato": "Máster en Ciencia de Datos"
+        "dato": "Máster en Ciencia de Datos",
+        "relacion": "afin"
       },
       {
-        "titulo": "Analista estadístico",
+        "titulo": "Estadístico",
         "idioma": "es",
-        "dato": "Grado en Estadística"
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
       },
       {
         "titulo": "Statistical Analyst",
         "idioma": "en",
-        "dato": "Grado en Estadística"
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista estadístico",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
       }
     ]
   }

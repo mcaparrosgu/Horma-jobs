@@ -1,8 +1,8 @@
 """Puerta de puestos por niveles de evidencia (spec 012, RF-12.5 a 12.8; RT-08). Código puro.
 
 El nivel lo decide el campo del que sale el `dato`, comparado entero (un trozo no vale):
-- puesto de una experiencia → nivel 1, «lo has sido»;
-- titulación o certificación → nivel 2, «afín»;
+- puesto de una experiencia y el título es ese mismo puesto (`relacion`) → nivel 1, «lo has sido»;
+- titulación, certificación o puesto con un título distinto → nivel 2, «afín»;
 - habilidad, titular, resumen o trozo → fuera.
 Nunca se sugiere por encima del nivel del perfil, salvo un puesto que ya ha tenido (D-038)."""
 from horma.schemas.perfil import Perfil
@@ -35,7 +35,8 @@ def puestos_del_perfil(perfil: Perfil, candidatos: list,
         if canonico(titulo) not in tenidos and supera_nivel(titulo, nivel):
             continue
         vistos.add(normalizar(titulo))
-        grado = 1 if tipo == "puesto" else 2
+        # S1: lo que dice el modelo solo baja de nivel; sin un puesto entero nunca hay nivel 1.
+        grado = 1 if tipo == "puesto" and getattr(c, "relacion", "mismo") == "mismo" else 2
         # RF-12.7: sin ninguna experiencia, lo que sale de la titulación llega marcado.
         marcado = grado == 1 or (tipo == "titulacion" and not perfil.experiencias)
         salida.append(PuestoSugerido(titulo=titulo, dato=c.dato.strip(), nivel=grado, tipo_dato=tipo,

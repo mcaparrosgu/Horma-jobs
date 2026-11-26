@@ -11,54 +11,70 @@
     ],
     "puestos": [
       {
-        "titulo": "Desarrollador backend",
+        "titulo": "Desarrolladora Python",
         "idioma": "es",
-        "dato": "Desarrolladora backend"
-      },
-      {
-        "titulo": "Backend Developer",
-        "idioma": "en",
-        "dato": "Desarrolladora backend"
-      },
-      {
-        "titulo": "Ingeniero backend",
-        "idioma": "es",
-        "dato": "Desarrolladora backend"
-      },
-      {
-        "titulo": "Backend Engineer",
-        "idioma": "en",
-        "dato": "Desarrolladora backend"
-      },
-      {
-        "titulo": "Desarrollador Python",
-        "idioma": "es",
-        "dato": "Desarrolladora Python"
+        "dato": "Desarrolladora Python",
+        "relacion": "mismo"
       },
       {
         "titulo": "Python Developer",
         "idioma": "en",
-        "dato": "Desarrolladora Python"
+        "dato": "Desarrolladora Python",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Python Backend Developer",
+        "titulo": "Programadora Python",
+        "idioma": "es",
+        "dato": "Desarrolladora Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrolladora backend",
+        "idioma": "es",
+        "dato": "Desarrolladora Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Backend Developer",
         "idioma": "en",
-        "dato": "Python"
+        "dato": "Desarrolladora Python",
+        "relacion": "afin"
       },
       {
-        "titulo": "Ingeniero de software backend",
+        "titulo": "Desarrolladora junior",
         "idioma": "es",
-        "dato": "FastAPI"
+        "dato": "Desarrolladora junior",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Ingeniero de software",
+        "titulo": "Junior Developer",
+        "idioma": "en",
+        "dato": "Desarrolladora junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ingeniera de software",
         "idioma": "es",
-        "dato": "Ingeniería Informática"
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
       },
       {
         "titulo": "Software Engineer",
         "idioma": "en",
-        "dato": "Ingeniería Informática"
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrolladora de APIs",
+        "idioma": "es",
+        "dato": "Desarrolladora Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrolladora Python",
+        "relacion": "afin"
       }
     ]
   },
@@ -74,64 +90,64 @@
     ],
     "puestos": [
       {
-        "titulo": "Desarrollador backend",
-        "idioma": "es",
-        "dato": "Desarrollador backend"
-      },
-      {
-        "titulo": "Backend Developer",
-        "idioma": "en",
-        "dato": "Desarrollador backend"
-      },
-      {
         "titulo": "Desarrollador Python",
         "idioma": "es",
-        "dato": "Desarrollador Python"
+        "dato": "Desarrollador Python",
+        "relacion": "mismo"
       },
       {
         "titulo": "Python Developer",
         "idioma": "en",
-        "dato": "Desarrollador Python"
+        "dato": "Desarrollador Python",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Ingeniero backend",
+        "titulo": "Desarrollador junior",
         "idioma": "es",
-        "dato": "Desarrollador backend"
+        "dato": "Desarrollador junior",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Backend Engineer",
+        "titulo": "Junior Developer",
         "idioma": "en",
-        "dato": "Desarrollador backend"
+        "dato": "Desarrollador junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador backend",
+        "idioma": "es",
+        "dato": "Desarrollador Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador Python",
+        "relacion": "afin"
       },
       {
         "titulo": "Desarrollador de software",
         "idioma": "es",
-        "dato": "Ingeniería Informática"
+        "dato": "Desarrollador Python",
+        "relacion": "afin"
       },
       {
         "titulo": "Software Developer",
         "idioma": "en",
-        "dato": "Ingeniería Informática"
+        "dato": "Desarrollador Python",
+        "relacion": "afin"
       },
       {
         "titulo": "Ingeniero de software",
         "idioma": "es",
-        "dato": "Ingeniería Informática"
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
       },
       {
         "titulo": "Software Engineer",
         "idioma": "en",
-        "dato": "Ingeniería Informática"
-      },
-      {
-        "titulo": "Desarrollador de APIs",
-        "idioma": "es",
-        "dato": "FastAPI"
-      },
-      {
-        "titulo": "API Developer",
-        "idioma": "en",
-        "dato": "FastAPI"
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
       }
     ]
   }

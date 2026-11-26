@@ -8,54 +8,70 @@
     ],
     "puestos": [
       {
-        "titulo": "Recepcionista de hotel",
+        "titulo": "Front Desk Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Recepcionista",
         "idioma": "es",
-        "dato": "Recepcionista"
+        "dato": "Recepcionista",
+        "relacion": "mismo"
       },
       {
         "titulo": "Hotel Receptionist",
         "idioma": "en",
-        "dato": "Recepcionista"
+        "dato": "Recepcionista",
+        "relacion": "mismo"
       },
       {
-        "titulo": "Front Desk Agent",
-        "idioma": "en",
-        "dato": "Front Desk Agent"
-      },
-      {
-        "titulo": "Front Desk Associate",
-        "idioma": "en",
-        "dato": "Front Desk Agent"
-      },
-      {
-        "titulo": "Agente de recepción",
+        "titulo": "Recepcionista de hotel",
         "idioma": "es",
-        "dato": "Front Desk Agent"
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Recepcionista de front desk",
+        "idioma": "es",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
       },
       {
         "titulo": "Guest Services Agent",
         "idioma": "en",
-        "dato": "Recepcionista"
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
       },
       {
-        "titulo": "Agente de atención al cliente",
+        "titulo": "Agente de atención al huésped",
         "idioma": "es",
-        "dato": "Recepcionista"
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Guest Relations Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Night Auditor",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
       },
       {
         "titulo": "Reservations Agent",
         "idioma": "en",
-        "dato": "Opera PMS"
+        "dato": "BA in Tourism Management",
+        "relacion": "afin"
       },
       {
         "titulo": "Agente de reservas",
         "idioma": "es",
-        "dato": "Opera PMS"
-      },
-      {
-        "titulo": "Asistente de turismo",
-        "idioma": "es",
-        "dato": "BA in Tourism Management"
+        "dato": "BA in Tourism Management",
+        "relacion": "afin"
       }
     ]
   }
