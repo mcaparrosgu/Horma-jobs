@@ -113,7 +113,7 @@ Admin (solo administradoras): Ingesta · Catálogo · Costes
   Solo lo descarga su dueña (RLS).
 - **RF-10.4c** «Tu CV completo» NO DEBERÁ poder editarse: cada sección lleva «Editar», que lleva a esa sección
   de Tu perfil.
-- **RF-10.4d** *(S7)* El PDF del CV (Tu CV completo y el de cada candidatura) DEBERÁ tener un diseño sobrio: el
+- **RF-10.4d** *(S7; cambiado por la spec 013, RF-13.26: tres diseños elegibles)* El PDF del CV (Tu CV completo y el de cada candidatura) DEBERÁ tener un diseño sobrio: el
   nombre grande y el titular debajo, en gris; las secciones en mayúsculas con una línea fina; «puesto ·
   empresa» en negrita y las fechas a la derecha; las habilidades en una línea; la tipografía de la marca, en
   tinta y gris. Todo es texto real, en el orden de lectura, sin tablas ni imágenes (RF-10.4b). La carta en
@@ -295,6 +295,7 @@ y E6.
 - **RF-10.14k** El aviso «Sin cifras» DEBERÁ tener un «Corregir» por experiencia, que abra directamente la caja
   de «Modificar» de ese puesto, y dar ejemplos de logros medibles sin ventas (mesas o cubiertos por servicio,
   aforo, caja diaria, personas formadas, temporadas repetidas, ascensos, idiomas con los que atendió).
+  *(Ampliado por la spec 013, RF-13.4b: «Ideas para medirlo», con preguntas generales y del puesto.)*
 
 **Cómo escribes**
 - **RF-10.14l** «Usas» y «Evitas» DEBERÁN verse como listas, un rasgo por viñeta. SI «Evitas» está vacío, DEBERÁ
