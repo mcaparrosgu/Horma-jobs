@@ -36,7 +36,8 @@ def _puestos_con_cuenta(s, prefs: Preferencias) -> list[dict]:
     """Los sugeridos (con el dato que los justifica) y los que escribió ella, con cuántas ofertas casan."""
     dato = {p.titulo: p.dato for p in prefs.puestos_sugeridos}
     titulos = list(dict.fromkeys([*dato, *prefs.puestos]))
-    cuentas = repo_ofertas.contar_por_puesto(s, titulos)
+    fila = perfiles.vigente(s)
+    cuentas = repo_ofertas.contar_por_puesto(s, titulos, fila and fila["familia"])
     return [{"valor": t, "dato": dato.get(t), "n": cuentas.get(t, 0), "marcado": t in prefs.puestos}
             for t in titulos]
 

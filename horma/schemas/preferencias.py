@@ -29,6 +29,10 @@ class PuestoSugerido(BaseModel):
 
     titulo: str = Field(min_length=1)
     dato: str = Field(min_length=1)
+    # Spec 012 (RF-12.10): 1 «lo has sido», 2 «afín». Los guardados sin nivel son de nivel 2.
+    nivel: Literal[1, 2] = 2
+    tipo_dato: Literal["puesto", "titulacion", "certificacion"] | None = None
+    marcado: bool = Field(default=False, description="Llega marcado en «Qué buscas» (RF-12.6, RF-12.7).")
 
 
 class Preferencias(BaseModel):

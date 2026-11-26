@@ -54,10 +54,11 @@ def test_un_puesto_con_un_dato_que_no_esta_en_el_perfil_se_descarta():
         {"titulo": "Data Analyst", "idioma": "en", "dato": "Analista de datos"},
         {"titulo": "Científico de datos", "idioma": "es", "dato": "Doctorado en estadística"},
         {"titulo": "Analista de Excel", "idioma": "es", "dato": "excel"}], [])
-    assert [p["titulo"] for p in e["puestos"]] == ["Data Analyst", "Analista de Excel"]
+    assert [p["titulo"] for p in e["puestos"]] == ["Data Analyst"]  # una habilidad no basta (RF-12.5)
     prefs = e["preferencias"]
-    assert prefs["puestos"] == ["Data Analyst", "Analista de Excel"]
-    assert prefs["puestos_sugeridos"][0] == {"titulo": "Data Analyst", "dato": "Analista de datos"}
+    assert prefs["puestos"] == ["Data Analyst"]
+    assert prefs["puestos_sugeridos"][0] == {"titulo": "Data Analyst", "dato": "Analista de datos",
+                                             "nivel": 1, "tipo_dato": "puesto", "marcado": True}
     assert prefs["origen"]["puestos"] == "cv"
     assert "puestos" not in e["taxonomia"]
 

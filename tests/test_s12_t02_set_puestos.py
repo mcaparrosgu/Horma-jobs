@@ -42,9 +42,9 @@ def _correr(tmp_path, *respuestas):
 def test_todo_bien_aprueba_y_mide_cada_metrica(tmp_path):
     _caso(tmp_path, "uno", _perfil(), {"Camarera": "lo_ha_sido", "Recepcionista": "afin"},
           imprescindibles=[("Camarera", "Waitress"), ("Ayudante de cocina",)])
-    r = _correr(tmp_path, _respuesta(("Camarera", "Camarera"), ("Recepcionista", "Grado en Turismo")))
+    r = _correr(tmp_path, _respuesta(("Camarera", "Camarera"), ("Recepcionista", "Camarera")))
     m = r["metricas"]
-    # Hoy todo llega marcado: de dos marcados, uno «lo ha sido».
+    # Los dos salen de su puesto y llegan marcados: de dos, uno «lo ha sido».
     assert m["ajenos_marcados"] == 0 and m["precision_marcados"] == 0.5
     assert m["cobertura"] == 0.5  # falta «Ayudante de cocina»
     assert m["precision_sin_marcar"] is None and m["equidad"] is None and m["kappa"] == 1.0
@@ -54,7 +54,7 @@ def test_todo_bien_aprueba_y_mide_cada_metrica(tmp_path):
 
 def test_un_ajeno_marcado_hace_fallar_el_set(tmp_path):
     _caso(tmp_path, "uno", _perfil(), {"Camarera": "lo_ha_sido", "Controller financiero": "ajeno"})
-    r = _correr(tmp_path, _respuesta(("Camarera", "Camarera"), ("Controller financiero", "Excel")))
+    r = _correr(tmp_path, _respuesta(("Camarera", "Camarera"), ("Controller financiero", "Camarera")))
     assert r["metricas"]["ajenos_marcados"] == 1 and not r["aprobado"]
     assert "ajenos" in r["detalle"][0]["fallos"]
 

@@ -57,8 +57,9 @@ pauta de Mar.
 - **RF-12.7** SI el CV no tiene ninguna experiencia, ENTONCES los puestos por titulación DEBERÁN llegar marcados,
   con el porqué «Para empezar, por tu grado en…» (F4-D7, S4).
 - **RF-12.8** La puerta NO DEBERÁ sugerir un puesto cuyo título indique un nivel superior al del perfil
-  («Senior», «Lead», «Head», «Jefe/a», «Director/a»…, frente a `taxonomia.nivel`). El filtro de ofertas por
-  nivel no cambia (F4-D4).
+  («Senior», «Lead», «Head», «Jefe/a», «Director/a»…, frente a `taxonomia.nivel`). «Senior», «Lead» y «Jefe/a» piden
+  nivel «senior»; «Head» y «Director/a», «direccion»; un puesto que ya ha tenido nunca se bloquea (D-038).
+  El filtro de ofertas por nivel no cambia (F4-D4).
 - **RF-12.9** Un puesto genérico (lista corta en código: «Manager», «Técnico», «Responsable», «Especialista»,
   «Consultor»…) DEBERÁ casar solo con ofertas de la familia del perfil (F4-D3, S2). Una oferta sin familia pasa,
   como cualquier oferta a la que le falta un dato del filtro (P2 de la spec 002). Vale para los puestos sugeridos y

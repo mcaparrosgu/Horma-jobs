@@ -75,8 +75,38 @@ def normalizar_titulo(titulo: str | None) -> str:
     return " ".join(_singular(p) for p in palabras)
 
 
-def casa_con_puestos(titulo: str | None, puestos: list[str]) -> bool:
+def canonico(titulo: str) -> str:
+    """La misma clave para las formas de género de un puesto."""
+    return min(variantes_genero(normalizar_titulo(titulo)), default="")
+
+
+# RF-12.9: solos, dicen demasiado poco; casan únicamente con ofertas de la familia del perfil.
+_GENERICOS = {normalizar_titulo(t) for t in (
+    "Manager", "Técnico", "Técnica", "Responsable", "Especialista", "Consultor", "Consultora", "Consultant",
+    "Engineer", "Developer", "Director", "Directora")}
+
+
+def es_generico(puesto: str) -> bool:
+    return normalizar_titulo(puesto) in _GENERICOS
+
+
+# D-038: el nivel mínimo del perfil que pide cada palabra de un título.
+_ESCALONES = {"practicas": 0, "junior": 1, "intermedio": 2, "senior": 3, "direccion": 4}
+_PIDEN = {"senior": 3, "sr": 3, "lead": 3, "jefe": 3, "jefa": 3, "head": 4, "chief": 4, "director": 4,
+          "directora": 4}
+
+
+def supera_nivel(titulo: str, nivel: str) -> bool:
+    """¿El título indica un nivel por encima del perfil (RF-12.8)? Sin nivel conocido, no."""
+    tope = _ESCALONES.get(nivel)
+    return tope is not None and any(_PIDEN.get(p, 0) > tope for p in normalizar_titulo(titulo).split())
+
+
+def casa_con_puestos(titulo: str | None, puestos: list[str], *, familia_perfil: str | None = None,
+                     familia_oferta: str | None = None) -> bool:
     """¿Algún puesto (o su forma de género) aparece como frase en el título? La misma regla que el filtro
-    de `buscar_ofertas`, en Python."""
+    de `buscar_ofertas`, en Python: un genérico no cuenta si las dos familias se conocen y no coinciden."""
     t = f" {normalizar_titulo(titulo)} "
-    return any(f" {v} " in t for p in puestos for v in variantes_genero(normalizar_titulo(p)))
+    otra_familia = bool(familia_perfil and familia_oferta and familia_perfil != familia_oferta)
+    return any(f" {v} " in t for p in puestos if not (otra_familia and es_generico(p))
+               for v in variantes_genero(normalizar_titulo(p)))

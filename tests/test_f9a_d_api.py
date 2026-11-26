@@ -161,8 +161,9 @@ def test_marcar_o_escribir_un_puesto_pone_origen_usuaria(app, motor_app, motor_m
     c, h = entrar(app)
     u = uid(motor_migrador)
     with sesion_de(motor_app, u) as s:
-        perfiles.aplicar_puestos_del_cv(s, u, [{"titulo": "Data Analyst", "dato": "Analista de datos"},
-                                               {"titulo": "BI Analyst", "dato": "Excel"}])
+        perfiles.aplicar_puestos_del_cv(s, u, [
+            {"titulo": "Data Analyst", "dato": "Analista de datos", "marcado": True},
+                                               {"titulo": "BI Analyst", "dato": "Excel", "marcado": True}])
     p = c.get("/api/preferencias").json()
     assert p["puestos"] == ["Data Analyst", "BI Analyst"] and p["origen"]["puestos"] == "cv"
     assert p["puestos_sugeridos"][0]["dato"] == "Analista de datos"
@@ -183,7 +184,8 @@ def test_opciones_trae_los_sugeridos_con_su_dato_y_cuantas_ofertas_casan(app, mo
                         "fraude) values ('t', 'h', 'Senior Data Analyst', 'senior data analyst', "
                         "'procesada', false, false)"))
     with sesion_de(motor_app, u) as s:
-        perfiles.aplicar_puestos_del_cv(s, u, [{"titulo": "Data Analyst", "dato": "Analista de datos"}])
+        perfiles.aplicar_puestos_del_cv(s, u, [
+            {"titulo": "Data Analyst", "dato": "Analista de datos", "marcado": True}])
     puestos = c.get("/api/preferencias/opciones").json()["puestos"]
     assert puestos[0]["valor"] == "Data Analyst" and puestos[0]["dato"] == "Analista de datos"
     assert puestos[0]["n"] == 1 and puestos[0]["marcado"] is True

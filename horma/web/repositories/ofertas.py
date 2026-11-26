@@ -11,7 +11,7 @@ from horma.schemas.oferta import Auditoria, Oferta, Salario
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.normalizar import huella
 from horma.tools.normalizar_oferta import normalizar_oferta
-from horma.tools.normalizar_titulo import normalizar_titulo, variantes_genero
+from horma.tools.normalizar_titulo import es_generico, normalizar_titulo, variantes_genero
 
 COLUMNAS_LISTA = (
     "o.id, o.estado, o.motivo_error, o.titulo, o.empresa, o.ubicacion, o.remoto, o.modalidad, o.contrato, "
@@ -187,14 +187,17 @@ def contadores(s: Session) -> tuple[int, dict[str, dict[str, int]]]:
     return total, grupos
 
 
-def contar_por_puesto(s: Session, titulos: list[str]) -> dict[str, int]:
-    """Cuántas ofertas recomendables casan con cada puesto (frase completa del título, RF-9.3d)."""
+def contar_por_puesto(s: Session, titulos: list[str], familia_perfil: str | None = None) -> dict[str, int]:
+    """Cuántas ofertas recomendables casan con cada puesto (frase completa del título, RF-9.3d); un
+    genérico, solo las de la familia del perfil (RF-12.9)."""
     cuentas = {}
     for t in titulos:
         norm = normalizar_titulo(t)
+        familia = familia_perfil if es_generico(t) else None
         cuentas[t] = 0 if not norm else s.execute(text(
-            f"select count(*) {_BASE} and (' ' || coalesce(titulo_norm, '') || ' ') like any(:p)"),
-            {"p": [f"% {v} %" for v in variantes_genero(norm)]}).scalar_one()
+            f"select count(*) {_BASE} and (' ' || coalesce(titulo_norm, '') || ' ') like any(:p)"
+            + (" and (familia is null or familia = :f)" if familia else "")),
+            {"p": [f"% {v} %" for v in variantes_genero(norm)], "f": familia}).scalar_one()
     return cuentas
 
 
@@ -262,8 +265,9 @@ def dueña(s: Session, oferta_id: int) -> int | None:
                      {"i": oferta_id}).scalar_one_or_none()
 
 
-def titulo(s: Session, oferta_id: int) -> str | None:
-    return s.execute(text("select titulo from ofertas where id=:i"), {"i": oferta_id}).scalar_one_or_none()
+def titulo_y_familia(s: Session, oferta_id: int) -> tuple[str | None, str | None]:
+    fila = s.execute(text("select titulo, familia from ofertas where id=:i"), {"i": oferta_id}).first()
+    return (fila.titulo, fila.familia) if fila else (None, None)
 
 
 def hay_propias(s: Session) -> bool:

@@ -309,7 +309,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
             update={"instrucciones_embebidas": []})
         r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=perfil), proveedor=proveedor)
         e["taxonomia"] = r.model_dump(mode="json", exclude={"puestos"})
-        e["puestos"] = [p.model_dump(mode="json") for p in puestos_del_perfil(perfil, r.puestos)]
+        e["puestos"] = [p.model_dump(mode="json") for p in puestos_del_perfil(perfil, r.puestos, r.nivel)]
         return e
 
     def preferencias_desde_cv(e: dict) -> dict:
@@ -319,7 +319,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
                   "sectores": [tax.sector] if tax.sector != "otros" else [],
                   "idiomas": list(dict.fromkeys(i.idioma for i in perfil.idiomas if i.idioma != "otro"))}
         sugeridos = e.get("puestos") or []
-        grupos["puestos"] = [p["titulo"] for p in sugeridos]
+        grupos["puestos"] = [p["titulo"] for p in sugeridos if p["marcado"]]  # RF-12.6
         prefs = Preferencias(**grupos, puestos_sugeridos=sugeridos,
                              origen={g: "cv" for g, v in grupos.items() if v})
         e["preferencias"] = prefs.model_dump(mode="json")

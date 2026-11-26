@@ -17,7 +17,7 @@ def crear(proveedor: Proveedor | None = None) -> PlainFlow:
         perfil = Perfil.model_validate(e["perfil"]).model_copy(update={"instrucciones_embebidas": []})
         r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=perfil), proveedor=proveedor)
         e["taxonomia"] = r.model_dump(mode="json", exclude={"puestos"})
-        e["puestos"] = [p.model_dump(mode="json") for p in puestos_del_perfil(perfil, r.puestos)]
+        e["puestos"] = [p.model_dump(mode="json") for p in puestos_del_perfil(perfil, r.puestos, r.nivel)]
         return e
 
     return PlainFlow("clasificar_perfil", pasos={"clasificar": clasificar}, aristas={},

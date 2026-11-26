@@ -28,7 +28,8 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T03 — 🛑 OK al gasto (~0,1 USD). Pasada real del `clasificador_postulante` actual; respuestas guardadas (26-nov: 40 llamadas, 0,05 USD).
 - [x] T04 — Etiquetado ciego (tres etiquetadores) e imprescindibles. 🛑 Mar repasa lo que no tiene unanimidad
   (26-nov: 296 puestos, kappa 0,77, 53 repasados; D-037).
-- [ ] T05 — Puerta por niveles, tope de nivel y genéricos con familia, medidos sobre las respuestas de T03 (0 USD).
+- [x] T05 — Puerta por niveles, tope de nivel y genéricos con familia, medidos sobre las respuestas de T03 (0 USD)
+  (26-nov: ajenos marcados 0, no marcados 0,98, marcados 0,79, cobertura 0,795, equidad 0; D-038).
   - **Test:** «Controller financiero» citando «Excel» queda fuera; el puesto entero de una experiencia da nivel 1;
     una titulación da nivel 2; «Senior …» no sale para un perfil junior; «Manager» no casa con una oferta de
     otra familia y sí con una sin familia.

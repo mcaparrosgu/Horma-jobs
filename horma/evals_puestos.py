@@ -16,7 +16,8 @@ from horma.agents.clasificador_postulante.schemas import EntradaClasificadorPost
 from horma.flows import perfilar
 from horma.llm.proveedor import Proveedor
 from horma.schemas.perfil import Perfil
-from horma.tools.normalizar_titulo import casa_con_puestos, normalizar_titulo, variantes_genero
+from horma.tools.normalizar_titulo import canonico as _canonico
+from horma.tools.normalizar_titulo import casa_con_puestos
 from horma.tools.puestos_del_perfil import puestos_del_perfil
 
 Etiqueta = Literal["lo_ha_sido", "afin", "ajeno"]
@@ -55,7 +56,7 @@ def _clasificar(perfil: dict, prov: Proveedor | None) -> dict:
     """El clasificador y, sobre su respuesta, el mismo código que usa `perfilar` para sugerir y marcar."""
     p = Perfil.model_validate(perfil)
     r = ClasificadorPostulante.run(EntradaClasificadorPostulante(perfil=p), proveedor=prov)
-    sugeridos = [x.model_dump(mode="json") for x in puestos_del_perfil(p, r.puestos)]
+    sugeridos = [x.model_dump(mode="json") for x in puestos_del_perfil(p, r.puestos, r.nivel)]
     estado = perfilar.crear().run_step("preferencias_desde_cv", {
         "extraccion": {"perfil": perfil}, "puestos": sugeridos,
         "taxonomia": r.model_dump(mode="json", exclude={"puestos"})})
@@ -72,10 +73,6 @@ def correr(estado: dict, prov: Proveedor | None) -> dict:
         obtenido["variante"] = otra
         obtenido["respuestas"]["variante"] = otra["respuesta"]
     return obtenido
-
-
-def _canonico(titulo: str) -> str:
-    return min(variantes_genero(normalizar_titulo(titulo)), default="")
 
 
 def _etiqueta(titulo: str, esperado: dict) -> str | None:

@@ -128,9 +128,9 @@ def _propia_procesada(s, tarea: dict) -> None:
     estaba (RF-10.6h). Las preferencias solo se ven con la sesión de ella (RLS): otra transacción."""
     if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
         _encolar_puntuar_propias(s, usuaria)
-        titulo = repo_ofertas.titulo(s, tarea["entidad_id"])
+        titulo, familia = repo_ofertas.titulo_y_familia(s, tarea["entidad_id"])
         with sesion_de(s.get_bind(), usuaria) as su:
-            repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo)
+            repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo, familia)
 
 
 def _puntuar_si_hay_propias(s, tarea: dict) -> None:

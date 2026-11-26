@@ -257,7 +257,8 @@ def aplicar_preferencias_del_cv(s: Session, usuaria_id: int, desde_cv: Preferenc
 
 def aplicar_puestos_del_cv(s: Session, usuaria_id: int, sugeridos: list[dict]) -> None:
     """Tras reclasificar: los sugeridos se renuevan; los puestos marcados, solo si no los tocó ella."""
-    desde_cv = Preferencias(puestos=[p["titulo"] for p in sugeridos], puestos_sugeridos=sugeridos)
+    desde_cv = Preferencias(puestos=[p["titulo"] for p in sugeridos if p.get("marcado")],
+                            puestos_sugeridos=sugeridos)
     actual = preferencias(s)
     actual.puestos_sugeridos = desde_cv.puestos_sugeridos
     if actual.origen.get("puestos") != "usuaria":
@@ -269,13 +270,16 @@ def aplicar_puestos_del_cv(s: Session, usuaria_id: int, sugeridos: list[dict]) -
     guardar_preferencias(s, usuaria_id, actual)
 
 
-def anadir_puesto_de_oferta(s: Session, usuaria_id: int, titulo: str | None) -> bool:
+def anadir_puesto_de_oferta(s: Session, usuaria_id: int, titulo: str | None,
+                            familia: str | None = None) -> bool:
     """RF-10.6h: el título de una oferta que ella añade entra en sus puestos marcados si ninguno lo cubre.
     Con la lista vacía no se añade: un puesto empezaría a filtrar lo que hoy se ve todo."""
     titulo = " ".join((titulo or "").split())[:MAX_LARGO_TERMINO]
     actual = preferencias(s)
+    fila = vigente(s)
     if (not titulo or not actual.puestos or len(actual.puestos) >= MAX_TERMINOS
-            or casa_con_puestos(titulo, actual.puestos)):
+            or casa_con_puestos(titulo, actual.puestos, familia_perfil=fila and fila["familia"],
+                                familia_oferta=familia)):
         return False
     actual.puestos = [*actual.puestos, titulo]
     actual.origen["puestos"] = "usuaria"   # lo ha traído ella: el CV ya no lo pisa

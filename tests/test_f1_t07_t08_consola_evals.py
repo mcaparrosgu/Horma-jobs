@@ -98,7 +98,7 @@ def test_eval_simulado_de_fuentes_aprueba(tmp_path):
     shutil.copytree(RAIZ / "evals" / "fuentes", tmp_path / "fuentes")
     res = correr_set("fuentes", raiz=tmp_path, simulado=True)
     assert res["aprobado"], res["detalle"]
-    assert set(SETS) == {"ofertas", "fuentes", "perfil", "cv-base", "recomendacion", "cv",
+    assert set(SETS) == {"ofertas", "fuentes", "puestos", "perfil", "cv-base", "recomendacion", "cv",
                          "respuestas", "red-teaming", "estilo"}  # fases 2 a 5
 
 
