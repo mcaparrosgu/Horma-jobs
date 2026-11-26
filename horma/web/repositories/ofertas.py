@@ -12,6 +12,7 @@ from horma.schemas.taxonomia import Taxonomia
 from horma.tools.normalizar import huella
 from horma.tools.normalizar_oferta import normalizar_oferta
 from horma.tools.normalizar_titulo import es_generico, normalizar_titulo, variantes_genero
+from horma.tools.sinonimos_puestos import otras_formas
 
 COLUMNAS_LISTA = (
     "o.id, o.estado, o.motivo_error, o.titulo, o.empresa, o.ubicacion, o.remoto, o.modalidad, o.contrato, "
@@ -192,12 +193,12 @@ def contar_por_puesto(s: Session, titulos: list[str], familia_perfil: str | None
     genérico, solo las de la familia del perfil (RF-12.9)."""
     cuentas = {}
     for t in titulos:
-        norm = normalizar_titulo(t)
+        formas = [n for f in otras_formas(t) if (n := normalizar_titulo(f))]
         familia = familia_perfil if es_generico(t) else None
-        cuentas[t] = 0 if not norm else s.execute(text(
+        cuentas[t] = 0 if not formas else s.execute(text(
             f"select count(*) {_BASE} and (' ' || coalesce(titulo_norm, '') || ' ') like any(:p)"
             + (" and (familia is null or familia = :f)" if familia else "")),
-            {"p": [f"% {v} %" for v in variantes_genero(norm)], "f": familia}).scalar_one()
+            {"p": [f"% {v} %" for n in formas for v in variantes_genero(n)], "f": familia}).scalar_one()
     return cuentas
 
 

@@ -118,10 +118,15 @@ def supera_nivel(titulo: str, nivel: str) -> bool:
 
 
 def casa_con_puestos(titulo: str | None, puestos: list[str], *, familia_perfil: str | None = None,
-                     familia_oferta: str | None = None) -> bool:
+                     familia_oferta: str | None = None,
+                     sinonimos: dict[str, list[str]] | None = None) -> bool:
     """¿Algún puesto (o su forma de género) aparece como frase en el título? La misma regla que el filtro
-    de `buscar_ofertas`, en Python: un genérico no cuenta si las dos familias se conocen y no coinciden."""
+    de `buscar_ofertas`, en Python: un genérico no cuenta si las dos familias se conocen y no coinciden.
+    Cuentan las otras formas de la tabla y las que lleguen en `sinonimos` (puesto → formas, RF-12.4c)."""
+    from horma.tools.sinonimos_puestos import otras_formas  # aquí: la tabla usa `canonico`
+
+    buscados = [f for p in puestos for f in otras_formas(p, (sinonimos or {}).get(p, ()))]
     t = f" {normalizar_titulo(titulo)} "
     otra_familia = bool(familia_perfil and familia_oferta and familia_perfil != familia_oferta)
-    return any(f" {v} " in t for p in puestos if not (otra_familia and es_generico(p))
+    return any(f" {v} " in t for p in buscados if not (otra_familia and es_generico(p))
                for v in variantes_genero(normalizar_titulo(p)))

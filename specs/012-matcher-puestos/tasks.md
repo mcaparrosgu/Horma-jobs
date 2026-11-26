@@ -59,8 +59,14 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - 🛑 Mar fija el umbral de estabilidad (26-nov: 0,50 USD, estabilidad 0,52, `perfil` aprobado; D-052: sin
     umbral y sus puestos, por código). Etiquetados los puestos nuevos (26-nov: 261, kappa 0,75, 53 repasados)
     y el set aprueba: ajenos 0, marcados 0,99, no marcados 1,0, cobertura 0,93, equidad 1,0.
-- [ ] T07 — Set de títulos de 9a: ~50 pares de sinónimos. 🛑 Mar firma los pares dudosos. Se vuelve a medir
-  RF-9.3e; SI la cobertura baja de 0,90, 🛑 se para y se propone la prueba de embeddings (F4-D6).
+- [x] T07 — Set de títulos de 9a: ~50 pares de sinónimos. 🛑 Mar firma los pares dudosos. Se vuelve a medir
+  RF-9.3e; SI la cobertura baja de 0,90, 🛑 se para y se propone la prueba de embeddings (F4-D6). Hecho (26-nov):
+  0,58 con texto; se midieron tres vías y entran tabla y modelo (D-053, D-061).
+  Set de 202 pares: cumple RF-9.3e; en 80 pares nuevos, cobertura 0,68 y precisión 1,0.
+- [ ] T07b — Las otras formas que da el modelo (RF-12.4c): agente pequeño, guardadas con las preferencias y pedidas
+  en el worker al clasificar y al guardar un puesto escrito a mano. Con T08: «También busco: …» bajo cada puesto
+  marcado, sin editar.
+  - **Test:** guardar «Peluquera» pide sus formas una vez y la búsqueda las usa; la API las enseña.
 - [ ] T08 — «Qué buscas»: nivel 1 marcado, nivel 2 sin marcar con su porqué y junior sin experiencia (RF-12.7).
   - **Test:** la API devuelve nivel y porqué; un CV sin experiencia trae marcados los de titulación.
   - **Navegador:** 1280 y 390 px, claro y oscuro.

@@ -41,6 +41,12 @@ pauta de Mar.
   difieren del código, y ampliarse con unos 50 pares de sinónimos sin palabras en común. Después se vuelve a
   medir RF-9.3e. SI la cobertura baja de 0,90, ENTONCES se para y se propone a Mar la prueba de embeddings, solo
   para proponer candidatos (F4-D6), como cambio de esta spec.
+- **RF-12.4b** (D-053) Con la cobertura en 0,58, antes de cambiar la búsqueda se DEBERÁN medir tres vías (embeddings en local,
+  tabla de sinónimos en código y sinónimos dados por el modelo) sobre pares que ninguna haya visto. Nada entra en la
+  aplicación hasta que Mar elija.
+- **RF-12.4c** (D-061) La búsqueda por título DEBERÁ casar también con las otras formas de anunciar cada puesto: las que
+  da el modelo pequeño una vez por puesto (también para los que ella escribe, al guardar) y las de una tabla en código.
+  RF-9.3e se mide con las dos (≥ 0,90 en el set); en puestos nuevos la cobertura medida es 0,68, con precisión 1,0.
 
 ### B · Puestos por niveles de evidencia (PRD RF-006)
 - **RF-12.5** La puerta de puestos DEBERÁ dar a cada puesto sugerido un nivel, decidido por código (S1):

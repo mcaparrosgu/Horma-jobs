@@ -28,6 +28,7 @@ from dataclasses import dataclass, field
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.normalizar_titulo import es_generico, normalizar_titulo, variantes_genero
+from horma.tools.sinonimos_puestos import otras_formas
 
 
 @dataclass(frozen=True)
@@ -46,14 +47,17 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
         return f"CAST(:{nombre} AS text[])"
 
     def frases(nombre: str, terminos: list[str]) -> str | None:
+        """Condición «el título contiene alguno». Los puestos llegan ya con sus otras formas."""
         normalizados = [n for n in dict.fromkeys(normalizar_titulo(t) for t in terminos) if n]
         if not normalizados:
             return None
         p[nombre] = [f"% {v} %" for n in normalizados for v in variantes_genero(n)]
         return f"((' ' || coalesce(titulo_norm, '') || ' ') LIKE ANY(CAST(:{nombre} AS text[])))"
 
-    concretos = frases("puestos", [t for t in prefs.puestos if not es_generico(t)])
-    genericos = frases("genericos", [t for t in prefs.puestos if es_generico(t)])
+    # RF-12.4c: también sus otras formas (no las de los excluidos); las genéricas, con RF-12.9.
+    buscados = [f for puesto in prefs.puestos for f in otras_formas(puesto)]
+    concretos = frases("puestos", [t for t in buscados if not es_generico(t)])
+    genericos = frases("genericos", [t for t in buscados if es_generico(t)])
     if genericos and taxonomia is not None:
         p["familia_perfil"] = taxonomia.familia
         genericos = f"({genericos} AND (familia IS NULL OR familia = :familia_perfil))"

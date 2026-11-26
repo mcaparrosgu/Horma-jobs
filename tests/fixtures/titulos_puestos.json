@@ -901,7 +901,371 @@
       "puesto": "Teleoperador",
       "casa": true,
       "propuesta": true
+    },
+    {
+      "titulo": "Waiter",
+      "puesto": "Camarero",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Bartender",
+      "puesto": "Camarero de barra",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Mesera",
+      "puesto": "Camarera",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Sales Assistant",
+      "puesto": "Dependiente",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Shop Assistant",
+      "puesto": "Dependienta",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Vendedor de tienda",
+      "puesto": "Dependiente",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Cashier",
+      "puesto": "Cajera",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Kitchen Porter",
+      "puesto": "Ayudante de cocina",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Pinche",
+      "puesto": "Ayudante de cocina",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Chef",
+      "puesto": "Cocinero",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Warehouse Operative",
+      "puesto": "Mozo de almacén",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Peón de logística",
+      "puesto": "Mozo de almacén",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Forklift Driver",
+      "puesto": "Carretillero",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Delivery Driver",
+      "puesto": "Repartidor",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Mensajero",
+      "puesto": "Repartidor",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "HGV Driver",
+      "puesto": "Conductor de camión",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Camionero",
+      "puesto": "Conductor de tráiler",
+      "casa": false,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Front Desk Agent",
+      "puesto": "Recepcionista",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Receptionist",
+      "puesto": "Recepcionista",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Guest Services Agent",
+      "puesto": "Recepcionista",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Office Clerk",
+      "puesto": "Auxiliar administrativo",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Back Office",
+      "puesto": "Auxiliar administrativo",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Secretaria",
+      "puesto": "Asistente de dirección",
+      "casa": false,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Registered Nurse",
+      "puesto": "Enfermera",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "DUE",
+      "puesto": "Enfermera",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Gerocultor",
+      "puesto": "Auxiliar de geriatría",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Care Assistant",
+      "puesto": "Auxiliar de enfermería",
+      "casa": false,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Software Developer",
+      "puesto": "Programador",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Ingeniero de software",
+      "puesto": "Desarrollador",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Web Developer",
+      "puesto": "Programador web",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Científico de datos",
+      "puesto": "Data Scientist",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Analista de datos",
+      "puesto": "Data Analyst",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Recruiter",
+      "puesto": "Técnico de selección",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Talent Acquisition",
+      "puesto": "Reclutador",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "People Manager",
+      "puesto": "Responsable de Recursos Humanos",
+      "casa": false,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Community Manager",
+      "puesto": "Responsable de redes sociales",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Redactor de contenidos",
+      "puesto": "Content Writer",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Photographer",
+      "puesto": "Fotógrafo",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "English Teacher",
+      "puesto": "Profesora de inglés",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Docente de idiomas",
+      "puesto": "Profesor de inglés",
+      "casa": false,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Lawyer",
+      "puesto": "Abogado",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Letrado",
+      "puesto": "Abogado",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Electrician",
+      "puesto": "Electricista",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Frigorista",
+      "puesto": "Técnico de climatización",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Help Desk",
+      "puesto": "Técnico de soporte informático",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Accountant",
+      "puesto": "Contable",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Teleoperadora",
+      "puesto": "Agente de atención al cliente",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Limpiadora",
+      "puesto": "Empleada de hogar",
+      "casa": false,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Cleaner",
+      "puesto": "Personal de limpieza",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Head Chef",
+      "puesto": "Jefe de cocina",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Maître",
+      "puesto": "Jefe de sala",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
+    },
+    {
+      "titulo": "Azafata de tienda",
+      "puesto": "Promotora de ventas",
+      "casa": true,
+      "propuesta": false,
+      "sinonimo": true
     }
   ],
-  "etiquetado_por": "Mayoría de 3 etiquetadores ciegos independientes (estricto, candidata, reclutadora); pendiente de repaso de Mar en los pares sin unanimidad"
+  "etiquetado_por": "Mayoría de 3 etiquetadores ciegos; sinónimos (spec 012, T07) firmados por Mar el 26-nov"
 }
