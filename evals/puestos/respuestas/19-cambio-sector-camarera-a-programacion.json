@@ -2,6 +2,85 @@
   "base": {
     "sector": "hosteleria_turismo",
     "familia": "hosteleria_restauracion",
+    "nivel": "junior",
+    "stack": [
+      "javascript",
+      "html",
+      "css",
+      "git"
+    ],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a web",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Programador/a web",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador/a front-end",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador/a web junior",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Programador/a junior",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Waiter",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Web Developer",
+        "idioma": "en",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Junior Web Developer",
+        "idioma": "en",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Front-end Developer",
+        "idioma": "en",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
     "nivel": "intermedio",
     "stack": [
       "javascript",
@@ -13,47 +92,47 @@
       {
         "titulo": "Camarero/a",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de barra",
+        "titulo": "Camarero/a de sala",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de sala",
-        "idioma": "es",
-        "dato": "Camarera",
+        "titulo": "Waiter/Waitress",
+        "idioma": "en",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Ayudante de camarero",
+        "titulo": "Server",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
         "relacion": "afin"
       },
       {
-        "titulo": "Desarrollador web junior",
-        "idioma": "es",
-        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Programador web junior",
-        "idioma": "es",
-        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Desarrollador frontend junior",
-        "idioma": "es",
-        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Maquetador web",
+        "titulo": "Desarrollador/a web junior",
         "idioma": "es",
         "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
         "relacion": "afin"
@@ -65,13 +144,86 @@
         "relacion": "afin"
       },
       {
+        "titulo": "Desarrollador/a front-end junior",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
         "titulo": "Junior Frontend Developer",
+        "idioma": "en",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [
+      "javascript",
+      "html",
+      "css",
+      "git"
+    ],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador/a web junior",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador/a front-end",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Programador/a web",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Maquetador/a web",
+        "idioma": "es",
+        "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Junior Web Developer",
         "idioma": "en",
         "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
         "relacion": "afin"
       },
       {
-        "titulo": "Web Developer",
+        "titulo": "Frontend Developer",
         "idioma": "en",
         "dato": "Grado Superior en Desarrollo de Aplicaciones Web",
         "relacion": "afin"

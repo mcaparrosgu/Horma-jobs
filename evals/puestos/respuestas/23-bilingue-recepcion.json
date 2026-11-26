@@ -8,20 +8,8 @@
     ],
     "puestos": [
       {
-        "titulo": "Front Desk Agent",
-        "idioma": "en",
-        "dato": "Front Desk Agent",
-        "relacion": "mismo"
-      },
-      {
         "titulo": "Recepcionista",
         "idioma": "es",
-        "dato": "Recepcionista",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Hotel Receptionist",
-        "idioma": "en",
         "dato": "Recepcionista",
         "relacion": "mismo"
       },
@@ -32,8 +20,26 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Recepcionista de front desk",
+        "titulo": "Front Desk Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Hotel Receptionist",
+        "idioma": "en",
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Agente de recepción",
         "idioma": "es",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Front Office Agent",
+        "idioma": "en",
         "dato": "Front Desk Agent",
         "relacion": "mismo"
       },
@@ -44,10 +50,80 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Agente de atención al huésped",
+        "titulo": "Guest Relations Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Agente de servicios al huésped",
         "idioma": "es",
         "dato": "Front Desk Agent",
         "relacion": "afin"
+      },
+      {
+        "titulo": "Reservations Agent",
+        "idioma": "en",
+        "dato": "BA in Tourism Management",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asistente de reservas",
+        "idioma": "es",
+        "dato": "BA in Tourism Management",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de turismo",
+        "idioma": "es",
+        "dato": "BA in Tourism Management",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [
+      "opera pms"
+    ],
+    "puestos": [
+      {
+        "titulo": "Recepcionista",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Recepcionista de hotel",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Agente de recepción",
+        "idioma": "es",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Front Desk Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Hotel Receptionist",
+        "idioma": "en",
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Front Office Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
       },
       {
         "titulo": "Guest Relations Agent",
@@ -62,15 +138,103 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Reservations Agent",
-        "idioma": "en",
+        "titulo": "Asistente de turismo",
+        "idioma": "es",
         "dato": "BA in Tourism Management",
         "relacion": "afin"
       },
       {
-        "titulo": "Agente de reservas",
-        "idioma": "es",
+        "titulo": "Tourism Assistant",
+        "idioma": "en",
         "dato": "BA in Tourism Management",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [
+      "opera pms"
+    ],
+    "puestos": [
+      {
+        "titulo": "Recepcionista",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Recepcionista de hotel",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Front Desk Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Hotel Receptionist",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Front Desk Associate",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Agente de recepción",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Guest Services Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Agente de atención al huésped",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Night Auditor",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de recepción",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conserje de hotel",
+        "idioma": "es",
+        "dato": "Recepcionista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reservations Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Guest Relations Agent",
+        "idioma": "en",
+        "dato": "Front Desk Agent",
         "relacion": "afin"
       }
     ]

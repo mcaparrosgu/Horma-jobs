@@ -2,25 +2,13 @@
   "base": {
     "sector": "hosteleria_turismo",
     "familia": "hosteleria_restauracion",
-    "nivel": "intermedio",
+    "nivel": "junior",
     "stack": [],
     "puestos": [
       {
-        "titulo": "Camarera",
+        "titulo": "Camarero/a",
         "idioma": "es",
-        "dato": "Camarera",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Camarero",
-        "idioma": "es",
-        "dato": "Camarera",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Camarero de sala",
-        "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
@@ -30,15 +18,21 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Waiter",
-        "idioma": "en",
-        "dato": "Camarera",
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Server",
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waiter/Waitress",
         "idioma": "en",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
@@ -48,10 +42,10 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Ayudante de camarero",
-        "idioma": "es",
-        "dato": "Camarera",
-        "relacion": "afin"
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
       },
       {
         "titulo": "Auxiliar de cocina",
@@ -60,53 +54,41 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Cocinero",
+        "titulo": "Ayudante de camarero/a",
         "idioma": "es",
-        "dato": "Ayudante de cocina",
+        "dato": "Camarero/a",
         "relacion": "afin"
       },
       {
-        "titulo": "Commis de cocina",
+        "titulo": "Auxiliar de restauración",
         "idioma": "es",
-        "dato": "Ayudante de cocina",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Técnico en Servicios de Restauración",
-        "idioma": "es",
-        "dato": "Técnico en Servicios de Restauración",
+        "dato": "Técnico/a en Servicios de Restauración",
         "relacion": "afin"
       }
     ]
   },
-  "variante": {
+  "base_2": {
     "sector": "hosteleria_turismo",
     "familia": "hosteleria_restauracion",
     "nivel": "junior",
     "stack": [],
     "puestos": [
       {
-        "titulo": "Camarero",
+        "titulo": "Camarero/a",
         "idioma": "es",
-        "dato": "Camarero",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de sala",
+        "titulo": "Camarero/a de barra",
         "idioma": "es",
-        "dato": "Camarero",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de barra",
-        "idioma": "es",
-        "dato": "Camarero",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Waiter",
+        "titulo": "Waiter/Waitress",
         "idioma": "en",
-        "dato": "Camarero",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
@@ -119,6 +101,80 @@
         "titulo": "Auxiliar de cocina",
         "idioma": "es",
         "dato": "Ayudante de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Commis chef",
+        "idioma": "en",
+        "dato": "Ayudante de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de servicios de restauración",
+        "idioma": "es",
+        "dato": "Técnico/a en Servicios de Restauración",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Food runner",
+        "idioma": "en",
+        "dato": "Técnico/a en Servicios de Restauración",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ayudante de sala",
+        "idioma": "es",
+        "dato": "Técnico/a en Servicios de Restauración",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de cocina",
+        "idioma": "es",
+        "dato": "Ayudante de cocina",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waiter/Waitress",
+        "idioma": "en",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
@@ -128,21 +184,27 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Runner de sala",
+        "titulo": "Ayudante de camarero/a",
         "idioma": "es",
-        "dato": "Camarero",
+        "dato": "Camarero/a",
         "relacion": "afin"
       },
       {
-        "titulo": "Food Runner",
-        "idioma": "en",
-        "dato": "Camarero",
+        "titulo": "Cocinero/a",
+        "idioma": "es",
+        "dato": "Ayudante de cocina",
         "relacion": "afin"
       },
       {
-        "titulo": "Ayudante de camarero",
+        "titulo": "Auxiliar de cocina",
         "idioma": "es",
-        "dato": "Camarero",
+        "dato": "Ayudante de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a en Servicios de Restauración",
+        "idioma": "es",
+        "dato": "Técnico/a en Servicios de Restauración",
         "relacion": "afin"
       },
       {
@@ -152,9 +214,9 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico en Servicios de Restauración",
-        "idioma": "es",
-        "dato": "Técnico en Servicios de Restauración",
+        "titulo": "Cook",
+        "idioma": "en",
+        "dato": "Ayudante de cocina",
         "relacion": "afin"
       }
     ]

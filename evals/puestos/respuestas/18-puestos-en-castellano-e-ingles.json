@@ -22,7 +22,79 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Analista de business intelligence",
+        "titulo": "Analista de Business Intelligence",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista de reporting",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reporting Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista estadístico",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador de Power BI",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Power BI Developer",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "intermedio",
+    "stack": [
+      "sql",
+      "excel",
+      "power bi"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Analista de Business Intelligence",
         "idioma": "es",
         "dato": "Analista de datos",
         "relacion": "afin"
@@ -52,14 +124,86 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Power BI Developer",
+        "titulo": "Analista de Power BI",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista de datos junior",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Estadístico/a",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista estadístico/a",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "intermedio",
+    "stack": [
+      "sql",
+      "excel",
+      "power bi"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Analista de Business Intelligence",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
         "idioma": "en",
         "dato": "Analista de datos",
         "relacion": "afin"
       },
       {
-        "titulo": "Desarrollador de Power BI",
+        "titulo": "Business Data Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista de reporting",
         "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reporting Analyst",
+        "idioma": "en",
         "dato": "Analista de datos",
         "relacion": "afin"
       },

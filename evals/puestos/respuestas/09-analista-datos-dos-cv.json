@@ -40,7 +40,19 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Científico de datos",
+        "titulo": "Analista estadístico/a",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Científico/a de datos",
         "idioma": "es",
         "dato": "Máster en Ciencia de Datos",
         "relacion": "afin"
@@ -52,20 +64,92 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Analista estadístico",
+        "titulo": "Power BI Developer",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "intermedio",
+    "stack": [
+      "sql",
+      "python",
+      "power bi"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Analista de Business Intelligence",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Business Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista de reporting",
+        "idioma": "es",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reporting Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Científico/a de datos",
+        "idioma": "es",
+        "dato": "Máster en Ciencia de Datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Data Scientist",
+        "idioma": "en",
+        "dato": "Máster en Ciencia de Datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista estadístico/a",
         "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       },
       {
-        "titulo": "Statistician",
+        "titulo": "Statistical Analyst",
         "idioma": "en",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       }
     ]
   },
-  "variante": {
+  "base_3": {
     "sector": "tecnologia",
     "familia": "datos_ia",
     "nivel": "intermedio",
@@ -100,13 +184,19 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Analista de BI",
+        "titulo": "Analista de Power BI",
         "idioma": "es",
         "dato": "Analista de datos",
         "relacion": "afin"
       },
       {
-        "titulo": "Científico de datos",
+        "titulo": "Business Analyst",
+        "idioma": "en",
+        "dato": "Analista de datos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Científico/a de datos",
         "idioma": "es",
         "dato": "Máster en Ciencia de Datos",
         "relacion": "afin"
@@ -118,7 +208,7 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Estadístico",
+        "titulo": "Analista estadístico/a",
         "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
@@ -126,12 +216,6 @@
       {
         "titulo": "Statistical Analyst",
         "idioma": "en",
-        "dato": "Grado en Estadística",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Analista estadístico",
-        "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       }

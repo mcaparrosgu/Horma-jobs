@@ -2,7 +2,7 @@
   "base": {
     "sector": "tecnologia",
     "familia": "datos_ia",
-    "nivel": "practicas",
+    "nivel": "sin_especificar",
     "stack": [
       "r",
       "python",
@@ -23,42 +23,6 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Analista de datos en prácticas",
-        "idioma": "es",
-        "dato": "Grado en Estadística",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Becario de análisis de datos",
-        "idioma": "es",
-        "dato": "Grado en Estadística",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Estadístico junior",
-        "idioma": "es",
-        "dato": "Grado en Estadística",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Analista estadístico",
-        "idioma": "es",
-        "dato": "Grado en Estadística",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Técnico de análisis de datos",
-        "idioma": "es",
-        "dato": "Grado en Estadística",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Analista de business intelligence",
-        "idioma": "es",
-        "dato": "Grado en Estadística",
-        "relacion": "afin"
-      },
-      {
         "titulo": "Data Analyst",
         "idioma": "en",
         "dato": "Grado en Estadística",
@@ -71,8 +35,14 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Data Analyst Intern",
-        "idioma": "en",
+        "titulo": "Estadístico/a",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista estadístico/a",
+        "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       },
@@ -83,8 +53,14 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Junior Data Scientist",
+        "titulo": "Statistical Analyst",
         "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista de business intelligence",
+        "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       },
@@ -96,7 +72,7 @@
       }
     ]
   },
-  "variante": {
+  "base_2": {
     "sector": "tecnologia",
     "familia": "datos_ia",
     "nivel": "sin_especificar",
@@ -132,7 +108,74 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Estadístico",
+        "titulo": "Analista estadístico/a",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Statistical Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Estadístico/a",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista de Business Intelligence",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Business Intelligence Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Científico/a de datos junior",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Junior Data Scientist",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "tecnologia",
+    "familia": "datos_ia",
+    "nivel": "sin_especificar",
+    "stack": [
+      "r",
+      "python",
+      "sql",
+      "excel"
+    ],
+    "puestos": [
+      {
+        "titulo": "Analista de datos",
+        "idioma": "es",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Data Analyst",
+        "idioma": "en",
+        "dato": "Grado en Estadística",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Estadístico/a",
         "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
@@ -144,25 +187,25 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Analista estadístico",
+        "titulo": "Analista estadístico/a",
         "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       },
       {
-        "titulo": "Junior Data Scientist",
+        "titulo": "Statistical Analyst",
         "idioma": "en",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       },
       {
-        "titulo": "Científico de datos junior",
+        "titulo": "Analista junior de datos",
         "idioma": "es",
         "dato": "Grado en Estadística",
         "relacion": "afin"
       },
       {
-        "titulo": "Business Intelligence Analyst",
+        "titulo": "Junior Data Analyst",
         "idioma": "en",
         "dato": "Grado en Estadística",
         "relacion": "afin"

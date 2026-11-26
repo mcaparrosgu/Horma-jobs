@@ -9,9 +9,21 @@
     ],
     "puestos": [
       {
-        "titulo": "Abogado laboralista",
+        "titulo": "Abogado/a laboralista",
         "idioma": "es",
-        "dato": "Abogado laboralista",
+        "dato": "Abogado/a laboralista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Abogado/a de derecho laboral",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Employment Lawyer",
+        "idioma": "en",
+        "dato": "Abogado/a laboralista",
         "relacion": "mismo"
       },
       {
@@ -21,9 +33,68 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Employment Lawyer",
+        "titulo": "Social Media Manager",
         "idioma": "en",
-        "dato": "Abogado laboralista",
+        "dato": "Responsable de redes sociales",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Community Manager",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Paid Social Specialist",
+        "idioma": "en",
+        "dato": "Responsable de redes sociales",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Abogado/a de empresa",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asesor/a jurídico/a laboral",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Jurista",
+        "idioma": "es",
+        "dato": "Grado en Derecho",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de marketing digital",
+        "idioma": "es",
+        "dato": "Máster en Marketing Digital",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Digital Marketing Specialist",
+        "idioma": "en",
+        "dato": "Máster en Marketing Digital",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "servicios_profesionales",
+    "familia": "marketing_comunicacion",
+    "nivel": "intermedio",
+    "stack": [
+      "google analytics",
+      "meta ads"
+    ],
+    "puestos": [
+      {
+        "titulo": "Responsable de redes sociales",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales",
         "relacion": "mismo"
       },
       {
@@ -33,19 +104,37 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Asesor jurídico laboral",
-        "idioma": "es",
-        "dato": "Abogado laboralista",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Abogado",
-        "idioma": "es",
-        "dato": "Grado en Derecho",
-        "relacion": "afin"
-      },
-      {
         "titulo": "Community Manager",
+        "idioma": "en",
+        "dato": "Responsable de redes sociales",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Abogado/a laboralista",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Abogado/a",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asesor/a jurídico/a laboral",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de comunicación",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de marketing digital",
         "idioma": "es",
         "dato": "Máster en Marketing Digital",
         "relacion": "afin"
@@ -63,9 +152,92 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Paid Social Specialist",
+        "titulo": "Analista de marketing digital",
+        "idioma": "es",
+        "dato": "Máster en Marketing Digital",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "servicios_profesionales",
+    "familia": "marketing_comunicacion",
+    "nivel": "intermedio",
+    "stack": [
+      "google analytics",
+      "meta ads"
+    ],
+    "puestos": [
+      {
+        "titulo": "Responsable de redes sociales",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Community Manager",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Community Manager",
+        "idioma": "en",
+        "dato": "Responsable de redes sociales",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Social Media Manager",
+        "idioma": "en",
+        "dato": "Responsable de redes sociales",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Especialista en redes sociales",
+        "idioma": "es",
+        "dato": "Responsable de redes sociales",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Especialista en marketing digital",
+        "idioma": "es",
+        "dato": "Máster en Marketing Digital",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Digital Marketing Specialist",
         "idioma": "en",
         "dato": "Máster en Marketing Digital",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista de marketing digital",
+        "idioma": "es",
+        "dato": "Máster en Marketing Digital",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Digital Marketing Analyst",
+        "idioma": "en",
+        "dato": "Máster en Marketing Digital",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Abogado/a laboralista",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Employment Lawyer",
+        "idioma": "en",
+        "dato": "Abogado/a laboralista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asesor/a laboral",
+        "idioma": "es",
+        "dato": "Abogado/a laboralista",
         "relacion": "afin"
       }
     ]

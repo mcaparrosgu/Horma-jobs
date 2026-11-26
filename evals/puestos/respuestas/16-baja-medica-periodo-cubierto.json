@@ -6,69 +6,217 @@
     "stack": [],
     "puestos": [
       {
-        "titulo": "Camarera",
+        "titulo": "Camarero/a",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarero",
+        "titulo": "Camarero/a de sala",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de sala",
+        "titulo": "Camarero/a de barra",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarera de sala",
+        "titulo": "Camarero/a de restaurante",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Camarero de barra",
-        "idioma": "es",
-        "dato": "Camarera",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Camarero de restaurante",
-        "idioma": "es",
-        "dato": "Camarera",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Waiter",
+        "titulo": "Waiter/Waitress",
         "idioma": "en",
-        "dato": "Camarera",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Waitress",
-        "idioma": "en",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
         "titulo": "Restaurant Server",
         "idioma": "en",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Ayudante de camarero",
+        "titulo": "Ayudante de camarero/a",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
         "relacion": "afin"
       },
       {
         "titulo": "Auxiliar de sala",
         "idioma": "es",
-        "dato": "Camarera",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Barista",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de restaurante",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de hotel",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waiter/Waitress",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Server",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Barista",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de restaurante",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waiter/Waitress",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Server",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Restaurant Server",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Food and Beverage Server",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Runner",
+        "idioma": "en",
+        "dato": "Camarero/a",
         "relacion": "afin"
       }
     ]

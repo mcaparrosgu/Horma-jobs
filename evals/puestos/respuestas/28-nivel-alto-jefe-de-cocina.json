@@ -3,152 +3,223 @@
     "sector": "hosteleria_turismo",
     "familia": "hosteleria_restauracion",
     "nivel": "senior",
-    "stack": [],
+    "stack": [
+      "escandallos",
+      "appcc"
+    ],
     "puestos": [
       {
-        "titulo": "Jefe de cocina",
+        "titulo": "Jefe/a de cocina",
         "idioma": "es",
-        "dato": "Jefe de cocina",
+        "dato": "Jefe/a de cocina",
         "relacion": "mismo"
       },
       {
         "titulo": "Head Chef",
         "idioma": "en",
-        "dato": "Jefe de cocina",
+        "dato": "Jefe/a de cocina",
         "relacion": "mismo"
       },
       {
-        "titulo": "Chef de cocina",
+        "titulo": "Jefe/a de cocina de hotel",
         "idioma": "es",
-        "dato": "Jefe de cocina",
+        "dato": "Jefe/a de cocina",
         "relacion": "mismo"
       },
       {
-        "titulo": "Cocinero",
+        "titulo": "Cocinero/a",
         "idioma": "es",
-        "dato": "Cocinero",
+        "dato": "Cocinero/a",
         "relacion": "mismo"
       },
       {
         "titulo": "Cook",
         "idioma": "en",
-        "dato": "Cocinero",
+        "dato": "Cocinero/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Cocinero de restaurante",
+        "titulo": "Cocinero/a de restaurante",
         "idioma": "es",
-        "dato": "Cocinero",
+        "dato": "Cocinero/a",
         "relacion": "mismo"
       },
       {
         "titulo": "Sous Chef",
         "idioma": "en",
-        "dato": "Jefe de cocina",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Segundo de cocina",
-        "idioma": "es",
-        "dato": "Jefe de cocina",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Jefe de partida",
-        "idioma": "es",
-        "dato": "Técnico Superior en Dirección de Cocina",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Chef de partie",
-        "idioma": "en",
-        "dato": "Técnico Superior en Dirección de Cocina",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Encargado de cocina",
-        "idioma": "es",
-        "dato": "Jefe de cocina",
+        "dato": "Jefe/a de cocina",
         "relacion": "afin"
       },
       {
         "titulo": "Responsable de cocina",
         "idioma": "es",
-        "dato": "Jefe de cocina",
+        "dato": "Jefe/a de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Kitchen Manager",
+        "idioma": "en",
+        "dato": "Jefe/a de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Jefe/a de partida",
+        "idioma": "es",
+        "dato": "Cocinero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Chef de partie",
+        "idioma": "en",
+        "dato": "Cocinero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ayudante de cocina",
+        "idioma": "es",
+        "dato": "Cocinero/a",
         "relacion": "afin"
       }
     ]
   },
-  "variante": {
+  "base_2": {
     "sector": "hosteleria_turismo",
     "familia": "hosteleria_restauracion",
     "nivel": "senior",
-    "stack": [],
+    "stack": [
+      "escandallos",
+      "appcc"
+    ],
     "puestos": [
       {
-        "titulo": "Jefa de cocina",
+        "titulo": "Jefe/a de cocina",
         "idioma": "es",
-        "dato": "Jefa de cocina",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Jefe de cocina",
-        "idioma": "es",
-        "dato": "Jefa de cocina",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Chef de cocina",
-        "idioma": "es",
-        "dato": "Jefa de cocina",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Cocinera",
-        "idioma": "es",
-        "dato": "Cocinera",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Cocinera de restaurante",
-        "idioma": "es",
-        "dato": "Cocinera",
+        "dato": "Jefe/a de cocina",
         "relacion": "mismo"
       },
       {
         "titulo": "Head Chef",
         "idioma": "en",
-        "dato": "Jefa de cocina",
+        "dato": "Jefe/a de cocina",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de cocina",
+        "idioma": "es",
+        "dato": "Jefe/a de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Sous Chef",
+        "idioma": "en",
+        "dato": "Jefe/a de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Segundo/a jefe/a de cocina",
+        "idioma": "es",
+        "dato": "Jefe/a de cocina",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cocinero/a",
+        "idioma": "es",
+        "dato": "Cocinero/a",
         "relacion": "mismo"
       },
       {
         "titulo": "Cook",
         "idioma": "en",
-        "dato": "Cocinera",
+        "dato": "Cocinero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Chef de partida",
+        "idioma": "es",
+        "dato": "Cocinero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Chef de Partie",
+        "idioma": "en",
+        "dato": "Cocinero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ayudante de cocina",
+        "idioma": "es",
+        "dato": "Cocinero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Commis Chef",
+        "idioma": "en",
+        "dato": "Cocinero/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "senior",
+    "stack": [
+      "escandallos",
+      "appcc"
+    ],
+    "puestos": [
+      {
+        "titulo": "Jefe/a de cocina",
+        "idioma": "es",
+        "dato": "Jefe/a de cocina",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Head Chef",
+        "idioma": "en",
+        "dato": "Jefe/a de cocina",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cocinero/a",
+        "idioma": "es",
+        "dato": "Cocinero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cook",
+        "idioma": "en",
+        "dato": "Cocinero/a",
         "relacion": "mismo"
       },
       {
         "titulo": "Sous Chef",
         "idioma": "en",
-        "dato": "Jefa de cocina",
+        "dato": "Jefe/a de cocina",
         "relacion": "afin"
       },
       {
-        "titulo": "Encargada de cocina",
+        "titulo": "Segundo/a de cocina",
         "idioma": "es",
-        "dato": "Jefa de cocina",
+        "dato": "Jefe/a de cocina",
         "relacion": "afin"
       },
       {
-        "titulo": "Director de cocina",
+        "titulo": "Chef de partida",
         "idioma": "es",
-        "dato": "Técnico Superior en Dirección de Cocina",
+        "dato": "Cocinero/a",
         "relacion": "afin"
       },
       {
-        "titulo": "Cocinera de hotel",
+        "titulo": "Ayudante de cocina",
         "idioma": "es",
-        "dato": "Jefa de cocina",
+        "dato": "Cocinero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Encargado/a de cocina",
+        "idioma": "es",
+        "dato": "Técnico/a Superior en Dirección de Cocina",
         "relacion": "afin"
       }
     ]

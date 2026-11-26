@@ -2,6 +2,82 @@
   "base": {
     "sector": "otros",
     "familia": "atencion_cliente",
+    "nivel": "senior",
+    "stack": [
+      "zendesk"
+    ],
+    "puestos": [
+      {
+        "titulo": "Customer Service Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Jefe/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de servicio al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Success Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Experience Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de experiencia de cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Supervisor/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Coordinador/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Service Team Leader",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "otros",
+    "familia": "atencion_cliente",
     "nivel": "intermedio",
     "stack": [
       "zendesk"
@@ -32,31 +108,19 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Customer Care Manager",
-        "idioma": "en",
-        "dato": "Manager",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Customer Experience Manager",
+        "titulo": "Customer Service Team Lead",
         "idioma": "en",
         "dato": "Manager",
         "relacion": "afin"
       },
       {
-        "titulo": "Jefa de equipo de atención al cliente",
+        "titulo": "Supervisor/a de atención al cliente",
         "idioma": "es",
         "dato": "Manager",
         "relacion": "afin"
       },
       {
-        "titulo": "Customer Service Team Leader",
-        "idioma": "en",
-        "dato": "Manager",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Coordinadora de atención al cliente",
+        "titulo": "Coordinador/a de atención al cliente",
         "idioma": "es",
         "dato": "Manager",
         "relacion": "afin"
@@ -68,20 +132,20 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Técnica de selección de personal",
-        "idioma": "es",
-        "dato": "Grado en Psicología",
+        "titulo": "Customer Experience Manager",
+        "idioma": "en",
+        "dato": "Manager",
         "relacion": "afin"
       },
       {
-        "titulo": "Recruiter",
-        "idioma": "en",
-        "dato": "Grado en Psicología",
+        "titulo": "Responsable de experiencia de cliente",
+        "idioma": "es",
+        "dato": "Manager",
         "relacion": "afin"
       }
     ]
   },
-  "variante": {
+  "base_3": {
     "sector": "otros",
     "familia": "atencion_cliente",
     "nivel": "senior",
@@ -102,14 +166,20 @@
         "relacion": "mismo"
       },
       {
-        "titulo": "Jefe de equipo de atención al cliente",
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Jefe/a de atención al cliente",
         "idioma": "es",
         "dato": "Manager",
         "relacion": "mismo"
       },
       {
-        "titulo": "Customer Support Manager",
-        "idioma": "en",
+        "titulo": "Responsable de soporte al cliente",
+        "idioma": "es",
         "dato": "Manager",
         "relacion": "mismo"
       },
@@ -126,33 +196,21 @@
         "relacion": "afin"
       },
       {
-        "titulo": "Supervisor de atención al cliente",
+        "titulo": "Supervisor/a de atención al cliente",
         "idioma": "es",
         "dato": "Manager",
         "relacion": "afin"
       },
       {
-        "titulo": "Team Leader Customer Service",
+        "titulo": "Customer Service Team Lead",
         "idioma": "en",
         "dato": "Manager",
         "relacion": "afin"
       },
       {
-        "titulo": "Coordinador de atención al cliente",
-        "idioma": "es",
+        "titulo": "Call Center Manager",
+        "idioma": "en",
         "dato": "Manager",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Especialista en selección de personal",
-        "idioma": "es",
-        "dato": "Grado en Psicología",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Técnico de recursos humanos",
-        "idioma": "es",
-        "dato": "Grado en Psicología",
         "relacion": "afin"
       }
     ]

@@ -5,5 +5,19 @@
     "nivel": "sin_especificar",
     "stack": [],
     "puestos": []
+  },
+  "base_2": {
+    "sector": "otros",
+    "familia": "otros",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": []
+  },
+  "base_3": {
+    "sector": "otros",
+    "familia": "otros",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": []
   }
 }

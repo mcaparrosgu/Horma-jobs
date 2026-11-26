@@ -2,73 +2,221 @@
   "base": {
     "sector": "servicios_profesionales",
     "familia": "administracion_oficina",
-    "nivel": "junior",
+    "nivel": "sin_especificar",
     "stack": [],
     "puestos": [
       {
-        "titulo": "Auxiliar administrativa",
+        "titulo": "Auxiliar administrativo/a",
         "idioma": "es",
-        "dato": "Auxiliar administrativa",
+        "dato": "Auxiliar administrativo/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Auxiliar administrativo",
+        "titulo": "Auxiliar de gestoría",
         "idioma": "es",
-        "dato": "Auxiliar administrativa",
+        "dato": "Auxiliar administrativo/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Administrative Assistant",
-        "idioma": "en",
-        "dato": "Auxiliar administrativa",
+        "titulo": "Dependiente/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Dependienta",
+        "titulo": "Dependiente/a de tienda",
         "idioma": "es",
-        "dato": "Dependienta",
+        "dato": "Dependiente/a",
         "relacion": "mismo"
       },
       {
-        "titulo": "Dependiente",
+        "titulo": "Administrativo/a",
         "idioma": "es",
-        "dato": "Dependienta",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Sales Assistant",
-        "idioma": "en",
-        "dato": "Dependienta",
-        "relacion": "mismo"
-      },
-      {
-        "titulo": "Auxiliar de oficina",
-        "idioma": "es",
-        "dato": "Auxiliar administrativa",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Asistente administrativo",
-        "idioma": "es",
-        "dato": "Auxiliar administrativa",
-        "relacion": "afin"
-      },
-      {
-        "titulo": "Office Assistant",
-        "idioma": "en",
-        "dato": "Auxiliar administrativa",
+        "dato": "Auxiliar administrativo/a",
         "relacion": "afin"
       },
       {
         "titulo": "Auxiliar contable",
         "idioma": "es",
-        "dato": "Auxiliar administrativa",
+        "dato": "Auxiliar administrativo/a",
         "relacion": "afin"
       },
       {
-        "titulo": "Vendedor de tienda",
+        "titulo": "Asistente administrativo/a",
         "idioma": "es",
-        "dato": "Dependienta",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Recepcionista",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Vendedor/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Sales Assistant",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Clerk",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar administrativo/a de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Dependiente/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Sales Assistant",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Office Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asistente administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Accounts Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Dependiente/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Sales assistant",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asistente administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrative assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Vendedor/a de tienda",
+        "idioma": "es",
+        "dato": "Dependiente/a",
         "relacion": "afin"
       }
     ]

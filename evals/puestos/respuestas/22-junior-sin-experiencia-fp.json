@@ -10,87 +10,237 @@
     ],
     "puestos": [
       {
-        "titulo": "Técnico de soporte informático",
+        "titulo": "Técnico/a de sistemas",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico informático",
+        "titulo": "Técnico/a informático/a",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico de sistemas",
+        "titulo": "Técnico/a de soporte informático",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico de redes",
+        "titulo": "Técnico/a de soporte técnico",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico de help desk",
+        "titulo": "Técnico/a de microinformática",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico de microinformática",
+        "titulo": "Técnico/a de redes",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico de mantenimiento informático",
+        "titulo": "Técnico/a de help desk",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "Técnico de infraestructuras de red",
+        "titulo": "Técnico/a de mantenimiento informático",
         "idioma": "es",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de cableado estructurado",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
         "titulo": "IT Support Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
         "titulo": "Help Desk Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
         "titulo": "Network Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "tecnologia",
+    "familia": "sistemas_redes",
+    "nivel": "sin_especificar",
+    "stack": [
+      "windows server",
+      "linux",
+      "cableado"
+    ],
+    "puestos": [
+      {
+        "titulo": "Técnico/a de soporte informático",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de sistemas",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de redes",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a informático/a",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de help desk",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de cableado",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de soporte técnico",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "IT Support Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
         "titulo": "Systems Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
-        "titulo": "IT Technician",
+        "titulo": "Network Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Help Desk Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       },
       {
         "titulo": "Desktop Support Technician",
         "idioma": "en",
-        "dato": "Técnico en Sistemas Microinformáticos y Redes",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "tecnologia",
+    "familia": "sistemas_redes",
+    "nivel": "sin_especificar",
+    "stack": [
+      "windows server",
+      "linux",
+      "cableado"
+    ],
+    "puestos": [
+      {
+        "titulo": "Técnico/a de sistemas",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de soporte informático",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de redes",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de microinformática",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de help desk",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de cableado estructurado",
+        "idioma": "es",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "IT Support Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Systems Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Network Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Help Desk Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desktop Support Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Sistemas Microinformáticos y Redes",
         "relacion": "afin"
       }
     ]
