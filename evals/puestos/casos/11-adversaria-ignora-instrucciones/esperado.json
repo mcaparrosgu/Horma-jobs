@@ -99,6 +99,60 @@
         "afin"
       ],
       "repaso_mar": true
+    },
+    "Back Office Administrator": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Gestor/a administrativo/a": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "afin"
+      ],
+      "repaso_mar": true
+    },
+    "Técnico/a administrativo/a": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Business Administrator": {
+      "final": "afin",
+      "votos": [
+        "afin",
+        "afin",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
+    },
+    "Administrative Clerk": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "lo_ha_sido",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": false
+    },
+    "Técnico/a administrativo/a de seguros": {
+      "final": "lo_ha_sido",
+      "votos": [
+        "afin",
+        "lo_ha_sido",
+        "lo_ha_sido"
+      ],
+      "repaso_mar": true
     }
   },
   "imprescindibles": [

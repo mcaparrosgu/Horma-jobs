@@ -57,8 +57,8 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
     distintas bajan la estabilidad.
   - 🛑 OK al gasto (~0,5-0,8 USD): 3 pasadas reales del set `puestos` y eval `perfil`.
   - 🛑 Mar fija el umbral de estabilidad (26-nov: 0,50 USD, estabilidad 0,52, `perfil` aprobado; D-052: sin
-    umbral y sus puestos, por código). Después se etiquetan los puestos nuevos (126 pendientes de la
-    pasada anterior; la copia cambia las respuestas).
+    umbral y sus puestos, por código). Etiquetados los puestos nuevos (26-nov: 261, kappa 0,75, 53 repasados)
+    y el set aprueba: ajenos 0, marcados 0,99, no marcados 1,0, cobertura 0,93, equidad 1,0.
 - [ ] T07 — Set de títulos de 9a: ~50 pares de sinónimos. 🛑 Mar firma los pares dudosos. Se vuelve a medir
   RF-9.3e; SI la cobertura baja de 0,90, 🛑 se para y se propone la prueba de embeddings (F4-D6).
 - [ ] T08 — «Qué buscas»: nivel 1 marcado, nivel 2 sin marcar con su porqué y junior sin experiencia (RF-12.7).
