@@ -36,7 +36,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T06 — `relacion` en el clasificador. 🛑 OK al gasto (~0,4-0,7 USD): segunda pasada del set y eval `perfil`
   (26-nov: 0,44 USD; `perfil` aprobado al 100 %; ajenos 0, marcados 0,98, no marcados 0,99, cobertura 0,94,
   equidad 0; 126 puestos nuevos por etiquetar).
-- [ ] T22 — Léxico y `en_genero` (`tools/lexico_genero.py`). 🛑 Mar repasa el léxico (0 USD).
+- [x] T22 — Léxico y `en_genero` (`tools/lexico_genero.py`). 🛑 Mar repasa el léxico (0 USD; aprobado el 26-nov, D-050).
   - **Test:** la tabla de ejemplos de D-043, incluida «Costurera» sin cambio; ida y vuelta
     `en_genero(a_copia(x), género de x) == x`; sin género, «Camarero/a».
 - [ ] T23 — `PerfilCiego` y `copia_ciega()` (RF-12.30a y b).
