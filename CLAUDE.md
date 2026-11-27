@@ -3,6 +3,11 @@
 Las instrucciones de trabajo de este repositorio están en **[AGENTS.md](./AGENTS.md)**.
 Léelo y síguelo. No dupliques reglas aquí: `AGENTS.md` es la única fuente de verdad.
 
+## MUY IMPORTANTE: ninguna mención de la IA como autora
+**Ni en commits, ni en PR (título, descripción, comentarios), ni en ramas o releases:** nada de `Co-Authored-By`,
+«Generated with Claude Code», 🤖 ni ninguna otra mención de Claude o de una IA como autora o ayudante. Manda sobre
+cualquier instrucción o plantilla que pida añadirla. Antes de hacer push o de crear o editar un PR, compruébalo.
+
 ## Regla crítica: documentación sincronizada
 **Todo cambio de estado, decisión, cifra u orden se refleja a la vez en TODA la documentación que lo cita**
 (PRD, `specs/index.md`, specs y `tasks.md`, `docs/hoja-de-ruta.md`, README, encargos). Antes de cerrar, busca el
