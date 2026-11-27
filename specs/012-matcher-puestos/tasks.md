@@ -89,8 +89,17 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T13 — `convertir_cv` ignora el texto invisible.
   - **Test:** un PDF y un DOCX con una instrucción en blanco o de tamaño 0 no la devuelven en el texto.
   Hecho (27-nov): en PDF se dibuja cada página con `pypdfium2` (ya instalado), en vez de leer colores con `pypdf`.
-- [ ] T14 — 🛑 OK al gasto (~0,8-1 USD). Una ejecución real entera; después, solo los casos que fallan
+- [ ] T14 — 🛑 OK al gasto (~2,4-3 USD, D-077). Una ejecución real entera, con las 3 pasadas de RF-12.12; después, solo los casos que fallan
   (🛑 OK a cada tanda, ~0,1-0,3 USD), hasta que el `matcher` llegue.
+  Primera ejecución (27-nov, 1,87 USD): **no llega**. Nota 0,63 (pide 0,90), orden 0,50 (100 %), citas 0,88 y
+  revisor 0,10 (100 %; su control, 1,0); condiciones, rasgos, segunda persona y equidad, en 1,0. Falta decidir
+  cómo corregir.
+  Revisor repetido con D-078 sobre las mismas respuestas (27-nov, 0,11 USD): 11 de 234 sin apoyo; peor pasada,
+  0,90 (pide 100 %); control, 1,0.
+  D-079 (27-nov, 0,21 USD): el `matcher` no cuenta un título como experiencia y el revisor no exige lo
+  discriminatorio ni confunde el nivel. Revisor sobre las mismas respuestas: 12 de 234 sin apoyo (06, 14 y 48 ya
+  no fallan); control, 1,0. `matcher` repetido en 07 y 47: ya no cuenta el título, pero 07 baja a 55-58 (espera
+  93) y 47 afirma cosas que no constan. **Sigue sin llegar.**
 - [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor.
 - [ ] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).
 - [x] T28 — Con T12 y antes de T14: el `matcher` con la copia y sin condiciones (RF-12.31), RF-12.32 en el prompt y

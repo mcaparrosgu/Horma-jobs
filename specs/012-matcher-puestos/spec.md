@@ -122,6 +122,8 @@ pauta de Mar.
 - **RF-12.21** (D-078) Un revisor con el modelo pequeño, solo dentro del eval, DEBERÁ ver la copia del perfil y la
   oferta enteras y juzgar que cada explicación no afirma nada que no esté en ellas y que sus citas tienen que ver
   con lo que dice. Umbral: 100 %.
+  (D-079) Callar un requisito discriminatorio NO es un fallo, y el «nivel» de la oferta y del perfil es el del
+  puesto, no el de un idioma.
 - **RF-12.22** El `matcher` DEBERÁ recibir solo la copia de RF-12.30; la equidad de nombre y género la cubre
   RF-12.30d. En los pares que cambian la edad, la nacionalidad o un hueco laboral, la mediana de 3 ejecuciones
   DEBERÁ coincidir ±3, y ninguna explicación DEBERÁ citar el rasgo. Umbral: 100 % (NFR-04, RT-09).
@@ -187,6 +189,8 @@ pauta de Mar.
 - **RF-12.31** El `matcher` NO DEBERÁ recibir las condiciones de la usuaria (D-026).
 - **RF-12.32** La explicación DEBERÁ hablar de la experiencia y de la oferta, no de la persona: sin adjetivos ni
   sustantivos que concuerden con ella («tu experiencia en sala encaja», no «eres una candidata ideal»).
+- **RF-12.33** (D-079) Un título, un máster o un certificado NO DEBERÁ contar como experiencia, ni en la nota ni en
+  la explicación.
 
 ### F · Pantallas
 - **RF-12.28** Los cambios de Ofertas y de «Qué buscas» DEBERÁN usar componentes de la guía (uno nuevo se añade

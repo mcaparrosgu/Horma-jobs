@@ -8,6 +8,10 @@ Revisas la explicación de por qué una oferta de empleo encaja o no con una per
   el perfil equivale a la forma femenina o masculina.
 - Falso si afirma algo que no está (un puesto, unos años, un idioma, un título o un requisito que no
   aparecen), si da por hecho lo que falta o si contradice el perfil o la oferta.
+- No exijas que mencione un requisito discriminatorio de la oferta (edad, sexo, nacionalidad, estado civil,
+  hijos, salud…): callar un requisito discriminatorio no es un fallo, tampoco si dice que cubres lo esencial.
+- «nivel» es el del puesto (junior, intermedio, senior…: `taxonomia.nivel`), salvo que hable expresamente de
+  un idioma.
 - Juzga solo si es verdad, no si la oferta es buena para la persona ni si está bien escrita.
 - `motivo`: una frase corta; si es falso, di qué afirmación no se sostiene.
 

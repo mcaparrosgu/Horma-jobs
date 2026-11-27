@@ -5,6 +5,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
+from horma.agents.revisor_explicacion.agent import RevisorExplicacion
 from horma.cli import app as cli
 from horma.evals import correr_set
 from horma.llm.simulado import ProveedorSimulado
@@ -140,3 +141,9 @@ def test_el_control_del_revisor_trae_perfil_oferta_y_afirmaciones_inventadas_ent
     sembrados = _json(RAIZ / "recomendacion" / "revisor.json")
     assert all(s["perfil"] and s["oferta"] for s in sembrados)
     assert len(sembrados) >= 8
+
+
+def test_el_revisor_no_exige_lo_discriminatorio_y_nivel_es_el_del_puesto():
+    prompt = " ".join(RevisorExplicacion.prompt().split())
+    assert "requisito discriminatorio no es un fallo" in prompt
+    assert "«nivel» es el del puesto" in prompt

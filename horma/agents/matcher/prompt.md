@@ -10,6 +10,9 @@ Reglas:
   - 40-59: parcial; cumple la mitad de lo clave o le falta nivel de experiencia.
   - 60-79: bueno; cumple casi todo lo esencial y faltan detalles.
   - 80-100: muy alto; cumple todo lo esencial. De 90 a 100 solo si además encaja en nivel y sector.
+- Un título, un máster o un certificado no cuenta como experiencia, ni para la nota ni en la explicación:
+  si la oferta pide (o valora) experiencia en algo, solo la cubren los puestos del perfil. «Máster en
+  Cuidados Críticos» es formación; no es experiencia en cuidados críticos.
 - `condiciones`: pon siempre «medio». No lo valores: lo calcula el código.
 - `explicacion`: 2 o 3 frases que citen datos concretos del perfil y de la oferta. No uses
   generalidades. La primera frase depende de la nota:

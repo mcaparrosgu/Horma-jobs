@@ -108,3 +108,7 @@ def test_una_cita_con_su_nombre_no_existe_y_se_pide_otra_vez():
     prov, r = _recomendar([{"matches": [_match(1, cita_perfil="Lucía fue encargada")]},
                            {"matches": [_match(1)]}])
     assert len(prov.llamadas) == 2 and r[1]["cita_perfil"] == "Camarero/a"
+
+
+def test_el_prompt_no_cuenta_un_titulo_o_certificado_como_experiencia():
+    assert "no cuenta como experiencia" in " ".join(Matcher.prompt().split())
