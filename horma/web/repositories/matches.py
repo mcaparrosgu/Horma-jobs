@@ -1,4 +1,6 @@
 """SQL de las notas del matcher. La tabla `matches` es la caché: lo ya puntuado no se vuelve a pedir."""
+import json
+
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -37,7 +39,7 @@ def listado(s: Session, ids: list[int], huella: str | None = None) -> list[dict]
         "o.procesada_en as analizada_en, o.fantasma, o.motivos_fantasma, o.fraude, o.senales_fraude, "
         "(o.salario_anual_eur_min is not null or o.salario_anual_eur_max is not null) "
         "as sueldo_comparable, m.nota, m.condiciones, m.explicacion, m.cita_perfil, m.cita_oferta, "
-        "m.retirada, m.correccion, m.perfil_version, "
+        "m.retirada, m.correccion, m.perfil_version, m.relacion, "
         "case when m.huella_perfil is null or cast(:h as text) is null then "
         "m.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
         "else m.huella_perfil <> cast(:h as text) end as desfasado, d.oferta_id is not null as descartada, "
@@ -90,12 +92,14 @@ def guardar(s: Session, usuaria_id: int, perfil_version: int, matches: list[dict
     for m in matches:
         s.execute(text(
             "insert into matches (usuaria_id, oferta_id, perfil_version, nota, condiciones, explicacion, "
-            "cita_perfil, cita_oferta, retirada, huella_perfil) "
-            "values (:u, :o, :v, :n, :c, :e, :cp, :co, :r, :h) "
+            "cita_perfil, cita_oferta, retirada, huella_perfil, nota_modelo, marcas, relacion) "
+            "values (:u, :o, :v, :n, :c, :e, :cp, :co, :r, :h, :nm, cast(:ma as jsonb), :rel) "
             "on conflict (usuaria_id, oferta_id, perfil_version) do update set nota = excluded.nota, "
             "condiciones = excluded.condiciones, explicacion = excluded.explicacion, "
             "cita_perfil = excluded.cita_perfil, cita_oferta = excluded.cita_oferta, "
-            "retirada = excluded.retirada, huella_perfil = excluded.huella_perfil"),
+            "retirada = excluded.retirada, huella_perfil = excluded.huella_perfil, "
+            "nota_modelo = excluded.nota_modelo, marcas = excluded.marcas, relacion = excluded.relacion"),
             {"u": usuaria_id, "o": m["oferta_id"], "v": perfil_version, "n": m["nota"],
              "c": m["condiciones"], "e": m["explicacion"], "cp": m["cita_perfil"],
-             "co": m["cita_oferta"], "r": m["retirada"], "h": huella})
+             "co": m["cita_oferta"], "r": m["retirada"], "h": huella, "nm": m.get("nota_modelo"),
+             "ma": None if m.get("marcas") is None else json.dumps(m["marcas"]), "rel": m.get("relacion")})

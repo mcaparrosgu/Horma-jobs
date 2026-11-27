@@ -32,7 +32,8 @@ def _oferta(i):
 
 
 def _match(i, nota=80, cita_perfil="Camarero/a", cita_oferta="Experiencia en sala"):
-    return {"oferta_id": i, "nota": nota, "condiciones": "medio",
+    return {"oferta_id": i, "nota": nota, "condiciones": "medio", "relacion": "otro_oficio",
+            "marcas": [{"requisito": 1, "tipo": "exigido", "cubierto": "a_medias"}],
             "explicacion": "Tienes experiencia en sala. La oferta pide experiencia en sala.",
             "cita_perfil": cita_perfil, "cita_oferta": cita_oferta}
 
@@ -72,9 +73,9 @@ def test_una_oferta_sin_resultado_queda_sin_puntuar():
     assert set(r) == {1}
 
 
-def test_el_prompt_pide_las_franjas_citas_literales_y_calla_las_instrucciones():
+def test_el_prompt_pide_citas_literales_y_calla_las_instrucciones():
     prompt = Matcher.prompt()
-    for trozo in ("70-100", "50-69", "30-49", "0-29", "literal", "instrucciones", "adjetivos"):
+    for trozo in ("literal", "instrucciones", "adjetivos"):
         assert trozo in prompt, trozo
     assert "condiciones de trabajo que busca" not in prompt
 

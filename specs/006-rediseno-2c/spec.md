@@ -116,6 +116,7 @@ mientras uno de estos sirva (RF-6.9).
 | **Plegable** | `<details>`/`<summary>` o botón con `aria-expanded`, con el mismo chevrón |
 | **Etiqueta de puesto** | 28 px de alto, borde de 1 px, fondo transparente, texto de 13 px y peso 600. El color sale del tono de la familia, con suficiente contraste. El texto siempre visible |
 | **Barra de compatibilidad** | 6 px de alto, sin radio y sin línea de borde (la pista ya contrasta 3:1), pista y relleno según el tema; `role="meter"` con valor, mínimo y máximo. A su lado, la nota en DM Mono |
+| **Línea de compatibilidad** (añadida por la spec 012) | una frase corta bajo la barra, en texto de 14 px y color apagado, alineada con la barra; dice qué pasa sin depender del color («Pide menos de lo que tienes»). No cambia la nota |
 | **Ayuda «?»** | botón de 44 × 44 px con un círculo de 20 px; abre una ayuda propia con foco o clic (no basta con `title`) y lleva `aria-label` «Qué significa …» |
 | **Explicación plegable** | la ayuda «?» junto al título de un bloque, con la explicación del bloque dentro (`montarExplicaciones()` en `comun.js`, sobre un párrafo marcado con `data-explicacion`). Sustituye a los párrafos explicativos sueltos (RF-10.14m) |
 | **Aviso** | texto con `role="status"` (o `alert` si es un error), con el color de error y nunca solo con color: el texto dice qué pasó |

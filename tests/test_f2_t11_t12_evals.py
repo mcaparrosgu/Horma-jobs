@@ -9,7 +9,7 @@ import pytest
 from typer.testing import CliRunner
 
 from horma.cli import app
-from horma.evals import SETS, correr_set, errores_ats
+from horma.evals import SETS, correr_set, errores_ats, marcas_de
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.oferta import Oferta
 from horma.schemas.perfil import Perfil
@@ -229,7 +229,7 @@ def test_fixtures_de_recomendacion_son_60_con_orden_y_pares_de_equidad():
     assert vacios >= 3 and incompletas >= 2 and correcciones >= 1 and len(sectores) >= 10
     assert sorted(rasgos) == ["edad"] * 4 + ["hueco"] * 4 + ["nacionalidad"] * 4
     assert min(notas) <= 20 and max(notas) >= 85
-    assert sum(40 <= n <= 70 for n in notas) >= 12
+    assert sum(40 <= n <= 70 for n in notas) >= 10  # D-082 a D-084 bajan cuatro intermedias
 
 
 def test_eval_recomendacion_simulado_pasa_al_100():
@@ -240,8 +240,9 @@ def test_eval_recomendacion_simulado_pasa_al_100():
     assert r["control_revisor"] == 1.0
 
 
-def _match(esperado, **cambios):
-    m = {"oferta_id": 1, "nota": esperado["nota"], "condiciones": esperado["condiciones"],
+def _match(esperado, oferta, **cambios):
+    m = {"relacion": "otro_oficio", "marcas": marcas_de(oferta),
+         "oferta_id": 1, "nota": esperado["nota"], "condiciones": esperado["condiciones"],
          "explicacion": "La experiencia del perfil encaja con el puesto. La oferta pide lo mismo.",
          "cita_perfil": "Camarera", "cita_oferta": "Camarera"}
     m.update(cambios)
@@ -256,7 +257,8 @@ def _correr_uno(tmp_path, **cambios):
     cambios.setdefault("cita_oferta", _json(_casos("recomendacion")[1] / "entrada.json")["oferta"]["titulo"])
     caso = _casos("recomendacion")[1]
     raiz = _copiar(tmp_path, "recomendacion", caso.name)
-    prov = ProveedorSimulado([_match(_json(caso / "esperado.json"), **cambios), APOYADA])
+    oferta = _json(caso / "entrada.json")["oferta"]
+    prov = ProveedorSimulado([_match(_json(caso / "esperado.json"), oferta, **cambios), APOYADA])
     return correr_set("recomendacion", raiz=raiz, proveedor=prov)
 
 

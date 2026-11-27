@@ -2,7 +2,8 @@
 personales y de las citas dentro de cada tanda) → (otra tanda) → componer. El `matcher` recibe la copia
 ciega del perfil y no recibe las condiciones (spec 012, RF-12.30 y 12.31). Las ofertas con una cita que no
 existe se piden otra vez, una sola; si vuelven a fallar, se retira la explicación y se conserva la nota
-(RF-12.19). Sin acceso a la base de datos: el
+(RF-12.19). Después el código acota cada nota
+(RF-12.35). Sin acceso a la base de datos: el
 worker carga las candidatas con
 `buscar_ofertas` y guarda los resultados.
 
@@ -24,9 +25,10 @@ from horma.agents.matcher.agent import Matcher
 from horma.agents.matcher.schemas import MAX_OFERTAS, EntradaMatcher, OfertaCandidata
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
-from horma.schemas.match import SIN_COMPROBAR, Match
+from horma.schemas.match import SIN_COMPROBAR, Marca, Match, frase_de_franja, sin_frase_de_franja
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
+from horma.tools.acotar_nota import acotar_nota
 from horma.tools.copia_ciega import copia_ciega
 from horma.tools.evaluar_condiciones import evaluar_condiciones
 from horma.tools.rasgos_personales import rasgos_personales
@@ -63,18 +65,40 @@ def crear(proveedor: Proveedor | None = None,
         nuevas = []
         for m in r.matches:
             if m.oferta_id in pedidas and m.oferta_id not in hechas:  # sin ids inventados ni repetidos
+                oferta = next(c.oferta for c in lote_modelo if c.oferta_id == m.oferta_id)
+                if not _marcada(m, oferta):
+                    continue  # queda «sin puntuar»: nunca una nota a medias (RF-12.23 y 12.34)
                 hechas.add(m.oferta_id)
                 # Las condiciones no las decide el modelo: se calculan con código (RF-2.12).
-                oferta = next(c.oferta for c in lote_modelo if c.oferta_id == m.oferta_id)
                 m.condiciones = evaluar_condiciones(oferta, prefs)
                 nuevas.append(_revisada(m.model_dump(mode="json")))
-        _comprobar_citas(nuevas, perfil, lote_modelo, prefs)
+        _comprobar_citas(nuevas, perfil, lote_modelo, prefs, e.setdefault("citas_fallidas", {}))
+        ofertas = {c.oferta_id: c.oferta for c in lote_modelo}
+        for m in nuevas:
+            # RF-12.35: el código acota; RF-12.18: la frase de franja, con la nota ya acotada.
+            oferta = ofertas[m["oferta_id"]]
+            m["nota_modelo"] = m["nota"]
+            m["nota"] = acotar_nota(
+                m["nota"], [Marca.model_validate(x) for x in m["marcas"]], m["relacion"], oferta.requisitos,
+                oferta.taxonomia.nivel, perfil.taxonomia.nivel if perfil.taxonomia else None)
+            if not m["retirada"]:
+                m["explicacion"] = f"{frase_de_franja(m['nota'])} {sin_frase_de_franja(m['explicacion'])}"
         e["matches"] += nuevas
         e["tandas"] += 1
         e["en_rango"] = any(prefs.rango_min <= m["nota"] <= prefs.rango_max for m in nuevas)
         if al_tanda is not None:
             al_tanda(nuevas, e["tandas"], max(e["previstas"], e["tandas"]))
         return e
+
+    def _marcada(m, oferta) -> bool:
+        """RF-12.34: una marca por cada requisito. Un rasgo personal no aplica, lo marque como lo marque el
+        modelo; las condiciones las aparta el prompt."""
+        if sorted(x.requisito for x in m.marcas) != list(range(1, len(oferta.requisitos) + 1)):
+            return False
+        for x in m.marcas:
+            if rasgos_personales(oferta.requisitos[x.requisito - 1]):
+                x.tipo = "no_aplica"
+        return True
 
     def _revisada(m: dict) -> dict:
         """RT-09: una explicación que menciona un rasgo personal se retira y se marca. Se hace en cada tanda,
@@ -83,15 +107,21 @@ def crear(proveedor: Proveedor | None = None,
             m.update(explicacion="", cita_perfil="", cita_oferta="", retirada=True)
         return m
 
-    def _comprobar_citas(nuevas: list[dict], perfil, lote: list, prefs: Preferencias) -> None:
-        """RF-12.19: las citas existen en la copia y en la oferta, o se piden otra vez, una sola."""
+    def _comprobar_citas(nuevas: list[dict], perfil, lote: list, prefs: Preferencias,
+                         fallidas: dict) -> None:
+        """RF-12.19: las citas existen en la copia y en la oferta, o se piden otra vez, una sola.
+        `fallidas` guarda las de cada intento solo para la traza del eval: no van a la base."""
         ofertas = {c.oferta_id: c for c in lote}
         copia = perfil.model_dump(mode="json")
 
         def mal(m: dict) -> bool:
             oferta = ofertas[m["oferta_id"]].oferta.model_dump(mode="json")
-            return not m["retirada"] and bool(
+            falla = not m["retirada"] and bool(
                 citas_que_no_existen(m["cita_perfil"], m["cita_oferta"], copia, oferta))
+            if falla:
+                fallidas.setdefault(m["oferta_id"], []).append(
+                    {"cita_perfil": m["cita_perfil"], "cita_oferta": m["cita_oferta"]})
+            return falla
 
         malas = {m["oferta_id"]: m for m in nuevas if mal(m)}
         if not malas:
@@ -103,7 +133,7 @@ def crear(proveedor: Proveedor | None = None,
             log.warning("No se pudieron volver a pedir las citas (%s)", type(error).__name__)
         else:
             for otra in r.matches:
-                if otra.oferta_id not in malas:
+                if otra.oferta_id not in malas or not _marcada(otra, ofertas[otra.oferta_id].oferta):
                     continue
                 otra.condiciones = evaluar_condiciones(ofertas[otra.oferta_id].oferta, prefs)
                 nueva = _revisada(otra.model_dump(mode="json"))

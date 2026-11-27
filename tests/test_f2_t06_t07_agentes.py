@@ -93,7 +93,7 @@ def _oferta(titulo="Camarera") -> Oferta:
 
 def test_matcher_devuelve_matches_y_el_prompt_exige_citas_y_prohibe_rasgos():
     prov = ProveedorSimulado([{"matches": [{
-        "oferta_id": 7, "nota": 82, "condiciones": "medio",
+        "oferta_id": 7, "nota": 82, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [],
         "explicacion": "Tiene dos años de camarera en Bar Sol. La oferta pide experiencia en sala.",
         "cita_perfil": "Bar Sol", "cita_oferta": "Camarera"}]}])
     r = Matcher.run(EntradaMatcher(perfil=copia_ciega(Perfil.model_validate(PERFIL)),
@@ -111,5 +111,5 @@ def test_matcher_no_admite_mas_de_30_ofertas_ni_explicaciones_de_una_frase():
         EntradaMatcher(perfil=PerfilCiego(),
                        ofertas=[OfertaCandidata(oferta_id=i, oferta=_oferta()) for i in range(31)])
     with pytest.raises(ValueError):
-        SalidaMatcher.model_validate({"matches": [{"oferta_id": 1, "nota": 50, "condiciones": "bajo",
+        SalidaMatcher.model_validate({"matches": [{"oferta_id": 1, "nota": 50, "condiciones": "bajo", "relacion": "otro_oficio", "marcas": [],
                                                    "explicacion": "Solo una frase."}]})

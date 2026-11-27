@@ -3,7 +3,7 @@ import json
 import shutil
 from pathlib import Path
 
-from horma.evals import correr_set
+from horma.evals import correr_set, marcas_de
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.perfil import Perfil
 from horma.tools.copia_ciega import copia_ciega
@@ -18,7 +18,8 @@ def _respuestas(caso: str, nota: int, explicacion: str) -> list[dict]:
     puesto = copia_ciega(Perfil.model_validate(entrada["perfil"])).experiencias[0].puesto
     return [{"matches": [{"oferta_id": 1, "nota": nota, "condiciones": "alto", "explicacion": explicacion,
                           "cita_perfil": puesto,
-                          "cita_oferta": entrada["oferta"]["titulo"]}]},
+                          "cita_oferta": entrada["oferta"]["titulo"], "relacion": "otro_oficio",
+                          "marcas": marcas_de(entrada["oferta"])}]},
             {"apoyada": True, "motivo": "Sí."}]
 
 

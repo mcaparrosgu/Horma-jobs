@@ -424,6 +424,7 @@ function filaOferta(o) {
     const fila = nodo("div", null, "nota");
     fila.append(barraCompat, nodo("span", String(o.nota), "numero"));
     comp.append(fila);
+    if (o.pide_menos) comp.append(nodo("p", TEXTOS.pideMenos, "linea-compat"));
   }
   tr.append(comp);
 

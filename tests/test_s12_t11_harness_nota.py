@@ -7,7 +7,7 @@ from typer.testing import CliRunner
 
 from horma.agents.revisor_explicacion.agent import RevisorExplicacion
 from horma.cli import app as cli
-from horma.evals import correr_set
+from horma.evals import correr_set, marcas_de
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.perfil import Perfil
 from horma.tools.copia_ciega import copia_ciega
@@ -38,7 +38,8 @@ def _matches(caso: str, notas: list[int] | None = None, **cambios) -> dict:
     puesto = copia.experiencias[0].puesto
     return {"matches": [{"oferta_id": i, "nota": n, "condiciones": "medio",
                          "explicacion": "Tu experiencia encaja con el puesto. La oferta pide lo mismo.",
-                         "cita_perfil": puesto, "cita_oferta": o["titulo"], **cambios}
+                         "cita_perfil": puesto, "cita_oferta": o["titulo"], "relacion": "otro_oficio",
+                         "marcas": marcas_de(o), **cambios}
                         for i, (o, n) in enumerate(zip(ofertas, notas, strict=True), 1)]}
 
 
@@ -147,3 +148,19 @@ def test_el_revisor_no_exige_lo_discriminatorio_y_nivel_es_el_del_puesto():
     prompt = " ".join(RevisorExplicacion.prompt().split())
     assert "requisito discriminatorio no es un fallo" in prompt
     assert "«nivel» es el del puesto" in prompt
+
+
+# --- T14b: las citas que fallan quedan en el resultado del eval ------------------------------------
+def test_una_explicacion_retirada_deja_las_citas_de_cada_intento(tmp_path):
+    primera = _matches(UNA, cita_perfil="Diez años de maître")
+    segunda = _matches(UNA, cita_oferta="Se valora francés")
+    r = _correr(tmp_path, UNA, [primera, segunda])
+    [[de_la_pasada]] = r["detalle"][0]["citas_fallidas"]  # una pasada, una oferta
+    assert de_la_pasada["oferta_id"] == 1
+    assert [i["cita_perfil"] for i in de_la_pasada["intentos"]][0] == "Diez años de maître"
+    assert de_la_pasada["intentos"][1]["cita_oferta"] == "Se valora francés"
+
+
+def test_sin_citas_mal_no_hay_nada_que_guardar(tmp_path):
+    r = _correr(tmp_path, UNA, [_matches(UNA), APOYADA])
+    assert "citas_fallidas" not in r["detalle"][0]

@@ -8,6 +8,7 @@ from horma.schemas.perfil import CAMPO_PROPUESTA, PreguntaPendiente
 from horma.tools.buscar_ofertas import buscar_ofertas
 from horma.tools.huella_perfil import huella_compatibilidad
 from horma.tools.lexico_genero import en_genero
+from horma.tools.nivel_pedido import pide_menos
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import candidaturas as repo_candidaturas
 from horma.web.repositories import descartes, perfiles, tareas
@@ -101,6 +102,8 @@ def listar(engine: Engine, usuaria_id: int) -> list[dict]:
         ids = repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia))
         huella = huella_compatibilidad(perfil) if perfil else None
         filas = en_su_genero(repo.listado(s, ids, huella), perfil.genero_puestos if perfil else None)
+        for f in filas:  # RF-12.36: al pedir la lista, sin guardar nada ni tocar la nota
+            f["pide_menos"] = pide_menos(f["relacion"], f["nivel"], taxonomia.nivel if taxonomia else None)
     with sesion_sistema(engine) as s:
         repo_ofertas.marcar_fuente_desconocida(filas, s)
     return filas

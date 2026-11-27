@@ -55,7 +55,7 @@ def _cand(i):
 
 
 def _match(i, nota=80, explicacion="Tiene experiencia en sala. La oferta pide camarera con experiencia."):
-    return {"oferta_id": i, "nota": nota, "condiciones": "medio", "explicacion": explicacion,
+    return {"oferta_id": i, "nota": nota, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [], "explicacion": explicacion,
             "cita_perfil": "Bar Sol", "cita_oferta": "camarera"}
 
 
@@ -150,7 +150,7 @@ def ofertas(motor_migrador, n, duena=None, prefijo="Camarera"):
 
 
 def matches(ids, nota=85):
-    return {"matches": [{"oferta_id": i, "nota": nota, "condiciones": "alto",
+    return {"matches": [{"oferta_id": i, "nota": nota, "condiciones": "alto", "relacion": "otro_oficio", "marcas": [],
                          "cita_perfil": "Bar Sol", "cita_oferta": "Camarera",
                          "explicacion": "Tiene experiencia en sala. La oferta pide camarera de sala."}
                         for i in ids]}

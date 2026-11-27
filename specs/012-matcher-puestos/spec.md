@@ -110,7 +110,7 @@ pauta de Mar.
 ### D · Explicación fiable (PRD RF-007)
 - **RF-12.17** Junto a la nota, Horma DEBERÁ enseñar un veredicto en palabras, puesto por código (F7-D5, S5):
   70-100 «Muy compatible», 50-69 «Compatible», 30-49 «Poco compatible» y 0-29 «No te la recomendamos».
-- **RF-12.18** (D-080) La explicación DEBERÁ empezar por la frase de su franja, puesta por código con la nota ya
+- **RF-12.18** (D-080, D-087) La explicación DEBERÁ empezar por la frase de su franja, puesta por código con la nota ya
   acotada (RF-12.35): 70-100, por qué te la recomendamos; 50-69, por qué tienes opciones; 30-49, por qué no te la
   recomendamos, aunque puedes intentarlo; 0-29, por qué no te la recomendamos. El `matcher` DEBERÁ escribir solo
   2 o 3 frases de hechos, sin la frase de franja.
@@ -199,7 +199,8 @@ pauta de Mar.
   la explicación.
 - **RF-12.34** (D-080) Por cada oferta, el `matcher` DEBERÁ devolver, además de la nota:
   - una marca por cada requisito de la oferta, identificado por su posición: `tipo` (exigido, valorable o no
-    aplica) y `cubierto` (sí, a medias o no). Un requisito sobre un rasgo personal o una condición es «no aplica».
+    aplica) y `cubierto` (sí, a medias o no). Un requisito sobre un rasgo personal o una condición es «no aplica»:
+    los rasgos personales los fuerza además el código; las condiciones, solo el prompt (D-088).
     «A medias» es el mismo puesto sin la especialidad, o la formación sin la experiencia pedida (RF-12.33);
   - la `relacion` con el puesto: mismo puesto, afín u otro oficio.
 
@@ -212,8 +213,10 @@ pauta de Mar.
   Reglas de partida, con sus valores en un solo sitio:
   1. Todos los exigidos «sí» y mismo puesto o afín: mínimo 90.
   2. Ningún exigido que aplique y mismo puesto o afín: mínimo 80.
-  3. Todos los exigidos «sí» y algún valorable «no»: mínimo 85.
-  4. Mismo puesto, la titulación exigida «sí» y el resto «a medias»: mínimo 70.
+  3. Todos los exigidos «sí» y algún valorable «no»: mínimo 85. Manda sobre la 1 (D-089).
+  4. Mismo puesto, la titulación exigida «sí» y el resto «a medias»: mínimo 70. Es titulación el requisito que
+     empieza por grado, máster, licenciatura, ingeniería, diplomatura, doctorado, ciclo, bachillerato, FP o
+     título (D-089).
   5. La mayoría de los exigidos «no»: máximo 30; si además la oferta es de un nivel superior al del perfil o de
      otro oficio: máximo 20.
   6. Otro oficio con todos los exigidos «sí»: entre 30 y 55, salvo RF-12.37.

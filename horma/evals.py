@@ -87,7 +87,7 @@ from horma.llm.vigilancia import fuga_prompt, senales_entrada
 from horma.schemas.candidatura import TipoProblema
 from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.fuente import CalificacionFuente
-from horma.schemas.match import SIN_COMPROBAR
+from horma.schemas.match import SIN_COMPROBAR, sin_frase_de_franja
 from horma.schemas.oferta import Auditoria, Oferta, OfertaExtraida, Taxonomia
 from horma.schemas.perfil import Perfil
 from horma.tools.copia_ciega import copia_ciega
@@ -386,10 +386,19 @@ def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
         # El flujo ya comprueba las citas y reintenta (RF-12.19): aquí cuenta lo que sale al final.
         m["citas_mal"] = m.get("explicacion") == SIN_COMPROBAR
         if m.get("explicacion") and not m["citas_mal"]:
-            m["sin_apoyo"] = not _revisar(m["cita_perfil"], m["cita_oferta"], m["explicacion"], copia,
-                                         oferta, prov)
+            # La frase de franja es del código: el revisor juzga solo lo que escribió el modelo.
+            m["sin_apoyo"] = not _revisar(m["cita_perfil"], m["cita_oferta"],
+                                         sin_frase_de_franja(m["explicacion"]), copia, oferta, prov)
     base = {"ofertas": resultados} if "ofertas" in estado else resultados[0]
-    return {**base, "_nombre_perfil": estado["perfil"].get("nombre")}
+    fallidas = [{"oferta_id": i, "intentos": x} for i, x in (e.get("citas_fallidas") or {}).items()]
+    return {**base, "_nombre_perfil": estado["perfil"].get("nombre"),
+            **({"_citas_fallidas": fallidas} if fallidas else {})}
+
+
+def marcas_de(oferta: dict) -> list[dict]:
+    """Respuesta simulada (RF-12.34): con `otro_oficio` y todo «a medias», ningún suelo ni tope toca la nota."""
+    return [{"requisito": n, "tipo": "exigido", "cubierto": "a_medias"}
+            for n in range(1, len(oferta.get("requisitos") or []) + 1)]
 
 
 def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[dict]:
@@ -403,7 +412,7 @@ def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[d
         "explicacion": "Tu experiencia encaja con lo que pide el puesto. "
                        "Las condiciones de la oferta se comparan con lo que buscas.",
         "cita_perfil": citables[0] if citables else "",
-        "cita_oferta": oferta["titulo"]}
+        "cita_oferta": oferta["titulo"], "relacion": "otro_oficio", "marcas": marcas_de(oferta)}
         for i, (oferta, nota, nivel) in enumerate(zip(ofertas, notas, niveles, strict=True), 1)]},
         *[{"apoyada": True, "motivo": "Simulado."}] * len(ofertas)]
 
@@ -1045,7 +1054,11 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                 notas = [[m.get("nota") for m in o.get("ofertas") or [o]] for o in salidas]
                 variacion = {"notas": notas, "variacion": max(
                     (max(v) - min(v) for v in zip(*notas, strict=True) if None not in v), default=0)}
+            citas = [o.get("_citas_fallidas", []) for o in salidas]  # una lista por pasada (T14b)
             detalle.append({"caso": caso.name, "fallos": fallos, **({"error": error} if error else {}),
+                            **({"citas_fallidas": citas} if any(citas) else {}),
+                            # Lo grabado permite ajustar suelos y topes sin volver a llamar (T14f y T14g).
+                            **({"salidas": salidas} if nombre == "recomendacion" and error is None else {}),
                             **({"medidas": medidas} if medidas else {}), **variacion})
             if tope_coste is not None and sum(x.coste for x in llamadas) > tope_coste:
                 detenido = True

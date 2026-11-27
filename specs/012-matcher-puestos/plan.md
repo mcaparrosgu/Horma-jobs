@@ -67,7 +67,7 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
   requisito y la relación con el puesto (RF-12.34), no nombra las instrucciones embebidas y cita literal. Los tramos
   de la nota no cambian, salvo que sale «De 90 a 100 solo si además encaja en nivel y sector».
 - **Nota acotada (RF-12.35 a 12.37):** función pura `acotar_nota`; el aviso de nivel, por código; `matches` guarda
-  nota del modelo, marcas y relación (migración).
+  nota del modelo, marcas y relación (migración 0033, D-090).
 - **Citas verificadas:** `tools/verificar_citas.py` (código: texto normalizado, la cita dentro del perfil o de la
   oferta). En `flows/recomendar.py`, tras cada tanda: las ofertas con una cita que no existe se piden otra vez
   en una sola llamada; si vuelven a fallar, `retirada` con su motivo, como ya se hace con los rasgos personales.

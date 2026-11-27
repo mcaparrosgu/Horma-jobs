@@ -219,6 +219,7 @@ details[open] > summary::after, [aria-expanded="true"] > .chevron::after, .chevr
 .nota .numero{ font-family: var(--f-mono); font-size: var(--fs-num); font-weight: var(--fw-num); line-height: 1; }
 .barra-compat{ position: relative; flex: 1 1 auto; min-width: 60px; height: var(--bar-h); background: var(--bar-track); }
 .barra-compat > span{ position: absolute; inset: 0 auto 0 0; background: var(--bar-fill); }
+.linea-compat{ margin: 4px 0 0; font-size: 14px; line-height: 1.4; color: var(--muted); }
 .titulo-oferta{ font-family: var(--f-head); font-size: var(--fs-title); font-weight: var(--fw-head); letter-spacing: var(--ls-head); color: var(--ink); }
 a.titulo-oferta:hover{ color: var(--muted); }
 
