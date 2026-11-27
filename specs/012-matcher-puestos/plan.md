@@ -63,8 +63,11 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
 - **Revisor:** `agents/revisor_explicacion/` (prompt, esquemas y `run`, modelo pequeño), llamado solo por el
   harness. Ve la copia del perfil y la oferta enteras (D-078). Su propio control: casos sembrados con afirmaciones
   que no están en ellas, también entre otras ciertas.
-- **Prompt del `matcher`:** la frase por franjas (RF-12.18), no nombrar las instrucciones embebidas y citas
-  literales. Los tramos de la nota que ya están no cambian.
+- **Prompt del `matcher`:** no escribe la frase por franjas (la antepone el código, RF-12.18, D-080), marca cada
+  requisito y la relación con el puesto (RF-12.34), no nombra las instrucciones embebidas y cita literal. Los tramos
+  de la nota no cambian, salvo que sale «De 90 a 100 solo si además encaja en nivel y sector».
+- **Nota acotada (RF-12.35 a 12.37):** función pura `acotar_nota`; el aviso de nivel, por código; `matches` guarda
+  nota del modelo, marcas y relación (migración).
 - **Citas verificadas:** `tools/verificar_citas.py` (código: texto normalizado, la cita dentro del perfil o de la
   oferta). En `flows/recomendar.py`, tras cada tanda: las ofertas con una cita que no existe se piden otra vez
   en una sola llamada; si vuelven a fallar, `retirada` con su motivo, como ya se hace con los rasgos personales.
@@ -102,8 +105,12 @@ suelen costar más de lo estimado: cada gasto se confirma con Mar antes.
 | Modelo pequeño: 3 ejecuciones | pequeño | ~0,15-0,3 USD |
 | Set `puestos`, 3 pasadas (estabilidad, T27) | pequeño | ~0,15 USD |
 | Eval `perfil`, regresión con la copia (T27) | mayor y pequeño | ~0,35-0,45 USD |
+| Prueba de la corrección: 27 casos, dos tandas como mucho (T14f) | mayor | hasta 0,45 USD cada una |
+| Ejecución completa de la corrección (T14g; vale como T15, D-086) | mayor y pequeño | ~2,3-2,8 USD (tope 3,0) |
 | **Total del paso** | | **~5-7,3 USD, en varias veces** |
 
+- **Corrección de T14 (D-086):** hasta 3,9 USD más, sobre 2,19 ya gastados en T14. El total del paso puede pasar de
+  lo previsto; si T14g pasa, se ahorran los ~2,4-3 USD de T15.
 - **El tope de 1 USD por ejecución (RF-2.17) queda justo** para ~60 casos. Si salta, el eval se para sin daño y
   se pide a Mar subirlo para esa ejecución.
 - **`evals-reales` en la CI** pasa de ~2 a ~3 USD por ejecución manual.

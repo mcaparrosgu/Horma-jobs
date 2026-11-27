@@ -110,9 +110,12 @@ pauta de Mar.
 ### D · Explicación fiable (PRD RF-007)
 - **RF-12.17** Junto a la nota, Horma DEBERÁ enseñar un veredicto en palabras, puesto por código (F7-D5, S5):
   70-100 «Muy compatible», 50-69 «Compatible», 30-49 «Poco compatible» y 0-29 «No te la recomendamos».
-- **RF-12.18** La explicación DEBERÁ empezar por lo que toca a su franja: 70-100, por qué te la recomendamos;
-  50-69, por qué tienes opciones; 30-49, por qué no te la recomendamos, aunque puedes intentarlo; 0-29, por qué
-  no te la recomendamos.
+- **RF-12.18** (D-080) La explicación DEBERÁ empezar por la frase de su franja, puesta por código con la nota ya
+  acotada (RF-12.35): 70-100, por qué te la recomendamos; 50-69, por qué tienes opciones; 30-49, por qué no te la
+  recomendamos, aunque puedes intentarlo; 0-29, por qué no te la recomendamos. El `matcher` DEBERÁ escribir solo
+  2 o 3 frases de hechos, sin la frase de franja.
+  Frases: «Te la recomendamos por esto.», «Tienes opciones por esto.», «No te la recomendamos, aunque puedes
+  intentarlo.» y «No te la recomendamos.». Una explicación retirada queda sin frase delante.
 - **RF-12.19** `cita_perfil` y `cita_oferta` DEBERÁN ser fragmentos literales, y un verificador en código DEBERÁ
   comprobar que existen en la copia del perfil (RF-12.30) y en la oferta; lo que vaya en «/a» se enseña con
   `en_genero`. SI alguna no existe, ENTONCES se piden otra vez, una sola vez, solo esas ofertas. SI vuelve a
@@ -142,6 +145,9 @@ pauta de Mar.
   el rango y para el veredicto, y enseñar «Tu nota: 40 · Horma: 75» con el motivo que escribió, legible sin abrir
   nada más. La corrección vale para esa oferta aunque cambie su perfil, hasta que pulse «Quitar mi nota» (S9).
   No llama al modelo. *(Cambia RF-10.15e.)*
+- **RF-12.36** (D-081) SI el nivel de la oferta es inferior al del perfil (taxonomía) y la relación es mismo puesto
+  o afín, ENTONCES Horma DEBERÁ enseñar junto al veredicto «Pide menos de lo que tienes», puesto por código. La
+  nota NO DEBERÁ cambiar.
 - **RF-12.27** Mar DEBERÁ revisar las correcciones antes de cada medición del eval, con
   `horma eval importar-correccion`. Ninguna entra en `evals/` sin su revisión (RF-2.13).
 
@@ -191,6 +197,32 @@ pauta de Mar.
   sustantivos que concuerden con ella («tu experiencia en sala encaja», no «eres una candidata ideal»).
 - **RF-12.33** (D-079) Un título, un máster o un certificado NO DEBERÁ contar como experiencia, ni en la nota ni en
   la explicación.
+- **RF-12.34** (D-080) Por cada oferta, el `matcher` DEBERÁ devolver, además de la nota:
+  - una marca por cada requisito de la oferta, identificado por su posición: `tipo` (exigido, valorable o no
+    aplica) y `cubierto` (sí, a medias o no). Un requisito sobre un rasgo personal o una condición es «no aplica».
+    «A medias» es el mismo puesto sin la especialidad, o la formación sin la experiencia pedida (RF-12.33);
+  - la `relacion` con el puesto: mismo puesto, afín u otro oficio.
+
+  SI falta la marca de algún requisito, ENTONCES esa salida DEBERÁ rechazarse. La explicación NO DEBERÁ nombrar
+  como carencia algo que la oferta no pide, opinar del nivel, deducir lo que no consta (se dice «no consta») ni
+  calcular años de experiencia («desde 2019»).
+- **RF-12.35** (D-080, D-081, D-085) El código DEBERÁ acotar la nota del `matcher` con las marcas, la relación y
+  la taxonomía, sin llamar al modelo. Un requisito «no aplica» NO DEBERÁ cambiar la nota y dos perfiles gemelos
+  (RF-12.30d) con las mismas marcas DEBERÁN recibir la misma. El veredicto y la franja usan la nota acotada.
+  Reglas de partida, con sus valores en un solo sitio:
+  1. Todos los exigidos «sí» y mismo puesto o afín: mínimo 90.
+  2. Ningún exigido que aplique y mismo puesto o afín: mínimo 80.
+  3. Todos los exigidos «sí» y algún valorable «no»: mínimo 85.
+  4. Mismo puesto, la titulación exigida «sí» y el resto «a medias»: mínimo 70.
+  5. La mayoría de los exigidos «no»: máximo 30; si además la oferta es de un nivel superior al del perfil o de
+     otro oficio: máximo 20.
+  6. Otro oficio con todos los exigidos «sí»: entre 30 y 55, salvo RF-12.37.
+  7. Un nivel de la oferta inferior al del perfil no cambia la nota.
+
+  Los valores solo DEBERÁN ajustarse sobre respuestas grabadas, de 5 en 5 y sin pasar de siete reglas.
+- **RF-12.37** (D-085) SI la oferta casa con un puesto marcado en «Qué buscas», ENTONCES NO DEBERÁ contar como
+  otro oficio. CUANDO cambie «Qué buscas», la nota DEBERÁ recalcularse en código desde la nota del modelo, las
+  marcas y la relación guardadas, sin llamar al modelo ni cambiar la huella (RF-12.30h).
 
 ### F · Pantallas
 - **RF-12.28** Los cambios de Ofertas y de «Qué buscas» DEBERÁN usar componentes de la guía (uno nuevo se añade

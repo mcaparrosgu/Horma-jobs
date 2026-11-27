@@ -92,15 +92,44 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T14 — 🛑 OK al gasto (~2,4-3 USD, D-077). Una ejecución real entera, con las 3 pasadas de RF-12.12; después, solo los casos que fallan
   (🛑 OK a cada tanda, ~0,1-0,3 USD), hasta que el `matcher` llegue.
   Primera ejecución (27-nov, 1,87 USD): **no llega**. Nota 0,63 (pide 0,90), orden 0,50 (100 %), citas 0,88 y
-  revisor 0,10 (100 %; su control, 1,0); condiciones, rasgos, segunda persona y equidad, en 1,0. Falta decidir
-  cómo corregir.
+  revisor 0,10 (100 %; su control, 1,0); condiciones, rasgos, segunda persona y equidad, en 1,0. Decidido
+  cómo corregir tras investigarlo (D-080 a D-086; T14a a T14h).
   Revisor repetido con D-078 sobre las mismas respuestas (27-nov, 0,11 USD): 11 de 234 sin apoyo; peor pasada,
   0,90 (pide 100 %); control, 1,0.
   D-079 (27-nov, 0,21 USD): el `matcher` no cuenta un título como experiencia y el revisor no exige lo
   discriminatorio ni confunde el nivel. Revisor sobre las mismas respuestas: 12 de 234 sin apoyo (06, 14 y 48 ya
   no fallan); control, 1,0. `matcher` repetido en 07 y 47: ya no cuenta el título, pero 07 baja a 55-58 (espera
   93) y 47 afirma cosas que no constan. **Sigue sin llegar.**
-- [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor.
+  **Corrección (D-080 a D-086; F4, apartado 11).** En este orden. Tope de gasto: 3,9 USD; cada gasto, con OK de Mar.
+- [ ] T14a — Etiquetas: notas de D-082 a D-084 con su D-NNN en el `motivo`; motivos de 01, 03, 05, 08, 12, 16 y 20
+  sin condiciones, con la misma nota (RF-12.14, 0 USD).
+  - **Test:** ningún `motivo` nombra sueldo, contrato, remoto ni ciudad; los ocho esperados nuevos.
+  - Volver a puntuar las salidas grabadas de T14: nota ~0,76-0,80 y orden 0,50. SI da otra cosa, se para.
+- [ ] T14b — Guardar en la traza del eval las citas que fallan; nada en la base (RF-12.19, 0 USD).
+  - **Test:** una explicación retirada por sus citas deja las dos citas de cada intento.
+- [ ] T14c — Marcas y relación en la salida y el prompt del `matcher`; la frase de franja, en código (RF-12.34,
+  12.18 y 12.21; D-080; 0 USD, simulado).
+  - **Test:** una salida sin la marca de un requisito se rechaza; un rasgo personal o una condición sale «no aplica».
+- [ ] T14d — `acotar_nota`, función pura (RF-12.35; D-080, D-081 y D-085; 0 USD).
+  - **Test:** uno por regla; «no aplica» no cambia la nota; dos gemelas dan la misma.
+- [ ] T14e — Aviso «Pide menos de lo que tienes», primero en la guía; revisar la landing (RF-12.36, 12.28 y 12.29;
+  D-081; 0 USD).
+  - **Test:** oferta de nivel inferior y mismo puesto o afín enseña el aviso; la nota no cambia.
+  - **Navegador:** 1280 y 390 px, claro y oscuro.
+- [ ] T14f — 🛑 OK al gasto (~0,35, tope 0,45 USD). Los 21 casos que fallan y los 6 de orden, una pasada; se graban
+  nota del modelo, marcas y citas fallidas.
+  - **Seguir** con ≥ 17 de 21 dentro de ±10 y 6 de 6 en orden. SI falla el código, se ajustan suelos y topes sobre
+    lo grabado (0 USD); SI el marcado falla en más de 4 casos, se corrigen las definiciones del prompt y **una**
+    tanda más; las citas, según lo que muestren.
+- [ ] T14g — 🛑 OK al gasto (~2,3-2,8, tope 3,0 USD). 60 casos, 3 pasadas y revisor, con las respuestas grabadas
+  (RF-12.12, 12.13, 12.19, 12.21 y 12.22). SI pasa todo, T14 y T15 hechas (D-086). SI no, no se toca más el prompt:
+  se simula a 0 USD la nota entera por código y se traen a Mar los casos que queden.
+- [ ] T14h — «Qué buscas» quita la franja de otro oficio: guardar en `matches` nota del modelo, marcas y relación
+  (migración); pruebas de Mar en el plan de pruebas (RF-12.37; D-085; 0 USD). Va tras T14g.
+  - **Test:** marcar «Teleoperador/a» quita la franja a las ofertas que casan y desmarcarlo la devuelve; sin llamar
+    al modelo y con la misma huella.
+- [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor. Vale la ejecución
+  completa de T14g si pasa todos los umbrales (D-086).
 - [ ] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).
 - [x] T28 — Con T12 y antes de T14: el `matcher` con la copia y sin condiciones (RF-12.31), RF-12.32 en el prompt y
   `huella_compatibilidad` sobre la copia, con una migración que reescriba las huellas guardadas (sin ella se
