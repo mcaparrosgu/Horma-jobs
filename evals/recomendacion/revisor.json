@@ -1,0 +1,12 @@
+[
+  {"explicacion": "Tienes experiencia como camarera. La oferta pide experiencia en sala.",
+   "cita_perfil": "Camarera", "cita_oferta": "Experiencia en sala", "apoyada": true},
+  {"explicacion": "Tu carné de carretillero cubre lo que piden. La oferta es para un almacén.",
+   "cita_perfil": "Carné de carretillero", "cita_oferta": "Carné de carretillero", "apoyada": true},
+  {"explicacion": "Hablas francés con soltura. La oferta pide francés avanzado.",
+   "cita_perfil": "Camarera", "cita_oferta": "Experiencia en sala", "apoyada": false},
+  {"explicacion": "Llevas diez años dirigiendo equipos. La oferta busca una jefatura.",
+   "cita_perfil": "Auxiliar contable", "cita_oferta": "Archivo y facturas", "apoyada": false},
+  {"explicacion": "Tienes el grado en Enfermería que exigen. Cumples el requisito principal.",
+   "cita_perfil": "Auxiliar de ayuda a domicilio", "cita_oferta": "Grado en Enfermería", "apoyada": false}
+]

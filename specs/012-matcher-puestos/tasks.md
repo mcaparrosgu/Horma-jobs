@@ -77,9 +77,11 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T10 — Eval `recomendacion` a ~60 casos, con orden y pares de equidad (0 USD). 🛑 Mar repasa los casos con más
   de 10 puntos entre etiquetadores y cualquier cambio de una nota esperada existente (RF-12.14).
   Hecho (27-nov): 60 casos (6 de orden y 6 pares de equidad); 6 ofertas repasadas (D-069); ninguna nota anterior cambia.
-- [ ] T11 — Harness: `--veces 3`, variación por caso, `orden`, `equidad`, `citas` y el revisor, en simulado.
+- [x] T11 — Harness: `--veces 3`, variación por caso, `orden`, `equidad`, `citas` y el revisor, en simulado.
   - **Test:** un par invertido hace fallar `orden`; dos notas de un par a más de 3 puntos hacen fallar `equidad`;
     el revisor simulado detecta una explicación sembrada que no se apoya en su cita.
+  Hecho (27-nov, 0 USD): `verificar_citas`, agente `revisor-explicacion` solo del eval, control sembrado en
+  `evals/recomendacion/revisor.json`; los casos de orden miden solo el orden (D-070).
 - [ ] T12 — Prompt del `matcher` (franjas, sin nombrar instrucciones, citas literales) y `verificar_citas` con un
   reintento.
   - **Test:** una cita inventada se pide una vez más; si vuelve a fallar, la explicación se retira y la nota se

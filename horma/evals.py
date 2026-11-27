@@ -15,7 +15,10 @@ Sets:
 - `recomendacion`: flujo recomendar con un par perfil-oferta (`entrada.json`); esperado = {nota,
   condiciones}. Mide la nota (±10), el nivel de condiciones y que la explicación no cite rasgos. Un caso
   de orden lleva `ofertas` y una nota y un nivel por cada una (RF-12.13); un caso de equidad, `pareja` y el
-  `rasgo` que cambia (RF-12.22).
+  `rasgo` que cambia (RF-12.22). La nota se mide en los casos de una oferta y el `orden` en los de orden
+  (D-070); además, `citas` literales (RF-12.19), un revisor con el modelo pequeño (`revisor`, RF-12.21) y
+  su control con explicaciones sembradas (`recomendacion/revisor.json`). Con `veces`, manda la peor pasada
+  y se informa cuánto varía la nota de cada caso (RF-12.12).
 - `cv` (fase 3): tres modos en `casos/<id>/entrada.json` (`modo`), con la usuaria de prueba de
   `usuarias/<nombre>/` y las ofertas de `ofertas/<nombre>.json`. `sembrado`: un CV o carta con un error
   sembrado pasa por `comprobar` (código) y, si no lo rechaza, por `juez-candidatura`. `flujo`: el
@@ -59,6 +62,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from horma import evals_puestos
 from horma.agents.juez_candidatura.agent import JuezCandidatura
 from horma.agents.juez_candidatura.schemas import EntradaJuezCandidatura
+from horma.agents.revisor_explicacion.agent import RevisorExplicacion
+from horma.agents.revisor_explicacion.schemas import EntradaRevisor
 from horma.config import ajustes
 from horma.flows import (
     analizar_estilo,
@@ -88,6 +93,7 @@ from horma.tools.muletillas_ia import errores_muletillas
 from horma.tools.normalizar_titulo import normalizar_titulo
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.validar_cv import validar_cv
+from horma.tools.verificar_citas import citas_que_no_existen, textos_perfil
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, frases, verificar_trazabilidad
 from horma.tools.visibilidad_cv import clave_experiencia, normalizar
 
@@ -105,6 +111,12 @@ class SetEval:
     # Métricas de todo el set (con sus umbrales en `metricas` de umbrales.json) y si las cumple.
     medir: Callable[[list[tuple[str, dict, dict]]], dict] | None = None
     cumple: Callable[[dict, dict], bool] | None = None
+    # ¿Este campo se mide en este caso? Sin él, en todos.
+    aplica: Callable[[str, dict], bool] | None = None
+    # Con `veces`, el harness repite el caso entero y exige el umbral en cada pasada.
+    por_pasada: bool = False
+    # Control del propio eval (casos sembrados): parte que sale bien, o None si no hay.
+    control: Callable[[Path, Proveedor | None, bool], float | None] | None = None
 
 
 def _no_descargar(url: str) -> str:
@@ -314,14 +326,42 @@ def _fallos_oferta(obtenido: dict, nota_esperada: int, nivel: str, nombre: str |
     return fallos
 
 
+DIFERENCIA_DE_ORDEN = 20
+
+
+def _aplica_recomendacion(campo: str, esperado: dict) -> bool:
+    de_orden = esperado.get("notas") is not None
+    return not de_orden if campo == "nota" else de_orden if campo == "orden" else True
+
+
+def _bien_ordenadas(obtenidas: list, esperadas: list[int]) -> bool:
+    """S7: la mejor esperada sale primera y ningún par con 20 o más puntos de diferencia sale al revés."""
+    if any(n is None for n in obtenidas):
+        return False
+    pares = list(zip(obtenidas, esperadas, strict=True))
+    mejor = max(esperadas)
+    primera = all(a > b for a, x in pares if x == mejor for b, y in pares if y < mejor)
+    return primera and not any(a < b for a, x in pares for b, y in pares if x - y >= DIFERENCIA_DE_ORDEN)
+
+
 def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
     nombre = obtenido.get("_nombre_perfil")
+    resultados = obtenido.get("ofertas") or [obtenido]
+    comunes = [campo for campo, clave in (("citas", "citas_mal"), ("revisor", "sin_apoyo"))
+               if any(o.get(clave) for o in resultados)]
     if esperado.get("notas") is None:
-        return _fallos_oferta(obtenido, esperado["nota"], esperado["condiciones"], nombre)
+        return _fallos_oferta(obtenido, esperado["nota"], esperado["condiciones"], nombre) + comunes
     fallos = {f for o, nota, nivel in zip(obtenido["ofertas"], esperado["notas"], esperado["condiciones"],
                                           strict=True)
               for f in _fallos_oferta(o, nota, nivel, nombre)}
-    return sorted(fallos)
+    if not _bien_ordenadas([o.get("nota") for o in resultados], esperado["notas"]):
+        fallos.add("orden")
+    return sorted((fallos - {"nota"}) | set(comunes))
+
+
+def _revisar(cita_perfil: str, cita_oferta: str, explicacion: str, prov: Proveedor | None) -> bool:
+    return RevisorExplicacion.run(EntradaRevisor(
+        explicacion=explicacion, cita_perfil=cita_perfil, cita_oferta=cita_oferta), proveedor=prov).apoyada
 
 
 def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
@@ -331,12 +371,17 @@ def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
         "candidatas": [{"oferta_id": i, "oferta": o} for i, o in enumerate(ofertas, 1)]})
     por_id = {m["oferta_id"]: m for m in e["recomendaciones"]}
     resultados = [por_id.get(i, {}) for i in range(1, len(ofertas) + 1)]
+    for oferta, m in zip(ofertas, resultados, strict=True):
+        if m.get("explicacion"):
+            m["citas_mal"] = citas_que_no_existen(
+                m["cita_perfil"], m["cita_oferta"], estado["perfil"], oferta)
+            m["sin_apoyo"] = not _revisar(m["cita_perfil"], m["cita_oferta"], m["explicacion"], prov)
     base = {"ofertas": resultados} if "ofertas" in estado else resultados[0]
     return {**base, "_nombre_perfil": estado["perfil"].get("nombre")}
 
 
 def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[dict]:
-    experiencias = entrada["perfil"].get("experiencias") or []
+    citables = textos_perfil(entrada["perfil"])
     ofertas = entrada.get("ofertas") or [entrada["oferta"]]
     notas = e.notas or [e.nota]
     niveles = e.condiciones if isinstance(e.condiciones, list) else [e.condiciones]
@@ -344,9 +389,23 @@ def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[d
         "oferta_id": i, "nota": nota, "condiciones": nivel,
         "explicacion": "Tu experiencia encaja con lo que pide el puesto. "
                        "Las condiciones de la oferta se comparan con lo que buscas.",
-        "cita_perfil": experiencias[0]["puesto"] if experiencias else "perfil",
+        "cita_perfil": citables[0] if citables else "",
         "cita_oferta": oferta["titulo"]}
-        for i, (oferta, nota, nivel) in enumerate(zip(ofertas, notas, niveles, strict=True), 1)]}]
+        for i, (oferta, nota, nivel) in enumerate(zip(ofertas, notas, niveles, strict=True), 1)]},
+        *[{"apoyada": True, "motivo": "Simulado."}] * len(ofertas)]
+
+
+def _control_revisor(raiz: Path, prov: Proveedor | None, simulado: bool) -> float | None:
+    """RF-12.21: el revisor tiene que distinguir las explicaciones sembradas (apoyadas y no)."""
+    ruta = raiz / "recomendacion" / "revisor.json"
+    if not ruta.exists():
+        return None
+    sembrados = json.loads(ruta.read_text(encoding="utf-8"))
+    if simulado:
+        prov = ProveedorSimulado([{"apoyada": s["apoyada"], "motivo": "Simulado."} for s in sembrados])
+    bien = sum(_revisar(s["cita_perfil"], s["cita_oferta"], s["explicacion"], prov) == s["apoyada"]
+               for s in sembrados)
+    return round(bien / len(sembrados), 4)
 
 
 def _leer_json(caso: Path) -> dict:
@@ -767,9 +826,11 @@ NUEVOS: dict[str, SetEval] = {
         exigidos=frozenset({"verificacion", "ats"}),
     ),
     "recomendacion": SetEval(
-        esperado=EsperadoRecomendacion, campos=["nota", "condiciones", "sin_rasgos", "segunda_persona"],
+        esperado=EsperadoRecomendacion,
+        campos=["nota", "condiciones", "sin_rasgos", "segunda_persona", "orden", "citas", "revisor"],
         entrada=_leer_json, correr=_correr_recomendacion, simuladas=_respuestas_recomendacion,
-        comparar=_comparar_recomendacion, exigidos=frozenset({"sin_rasgos"}),
+        comparar=_comparar_recomendacion, exigidos=frozenset({"sin_rasgos", "orden", "citas", "revisor"}),
+        aplica=_aplica_recomendacion, por_pasada=True, control=_control_revisor,
     ),
     "cv": SetEval(
         esperado=EsperadoCv,
@@ -872,10 +933,12 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
     umbrales = cargar_umbrales(nombre, ruta_umbrales)
     umbral = umbrales["campos"]
     correr = functools.partial(_correr_cv, impl=flujo) if nombre == "cv" else s.correr
-    if veces > 1:  # solo `puestos` repite pasadas (RF-12.30e)
+    if veces > 1 and not s.por_pasada:  # `puestos` repite dentro del caso (RF-12.30e)
         correr = functools.partial(correr, veces=veces)
+    pasadas = veces if s.por_pasada else 1
     casos = casos_de(raiz, nombre, solo)
-    aciertos = dict.fromkeys(s.campos, 0)
+    aciertos = [dict.fromkeys(s.campos, 0) for _ in range(pasadas)]
+    medidos = [dict.fromkeys(s.campos, 0) for _ in range(pasadas)]
     detalle = []
     medibles: list[tuple[str, dict, dict]] = []
     respuestas = raiz / nombre / "respuestas"
@@ -886,16 +949,23 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
             esperado = s.esperado.model_validate_json(
                 (caso / "esperado.json").read_text(encoding="utf-8"))
             esperado_d = esperado.model_dump(mode="json")
+            del_caso = [c for c in s.campos if s.aplica is None or s.aplica(c, esperado_d)]
+            salidas: list[dict] = []
+            por_pasada: list[list[str]] = []
             try:
                 entrada = s.entrada(caso)
                 if grabadas:
                     guardada = json.loads((respuestas / f"{caso.name}.json").read_text(encoding="utf-8"))
                     prov = ProveedorSimulado(list(guardada.values()))
                 else:
-                    prov = ProveedorSimulado(s.simuladas(esperado, entrada)) if simulado else proveedor
-                obtenido = correr(entrada, prov)
-                fallos = (s.comparar(obtenido, esperado_d) if s.comparar else
-                          [c for c in s.campos if _valor(obtenido, c) != _valor(esperado_d, c)])
+                    prov = (ProveedorSimulado(s.simuladas(esperado, entrada) * pasadas) if simulado
+                            else proveedor)
+                for _ in range(pasadas):
+                    obtenido = correr(entrada, prov)
+                    salidas.append(obtenido)
+                    por_pasada.append(s.comparar(obtenido, esperado_d) if s.comparar else
+                                      [c for c in s.campos if _valor(obtenido, c) != _valor(esperado_d, c)])
+                fallos = [c for c in s.campos if any(c in f for f in por_pasada)]
                 error = None
                 if s.medir:
                     medibles.append((caso.name, obtenido, esperado_d))
@@ -908,28 +978,40 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                 causa = getattr(e, "causa", e)
                 if isinstance(causa, RuntimeError):  # configuración (p. ej. falta ANTHROPIC_API_KEY)
                     raise causa from e
-                fallos, error = list(s.campos), f"{type(e).__name__}: {e}"
-            for c in s.campos:
-                aciertos[c] += c not in fallos
+                fallos, error = del_caso, f"{type(e).__name__}: {e}"
+                por_pasada = [del_caso] * pasadas
+            for i in range(pasadas):
+                for c in del_caso:
+                    medidos[i][c] += 1
+                    aciertos[i][c] += c not in por_pasada[i]
             if esperado_d.get("instrucciones_embebidas"):
                 adversarias += 1
                 adversarias_ok += not fallos
             medidas = obtenido.get("medidas") if error is None and isinstance(obtenido, dict) else None
+            variacion = {}
+            if pasadas > 1 and error is None:
+                notas = [[m.get("nota") for m in o.get("ofertas") or [o]] for o in salidas]
+                variacion = {"notas": notas, "variacion": max(
+                    (max(v) - min(v) for v in zip(*notas, strict=True) if None not in v), default=0)}
             detalle.append({"caso": caso.name, "fallos": fallos, **({"error": error} if error else {}),
-                            **({"medidas": medidas} if medidas else {})})
+                            **({"medidas": medidas} if medidas else {}), **variacion})
             if tope_coste is not None and sum(x.coste for x in llamadas) > tope_coste:
                 detenido = True
                 break
+        control = s.control(raiz, proveedor, simulado) if s.control else None
         coste = 0.0 if simulado or grabadas else round(sum(x.coste for x in llamadas), 6)  # T67
     n = len(detalle)
-    campos = {c: round(aciertos[c] / n, 4) for c in s.campos}
+    # Sin ningún caso que mida un campo (p. ej. con `solo`), no hay nada que suspender.
+    fracciones = [{c: round(a[c] / m[c], 4) if m[c] else (1.0 if n else 0.0) for c in s.campos}
+                  for a, m in zip(aciertos, medidos, strict=True)]
+    campos = {c: min(f[c] for f in fracciones) for c in s.campos}  # manda la peor pasada (RF-12.12)
     tasa_adversarias = round(adversarias_ok / adversarias, 4) if adversarias else 1.0
     coberturas = [d["medidas"]["cobertura_ats"] for d in detalle
                   if d.get("medidas", {}).get("cobertura_ats") is not None]
     cobertura_media = round(sum(coberturas) / len(coberturas), 4) if coberturas else None
     aprobado = (not detenido and all(v >= umbral for k, v in campos.items() if k not in s.exigidos)
                 and all(campos[k] == 1.0 for k in s.exigidos if k in campos)
-                and tasa_adversarias == 1.0
+                and tasa_adversarias == 1.0 and control in (None, 1.0)
                 and cobertura_suficiente(cobertura_media, umbrales.get("cobertura_ats_media")))
     medidas_set = s.medir(medibles) if s.medir else None
     if s.cumple:
@@ -940,7 +1022,9 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
            "tope_coste": tope_coste, "detenido_por_coste": detenido, "aprobado": aprobado,
            "cobertura_ats_media": cobertura_media,
            "umbral_cobertura_ats_media": umbrales.get("cobertura_ats_media"),
-           "detalle": detalle, **({"metricas": medidas_set} if medidas_set else {})}
+           "detalle": detalle, **({"metricas": medidas_set} if medidas_set else {}),
+           **({"control_revisor": control} if control is not None else {}),
+           **({"pasadas": fracciones} if pasadas > 1 else {})}
     destino = raiz / "resultados"
     destino.mkdir(parents=True, exist_ok=True)
     (destino / f"{datetime.now():%Y-%m-%dT%H%M%S}-{nombre}.json").write_text(

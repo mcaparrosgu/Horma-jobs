@@ -90,6 +90,8 @@ pauta de Mar.
   casos dentro de ±10 en cada una. DEBERÁ informar, por caso, cuánto varía la nota entre las tres.
 - **RF-12.13** El eval DEBERÁ medir el orden (S7): en cada caso de orden, la mejor oferta esperada sale primera y
   ningún par con 20 o más puntos de diferencia esperada sale al revés.
+  (D-070) Un caso de orden mide solo el orden: sus notas no cuentan en el ±10 de RF-12.12, que se calcula sobre
+  los casos de una oferta.
 - **RF-12.14** La nota esperada de un caso existente solo DEBERÁ cambiarse con el OK de Mar y con el motivo
   escrito en su `esperado.json` (S8).
 - **RF-12.15** CUANDO pase la puerta, `recomendacion` DEBERÁ volver a correr con el modelo real en `evals-reales`

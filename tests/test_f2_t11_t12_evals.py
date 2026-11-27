@@ -235,8 +235,9 @@ def test_fixtures_de_recomendacion_son_60_con_orden_y_pares_de_equidad():
 def test_eval_recomendacion_simulado_pasa_al_100():
     r = correr_set("recomendacion", raiz=RAIZ, simulado=True)
     assert r["aprobado"] and r["casos"] == 60 and r["adversarias"] == 1.0
-    assert r["campos"] == {"nota": 1.0, "condiciones": 1.0, "sin_rasgos": 1.0,
-                         "segunda_persona": 1.0}
+    assert r["campos"] == dict.fromkeys(
+        ["nota", "condiciones", "sin_rasgos", "segunda_persona", "orden", "citas", "revisor"], 1.0)
+    assert r["control_revisor"] == 1.0
 
 
 def _match(esperado, **cambios):
@@ -247,10 +248,15 @@ def _match(esperado, **cambios):
     return {"matches": [m]}
 
 
+APOYADA = {"apoyada": True, "motivo": "Se deduce de las citas."}  # el revisor del eval (spec 012)
+
+
 def _correr_uno(tmp_path, **cambios):
+    cambios.setdefault("cita_perfil", "Camarera")  # citas literales del caso (RF-12.19)
+    cambios.setdefault("cita_oferta", _json(_casos("recomendacion")[1] / "entrada.json")["oferta"]["titulo"])
     caso = _casos("recomendacion")[1]
     raiz = _copiar(tmp_path, "recomendacion", caso.name)
-    prov = ProveedorSimulado([_match(_json(caso / "esperado.json"), **cambios)])
+    prov = ProveedorSimulado([_match(_json(caso / "esperado.json"), **cambios), APOYADA])
     return correr_set("recomendacion", raiz=raiz, proveedor=prov)
 
 
