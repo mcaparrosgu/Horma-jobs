@@ -618,7 +618,7 @@ def recomendar_cmd(
         typer.echo(f"{m['nota']:>3}  {titulos.get(m['oferta_id'], m['oferta_id'])}  "
                    f"· condiciones {m['condiciones']}")
         if m["retirada"]:
-            typer.echo("     (explicación retirada: mencionaba un rasgo personal)")
+            typer.echo(f"     ({m['explicacion'] or 'explicación retirada: mencionaba un rasgo personal'})")
         elif m["explicacion"]:
             typer.echo(f"     {m['explicacion']}")
     typer.echo(f"\n{len(en_rango)} de {len(estado['recomendaciones'])} ofertas en el rango "

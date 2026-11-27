@@ -1,7 +1,8 @@
 """Huellas del perfil (RF-10.10c, RF-10.10d). Código puro: dos hashes que cambian solo cuando cambia lo que
 afecta a lo que se guarda, para no volver a puntuar ni a clasificar por una errata en otra parte.
 
-- `huella_compatibilidad`: experiencia, formación, habilidades, idiomas y titular (lo que mira el `matcher`).
+- `huella_compatibilidad`: experiencia, formación, habilidades e idiomas de la copia ciega, que es lo que lee
+  el `matcher`; sin el titular (spec 012, RF-12.30h).
 - `huella_clasificacion`: experiencia, formación y certificaciones de la copia ciega, que es lo que lee
   `clasificador-postulante` (spec 012, RF-12.30h).
 """
@@ -11,7 +12,7 @@ import json
 from horma.schemas.perfil import Perfil
 from horma.tools.copia_ciega import copia_ciega
 
-_COMPATIBILIDAD = ("titular", "experiencias", "formacion", "habilidades", "idiomas")
+_COMPATIBILIDAD = ("experiencias", "formacion", "habilidades", "idiomas")
 _CLASIFICACION = ("experiencias", "formacion", "certificaciones")
 
 
@@ -31,7 +32,7 @@ def _huella(volcado: dict, campos: tuple[str, ...]) -> str:
 
 
 def huella_compatibilidad(perfil: Perfil) -> str:
-    return _huella(perfil.model_dump(mode="json"), _COMPATIBILIDAD)
+    return _huella(copia_ciega(perfil).model_dump(mode="json"), _COMPATIBILIDAD)
 
 
 def huella_clasificacion(perfil: Perfil) -> str:

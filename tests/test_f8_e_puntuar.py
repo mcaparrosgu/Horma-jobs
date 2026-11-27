@@ -56,7 +56,7 @@ def _cand(i):
 
 def _match(i, nota=80, explicacion="Tiene experiencia en sala. La oferta pide camarera con experiencia."):
     return {"oferta_id": i, "nota": nota, "condiciones": "medio", "explicacion": explicacion,
-            "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "camarera"}
+            "cita_perfil": "Bar Sol", "cita_oferta": "camarera"}
 
 
 def _perfil_dict():
@@ -151,7 +151,7 @@ def ofertas(motor_migrador, n, duena=None, prefijo="Camarera"):
 
 def matches(ids, nota=85):
     return {"matches": [{"oferta_id": i, "nota": nota, "condiciones": "alto",
-                         "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "Camarera de sala",
+                         "cita_perfil": "Bar Sol", "cita_oferta": "Camarera",
                          "explicacion": "Tiene experiencia en sala. La oferta pide camarera de sala."}
                         for i in ids]}
 
@@ -228,7 +228,7 @@ def test_el_worker_puntua_con_rango_40_100_y_no_puntua_una_descartada(app, motor
     assert notas(motor_migrador) == {a: 50}
     enviado = prov.llamadas[0]["usuario"]
     assert f'"oferta_id":{a}' in enviado and f'"oferta_id":{b}' not in enviado
-    assert '"rango_min":40' in enviado.replace(" ", "")  # el rango de la vista (90-95) no cuenta
+    assert "rango_min" not in enviado  # las condiciones no llegan al modelo (spec 012, RF-12.31)
 
 
 @pytest.mark.bd

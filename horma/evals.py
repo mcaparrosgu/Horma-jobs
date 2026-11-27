@@ -85,8 +85,10 @@ from horma.llm.vigilancia import fuga_prompt, senales_entrada
 from horma.schemas.candidatura import TipoProblema
 from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.fuente import CalificacionFuente
+from horma.schemas.match import SIN_COMPROBAR
 from horma.schemas.oferta import Auditoria, Oferta, OfertaExtraida, Taxonomia
 from horma.schemas.perfil import Perfil
+from horma.tools.copia_ciega import copia_ciega
 from horma.tools.depurar_guia import motivos_de_rechazo
 from horma.tools.estructura_carta import errores_estructura_carta
 from horma.tools.lexico_genero import a_copia
@@ -95,7 +97,7 @@ from horma.tools.muletillas_ia import errores_muletillas
 from horma.tools.normalizar_titulo import normalizar_titulo
 from horma.tools.rasgos_personales import rasgos_personales
 from horma.tools.validar_cv import validar_cv
-from horma.tools.verificar_citas import citas_que_no_existen, textos_perfil
+from horma.tools.verificar_citas import textos_perfil
 from horma.tools.verificar_trazabilidad import FORMULAS_CORTESIA, frases, verificar_trazabilidad
 from horma.tools.visibilidad_cv import clave_experiencia, normalizar
 
@@ -321,7 +323,8 @@ def _fallos_oferta(obtenido: dict, nota_esperada: int, nivel: str, nombre: str |
     if obtenido.get("condiciones") != nivel:
         fallos.append("condiciones")
     texto = " ".join(obtenido.get(k) or "" for k in ("explicacion", "cita_perfil", "cita_oferta"))
-    if obtenido.get("retirada") or rasgos_personales(texto):
+    sin_citas = obtenido.get("explicacion") == SIN_COMPROBAR  # eso lo mide `citas`
+    if (obtenido.get("retirada") and not sin_citas) or rasgos_personales(texto):
         fallos.append("sin_rasgos")
     if not habla_de_tu(obtenido.get("explicacion") or "", nombre):
         fallos.append("segunda_persona")
@@ -373,17 +376,18 @@ def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
         "candidatas": [{"oferta_id": i, "oferta": o} for i, o in enumerate(ofertas, 1)]})
     por_id = {m["oferta_id"]: m for m in e["recomendaciones"]}
     resultados = [por_id.get(i, {}) for i in range(1, len(ofertas) + 1)]
-    for oferta, m in zip(ofertas, resultados, strict=True):
-        if m.get("explicacion"):
-            m["citas_mal"] = citas_que_no_existen(
-                m["cita_perfil"], m["cita_oferta"], estado["perfil"], oferta)
+    for m in resultados:
+        # El flujo ya comprueba las citas y reintenta (RF-12.19): aquí cuenta lo que sale al final.
+        m["citas_mal"] = m.get("explicacion") == SIN_COMPROBAR
+        if m.get("explicacion") and not m["citas_mal"]:
             m["sin_apoyo"] = not _revisar(m["cita_perfil"], m["cita_oferta"], m["explicacion"], prov)
     base = {"ofertas": resultados} if "ofertas" in estado else resultados[0]
     return {**base, "_nombre_perfil": estado["perfil"].get("nombre")}
 
 
 def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[dict]:
-    citables = textos_perfil(entrada["perfil"])
+    copia = copia_ciega(Perfil.model_validate(entrada["perfil"]))
+    citables = textos_perfil(copia.model_dump(mode="json"))
     ofertas = entrada.get("ofertas") or [entrada["oferta"]]
     notas = e.notas or [e.nota]
     niveles = e.condiciones if isinstance(e.condiciones, list) else [e.condiciones]

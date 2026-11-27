@@ -1,5 +1,8 @@
 """Flujo recomendar (RF-2.12, RF-2.14, RF-8.7): candidatas → puntuar_tanda (con la revisión de rasgos
-personales dentro de cada tanda) → (otra tanda) → componer. Sin acceso a la base de datos: el
+personales y de las citas dentro de cada tanda) → (otra tanda) → componer. El `matcher` recibe la copia
+ciega del perfil y no recibe las condiciones (spec 012, RF-12.30 y 12.31). Las ofertas con una cita que no
+existe se piden otra vez, una sola; si vuelven a fallar, se retira la explicación y se conserva la nota
+(RF-12.19). Sin acceso a la base de datos: el
 worker carga las candidatas con
 `buscar_ofertas` y guarda los resultados.
 
@@ -13,6 +16,7 @@ Estado de salida: además, "recomendaciones" ([Match]), "tandas" y "quedan_sin_p
 
 Se puntúa por tandas de 30 en el orden recibido. Se pide otra tanda solo si la anterior dejó alguna
 nota dentro del rango de la usuaria y quedan candidatas, con tope de 5 tandas (coste, RT-14)."""
+import logging
 import math
 from collections.abc import Callable
 
@@ -20,12 +24,15 @@ from horma.agents.matcher.agent import Matcher
 from horma.agents.matcher.schemas import MAX_OFERTAS, EntradaMatcher, OfertaCandidata
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
-from horma.schemas.match import Match
+from horma.schemas.match import SIN_COMPROBAR, Match
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
+from horma.tools.copia_ciega import copia_ciega
 from horma.tools.evaluar_condiciones import evaluar_condiciones
 from horma.tools.rasgos_personales import rasgos_personales
+from horma.tools.verificar_citas import citas_que_no_existen
 
+log = logging.getLogger("horma.recomendar")
 TANDA = MAX_OFERTAS
 MAX_TANDAS = 5
 
@@ -48,11 +55,9 @@ def crear(proveedor: Proveedor | None = None,
     def puntuar_tanda(e: dict) -> dict:
         lote, e["pendientes"] = e["pendientes"][:TANDA], e["pendientes"][TANDA:]
         prefs = Preferencias.model_validate(e["preferencias"])
-        perfil = Perfil.model_validate(e["perfil"]).model_copy(update={"instrucciones_embebidas": []})
+        perfil = copia_ciega(Perfil.model_validate(e["perfil"]), con_taxonomia=True)
         lote_modelo = [OfertaCandidata.model_validate(c) for c in lote]
-        r = Matcher.run(EntradaMatcher(
-            perfil=perfil, condiciones=prefs,
-            ofertas=lote_modelo), proveedor=proveedor)
+        r = Matcher.run(EntradaMatcher(perfil=perfil, ofertas=lote_modelo), proveedor=proveedor)
         pedidas = {c["oferta_id"] for c in lote}
         hechas = {m["oferta_id"] for m in e["matches"]}
         nuevas = []
@@ -63,6 +68,7 @@ def crear(proveedor: Proveedor | None = None,
                 oferta = next(c.oferta for c in lote_modelo if c.oferta_id == m.oferta_id)
                 m.condiciones = evaluar_condiciones(oferta, prefs)
                 nuevas.append(_revisada(m.model_dump(mode="json")))
+        _comprobar_citas(nuevas, perfil, lote_modelo, prefs)
         e["matches"] += nuevas
         e["tandas"] += 1
         e["en_rango"] = any(prefs.rango_min <= m["nota"] <= prefs.rango_max for m in nuevas)
@@ -76,6 +82,35 @@ def crear(proveedor: Proveedor | None = None,
         if rasgos_personales(" ".join([m["explicacion"], m["cita_perfil"], m["cita_oferta"]])):
             m.update(explicacion="", cita_perfil="", cita_oferta="", retirada=True)
         return m
+
+    def _comprobar_citas(nuevas: list[dict], perfil, lote: list, prefs: Preferencias) -> None:
+        """RF-12.19: las citas existen en la copia y en la oferta, o se piden otra vez, una sola."""
+        ofertas = {c.oferta_id: c for c in lote}
+        copia = perfil.model_dump(mode="json")
+
+        def mal(m: dict) -> bool:
+            oferta = ofertas[m["oferta_id"]].oferta.model_dump(mode="json")
+            return not m["retirada"] and bool(
+                citas_que_no_existen(m["cita_perfil"], m["cita_oferta"], copia, oferta))
+
+        malas = {m["oferta_id"]: m for m in nuevas if mal(m)}
+        if not malas:
+            return
+        try:
+            r = Matcher.run(EntradaMatcher(perfil=perfil, ofertas=[ofertas[i] for i in malas]),
+                            proveedor=proveedor)
+        except Exception as error:  # noqa: BLE001 - las notas ya calculadas no se pierden (RF-12.23)
+            log.warning("No se pudieron volver a pedir las citas (%s)", type(error).__name__)
+        else:
+            for otra in r.matches:
+                if otra.oferta_id not in malas:
+                    continue
+                otra.condiciones = evaluar_condiciones(ofertas[otra.oferta_id].oferta, prefs)
+                nueva = _revisada(otra.model_dump(mode="json"))
+                if not mal(nueva):
+                    malas.pop(otra.oferta_id).update(nueva)
+        for m in malas.values():
+            m.update(explicacion=SIN_COMPROBAR, cita_perfil="", cita_oferta="", retirada=True)
 
     def componer(e: dict) -> dict:
         e["recomendaciones"] = [Match.model_validate(m).model_dump(mode="json") for m in e["matches"]]

@@ -8,6 +8,8 @@ from typer.testing import CliRunner
 from horma.cli import app as cli
 from horma.evals import correr_set
 from horma.llm.simulado import ProveedorSimulado
+from horma.schemas.perfil import Perfil
+from horma.tools.copia_ciega import copia_ciega
 from horma.tools.verificar_citas import citas_que_no_existen
 
 RAIZ = Path(__file__).resolve().parent.parent / "evals"
@@ -31,7 +33,8 @@ def _matches(caso: str, notas: list[int] | None = None, **cambios) -> dict:
     esperado = _json(RAIZ / "recomendacion" / "casos" / caso / "esperado.json")
     ofertas = entrada.get("ofertas") or [entrada["oferta"]]
     notas = notas or esperado.get("notas") or [esperado["nota"]]
-    puesto = entrada["perfil"]["experiencias"][0]["puesto"]
+    copia = copia_ciega(Perfil.model_validate(entrada["perfil"]))  # lo que lee el modelo (T28)
+    puesto = copia.experiencias[0].puesto
     return {"matches": [{"oferta_id": i, "nota": n, "condiciones": "medio",
                          "explicacion": "Tu experiencia encaja con el puesto. La oferta pide lo mismo.",
                          "cita_perfil": puesto, "cita_oferta": o["titulo"], **cambios}
@@ -64,7 +67,8 @@ def test_un_caso_de_orden_bien_ordenado_no_mide_la_nota(tmp_path):
 
 # --- citas (RF-12.19) y revisor (RF-12.21) ---------------------------------------------------------
 def test_una_cita_inventada_hace_fallar_citas(tmp_path):
-    r = _correr(tmp_path, UNA, [_matches(UNA, cita_perfil="Diez años de maître"), APOYADA])
+    inventada = _matches(UNA, cita_perfil="Diez años de maître")
+    r = _correr(tmp_path, UNA, [inventada, inventada])  # se pide otra vez y vuelve a fallar
     assert r["detalle"][0]["fallos"] == ["citas"] and not r["aprobado"]
 
 

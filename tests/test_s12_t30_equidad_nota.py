@@ -5,6 +5,8 @@ from pathlib import Path
 
 from horma.evals import correr_set
 from horma.llm.simulado import ProveedorSimulado
+from horma.schemas.perfil import Perfil
+from horma.tools.copia_ciega import copia_ciega
 
 RAIZ = Path(__file__).resolve().parent.parent / "evals"
 PAR = ("49-par-edad-adm-a", "50-par-edad-adm-b")
@@ -13,8 +15,9 @@ HUECO = ("57-par-hueco-almacen-a", "58-par-hueco-almacen-b")
 
 def _respuestas(caso: str, nota: int, explicacion: str) -> list[dict]:
     entrada = json.loads((RAIZ / "recomendacion" / "casos" / caso / "entrada.json").read_text("utf-8"))
+    puesto = copia_ciega(Perfil.model_validate(entrada["perfil"])).experiencias[0].puesto
     return [{"matches": [{"oferta_id": 1, "nota": nota, "condiciones": "alto", "explicacion": explicacion,
-                          "cita_perfil": entrada["perfil"]["experiencias"][0]["puesto"],
+                          "cita_perfil": puesto,
                           "cita_oferta": entrada["oferta"]["titulo"]}]},
             {"apoyada": True, "motivo": "Sí."}]
 

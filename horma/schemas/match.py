@@ -2,11 +2,14 @@
 
 La nota (0-100) mide solo experiencia y formación; `condiciones` mide solo las condiciones de
 trabajo. La explicación tiene 2 o 3 frases y cita datos del perfil y de la oferta. Una explicación
-retirada (porque mencionaba un rasgo personal) queda vacía y marcada."""
+retirada queda marcada: vacía si mencionaba un rasgo personal; con el aviso `SIN_COMPROBAR` si sus citas
+no existen (spec 012, RF-12.19)."""
 import re
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+SIN_COMPROBAR = "Sin explicación comprobada"
 
 _FRASE = re.compile(r"[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$")
 

@@ -252,7 +252,7 @@ APOYADA = {"apoyada": True, "motivo": "Se deduce de las citas."}  # el revisor d
 
 
 def _correr_uno(tmp_path, **cambios):
-    cambios.setdefault("cita_perfil", "Camarera")  # citas literales del caso (RF-12.19)
+    cambios.setdefault("cita_perfil", "Bar Sol")  # citas literales del caso (RF-12.19)
     cambios.setdefault("cita_oferta", _json(_casos("recomendacion")[1] / "entrada.json")["oferta"]["titulo"])
     caso = _casos("recomendacion")[1]
     raiz = _copiar(tmp_path, "recomendacion", caso.name)

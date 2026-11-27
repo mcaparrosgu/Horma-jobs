@@ -245,7 +245,7 @@ function detalle(o) {
       return;
     }
     if (o.retirada) {
-      izq.append(nodo("p", TEXTOS.explicacionRetirada, "suave"));
+      izq.append(nodo("p", o.explicacion || TEXTOS.explicacionRetirada, "suave"));
     } else {
       izq.append(nodo("p", o.explicacion));
       if (o.cita_perfil) izq.append(nodo("p", `De tu perfil: «${o.cita_perfil}»`, "suave"));

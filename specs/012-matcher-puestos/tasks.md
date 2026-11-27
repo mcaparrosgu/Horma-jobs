@@ -82,7 +82,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
     el revisor simulado detecta una explicación sembrada que no se apoya en su cita.
   Hecho (27-nov, 0 USD): `verificar_citas`, agente `revisor-explicacion` solo del eval, control sembrado en
   `evals/recomendacion/revisor.json`; los casos de orden miden solo el orden (D-070).
-- [ ] T12 — Prompt del `matcher` (franjas, sin nombrar instrucciones, citas literales) y `verificar_citas` con un
+- [x] T12 — Prompt del `matcher` (franjas, sin nombrar instrucciones, citas literales) y `verificar_citas` con un
   reintento.
   - **Test:** una cita inventada se pide una vez más; si vuelve a fallar, la explicación se retira y la nota se
     conserva; una tanda con una oferta sin resultado la deja «sin puntuar».
@@ -92,12 +92,13 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   (🛑 OK a cada tanda, ~0,1-0,3 USD), hasta que el `matcher` llegue.
 - [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor.
 - [ ] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).
-- [ ] T28 — Con T12 y antes de T14: el `matcher` con la copia y sin condiciones (RF-12.31), RF-12.32 en el prompt y
+- [x] T28 — Con T12 y antes de T14: el `matcher` con la copia y sin condiciones (RF-12.31), RF-12.32 en el prompt y
   `huella_compatibilidad` sobre la copia, con una migración que reescriba las huellas guardadas (sin ella se
   vuelve a puntuar todo).
   - **Test:** el proveedor simulado no recibe el nombre, «Camarera» ni las condiciones; cambiar el nombre no
     cambia la huella; la migración conserva las notas.
-- [ ] T29 — Con T12: citas contra la copia.
+  Hecho (27-nov, 0 USD) junto con T12 y T29: migración 0032.
+- [x] T29 — Con T12: citas contra la copia.
   - **Test:** «encargado/a de turno» existe en la copia y se enseña «encargada de turno»; una cita con el nombre
     de la usuaria no existe y se pide otra vez.
 - [x] T30 — Con T11: pares de RF-12.22 solo para edad, hueco y nacionalidad.

@@ -192,7 +192,7 @@ def _cand(i):
 def _match(i, nota=80,
            explicacion="Tiene experiencia en sala. La oferta pide camarera con experiencia."):
     return {"oferta_id": i, "nota": nota, "condiciones": "medio", "explicacion": explicacion,
-            "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "camarera"}
+            "cita_perfil": "Bar Sol", "cita_oferta": "camarera"}
 
 
 def _perfil_dict():
