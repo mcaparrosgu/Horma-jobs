@@ -5,7 +5,7 @@ description: Preguntas abiertas de la fase 9 (huecos y avisos del CV, entrevista
 tags: [clarify, perfil, entrevista, estilo, preferencias, agentes]
 status: active
 sources: [../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../005-correcciones-profesor/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md]
-generated: { by: claude-code, at: 2026-11-21 }
+generated: { at: 2026-11-21 }
 verified: { by: human, at: 2026-11-21 }
 stale_after: null
 ---

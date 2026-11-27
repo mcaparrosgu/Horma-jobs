@@ -5,7 +5,7 @@ description: Cada prompt de los agentes (12 registrados y 2 aparcados) y el fluj
 tags: [lineas-rojas, seguridad, rgpd]
 status: verified
 sources: [../specs/constitution.md, ../specs/004-langgraph-salida/spec.md]
-generated: { by: claude-code, at: 2026-11-16 }
+generated: { at: 2026-11-16 }
 verified: { by: Mar, at: 2026-11-22 }
 stale_after: null
 ---

@@ -5,7 +5,7 @@ description: Requisitos del rediseño visual «Editorial» (dirección 2c) de to
 tags: [spec, frontend, diseno, accesibilidad, tokens, componentes]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md]
-generated: { by: claude-code, at: 2026-11-19 }
+generated: { at: 2026-11-19 }
 verified: { by: human, at: 2026-11-19 }
 stale_after: null
 ---

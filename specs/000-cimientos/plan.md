@@ -5,7 +5,7 @@ description: Arquitectura, contratos y modelo de datos que cubren cada requisito
 tags: [plan, cimientos]
 status: draft
 sources: [./spec.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-12 }
+generated: { at: 2026-11-12 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---

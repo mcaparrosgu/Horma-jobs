@@ -5,7 +5,7 @@ description: Archivos y cambios que cubren la spec 010 por bloques (S1-S10) — 
 tags: [plan, simplificacion, frontend, flujos, agentes, costes, arquitectura, migracion]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../008-portada-ofertas/plan.md, ../009-cv-maestro-entrevista/plan.md]
-generated: { by: claude-code, at: 2026-11-21 }
+generated: { at: 2026-11-21 }
 verified: { by: human, at: 2026-11-21 }
 stale_after: null
 ---

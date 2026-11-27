@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables derivadas del plan de la fase 2. Ca
 tags: [tareas, perfil, recomendacion]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-14 }
+generated: { at: 2026-11-14 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---

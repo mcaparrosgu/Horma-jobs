@@ -5,7 +5,7 @@ description: Preguntas abiertas de la fase 4 (LangGraph, calidad y salida) resue
 tags: [clarify, langgraph, ci, guardarrailes, despliegue, observabilidad]
 status: active
 sources: [../system.md, ../constitution.md, ../003-candidatura/spec.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
-generated: { by: claude-code, at: 2026-11-16 }
+generated: { at: 2026-11-16 }
 verified: { by: human, at: 2026-11-16 }
 stale_after: null
 ---

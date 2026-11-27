@@ -5,7 +5,7 @@ description: Preguntas abiertas de la fase 8 (landing, oferta original, «Qué b
 tags: [clarify, frontend, landing, recomendadas, candidaturas, worker]
 status: active
 sources: [../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md]
-generated: { by: claude-code, at: 2026-11-20 }
+generated: { at: 2026-11-20 }
 verified: { by: human, at: 2026-11-20 }
 stale_after: null
 ---

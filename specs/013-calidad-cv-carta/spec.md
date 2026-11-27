@@ -5,7 +5,7 @@ description: Requisitos en notación EARS de la spec 013 (paso 3 del PRD) — he
 tags: [spec, cv, carta, pdf, panel, eliminatorios, evals]
 status: active
 sources: [./clarifications.md, ../prd.md, ../system.md, ../003-candidatura/spec.md, ../010-simplificacion/spec.md, ../012-matcher-puestos/spec.md]
-generated: { by: claude-code, at: 2026-11-26 }
+generated: { at: 2026-11-26 }
 verified: { by: human, at: 2026-11-26 }
 stale_after: null
 ---

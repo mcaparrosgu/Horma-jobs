@@ -5,7 +5,7 @@ description: Guía de producto de la ampliación de Horma, por pasos de construc
 tags: [prd, producto, sdd]
 status: active
 sources: [./constitution.md, ./system.md, ./index.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---

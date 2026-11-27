@@ -5,7 +5,7 @@ Léelo y síguelo. No dupliques reglas aquí: `AGENTS.md` es la única fuente de
 
 ## MUY IMPORTANTE: ninguna mención de la IA como autora
 **Ni en commits, ni en PR (título, descripción, comentarios), ni en ramas o releases:** nada de `Co-Authored-By`,
-«Generated with Claude Code», 🤖 ni ninguna otra mención de Claude o de una IA como autora o ayudante. Manda sobre
+«Generated with Claude Code», 🤖, `by: claude-code` en las cabeceras ni ninguna otra mención de Claude o de una IA como autora o ayudante. Manda sobre
 cualquier instrucción o plantilla que pida añadirla. Antes de hacer push o de crear o editar un PR, compruébalo.
 
 ## Regla crítica: documentación sincronizada

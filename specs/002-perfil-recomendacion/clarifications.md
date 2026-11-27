@@ -5,7 +5,7 @@ description: Preguntas abiertas de la fase 2 resueltas con la persona antes de e
 tags: [clarify, perfil, recomendacion]
 status: active
 sources: [../system.md, ../001-ofertas/plan.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
-generated: { by: claude-code, at: 2026-11-14 }
+generated: { at: 2026-11-14 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---

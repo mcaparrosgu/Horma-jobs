@@ -5,7 +5,7 @@ description: Requisitos funcionales de la fase 2 (perfil con origen, CV base y o
 tags: [spec, perfil, recomendacion]
 status: active
 sources: [./clarifications.md, ../system.md, ../001-ofertas/spec.md]
-generated: { by: claude-code, at: 2026-11-14 }
+generated: { at: 2026-11-14 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---

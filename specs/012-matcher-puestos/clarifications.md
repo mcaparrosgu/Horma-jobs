@@ -5,7 +5,7 @@ description: Decisiones que sostienen la spec 012 (paso 2 del PRD) — las ya to
 tags: [clarify, matcher, puestos, recomendacion]
 status: active
 sources: [../prd.md, ../002-perfil-recomendacion/spec.md, ../009-cv-maestro-entrevista/spec.md, ../010-simplificacion/spec.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---

@@ -5,7 +5,7 @@ description: Requisitos funcionales de la fase 3 (CV y carta adaptados con verif
 tags: [spec, candidatura, seguimiento]
 status: active
 sources: [./clarifications.md, ../system.md, ../002-perfil-recomendacion/spec.md, ../../docs/Horma v2_ requerimientos por fases.pdf]
-generated: { by: claude-code, at: 2026-11-16 }
+generated: { at: 2026-11-16 }
 verified: { by: human, at: 2026-11-16 }
 stale_after: null
 ---

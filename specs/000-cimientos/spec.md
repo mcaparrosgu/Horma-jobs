@@ -5,7 +5,7 @@ description: Requisitos funcionales de la fase 0 (cimientos), en notación EARS.
 tags: [spec, cimientos]
 status: draft
 sources: [./clarifications.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-12 }
+generated: { at: 2026-11-12 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---

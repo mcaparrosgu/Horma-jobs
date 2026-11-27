@@ -5,7 +5,7 @@ description: Preguntas abiertas de la fase 7 (ajustes de pantalla pedidos por Ma
 tags: [clarify, frontend, preferencias, perfil, ingesta, matcher]
 status: active
 sources: [../system.md, ../002-perfil-recomendacion/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md]
-generated: { by: claude-code, at: 2026-11-20 }
+generated: { at: 2026-11-20 }
 verified: { by: human, at: 2026-11-20 }
 stale_after: null
 ---

@@ -5,7 +5,7 @@ description: Requisitos de la simplificación de Horma en notación EARS — rec
 tags: [spec, simplificacion, ux, frontend, costes, arquitectura, agentes]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../006-rediseno-2c/spec.md, ../007-ajustes-pantalla/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
-generated: { by: claude-code, at: 2026-11-21 }
+generated: { at: 2026-11-21 }
 verified: { by: human, at: 2026-11-23 }  # S7 firmada el 21-nov; S8 (RF-10.14 a 10.14r) y S9 (RF-10.15 a 10.15e) firmadas el 22-nov; RF-5.3i, 10.4e, 10.6i, 10.8c, 10.16 y 10.17 pedidos por Mar en la prueba del 22-nov; S10 (RF-10.18 a 10.18i) firmada el 23-nov
 stale_after: null
 ---

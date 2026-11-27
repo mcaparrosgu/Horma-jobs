@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables de la spec 012 (paso 2 del PRD), en
 tags: [tareas, matcher, puestos, recomendacion]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
@@ -71,7 +71,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** la API devuelve nivel y porqué; un CV sin experiencia trae marcados los de titulación.
   - **Navegador:** 1280 y 390 px, claro y oscuro (`tests/capturas.js`, 27-nov). El porqué de cada puesto, D-063.
 - [x] T09 — Cierre de P: set `puestos` en umbral, suite verde, `specs/index.md` al día y PR. Hecho (27-nov): set en
-  umbral y en la CI con las respuestas grabadas (D-064), suite verde; PR #46 abierto.
+  umbral y en la CI con las respuestas grabadas (D-064), suite verde; PR #46 fusionado.
 
 ### N · Nota y explicación (RF-12.11 a 12.24, 12.31 y 12.32)
 - [ ] T10 — Eval `recomendacion` a ~60 casos, con orden y pares de equidad (0 USD). 🛑 Mar repasa los casos con más

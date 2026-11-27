@@ -5,7 +5,7 @@ description: Requisitos en notación EARS de la spec 012 (paso 2 del PRD) — pu
 tags: [spec, matcher, puestos, recomendacion, evals]
 status: active
 sources: [./clarifications.md, ../prd.md, ../system.md, ../002-perfil-recomendacion/spec.md, ../009-cv-maestro-entrevista/spec.md, ../010-simplificacion/spec.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---

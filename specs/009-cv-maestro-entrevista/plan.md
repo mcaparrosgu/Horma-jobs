@@ -5,7 +5,7 @@ description: Archivos y cambios que cubren la parte 9a de la fase 9 — huecos y
 tags: [plan, perfil, preferencias, agentes, frontend, migracion]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../008-portada-ofertas/plan.md]
-generated: { by: claude-code, at: 2026-11-21 }
+generated: { at: 2026-11-21 }
 verified: { by: human, at: 2026-11-21 }
 stale_after: null
 ---

@@ -5,7 +5,7 @@ description: Arquitectura, contratos y modelo de datos que cubren cada requisito
 tags: [plan, perfil, recomendacion]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../001-ofertas/plan.md]
-generated: { by: claude-code, at: 2026-11-14 }
+generated: { at: 2026-11-14 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---

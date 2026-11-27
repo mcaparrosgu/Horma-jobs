@@ -5,7 +5,7 @@ description: Piezas, archivos y costes de la spec 012 (paso 2 del PRD) — set d
 tags: [plan, matcher, puestos, recomendacion, evals]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---

@@ -5,7 +5,7 @@ description: Las 12 decisiones de la simplificación de Horma (S0), tomadas con 
 tags: [clarify, simplificacion, ux, costes, arquitectura]
 status: active
 sources: [../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../005-correcciones-profesor/spec.md, ../008-portada-ofertas/spec.md, ../009-cv-maestro-entrevista/spec.md]
-generated: { by: claude-code, at: 2026-11-21 }
+generated: { at: 2026-11-21 }
 verified: { by: human, at: 2026-11-21 }
 stale_after: null
 ---

@@ -5,7 +5,7 @@ description: Archivos y cambios que cubren cada requisito de la fase 7 — colum
 tags: [plan, frontend, extractor, matcher, migracion]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-20 }
+generated: { at: 2026-11-20 }
 verified: { by: human, at: 2026-11-20 }
 stale_after: null
 ---

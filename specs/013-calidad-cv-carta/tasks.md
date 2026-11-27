@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables de la spec 013 (paso 3 del PRD), en
 tags: [tareas, cv, carta, pdf, panel]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-26 }
+generated: { at: 2026-11-26 }
 verified: { by: human, at: 2026-11-26 }
 stale_after: null
 ---
