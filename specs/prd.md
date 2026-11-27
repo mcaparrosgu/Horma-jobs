@@ -259,8 +259,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Workday (D-020): por el sitemap y el marcado `JobPosting` del tablón público de cada empresa y por sus
     webs de empleo propias. Nunca por su API interna.
   - Fuentes nuevas (punto 14; D-025): Feina Activa, Lanbide, ECyL (si se confirma su conjunto de datos) y,
-    al final, Manfred, además de los ATS de F1. Solo con permiso escrito del portal: InfoJobs, Welcome to the
-    Jungle, Turijobs, Infoempleo y Tecnoempleo. Fuera: Jooble, Adzuna, Careerjet y EURES; SEPE, en vigilancia.
+    al final, Manfred, además de los ATS de F1. Solo con permiso escrito del portal: Welcome to the Jungle,
+    Turijobs, Infoempleo y Tecnoempleo. InfoJobs no: su API es solo para empresas constituidas (D-067). Fuera: Jooble, Adzuna, Careerjet y EURES; SEPE, en vigilancia.
     Ninguna se activa sin calificación apta. Con ella, cada fuente entra como cambio pequeño: conector, test
     y una línea en las tareas de la 014. Punto 8: todas las empresas de Greenhouse y, después, Lever.
   - Vigía semanal de portales nuevos; clasificar solas las fuentes que no están en Horma.
@@ -452,7 +452,8 @@ estructuradas, como un indexador de ofertas públicas.
 
 1. **No hay lado empresas ni recruiters.** Abrirlo convertiría a Horma en sistema de alto riesgo.
 2. **No usa LinkedIn ni Indeed,** ni como fuente ni para enviar. InfoJobs y Welcome to the Jungle sí están en
-   alcance, como fuente (7.1) y para enviar, con las mismas reglas que cualquier portal (puntos 3 y 4).
+   alcance, como fuente (7.1) y para enviar, con las mismas reglas que cualquier portal (puntos 3 y 4). InfoJobs,
+   como fuente, solo por su API, que es para empresas constituidas (D-067).
 3. **No resuelve captchas, no rota IP, no disfraza el navegador, no crea cuentas y no entra en áreas privadas.**
 4. **No guarda contraseñas de portales.** Los portales con cuenta quedan como «Envíala tú».
 5. **No envía en Greenhouse ni por la API de Recruitee.**
