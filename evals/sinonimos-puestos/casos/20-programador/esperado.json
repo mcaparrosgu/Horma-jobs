@@ -3,5 +3,15 @@
     "Software Developer"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Desarrollador de software": "mismo",
+    "Desarrollador": "mismo",
+    "Programador informático": "mismo",
+    "Ingeniero de software": "mismo",
+    "Software engineer": "mismo",
+    "Coder": "otro",
+    "Programmer": "mismo",
+    "Programador de software": "mismo",
+    "Software programmer": "mismo"
+  }
 }

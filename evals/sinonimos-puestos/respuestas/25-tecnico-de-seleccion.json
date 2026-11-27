@@ -1,0 +1,19 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Técnico de selección",
+        "otras": [
+          "Técnico de reclutamiento",
+          "Técnico de selección de personal",
+          "Técnica de selección",
+          "Especialista en selección de personal",
+          "Técnico de reclutamiento y selección",
+          "Recruiter",
+          "Recruitment specialist",
+          "Talent acquisition specialist"
+        ]
+      }
+    ]
+  }
+}

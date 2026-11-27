@@ -1,0 +1,19 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Enfermera",
+        "otras": [
+          "Enfermero",
+          "Enfermero/a",
+          "Diplomada en enfermería",
+          "Diplomado en enfermería",
+          "Graduada en enfermería",
+          "Graduado en enfermería",
+          "Registered Nurse",
+          "Nurse"
+        ]
+      }
+    ]
+  }
+}

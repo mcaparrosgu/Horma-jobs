@@ -1,0 +1,16 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Contable",
+        "otras": [
+          "Contador",
+          "Técnico contable",
+          "Técnico de contabilidad",
+          "Accountant",
+          "Accounting specialist"
+        ]
+      }
+    ]
+  }
+}

@@ -52,9 +52,14 @@ pauta de Mar.
   editarlas. Los términos excluidos no se amplían.
 - **RF-12.4e** (D-068) El agente `sinonimos-puestos` DEBERÁ tener su set de evals con umbral (RT-11), en el bloque N. El
   umbral lo fija Mar antes de medir con el modelo real.
-  (D-071) Ninguna forma puede ser otro puesto y, solo con las formas del modelo, DEBERÁ encontrarse al menos
-  0,55 de los anuncios firmados que el texto solo no encuentra. SI llegan pocas ofertas, ENTONCES se pasará a
-  tolerar hasta 0,05 de formas ajenas con cobertura ≥ 0,60, como cambio de esta spec.
+  (D-076) Como máximo 0,05 de las formas pueden ser otro puesto y, solo con las formas del modelo, DEBERÁ
+  encontrarse al menos 0,60 de los anuncios firmados que el texto solo no encuentra. La CI DEBERÁ correr el set con
+  las respuestas reales grabadas, sin llamar al modelo.
+  Al etiquetar una forma: en dirección y ventas, otro escalón de la misma área es el mismo puesto; en los oficios, no
+  (D-072). Una palabra suelta que arrastra otro oficio («Developer», «Server») es otro puesto (D-073). Los parecidos
+  dudosos los decide Mar (D-074).
+  (D-075) El prompt del agente DEBERÁ pedir esas mismas reglas: ni otro escalón en los oficios, ni palabras sueltas que
+  sirvan para otro oficio, ni puestos parecidos.
 
 ### B · Puestos por niveles de evidencia (PRD RF-006)
 - **RF-12.5** La puerta de puestos DEBERÁ dar a cada puesto sugerido un nivel, decidido por código (S1):

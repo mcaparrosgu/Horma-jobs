@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Promotora de ventas",
+        "otras": [
+          "Promotor de ventas",
+          "Promotora de punto de venta",
+          "Promotor de punto de venta",
+          "Sales promoter",
+          "In-store promoter",
+          "Promotora de ventas en punto de venta"
+        ]
+      }
+    ]
+  }
+}

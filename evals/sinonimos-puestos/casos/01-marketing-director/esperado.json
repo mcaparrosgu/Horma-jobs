@@ -5,5 +5,14 @@
   "otros_puestos": [
     "Director, AI Engineering (Data Science)"
   ],
-  "etiquetas": {}
+  "etiquetas": {
+    "Director de Marketing": "mismo",
+    "Director de Marketing y Comunicación": "mismo",
+    "Responsable de Marketing": "mismo",
+    "Head of Marketing": "mismo",
+    "Jefe de Marketing": "mismo",
+    "Marketing Manager Director": "mismo",
+    "Director Comercial y de Marketing": "mismo",
+    "Director Marketing": "mismo"
+  }
 }

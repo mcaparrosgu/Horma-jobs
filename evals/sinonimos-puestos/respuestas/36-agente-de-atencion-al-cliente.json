@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Agente de atención al cliente",
+        "otras": [
+          "Agente de servicio al cliente",
+          "Representante de atención al cliente",
+          "Asesor de atención al cliente",
+          "Customer service agent",
+          "Customer service representative",
+          "Customer service advisor",
+          "Customer care agent"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Abogado",
+        "otras": [
+          "Abogada",
+          "Letrado",
+          "Letrada",
+          "Lawyer",
+          "Attorney",
+          "Attorney at law"
+        ]
+      }
+    ]
+  }
+}

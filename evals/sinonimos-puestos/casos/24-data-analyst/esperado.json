@@ -8,5 +8,13 @@
     "Consulting Manager (m/f/d) Data & AI Strategy",
     "Director, AI Engineering (Data Science)"
   ],
-  "etiquetas": {}
+  "etiquetas": {
+    "Analista de datos junior": "mismo",
+    "Analista de Business Intelligence": "otro",
+    "Analista BI": "otro",
+    "Analista de datos y reporting": "mismo",
+    "Data Analysis Specialist": "mismo",
+    "Business Data Analyst": "mismo",
+    "Analista de datos de negocio": "mismo"
+  }
 }

@@ -105,11 +105,11 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T30 — Con T11: pares de RF-12.22 solo para edad, hueco y nacionalidad.
   - **Test:** dos medianas a más de 3 puntos hacen fallar la equidad.
   Hecho (27-nov, 0 USD): seis parejas (T10), métrica `equidad` al 100 % en `umbrales.json`.
-- [ ] T31 — Set de evals de `sinonimos-puestos` (RF-12.4e, D-068), con su harness en simulado. 🛑 Mar fija el umbral.
+- [x] T31 — Set de evals de `sinonimos-puestos` (RF-12.4e, D-068), con su harness en simulado. 🛑 Mar fija el umbral.
   🛑 OK al gasto antes de medir con el modelo real; entra en la CI sin gasto.
   - **Test:** una forma que sea otro puesto hace fallar el set.
-  Hecho en simulado (27-nov, D-071): 40 puestos y en la CI. **Falta** la medición real (🛑 OK al gasto, <0,01 USD),
-  etiquetar sus formas y pasar la CI a `--grabadas`.
+  Hecho (27-nov, 0,022 USD): la primera pasada dio 22 formas ajenas; prompt corregido (D-075) y umbral de reserva
+  (D-076): 3 de 213 ajenas (0,014) y cobertura 0,60. En la CI con las respuestas grabadas.
 - [ ] T17 — `recomendacion` de vuelta en `evals-reales`. Cierre de N: suite verde, `specs/index.md` al día y PR.
 
 ### V · Lo que ve la usuaria (RF-12.25 a 12.29)

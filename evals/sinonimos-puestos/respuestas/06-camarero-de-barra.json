@@ -1,0 +1,16 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Camarero de barra",
+        "otras": [
+          "Camarera de barra",
+          "Camarero/a de barra",
+          "Camarero de bar",
+          "Bar waiter",
+          "Bar server"
+        ]
+      }
+    ]
+  }
+}

@@ -3,5 +3,13 @@
     "Photographer"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Fotoperiodista": "mismo",
+    "Reportero gráfico": "mismo",
+    "Camarógrafo": "otro",
+    "Photojournalist": "mismo",
+    "Photo specialist": "otro",
+    "Imaging specialist": "otro",
+    "Fotógrafo profesional": "mismo"
+  }
 }

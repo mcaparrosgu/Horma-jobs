@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Sales Manager",
+        "otras": [
+          "Sales Director",
+          "Head of Sales",
+          "Director de ventas",
+          "Jefe de ventas",
+          "Responsable de ventas",
+          "Director comercial",
+          "Responsable comercial"
+        ]
+      }
+    ]
+  }
+}

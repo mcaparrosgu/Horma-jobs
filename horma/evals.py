@@ -852,7 +852,7 @@ NUEVOS: dict[str, SetEval] = {
     "sinonimos-puestos": SetEval(
         esperado=evals_sinonimos.EsperadoSinonimos, campos=evals_sinonimos.CAMPOS,
         entrada=evals_sinonimos.entrada, correr=evals_sinonimos.correr, simuladas=evals_sinonimos.simuladas,
-        comparar=evals_sinonimos.comparar, exigidos=frozenset(evals_sinonimos.CAMPOS),
+        comparar=evals_sinonimos.comparar, exigidos=frozenset({"etiquetado"}),
         medir=evals_sinonimos.medir, cumple=evals_sinonimos.cumple,
     ),
     "perfil": SetEval(

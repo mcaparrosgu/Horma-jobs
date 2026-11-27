@@ -1,0 +1,15 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Jefe de cocina",
+        "otras": [
+          "Chef de cocina",
+          "Head chef",
+          "Jefe de cocinas",
+          "Responsable de cocina"
+        ]
+      }
+    ]
+  }
+}

@@ -3,5 +3,14 @@
     "Cleaner"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Limpiador": "mismo",
+    "Operario de limpieza": "mismo",
+    "Auxiliar de limpieza": "mismo",
+    "Personal de limpieza de edificios": "mismo",
+    "Cleaning staff": "mismo",
+    "Janitor": "mismo",
+    "Trabajador de limpieza": "mismo",
+    "Cleaning operative": "mismo"
+  }
 }

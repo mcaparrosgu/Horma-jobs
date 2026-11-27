@@ -22,10 +22,10 @@
     }
   },
   "sinonimos-puestos": {
-    "campos": 0.9,
+    "campos": 0,
     "metricas": {
-      "otros": 0,
-      "cobertura": 0.55
+      "ajenas": 0.05,
+      "cobertura": 0.6
     }
   },
   "recomendacion": {

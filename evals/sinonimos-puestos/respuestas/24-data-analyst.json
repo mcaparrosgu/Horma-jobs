@@ -1,0 +1,14 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Data Analyst",
+        "otras": [
+          "Analista de datos",
+          "Business Data Analyst",
+          "Analista de datos de negocio"
+        ]
+      }
+    ]
+  }
+}

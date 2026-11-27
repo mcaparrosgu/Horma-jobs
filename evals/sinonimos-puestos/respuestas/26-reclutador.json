@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Reclutador",
+        "otras": [
+          "Reclutadora",
+          "Recruiter",
+          "Técnico de selección",
+          "Especialista en selección de personal",
+          "Especialista en reclutamiento",
+          "Talent acquisition specialist",
+          "Headhunter"
+        ]
+      }
+    ]
+  }
+}

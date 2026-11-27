@@ -3,5 +3,17 @@
     "Help Desk"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Técnico de soporte IT": "mismo",
+    "Técnico de soporte técnico informático": "mismo",
+    "Técnico de atención al usuario informático": "mismo",
+    "Técnico de mesa de ayuda": "mismo",
+    "Técnico helpdesk": "mismo",
+    "IT support technician": "mismo",
+    "Help desk technician": "mismo",
+    "Desktop support technician": "mismo",
+    "Técnico informático de soporte": "mismo",
+    "Técnico de helpdesk": "mismo",
+    "IT Support Specialist": "mismo"
+  }
 }

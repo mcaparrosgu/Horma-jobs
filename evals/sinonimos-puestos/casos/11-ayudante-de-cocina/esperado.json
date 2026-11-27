@@ -4,5 +4,16 @@
     "Pinche"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Auxiliar de cocina": "mismo",
+    "Ayudante de cocinero": "mismo",
+    "Pinche de cocina": "mismo",
+    "Office de cocina": "mismo",
+    "Auxiliar de cocinero": "mismo",
+    "Kitchen helper": "mismo",
+    "Kitchen assistant": "mismo",
+    "Commis chef": "mismo",
+    "Asistente de cocina": "mismo",
+    "Kitchen hand": "mismo"
+  }
 }

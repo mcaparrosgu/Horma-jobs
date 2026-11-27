@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Auxiliar administrativo",
+        "otras": [
+          "Auxiliar administrativa",
+          "Auxiliar de administración",
+          "Auxiliar de oficina",
+          "Administrative assistant",
+          "Office assistant",
+          "Administrative clerk"
+        ]
+      }
+    ]
+  }
+}

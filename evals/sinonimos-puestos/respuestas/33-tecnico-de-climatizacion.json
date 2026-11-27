@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Técnico de climatización",
+        "otras": [
+          "Técnico en climatización",
+          "Técnico de aire acondicionado",
+          "Técnico HVAC",
+          "Técnico de climatización y calefacción",
+          "HVAC technician",
+          "Air conditioning technician",
+          "HVAC service technician"
+        ]
+      }
+    ]
+  }
+}

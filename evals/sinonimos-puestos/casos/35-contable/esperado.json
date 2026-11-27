@@ -3,5 +3,14 @@
     "Accountant"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Técnico contable": "mismo",
+    "Técnico de contabilidad": "mismo",
+    "Contador": "mismo",
+    "Contador/a de empresa": "mismo",
+    "Tenedor de libros": "mismo",
+    "Accounting technician": "mismo",
+    "General accountant": "mismo",
+    "Accounting specialist": "mismo"
+  }
 }

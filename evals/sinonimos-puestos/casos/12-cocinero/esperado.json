@@ -3,5 +3,11 @@
     "Chef"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Chef de cocina": "otro",
+    "Cook": "mismo",
+    "Line cook": "mismo",
+    "Jefe de cocina": "otro",
+    "Cocinero de partida": "mismo"
+  }
 }

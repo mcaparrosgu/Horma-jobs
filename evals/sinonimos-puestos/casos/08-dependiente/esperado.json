@@ -4,5 +4,13 @@
     "Vendedor de tienda"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Dependiente de comercio": "mismo",
+    "Asistente de ventas": "mismo",
+    "Shop assistant": "mismo",
+    "Retail sales associate": "mismo",
+    "Sales clerk": "mismo",
+    "Dependiente de tienda": "mismo",
+    "Sales associate": "mismo"
+  }
 }

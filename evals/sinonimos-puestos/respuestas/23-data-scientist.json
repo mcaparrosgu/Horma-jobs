@@ -1,0 +1,14 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Data Scientist",
+        "otras": [
+          "Científico de datos",
+          "Científica de datos",
+          "Científico/a de datos"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Responsable de redes sociales",
+        "otras": [
+          "Social media manager",
+          "Community manager",
+          "Responsable de social media",
+          "Social media specialist",
+          "Gestor de redes sociales",
+          "Social media coordinator"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Programador",
+        "otras": [
+          "Programador informático",
+          "Programador de software",
+          "Programadora",
+          "Programador/a",
+          "Software programmer",
+          "Programmer"
+        ]
+      }
+    ]
+  }
+}

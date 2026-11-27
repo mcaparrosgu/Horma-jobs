@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Técnico de soporte informático",
+        "otras": [
+          "Técnico de soporte IT",
+          "Técnico informático de soporte",
+          "Técnico de helpdesk",
+          "Técnico de mesa de ayuda",
+          "IT Support Technician",
+          "IT Support Specialist",
+          "Help Desk Technician"
+        ]
+      }
+    ]
+  }
+}

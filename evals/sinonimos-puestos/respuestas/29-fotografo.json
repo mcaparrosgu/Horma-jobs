@@ -1,0 +1,15 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Fotógrafo",
+        "otras": [
+          "Fotógrafa",
+          "Fotógrafo/a",
+          "Fotógrafo profesional",
+          "Photographer"
+        ]
+      }
+    ]
+  }
+}

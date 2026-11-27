@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Ayudante de cocina",
+        "otras": [
+          "Auxiliar de cocina",
+          "Asistente de cocina",
+          "Ayudante de cocinero",
+          "Kitchen helper",
+          "Kitchen assistant",
+          "Kitchen hand"
+        ]
+      }
+    ]
+  }
+}

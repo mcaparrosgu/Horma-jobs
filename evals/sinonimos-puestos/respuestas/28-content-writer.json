@@ -1,0 +1,16 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Content Writer",
+        "otras": [
+          "Redactor de contenidos",
+          "Redactora de contenidos",
+          "Redactor de contenido",
+          "Redactor web",
+          "Escritor de contenidos"
+        ]
+      }
+    ]
+  }
+}

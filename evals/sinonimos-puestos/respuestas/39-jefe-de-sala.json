@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Jefe de sala",
+        "otras": [
+          "Maître",
+          "Maître d'hôtel",
+          "Jefe de comedor",
+          "Restaurant manager",
+          "Floor manager",
+          "Front of house manager"
+        ]
+      }
+    ]
+  }
+}

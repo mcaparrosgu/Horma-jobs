@@ -1,0 +1,16 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Dependienta",
+        "otras": [
+          "Dependiente",
+          "Dependienta de tienda",
+          "Vendedora de tienda",
+          "Shop assistant",
+          "Retail sales assistant"
+        ]
+      }
+    ]
+  }
+}

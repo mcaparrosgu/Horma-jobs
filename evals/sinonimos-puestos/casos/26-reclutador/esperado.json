@@ -3,5 +3,13 @@
     "Talent Acquisition"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Recruiter": "mismo",
+    "Agente de reclutamiento": "mismo",
+    "Especialista en reclutamiento": "mismo",
+    "Talent acquisition specialist": "mismo",
+    "Técnico de selección": "mismo",
+    "Headhunter": "mismo",
+    "Especialista en selección de personal": "mismo"
+  }
 }

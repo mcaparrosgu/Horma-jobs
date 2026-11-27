@@ -5,5 +5,15 @@
     "Peón de logística"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Operario de almacén": "mismo",
+    "Auxiliar de almacén": "mismo",
+    "Almacenero": "mismo",
+    "Mozo de almacén polivalente": "mismo",
+    "Warehouse operator": "mismo",
+    "Warehouse worker": "mismo",
+    "Warehouse associate": "mismo",
+    "Stock handler": "mismo",
+    "Peón de almacén": "mismo"
+  }
 }

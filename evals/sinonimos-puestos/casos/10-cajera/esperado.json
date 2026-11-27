@@ -3,5 +3,11 @@
     "Cashier"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Cajera de supermercado": "mismo",
+    "Operadora de caja": "mismo",
+    "Checkout clerk": "mismo",
+    "Cash register operator": "mismo",
+    "Cashier de supermercado": "mismo"
+  }
 }

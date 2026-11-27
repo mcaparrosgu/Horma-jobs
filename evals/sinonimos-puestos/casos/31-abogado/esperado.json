@@ -4,5 +4,11 @@
     "Letrado"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Jurista": "mismo",
+    "Attorney": "mismo",
+    "Counsel": "mismo",
+    "Legal counsel": "mismo",
+    "Attorney at law": "mismo"
+  }
 }

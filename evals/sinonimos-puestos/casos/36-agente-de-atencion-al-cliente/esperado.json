@@ -3,5 +3,15 @@
     "Teleoperadora"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Asesor de atención al cliente": "mismo",
+    "Representante de atención al cliente": "mismo",
+    "Operador de atención al cliente": "mismo",
+    "Agente de servicio al cliente": "mismo",
+    "Teleoperador de atención al cliente": "mismo",
+    "Customer service agent": "mismo",
+    "Customer service representative": "mismo",
+    "Customer service advisor": "mismo",
+    "Customer care agent": "mismo"
+  }
 }

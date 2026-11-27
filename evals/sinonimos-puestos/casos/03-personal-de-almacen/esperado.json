@@ -5,5 +5,15 @@
   "otros_puestos": [
     "Personal de Equipo"
   ],
-  "etiquetas": {}
+  "etiquetas": {
+    "Operario de almacén": "mismo",
+    "Auxiliar de almacén": "mismo",
+    "Operario logístico": "mismo",
+    "Warehouse operative": "mismo",
+    "Warehouse worker": "mismo",
+    "Almacenero": "mismo",
+    "Preparador de pedidos": "mismo",
+    "Warehouse associate": "mismo",
+    "Warehouse operator": "mismo"
+  }
 }

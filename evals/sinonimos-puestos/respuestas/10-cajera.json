@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Cajera",
+        "otras": [
+          "Cajero",
+          "Cajero/a",
+          "Cashier",
+          "Cajera de supermercado",
+          "Cajero de supermercado",
+          "Operador de caja",
+          "Cashier de supermercado"
+        ]
+      }
+    ]
+  }
+}

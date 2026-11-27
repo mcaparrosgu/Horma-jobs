@@ -3,5 +3,13 @@
     "Maître"
   ],
   "otros_puestos": [],
-  "etiquetas": {}
+  "etiquetas": {
+    "Responsable de sala": "mismo",
+    "Encargado de sala": "mismo",
+    "Floor manager": "mismo",
+    "Restaurant manager": "mismo",
+    "Front of house manager": "mismo",
+    "Maître d'hôtel": "mismo",
+    "Jefe de comedor": "mismo"
+  }
 }

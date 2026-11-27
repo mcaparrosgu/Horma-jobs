@@ -7,8 +7,8 @@ son de ese puesto y que el texto solo no encuentra, y anuncios de otro puesto. `
 «mismo» | «otro»}, para las formas que ya ha dado el modelo.
 
 Se mide solo lo que da el modelo, sin la tabla fija. Una forma es otro puesto si está etiquetada así o si
-trae un anuncio de `otros_puestos`; el máximo es 0. La cobertura es la parte de `titulos` que encuentran
-sus formas (mínimo 0,55). Una forma sin etiqueta no deja aprobar."""
+trae un anuncio de `otros_puestos`; como máximo, 0,05 de las formas. La cobertura es la parte de `titulos` que
+encuentran sus formas (mínimo 0,60; D-076). Una forma sin etiqueta no deja aprobar."""
 import json
 from pathlib import Path
 from typing import Literal
@@ -68,22 +68,24 @@ def comparar(obtenido: dict, esperado: dict) -> list[str]:
 
 
 def medir(casos: list[tuple[str, dict, dict]]) -> dict:
-    otros = encontrados = titulos = 0
+    otros = formas = encontrados = titulos = 0
     sin_etiquetar: list[str] = []
     for nombre, o, e in casos:
         for forma in _nuevas(o):
             etiqueta = _etiqueta(forma, e)
+            formas += 1
             otros += etiqueta == "otro"
             if etiqueta is None:
                 sin_etiquetar.append(f"{nombre}: {forma}")
         titulos += len(e["titulos"])
         encontrados += sum(_encuentra([o["puesto"], *o["formas"]], t) for t in e["titulos"])
-    return {"otros": otros, "cobertura": round(encontrados / titulos, 4) if titulos else None,
+    return {"otros": otros, "ajenas": round(otros / formas, 4) if formas else 0.0,
+            "cobertura": round(encontrados / titulos, 4) if titulos else None,
             "sin_etiquetar": sin_etiquetar}
 
 
 def cumple(metricas: dict, umbrales: dict) -> bool:
-    return (not metricas["sin_etiquetar"] and metricas["otros"] <= umbrales["otros"]
+    return (not metricas["sin_etiquetar"] and metricas["ajenas"] <= umbrales["ajenas"]
             and (metricas["cobertura"] is None or metricas["cobertura"] >= umbrales["cobertura"]))
 
 

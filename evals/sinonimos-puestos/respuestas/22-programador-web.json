@@ -1,0 +1,16 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Programador web",
+        "otras": [
+          "Desarrollador web",
+          "Desarrollador/a web",
+          "Programador/a web",
+          "Web developer",
+          "Web programmer"
+        ]
+      }
+    ]
+  }
+}

@@ -51,7 +51,8 @@ with sesion_de(motor, u) as s:
     }
     perfiles.guardar_perfil(s, u, pid, Perfil.model_validate(perfil), "# Ana Prueba\n\n" + CV)
     perfiles.guardar_preferencias(s, u, Preferencias(
-        puestos=["Camarera de sala y barra", "Camarera"], sinonimos={"Camarera de sala y barra": ["Waitress", "Mesera"]},
+        puestos=["Camarera de sala y barra", "Camarera"],
+        sinonimos={"Camarera de sala y barra": ["Waitress", "Mesera"]},
         puestos_sugeridos=[
             {"titulo": "Camarera de sala y barra", "dato": "Camarera de sala y barra", "nivel": 1,
              "tipo_dato": "puesto", "marcado": True},
