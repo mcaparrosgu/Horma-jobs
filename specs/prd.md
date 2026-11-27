@@ -135,8 +135,9 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Puestos afines según el informe F4 (F4-D1 a D9, decididas). Primero se mide con un set de 30 CV (F4-D5);
     junior sin experiencia: puestos por titulación, marcados (F4-D7); set de la 9a repasado y con ~50
     sinónimos (F4-D9).
-  - Embeddings para sinónimos de puestos (F4-D6): solo si el set ampliado da cobertura < 0,90 y solo para
-    proponer candidatos. ESCO, descartado por lo medido.
+  - Sinónimos de puestos (F4-D6): la cobertura bajó a 0,58, se midieron tres vías y entran una tabla en código y
+    las formas que da el modelo pequeño (D-053, D-061; 0,68 en puestos nuevos). Embeddings y ESCO, descartados
+    por lo medido.
   - Medir mejor: eval `recomendacion` de 21 a unos 60 casos (más sectores, notas intermedias, perfiles casi
     vacíos, ofertas incompletas y correcciones importadas), 3 ejecuciones por caso y el orden de la lista
     además del ±10. Los tramos de la nota ya están en el prompt, sin medir.
@@ -463,7 +464,7 @@ No son exclusiones de principio: no entran ahora.
 
 - Servidor MCP, extensión de navegador y aplicación nativa.
 - Fuera de España y otros idiomas.
-- Embeddings y taxonomías externas, salvo la excepción condicionada de los sinónimos de puestos.
+- Embeddings y taxonomías externas.
 - Precio y planes de pago: esperan a su estudio de mercado.
 - Alojamiento en la UE y despliegue fuera de local.
 - Compra de ofertas a proveedores.

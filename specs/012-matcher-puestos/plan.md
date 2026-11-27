@@ -12,7 +12,8 @@ stale_after: null
 
 # matcher-puestos — Plan
 
-Sin agentes de producto nuevos, sin tablas nuevas y sin pantallas nuevas. Un agente solo para el eval (el
+Sin tablas ni pantallas nuevas. Un agente de producto nuevo, `sinonimos-puestos` (modelo pequeño, D-061; sin eval
+propio todavía), con una columna en `preferencias` (migración 0031), y un agente solo para el eval (el
 revisor). Las rutas son las del 25-nov: se comprueban antes de tocar.
 
 **Simple primero.** Descartado: ESCO (medido en F4: 0,41 de cobertura), embeddings como puerta (MAP ~0,5 en
@@ -37,6 +38,8 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
 - **Tope de nivel y genéricos:** listas cortas en código, en `tools/normalizar_titulo.py`. El genérico se filtra
   con la familia en `tools/buscar_ofertas.py` (SQL) y en `casa_con_puestos`, que hoy hacen la frase completa.
 - **Set de 9a:** `tests/fixtures/titulos_puestos.json`, con ~50 pares nuevos y la firma de Mar en los dudosos.
+- **Sinónimos (D-061):** tabla en `tools/sinonimos_puestos.py` y agente `sinonimos-puestos`, pedido en el worker.
+- **CI (D-064):** `puestos` se repite con las respuestas reales grabadas, sin gasto.
 - **Pantalla «Qué buscas»** (`ofertas.html`, `ofertas.js`): el nivel 2 sin marcar, con su porqué en texto suave
   bajo la casilla. Primero en la guía.
 
