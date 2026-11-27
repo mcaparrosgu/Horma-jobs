@@ -14,7 +14,8 @@ RAIZ = Path(__file__).resolve().parent.parent / "evals"
 
 def test_hay_una_entrada_por_cada_set_y_cv_exige_ats_075():
     for nombre in SETS:
-        assert cargar_umbrales(nombre)["campos"] == 0.9
+        # `sinonimos-puestos` solo se mide por las métricas del set (spec 012, D-076).
+        assert cargar_umbrales(nombre)["campos"] == (0 if nombre == "sinonimos-puestos" else 0.9)
     assert cargar_umbrales("cv")["cobertura_ats_media"] == 0.75
 
 
