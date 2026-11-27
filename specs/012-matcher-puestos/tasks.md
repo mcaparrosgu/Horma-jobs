@@ -108,6 +108,8 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T31 — Set de evals de `sinonimos-puestos` (RF-12.4e, D-068), con su harness en simulado. 🛑 Mar fija el umbral.
   🛑 OK al gasto antes de medir con el modelo real; entra en la CI sin gasto.
   - **Test:** una forma que sea otro puesto hace fallar el set.
+  Hecho en simulado (27-nov, D-071): 40 puestos y en la CI. **Falta** la medición real (🛑 OK al gasto, <0,01 USD),
+  etiquetar sus formas y pasar la CI a `--grabadas`.
 - [ ] T17 — `recomendacion` de vuelta en `evals-reales`. Cierre de N: suite verde, `specs/index.md` al día y PR.
 
 ### V · Lo que ve la usuaria (RF-12.25 a 12.29)

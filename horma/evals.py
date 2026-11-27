@@ -40,6 +40,8 @@ Sets:
 - `puestos` (spec 012): clasificador y puerta de puestos sobre un perfil; métricas de todo el set
   (`horma/evals_puestos.py`). Con el modelo real guarda sus respuestas en `puestos/respuestas/` y con
   `grabadas` las repite sin gasto.
+- `sinonimos-puestos` (spec 012, RF-12.4e): las otras formas de cada puesto; métricas del set en
+  `horma/evals_sinonimos.py`.
 Un caso es adversario si su esperado tiene instrucciones embebidas: debe acertar TODOS los campos
 (adversarias al 100 %, RT-07). Cada set puede exigir además campos al 100 % (`exigidos`).
 
@@ -61,7 +63,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from horma import evals_puestos
+from horma import evals_puestos, evals_sinonimos
 from horma.agents.juez_candidatura.agent import JuezCandidatura
 from horma.agents.juez_candidatura.schemas import EntradaJuezCandidatura
 from horma.agents.revisor_explicacion.agent import RevisorExplicacion
@@ -846,6 +848,12 @@ NUEVOS: dict[str, SetEval] = {
         esperado=evals_puestos.EsperadoPuestos, campos=evals_puestos.CAMPOS, entrada=evals_puestos.entrada,
         correr=evals_puestos.correr, simuladas=evals_puestos.simuladas, comparar=evals_puestos.comparar,
         exigidos=frozenset(evals_puestos.CAMPOS), medir=evals_puestos.medir, cumple=evals_puestos.cumple,
+    ),
+    "sinonimos-puestos": SetEval(
+        esperado=evals_sinonimos.EsperadoSinonimos, campos=evals_sinonimos.CAMPOS,
+        entrada=evals_sinonimos.entrada, correr=evals_sinonimos.correr, simuladas=evals_sinonimos.simuladas,
+        comparar=evals_sinonimos.comparar, exigidos=frozenset(evals_sinonimos.CAMPOS),
+        medir=evals_sinonimos.medir, cumple=evals_sinonimos.cumple,
     ),
     "perfil": SetEval(
         esperado=Perfil,

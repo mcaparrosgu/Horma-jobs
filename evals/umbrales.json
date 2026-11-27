@@ -21,6 +21,13 @@
       "equidad": 1.0
     }
   },
+  "sinonimos-puestos": {
+    "campos": 0.9,
+    "metricas": {
+      "otros": 0,
+      "cobertura": 0.55
+    }
+  },
   "recomendacion": {
     "campos": 0.9,
     "metricas": {
