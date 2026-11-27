@@ -1,0 +1,99 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Iván Mora",
+    "experiencias": [
+      {
+        "puesto": "Operario de producción",
+        "empresa": "Cerámicas Ribera",
+        "inicio": "2018",
+        "fin": "2025",
+        "descripcion": "Línea de esmaltado y control visual",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Operario de producción en Cerámicas Ribera, 2018-2025"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Bachillerato",
+        "centro": null,
+        "inicio": "2014",
+        "fin": "2016",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Bachillerato"
+        }
+      }
+    ],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [
+      {
+        "nombre": "PRL",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "PRL"
+        }
+      }
+    ],
+    "otros": [],
+    "taxonomia": {
+      "sector": "industria",
+      "familia": "produccion_operarios",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Técnico de control de calidad",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Ciclo superior o grado técnico",
+      "Experiencia en control de calidad",
+      "Normas ISO 9001"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "industria",
+      "familia": "produccion_operarios",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

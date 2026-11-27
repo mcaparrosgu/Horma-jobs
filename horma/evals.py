@@ -13,7 +13,9 @@ Sets:
   simulado señale ese problema. Largo, fechas al revés y resumen que no casa se miden en `cv` (modo
   `formato` y sembrados) y en los tests: el modelo real los corrige y el CV base sale bien.
 - `recomendacion`: flujo recomendar con un par perfil-oferta (`entrada.json`); esperado = {nota,
-  condiciones}. Mide la nota (±10), el nivel de condiciones y que la explicación no cite rasgos.
+  condiciones}. Mide la nota (±10), el nivel de condiciones y que la explicación no cite rasgos. Un caso
+  de orden lleva `ofertas` y una nota y un nivel por cada una (RF-12.13); un caso de equidad, `pareja` y el
+  `rasgo` que cambia (RF-12.22).
 - `cv` (fase 3): tres modos en `casos/<id>/entrada.json` (`modo`), con la usuaria de prueba de
   `usuarias/<nombre>/` y las ofertas de `ofertas/<nombre>.json`. `sembrado`: un CV o carta con un error
   sembrado pasa por `comprobar` (código) y, si no lo rechaza, por `juez-candidatura`. `flujo`: el
@@ -269,11 +271,17 @@ def _respuestas_cv_base(e: EsperadoCvBase, entrada: dict) -> list[dict]:
 
 
 # --- recomendacion -----------------------------------------------------------------------------
+_Nivel = Literal["bajo", "medio", "alto"]
+
+
 class EsperadoRecomendacion(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    nota: int = Field(ge=0, le=100)
-    condiciones: Literal["bajo", "medio", "alto"]
+    nota: int | None = Field(default=None, ge=0, le=100)
+    condiciones: _Nivel | list[_Nivel]
+    notas: list[int] | None = Field(default=None, description="Orden: una por oferta de `ofertas`.")
+    pareja: str | None = Field(default=None, description="Equidad: el caso gemelo.")
+    rasgo: Literal["edad", "nacionalidad", "hueco"] | None = None
     instrucciones_embebidas: bool = False
     motivo: str = Field(default="", description="Por qué esa nota y ese nivel (para quien revise).")
 
@@ -291,36 +299,54 @@ def habla_de_tu(explicacion: str, nombre: str | None) -> bool:
     return not _TERCERA_PERSONA.search(explicacion)
 
 
-def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
+def _fallos_oferta(obtenido: dict, nota_esperada: int, nivel: str, nombre: str | None) -> list[str]:
     fallos = []
     nota = obtenido.get("nota")
-    if nota is None or abs(nota - esperado["nota"]) > MARGEN_NOTA:
+    if nota is None or abs(nota - nota_esperada) > MARGEN_NOTA:
         fallos.append("nota")
-    if obtenido.get("condiciones") != esperado["condiciones"]:
+    if obtenido.get("condiciones") != nivel:
         fallos.append("condiciones")
     texto = " ".join(obtenido.get(k) or "" for k in ("explicacion", "cita_perfil", "cita_oferta"))
     if obtenido.get("retirada") or rasgos_personales(texto):
         fallos.append("sin_rasgos")
-    if not habla_de_tu(obtenido.get("explicacion") or "", obtenido.get("_nombre_perfil")):
+    if not habla_de_tu(obtenido.get("explicacion") or "", nombre):
         fallos.append("segunda_persona")
     return fallos
 
 
+def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
+    nombre = obtenido.get("_nombre_perfil")
+    if esperado.get("notas") is None:
+        return _fallos_oferta(obtenido, esperado["nota"], esperado["condiciones"], nombre)
+    fallos = {f for o, nota, nivel in zip(obtenido["ofertas"], esperado["notas"], esperado["condiciones"],
+                                          strict=True)
+              for f in _fallos_oferta(o, nota, nivel, nombre)}
+    return sorted(fallos)
+
+
 def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
+    ofertas = estado.get("ofertas") or [estado["oferta"]]
     e = recomendar.crear(proveedor=prov).run({
         "perfil": estado["perfil"], "preferencias": estado.get("preferencias") or {},
-        "candidatas": [{"oferta_id": 1, "oferta": estado["oferta"]}]})
-    return {**(e["recomendaciones"] or [{}])[0], "_nombre_perfil": estado["perfil"].get("nombre")}
+        "candidatas": [{"oferta_id": i, "oferta": o} for i, o in enumerate(ofertas, 1)]})
+    por_id = {m["oferta_id"]: m for m in e["recomendaciones"]}
+    resultados = [por_id.get(i, {}) for i in range(1, len(ofertas) + 1)]
+    base = {"ofertas": resultados} if "ofertas" in estado else resultados[0]
+    return {**base, "_nombre_perfil": estado["perfil"].get("nombre")}
 
 
 def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[dict]:
     experiencias = entrada["perfil"].get("experiencias") or []
+    ofertas = entrada.get("ofertas") or [entrada["oferta"]]
+    notas = e.notas or [e.nota]
+    niveles = e.condiciones if isinstance(e.condiciones, list) else [e.condiciones]
     return [{"matches": [{
-        "oferta_id": 1, "nota": e.nota, "condiciones": e.condiciones,
+        "oferta_id": i, "nota": nota, "condiciones": nivel,
         "explicacion": "Tu experiencia encaja con lo que pide el puesto. "
                        "Las condiciones de la oferta se comparan con lo que buscas.",
         "cita_perfil": experiencias[0]["puesto"] if experiencias else "perfil",
-        "cita_oferta": entrada["oferta"]["titulo"]}]}]
+        "cita_oferta": oferta["titulo"]}
+        for i, (oferta, nota, nivel) in enumerate(zip(ofertas, notas, niveles, strict=True), 1)]}]
 
 
 def _leer_json(caso: Path) -> dict:

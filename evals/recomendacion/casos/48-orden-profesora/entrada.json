@@ -1,0 +1,262 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Elena Prats",
+    "experiencias": [
+      {
+        "puesto": "Profesora de inglés",
+        "empresa": "Academia Puente",
+        "inicio": "2018",
+        "fin": "actual",
+        "descripcion": "Grupos de primaria y adultos",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Profesora de inglés en Academia Puente, 2018-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Estudios Ingleses",
+        "centro": "Universitat de València",
+        "inicio": "2013",
+        "fin": "2017",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Estudios Ingleses"
+        }
+      },
+      {
+        "titulo": "Máster de Profesorado",
+        "centro": "Universitat de València",
+        "inicio": "2017",
+        "fin": "2018",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Máster de Profesorado"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "C2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en C2"
+        }
+      }
+    ],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "educacion",
+      "familia": "educacion_formacion",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "ofertas": [
+    {
+      "titulo": "Monitor de comedor",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "Trato con niños"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "educacion",
+        "familia": "educacion_formacion",
+        "nivel": "junior",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Traductor/a inglés-español",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "Grado en Traducción o similar",
+        "Inglés C2",
+        "Experiencia traduciendo"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "servicios_profesionales",
+        "familia": "otros",
+        "nivel": "intermedio",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Mecánico de automóviles",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "FP de automoción"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "industria",
+        "familia": "produccion_operarios",
+        "nivel": "intermedio",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Teleoperador con inglés",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "Inglés B2"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "servicios_profesionales",
+        "familia": "atencion_cliente",
+        "nivel": "intermedio",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Profesor/a de inglés en colegio",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "Grado y máster de profesorado",
+        "Inglés C1"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "educacion",
+        "familia": "educacion_formacion",
+        "nivel": "intermedio",
+        "stack": []
+      }
+    }
+  ]
+}

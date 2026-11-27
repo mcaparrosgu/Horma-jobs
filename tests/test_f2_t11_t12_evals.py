@@ -190,28 +190,51 @@ def test_cv_base_con_dato_inventado_falla_en_verificacion(tmp_path):
 
 
 # --- T12: recomendación ------------------------------------------------------------------------
-def test_fixtures_de_recomendacion_son_21_validas_con_adversarias_y_trampas():
-    casos = _casos("recomendacion")
-    assert len(casos) == 21
-    adversarias = trampas = 0
-    notas = []
-    for c in casos:
+def test_fixtures_de_recomendacion_son_60_con_orden_y_pares_de_equidad():
+    """RF-12.11: ~60 casos, con notas intermedias, perfiles casi vacíos, ofertas incompletas, correcciones
+    importadas, casos de orden y pares de equidad."""
+    casos = {c.name: c for c in _casos("recomendacion")}
+    assert len(casos) == 60
+    adversarias = trampas = ordenes = vacios = incompletas = correcciones = 0
+    notas, sectores, rasgos = [], set(), []
+    for nombre, c in casos.items():
         e, esp = _json(c / "entrada.json"), _json(c / "esperado.json")
-        Perfil.model_validate(e["perfil"])
+        perfil = Perfil.model_validate(e["perfil"])
         Preferencias.model_validate(e.get("preferencias") or {})
-        o = Oferta.model_validate(e["oferta"])
-        assert 0 <= esp["nota"] <= 100 and esp["condiciones"] in ("bajo", "medio", "alto")
+        ofertas = [Oferta.model_validate(x) for x in e.get("ofertas") or [e.get("oferta")]]
+        if "ofertas" in e:  # orden (S7): cinco ofertas y una nota y un nivel por cada una
+            ordenes += 1
+            assert len(ofertas) == len(esp["notas"]) == len(esp["condiciones"]) == 5, nombre
+            assert max(esp["notas"]) - min(esp["notas"]) >= 20, nombre
+            notas += esp["notas"]
+        else:
+            assert esp["condiciones"] in ("bajo", "medio", "alto")
+            notas.append(esp["nota"])
+        sectores.add(perfil.taxonomia.sector)
+        embebidas = any(o.instrucciones_embebidas for o in ofertas)
         adversarias += bool(esp.get("instrucciones_embebidas"))
-        assert bool(esp.get("instrucciones_embebidas")) == bool(o.instrucciones_embebidas), c.name
-        trampas += bool(rasgos_personales(" ".join(o.requisitos)))
-        notas.append(esp["nota"])
-    assert adversarias >= 2 and trampas >= 2
-    assert min(notas) <= 20 and max(notas) >= 85  # hay de todo: encaje alto, medio y nulo
+        if "correccion" not in nombre:
+            assert bool(esp.get("instrucciones_embebidas")) == embebidas, nombre
+        trampas += any(rasgos_personales(" ".join(o.requisitos)) for o in ofertas)
+        vacios += len(perfil.experiencias) + len(perfil.habilidades) <= 1 and not perfil.idiomas
+        incompletas += any(not o.salario and not o.contrato for o in ofertas)
+        correcciones += "correccion" in nombre
+        if pareja := esp.get("pareja"):  # RF-12.22: solo edad, nacionalidad o hueco; nota igual
+            rasgos.append(esp["rasgo"])
+            otro = _json(casos[pareja] / "esperado.json")
+            assert otro["pareja"] == nombre and otro["nota"] == esp["nota"], nombre
+            hermana = _json(casos[pareja] / "entrada.json")
+            assert hermana["oferta"] == e["oferta"] and hermana["perfil"] != e["perfil"], nombre
+    assert adversarias >= 3 and trampas >= 2 and ordenes == 6
+    assert vacios >= 3 and incompletas >= 2 and correcciones >= 1 and len(sectores) >= 10
+    assert sorted(rasgos) == ["edad"] * 4 + ["hueco"] * 4 + ["nacionalidad"] * 4
+    assert min(notas) <= 20 and max(notas) >= 85
+    assert sum(40 <= n <= 70 for n in notas) >= 12
 
 
 def test_eval_recomendacion_simulado_pasa_al_100():
     r = correr_set("recomendacion", raiz=RAIZ, simulado=True)
-    assert r["aprobado"] and r["casos"] == 21 and r["adversarias"] == 1.0
+    assert r["aprobado"] and r["casos"] == 60 and r["adversarias"] == 1.0
     assert r["campos"] == {"nota": 1.0, "condiciones": 1.0, "sin_rasgos": 1.0,
                          "segunda_persona": 1.0}
 
@@ -257,7 +280,7 @@ def test_el_eval_se_detiene_al_superar_el_tope_y_deja_constancia(tmp_path):
     shutil.copytree(RAIZ / "recomendacion", raiz / "recomendacion")
     r = correr_set("recomendacion", raiz=raiz, simulado=True, tope_coste=1e-9)
     assert r["detenido_por_coste"] is True
-    assert 1 <= r["casos_ejecutados"] < r["casos"] == 21
+    assert 1 <= r["casos_ejecutados"] < r["casos"] == 60
     assert r["tope_coste"] == 1e-9 and r["coste"] == 0   # T67: informa 0
     assert not r["aprobado"]
     guardado = json.loads(next((raiz / "resultados").glob("*-recomendacion.json"))

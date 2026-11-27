@@ -1,0 +1,89 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Andrés Pla",
+    "experiencias": [
+      {
+        "puesto": "Tornero",
+        "empresa": "Mecanizados Horta",
+        "inicio": "2018",
+        "fin": "actual",
+        "descripcion": "Torno y fresadora CNC, lectura de planos",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Tornero en Mecanizados Horta, 2018-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado medio en Mecanizado",
+        "centro": "IES Marítim",
+        "inicio": "2010",
+        "fin": "2012",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado medio en Mecanizado"
+        }
+      }
+    ],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "industria",
+      "familia": "produccion_operarios",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Operario/a de torno CNC",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Experiencia en CNC",
+      "Interpretación de planos"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "industria",
+      "familia": "produccion_operarios",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Sara Ibáñez",
+    "experiencias": [
+      {
+        "puesto": "Mozo de almacén",
+        "empresa": "Logística Levante",
+        "inicio": "2021",
+        "fin": "actual",
+        "descripcion": "Picking, carga y descarga",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Mozo de almacén en Logística Levante, 2021-actual"
+        }
+      },
+      {
+        "puesto": "Mozo de almacén",
+        "empresa": "Frutas Júcar",
+        "inicio": "2018",
+        "fin": "2021",
+        "descripcion": null,
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Mozo de almacén en Frutas Júcar, 2018-2021"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [
+      {
+        "nombre": "Carné de carretillero",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Carné de carretillero"
+        }
+      }
+    ],
+    "otros": [],
+    "taxonomia": {
+      "sector": "logistica_transporte",
+      "familia": "logistica_transporte",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Mozo/a de almacén",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Experiencia en almacén",
+      "Carné de carretillero"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "logistica_transporte",
+      "familia": "logistica_transporte",
+      "nivel": "junior",
+      "stack": []
+    }
+  }
+}

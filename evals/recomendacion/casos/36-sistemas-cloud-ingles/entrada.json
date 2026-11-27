@@ -1,0 +1,120 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Hugo Ferri",
+    "experiencias": [
+      {
+        "puesto": "Técnico de sistemas",
+        "empresa": "Redes Mediterráneo",
+        "inicio": "2019",
+        "fin": "actual",
+        "descripcion": "Windows Server, redes y soporte",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico de sistemas en Redes Mediterráneo, 2019-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado Superior en ASIR",
+        "centro": "IES La Senia",
+        "inicio": "2017",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado Superior en ASIR"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en B2"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Linux",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Linux"
+        }
+      },
+      {
+        "nombre": "Azure",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Azure"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "tecnologia",
+      "familia": "sistemas_redes",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Cloud Operations Engineer",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": true,
+    "modalidad": "remoto",
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 32000,
+      "maximo": 40000,
+      "moneda": "EUR"
+    },
+    "idiomas": [
+      "inglés"
+    ],
+    "requisitos": [
+      "Experience running Azure in production",
+      "Linux administration",
+      "Terraform",
+      "English B2"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "32000–40000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "tecnologia",
+      "familia": "sistemas_redes",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

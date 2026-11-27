@@ -1,0 +1,87 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Sara Ibáñez",
+    "experiencias": [
+      {
+        "puesto": "Mozo de almacén",
+        "empresa": "Logística Levante",
+        "inicio": "2019",
+        "fin": "actual",
+        "descripcion": "Picking, carga y descarga",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Mozo de almacén en Logística Levante, 2019-actual"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [
+      {
+        "nombre": "Carné de carretillero",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Carné de carretillero"
+        }
+      }
+    ],
+    "otros": [],
+    "taxonomia": {
+      "sector": "logistica_transporte",
+      "familia": "logistica_transporte",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Responsable de logística",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 35000,
+      "maximo": 40000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Grado universitario",
+      "Gestión de equipos de más de 10 personas",
+      "SAP"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "35000–40000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "logistica_transporte",
+      "familia": "logistica_transporte",
+      "nivel": "senior",
+      "stack": []
+    }
+  }
+}

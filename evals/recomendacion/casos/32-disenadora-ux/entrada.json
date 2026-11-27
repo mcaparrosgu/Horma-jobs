@@ -1,0 +1,115 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Alba Sanz",
+    "experiencias": [
+      {
+        "puesto": "Diseñadora gráfica",
+        "empresa": "Estudio Nube",
+        "inicio": "2023",
+        "fin": "actual",
+        "descripcion": null,
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Diseñadora gráfica en Estudio Nube, 2023-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado Superior en Diseño Gráfico",
+        "centro": "EASD",
+        "inicio": "2020",
+        "fin": "2022",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado Superior en Diseño Gráfico"
+        }
+      }
+    ],
+    "idiomas": [],
+    "habilidades": [
+      {
+        "nombre": "Illustrator",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Illustrator"
+        }
+      },
+      {
+        "nombre": "Figma",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Figma"
+        }
+      },
+      {
+        "nombre": "InDesign",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "InDesign"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "medios_marketing",
+      "familia": "diseno_creatividad",
+      "nivel": "junior",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Diseñador UX/UI",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": false,
+    "modalidad": "hibrido",
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Figma",
+      "Portafolio de producto digital",
+      "3 años de experiencia en UX"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "tecnologia",
+      "familia": "diseno_creatividad",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

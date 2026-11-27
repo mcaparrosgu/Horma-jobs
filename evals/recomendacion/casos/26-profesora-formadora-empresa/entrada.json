@@ -1,0 +1,107 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Elena Prats",
+    "experiencias": [
+      {
+        "puesto": "Profesora de inglés",
+        "empresa": "Academia Puente",
+        "inicio": "2018",
+        "fin": "actual",
+        "descripcion": "Grupos de primaria y adultos",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Profesora de inglés en Academia Puente, 2018-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Estudios Ingleses",
+        "centro": "Universitat de València",
+        "inicio": "2013",
+        "fin": "2017",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Estudios Ingleses"
+        }
+      },
+      {
+        "titulo": "Máster de Profesorado",
+        "centro": "Universitat de València",
+        "inicio": "2017",
+        "fin": "2018",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Máster de Profesorado"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "C2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en C2"
+        }
+      }
+    ],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "educacion",
+      "familia": "educacion_formacion",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Formador de inglés para empresas",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": null,
+    "idiomas": [],
+    "requisitos": [
+      "Inglés C1",
+      "Experiencia con adultos",
+      "Valorable inglés de negocios"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": false,
+      "salario_rango": null,
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "educacion",
+      "familia": "educacion_formacion",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

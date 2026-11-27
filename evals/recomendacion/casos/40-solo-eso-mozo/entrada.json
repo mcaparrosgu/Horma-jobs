@@ -1,0 +1,76 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Laia Bosch",
+    "experiencias": [],
+    "formacion": [
+      {
+        "titulo": "Graduado en ESO",
+        "centro": null,
+        "inicio": "2019",
+        "fin": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Graduado en ESO"
+        }
+      }
+    ],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "otros",
+      "familia": "otros",
+      "nivel": "junior",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Mozo de almacén sin experiencia",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "No se requiere experiencia",
+      "ESO"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "logistica_transporte",
+      "familia": "logistica_transporte",
+      "nivel": "junior",
+      "stack": []
+    }
+  }
+}
