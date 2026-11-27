@@ -1,13 +1,13 @@
 """Páginas de un PDF como imagen, para verlo en el móvil, donde el navegador no pinta un PDF (RF-2.1c)."""
 import io
-import threading
 from pathlib import Path
 
 import pypdfium2
 
+from horma.tools.texto_invisible import CERROJO as _CERROJO
+
 MAX_PAGINAS = 20
 ANCHO_PX = 1000   # nítida a 390 px en pantallas densas sin pesar demasiado
-_CERROJO = threading.Lock()   # PDFium no admite llamadas a la vez desde varios hilos
 
 
 def contar(ruta: Path) -> int:

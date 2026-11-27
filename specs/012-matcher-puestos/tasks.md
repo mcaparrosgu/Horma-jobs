@@ -86,8 +86,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   reintento.
   - **Test:** una cita inventada se pide una vez más; si vuelve a fallar, la explicación se retira y la nota se
     conserva; una tanda con una oferta sin resultado la deja «sin puntuar».
-- [ ] T13 — `convertir_cv` ignora el texto invisible.
+- [x] T13 — `convertir_cv` ignora el texto invisible.
   - **Test:** un PDF y un DOCX con una instrucción en blanco o de tamaño 0 no la devuelven en el texto.
+  Hecho (27-nov): en PDF se dibuja cada página con `pypdfium2` (ya instalado), en vez de leer colores con `pypdf`.
 - [ ] T14 — 🛑 OK al gasto (~0,8-1 USD). Una ejecución real entera; después, solo los casos que fallan
   (🛑 OK a cada tanda, ~0,1-0,3 USD), hasta que el `matcher` llegue.
 - [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor.

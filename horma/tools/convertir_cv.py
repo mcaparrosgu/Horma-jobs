@@ -1,9 +1,12 @@
 """Convierte un CV (PDF, DOCX o Markdown) a texto (RF-2.1).
 
 Código puro: recibe bytes y devuelve texto; no toca disco. Comprueba los bytes del archivo y no se
-fía de la extensión: un ejecutable renombrado a .pdf se rechaza."""
+fía de la extensión: un ejecutable renombrado a .pdf se rechaza. El texto que no se ve no se devuelve
+(spec 012, RF-12.24)."""
 import io
 import zipfile
+
+from horma.tools.texto_invisible import paginas_sin_invisible, quitar_invisible_docx
 
 TIPOS = ("pdf", "docx", "md")
 
@@ -17,11 +20,14 @@ def _pdf(contenido: bytes) -> str:
         raise ArchivoNoValido("el archivo no es un PDF válido")
     from pypdf import PdfReader
     from pypdf.errors import PyPdfError
+    from pypdfium2 import PdfiumError
 
     try:
         lector = PdfReader(io.BytesIO(contenido))
-        return "\n".join((pagina.extract_text() or "") for pagina in lector.pages)
-    except (PyPdfError, ValueError, KeyError, OSError) as e:
+        limpias = paginas_sin_invisible(contenido)
+        return "\n".join(limpias[i] if i in limpias else (pagina.extract_text() or "")
+                         for i, pagina in enumerate(lector.pages))
+    except (PyPdfError, PdfiumError, ValueError, KeyError, OSError) as e:
         raise ArchivoNoValido("no se ha podido leer el PDF") from e
 
 
@@ -35,6 +41,7 @@ def _docx(contenido: bytes) -> str:
         from docx import Document
 
         d = Document(io.BytesIO(contenido))
+        quitar_invisible_docx(d)
         partes = [p.text for p in d.paragraphs]
         for tabla in d.tables:
             for fila in tabla.rows:

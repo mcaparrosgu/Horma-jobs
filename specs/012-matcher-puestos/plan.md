@@ -67,9 +67,9 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
 - **Citas verificadas:** `tools/verificar_citas.py` (código: texto normalizado, la cita dentro del perfil o de la
   oferta). En `flows/recomendar.py`, tras cada tanda: las ofertas con una cita que no existe se piden otra vez
   en una sola llamada; si vuelven a fallar, `retirada` con su motivo, como ya se hace con los rasgos personales.
-- **Texto invisible:** en `tools/convertir_cv.py`, PDF con los visitantes de `pypdf` (color de relleno y tamaño
-  de letra) y DOCX con `w:vanish` y el color blanco. Sin dependencias nuevas; si no basta, se dice antes de
-  añadir una.
+- **Texto invisible:** `tools/texto_invisible.py`. PDF: se dibuja la página con `pypdfium2` (ya instalado) y se quita la
+  letra cuyo recuadro sale de un solo color; así el blanco sobre una banda de color se conserva. DOCX: marcas de
+  oculto, tamaño 0 y blanco sin fondo. Sin dependencias nuevas.
 - **Modelo pequeño:** el eval se corre con `modelo = "pequeño"` sin tocar el agente (opción del harness).
 - **CI:** al pasar la puerta, `recomendacion` vuelve a la lista de `evals-reales` en `.github/workflows/ci.yml`.
 
