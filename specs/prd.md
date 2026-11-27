@@ -154,14 +154,21 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     la condición que falta o no se cumple y, a igual nota, va antes la que cumple todo (D-026).
   - Veredicto en palabras junto a la nota, puesto por código y por franjas (F7-D5): «Muy compatible»,
     «Compatible», «Poco compatible», «No te la recomendamos». La frase de la nota por franjas (70-100, 50-69,
-    30-49, 0-29) toca el prompt y, por tanto, los evals.
+    30-49, 0-29) la pone el código, con la nota ya acotada (D-080).
+  - Nota acotada por código (D-080): el `matcher` marca cada requisito de la oferta (cubierto, a medias o no) y
+    su relación con el puesto, sigue dando la nota y el código le pone suelos y topes.
+  - Tener más de lo que pide la oferta no resta; se avisa junto al veredicto: «Pide menos de lo que tienes»
+    (D-081).
+  - Otro oficio (D-084 y D-085): cumplir lo pedido desde otro oficio deja la nota entre 30 y 55; lo afín no se
+    acota, y una oferta que casa con un puesto marcado por ella en «Qué buscas» no cuenta como otro oficio.
   - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6) [pendiente: se decide con la medición].
 - **Puerta de salida:** eval `recomendacion` ≥ 0,90 dentro de ±10, estable en 3 ejecuciones (NFR-02) y de
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
   citas verificadas; set de 30 CV en sus umbrales (sección 2); ningún puesto marcado sin
   evidencia; revisión de Mar sobre 20 recomendaciones.
 - **Depende de:** el paso 1. Gasto real: ~5-7,3 USD en todo el paso, en varias veces (set de 30 CV y evals;
-  detalle en el plan de la spec 012), cada vez con el OK de Mar.
+  detalle en el plan de la spec 012), cada vez con el OK de Mar. Corregir la nota (T14a a T14h) añade hasta
+  3,9 USD y puede superar esa cifra; su ejecución completa vale como la de la puerta si pasa todo (D-086).
 
 ### Paso 3 · Calidad de CV y carta, con PDF comprobado (spec 013)
 
