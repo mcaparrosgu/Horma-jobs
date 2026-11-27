@@ -49,8 +49,6 @@ pauta de Mar.
   RF-9.3e se mide con las dos (≥ 0,90 en el set); en puestos nuevos la cobertura medida es 0,68, con precisión 1,0.
 - **RF-12.4d** (D-062) «Qué buscas» DEBERÁ enseñar bajo cada puesto marcado «También busco: …» con sus otras formas, sin
   editarlas. Los términos excluidos no se amplían.
-- **RF-12.4d** (D-062) «Qué buscas» DEBERÁ enseñar bajo cada puesto marcado «También busco: …» con sus otras formas, sin
-  editarlas. Los términos excluidos no se amplían.
 
 ### B · Puestos por niveles de evidencia (PRD RF-006)
 - **RF-12.5** La puerta de puestos DEBERÁ dar a cada puesto sugerido un nivel, decidido por código (S1):
