@@ -95,6 +95,6 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** negrita, lista y título dan el Markdown de siempre y vuelven igual; lo pegado entra sin formato; la
     carta no ofrece negrita.
   - **Navegador:** 1280 y 390 px, claro y oscuro, también con teclado.
-- [ ] T20 — 🛑 Mar decide el mensaje de Horma (F7-D1, D-NNN). Landing revisada: promete solo lo que funciona.
+- [ ] T20 — Landing revisada: promete solo lo que funciona. El mensaje de Horma (F7-D1) pasa al paso 9 (D-066).
 - [ ] T21 — Cierre del paso. 🛑 Prueba manual de Mar (sección en `docs/plan-pruebas-manuales.md`); `specs/index.md`,
   PRD y pauta al día; PR.

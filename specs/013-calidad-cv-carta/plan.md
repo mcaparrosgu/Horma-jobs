@@ -100,7 +100,7 @@ concreto por ~0,001 USD).
 - **Editor:** `static/editor.js` (sin librerías): zona editable, botones Negrita, Lista y Título en el CV, ninguno en
   la carta; pegar sin formato; Ctrl+B; conversión al Markdown de siempre (`#`, `##`, `-`, `**`). Sustituye al cuadro
   de texto de `candidatura.js`. Primero en la guía, con 44 px y uso con teclado.
-- **Landing** (`index.html`): el mensaje que decida Mar (F7-D1) y solo lo que funciona.
+- **Landing** (`index.html`): solo lo que funciona; el mensaje (F7-D1) pasa al paso 9 (D-066).
 
 ## Costes
 Base: el eval `cv` real del 22-nov (33 casos, 1,74 USD: ~0,053 por caso). Con el lector y la relectura, ~0,06-0,065

@@ -198,8 +198,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Editor tipo procesador de texto (negrita, listas, títulos), sin Markdown a la vista.
   - Del cruce del 22-nov: falsos «Dato dudoso», recortes del extractor (eval `perfil`) y «manejo de
     ordenador» como hueco (F2-D3).
-  - Mensaje de Horma (F7-D1): [pendiente: lo decide Mar en este paso]. Propuesta: «CV y carta con cita, en
-    español y para cualquier sector».
+  - Landing: solo promete lo que ya funciona. El mensaje de Horma (F7-D1) pasa al paso 9 (D-066).
   - Marca de «generado con IA» en el PDF (F9-D7): [pendiente: solo si la asesoría legal confirma que obliga].
   - Las fechas MM-AAAA no cambian: en la prueba propia del PDF (DEP-05, 26-nov), guion y barra dieron lo mismo.
 - **Puerta de salida:** eval `cv` con 0 frases sin origen (NFR-01); el PDF, comprobado en el 100 % de las
@@ -357,6 +356,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     la medición final de la fase 5 (~1,8 USD), solo si Mar la pide.
   - Red-teaming (PR #8, aparcado: se rehace en una rama nueva desde `main`). Umbral: [pendiente: 100 % o ~95 %
     con el modelo real; consulta al profesor].
+  - Mensaje de Horma en la landing (F7-D1): [pendiente: lo decide Mar mientras se construye el paso 8, D-066].
+    Propuesta de partida: «CV y carta con cita, en español y para cualquier sector».
   - Prueba con cinco personas y repaso de Mar a 390 px.
   - Límites de ritmo: hoy viven en la memoria de un proceso; con varios, pasan a Postgres (NFR-07).
 - **Puerta de salida:** `evals-reales` en verde y obligatorio; red-teaming en su umbral (NFR-03); prueba con
@@ -490,8 +491,9 @@ Entrar en alcance desde 7.2 o 7.3 exige cambiar este PRD.
 - DEP-01: investigación del banco de ofertas (Fable) y prueba práctica de ingesta (Sonnet); desbloquean el paso 5 y RF-010.
 - DEP-02: investigación de los límites de gasto en la competencia (entregada el 25-nov) y estudio de precio,
   pendiente (Fable); desbloquean el paso 8 y NFR-06.
-- DEP-03: evaluación de impacto en Gestiona RGPD (Mar); desbloquea los pasos 9 y 10.
-- DEP-04: asesoría legal (agente de abogacía, por crear); cierra la casilla de privacidad, la marca de
+- DEP-03: evaluación de impacto en Gestiona RGPD (Mar), mientras se construye el paso 8 (D-066); desbloquea los
+  pasos 9 y 10.
+- DEP-04: asesoría legal (agente de abogacía, que se crea mientras se construye el paso 8, D-066); cierra la casilla de privacidad, la marca de
   «generado con IA» y el modo real.
 - DEP-05: prueba propia del PDF en cuatro formularios reales (Mar, 30 min): hecha (26-nov); ya no frena el paso 3.
 - DEP-06: dominio y correo entrante (Mar, ~10-15 € al año); desbloquea RF-005 y da la dirección de contacto del `User-Agent` del ingestor (RT-15).
