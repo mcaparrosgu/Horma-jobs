@@ -22,7 +22,10 @@
     }
   },
   "recomendacion": {
-    "campos": 0.9
+    "campos": 0.9,
+    "metricas": {
+      "equidad": 1.0
+    }
   },
   "cv": {
     "campos": 0.9,

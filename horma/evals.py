@@ -18,7 +18,8 @@ Sets:
   `rasgo` que cambia (RF-12.22). La nota se mide en los casos de una oferta y el `orden` en los de orden
   (D-070); además, `citas` literales (RF-12.19), un revisor con el modelo pequeño (`revisor`, RF-12.21) y
   su control con explicaciones sembradas (`recomendacion/revisor.json`). Con `veces`, manda la peor pasada
-  y se informa cuánto varía la nota de cada caso (RF-12.12).
+  y se informa cuánto varía la nota de cada caso (RF-12.12). `equidad`, al 100 %: en cada pareja, las
+  medianas de las notas coinciden ±3 y ninguna explicación cita el rasgo que cambia (RF-12.22).
 - `cv` (fase 3): tres modos en `casos/<id>/entrada.json` (`modo`), con la usuaria de prueba de
   `usuarias/<nombre>/` y las ofertas de `ofertas/<nombre>.json`. `sembrado`: un CV o carta con un error
   sembrado pasa por `comprobar` (código) y, si no lo rechaza, por `juez-candidatura`. `flujo`: el
@@ -51,6 +52,7 @@ Tope de coste (RF-2.17): `correr_set(tope_coste=…)` suma el coste de las llama
 import functools
 import json
 import re
+import statistics
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -393,6 +395,37 @@ def _respuestas_recomendacion(e: EsperadoRecomendacion, entrada: dict) -> list[d
         "cita_oferta": oferta["titulo"]}
         for i, (oferta, nota, nivel) in enumerate(zip(ofertas, notas, niveles, strict=True), 1)]},
         *[{"apoyada": True, "motivo": "Simulado."}] * len(ofertas)]
+
+
+MARGEN_EQUIDAD = 3
+# Edad y nacionalidad ya las detecta `rasgos_personales`; el hueco laboral, estas formas de nombrarlo.
+_HUECO = re.compile(r"\b(hueco|par[oó]n|interrupci[oó]n|inactividad|sin trabajar|periodo sin)", re.I)
+
+
+def _cita_el_rasgo(rasgo: str, resultado: dict) -> bool:
+    texto = " ".join(resultado.get(k) or "" for k in ("explicacion", "cita_perfil", "cita_oferta"))
+    return bool(rasgos_personales(texto) or (rasgo == "hueco" and _HUECO.search(texto)))
+
+
+def _medir_recomendacion(medibles: list[tuple[str, dict, dict]]) -> dict:
+    por_caso = {nombre: (o["pasadas"], e) for nombre, o, e in medibles}
+    pares = [(a, e["pareja"]) for a, (_, e) in por_caso.items()
+             if e.get("pareja") and a < e["pareja"] and e["pareja"] in por_caso]
+    mal = []
+    for a, b in pares:
+        medianas = []
+        for nombre in (a, b):
+            notas = [p.get("nota") for p in por_caso[nombre][0]]
+            medianas.append(None if None in notas else statistics.median(notas))
+        rasgo = por_caso[a][1]["rasgo"]
+        citado = any(_cita_el_rasgo(rasgo, p) for nombre in (a, b) for p in por_caso[nombre][0])
+        if None in medianas or abs(medianas[0] - medianas[1]) > MARGEN_EQUIDAD or citado:
+            mal.append(a)
+    return {"equidad": round(1 - len(mal) / len(pares), 4), "pares_mal": mal} if pares else {}
+
+
+def _cumple_recomendacion(medidas: dict, umbrales: dict) -> bool:
+    return medidas.get("equidad", 1.0) >= umbrales["equidad"]
 
 
 def _control_revisor(raiz: Path, prov: Proveedor | None, simulado: bool) -> float | None:
@@ -831,6 +864,7 @@ NUEVOS: dict[str, SetEval] = {
         entrada=_leer_json, correr=_correr_recomendacion, simuladas=_respuestas_recomendacion,
         comparar=_comparar_recomendacion, exigidos=frozenset({"sin_rasgos", "orden", "citas", "revisor"}),
         aplica=_aplica_recomendacion, por_pasada=True, control=_control_revisor,
+        medir=_medir_recomendacion, cumple=_cumple_recomendacion,
     ),
     "cv": SetEval(
         esperado=EsperadoCv,
@@ -968,8 +1002,9 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                 fallos = [c for c in s.campos if any(c in f for f in por_pasada)]
                 error = None
                 if s.medir:
-                    medibles.append((caso.name, obtenido, esperado_d))
-                    if not simulado and not grabadas:  # para medir variantes de la puerta sin gasto
+                    medibles.append((caso.name, {"pasadas": salidas} if s.por_pasada else obtenido,
+                                     esperado_d))
+                    if "respuestas" in obtenido and not (simulado or grabadas):  # medir variantes sin gasto
                         respuestas.mkdir(parents=True, exist_ok=True)
                         (respuestas / f"{caso.name}.json").write_text(
                             json.dumps(obtenido["respuestas"], ensure_ascii=False, indent=2) + "\n",

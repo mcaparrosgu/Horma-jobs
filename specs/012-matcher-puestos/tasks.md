@@ -100,8 +100,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T29 — Con T12: citas contra la copia.
   - **Test:** «encargado/a de turno» existe en la copia y se enseña «encargada de turno»; una cita con el nombre
     de la usuaria no existe y se pide otra vez.
-- [ ] T30 — Con T11: pares de RF-12.22 solo para edad, hueco y nacionalidad.
+- [x] T30 — Con T11: pares de RF-12.22 solo para edad, hueco y nacionalidad.
   - **Test:** dos medianas a más de 3 puntos hacen fallar la equidad.
+  Hecho (27-nov, 0 USD): seis parejas (T10), métrica `equidad` al 100 % en `umbrales.json`.
 - [ ] T31 — Set de evals de `sinonimos-puestos` (RF-12.4e, D-068), con su harness en simulado. 🛑 Mar fija el umbral.
   🛑 OK al gasto antes de medir con el modelo real; entra en la CI sin gasto.
   - **Test:** una forma que sea otro puesto hace fallar el set.
