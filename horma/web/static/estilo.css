@@ -301,6 +301,7 @@ dialog.ventana > header{ justify-content: space-between; align-items: center; di
 .texto-original .apartado-original{ margin: 0.5rem 0 0; font-family: var(--f-mono); font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--ls-label); font-weight: 600; color: var(--ink); border-bottom: var(--bw) solid var(--line-strong); padding-bottom: 0.25rem; }
 .texto-original .lista-original{ margin: 0; padding-left: 1.25rem; display: grid; gap: 0.35rem; }
 .visor-marco{ width: 100%; height: 100%; border: 0; background: var(--surface); }
+.visor-pagina{ display: block; width: 100%; height: auto; border: var(--bw) solid var(--line); }
 /* con un documento (CV o carta), su fila ocupa todo el cuerpo: sin esto el iframe se queda en sus 150 px (T08o) */
 .ventana-cuerpo:has(> .visor-marco){ grid-template-rows: minmax(0, 1fr); align-content: stretch; }
 
@@ -392,6 +393,7 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
 @media (max-width: 900px){
   /* una columna: Subir archivo, Tu perfil, Tu CV completo, Por resolver, Documentos subidos, Cómo escribes */
   .pantalla-perfil{ display: flex; flex-direction: column; }
+  .pantalla-perfil{ align-items: stretch; }
   .pantalla-perfil > .col-izq, .pantalla-perfil > .col-der{ display: contents; }
   #subir-otro{ order: 1; } #mi-perfil{ order: 2; } #maestro{ order: 3; } #pendientes{ order: 4; } #cvs-subidos{ order: 5; } #estilo{ order: 6; }
 }
@@ -450,6 +452,12 @@ textarea.json, .json{ font-family: var(--f-mono); font-size: 0.9rem; }
   .barra-contador .derecha{ margin-left: 0; width: 100%; }
 }
 
+/* Portada en móvil: sin menú, los dos botones de la cabecera ocupan todo el ancho a partes iguales (RF-6.4b). */
+@media (max-width: 520px){
+  .cabecera:not(:has(nav)) .derecha{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(max-content, 1fr); width: 100%; padding-bottom: 8px; }
+  .cabecera:not(:has(nav)) .derecha > *{ justify-content: center; text-align: center; white-space: nowrap; padding-inline: 8px; }
+}
+
 @media (max-width: 760px){
   .tablero{ grid-template-columns: 1fr; }
 }
@@ -476,6 +484,7 @@ ol.pasos > li::before{ content: counter(paso); display: inline-grid; place-items
 /* «Qué buscas»: Puestos y Términos excluidos en dos columnas del mismo alto. */
 fieldset.grupo.grupo-puestos{ display: flex; flex-direction: column; }
 fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
+.casilla-puesto{ padding-block: 6px; }
 .casilla-puesto .dato-puesto{ display: block; color: var(--muted); font-size: 0.85rem; }
 .anadir-termino{ margin-top: 12px; flex-wrap: nowrap; }
 .anadir-termino input{ flex: 1 1 0; min-width: 0; }
@@ -515,3 +524,16 @@ fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
 .rejilla-clases label{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, 12rem); align-items: center; gap: 12px; }
 .rejilla-clases .nombre-doc{ min-width: 0; overflow-wrap: anywhere; text-transform: none; letter-spacing: normal; font: inherit; color: var(--ink); }
 @media (max-width: 480px){ .rejilla-clases label{ grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+
+/* Móvil: simetría (RF-6.4b). El título y «Cerrar» comparten fila, y las filas de solo botones van en columnas iguales. */
+@media (max-width: 600px){
+  dialog.ventana > header{ flex-wrap: nowrap; align-items: flex-start; margin-top: 0; }
+  dialog.ventana > header > h3{ flex: 1 1 auto; min-width: 0; margin: 0; overflow-wrap: anywhere; }
+  .fila:not([hidden]):not(header):not(:has(> :not(button, .boton))){ display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 12px; }
+  .fila:not(header):not(:has(> :not(button, .boton))) > *{ justify-content: center; text-align: center; }
+  .fila > button.icono:last-child:nth-child(odd){ grid-column: 1 / -1; }
+  .fila.acciones-fuente{ display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+  .acciones-fuente > *{ grid-column: span 2; width: 100%; min-width: 0; padding-inline: 8px; justify-content: center; }
+  .acciones-fuente > :nth-child(-n+2){ grid-column: span 3; }
+  #candidatura details, #mi-perfil .fila + details{ margin-top: 16px; }
+}

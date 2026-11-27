@@ -25,9 +25,10 @@ def test_los_encadenados_estan_en_una_sola_tabla():
     """T25: qué tarea lanza a cuál."""
     assert set(worker.ENCADENADOS) == {"procesar_oferta", "perfilar", "clasificar_perfil"}
     assert [f.__name__ for f in worker.ENCADENADOS["perfilar"]] == [
-        "_puntuar_si_hay_propias", "_estilo_la_primera_vez"]
+        "_puntuar_si_hay_propias", "_estilo_la_primera_vez", "_sinonimos"]
     assert [f.__name__ for f in worker.ENCADENADOS["procesar_oferta"]] == ["_propia_procesada"]
-    assert [f.__name__ for f in worker.ENCADENADOS["clasificar_perfil"]] == ["_puntuar_si_hay_propias"]
+    assert [f.__name__ for f in worker.ENCADENADOS["clasificar_perfil"]] == [
+        "_puntuar_si_hay_propias", "_sinonimos"]
 
 
 def test_lo_aparcado_no_esta_activo_ni_se_puede_encolar():

@@ -63,6 +63,10 @@ están en `specs/system.md`.
 - Incluye los controles nativos (`input[type=file]`, `select`, casillas): se estilan para que encajen.
 - Una tarea de frontend no está hecha hasta comprobarla en el navegador a 1280 y 390 px, en claro y
   en oscuro, mirando expresamente alineación y simetría. Si no se ha podido comprobar, se dice.
+- El agente hace esa comprobación: `docker compose up -d --build` y `node tests/capturas.js` (Playwright con el
+  Chrome instalado; la extensión de Chrome no baja a 390 px). Mira las imágenes, no solo el «ok». Cubre las
+  pantallas de usuaria y de admin con datos inventados (`tests/capturas_datos.py`) y algunas ventanas; lo que
+  falte se añade al script o se declara sin comprobar.
 
 ## Flujo de trabajo
 Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementación (TDD) → Validación → Cambio
@@ -78,8 +82,8 @@ Constitución → Clarify → Spec (EARS) → Plan → Tareas → Implementació
 
 ## Git
 - NO hagas commits salvo que la persona lo pida expresamente.
-- Nunca añadas a Claude ni a ninguna IA como coautor o colaborador. Sin líneas `Co-Authored-By`.
-  Los commits los firma la persona.
+- Nunca añadas a Claude ni a ninguna IA como coautor o colaborador. Sin líneas `Co-Authored-By`
+  ni «Generated with…», 🤖 u otra mención de la IA en commits o PR. Los commits los firma la persona.
 - `main` está protegida: todo entra por PR. Una rama por PR, creada desde `main` al día. Los docs de la tarea
   van en su mismo PR; el «fusionada» se anota en el PR siguiente, nunca en una rama aparte de solo docs.
 - Para apartar trabajo, un commit provisional en su rama; nunca `git stash`.

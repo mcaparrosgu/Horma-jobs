@@ -64,7 +64,7 @@ function avisoItem(a) {
 function revisaEsto() {
   const s = nodo("section", null, "panel");
   const hayAlgo = c.huecos.length > 0 || c.avisos.length > 0;
-  if (!hayAlgo && c.preparacion !== "pendiente_de_ti") return s;
+  if (!hayAlgo && c.preparacion !== "pendiente_de_ti") { s.hidden = true; return s; }
   s.append(nodo("h3", "Revisa esto", "subtitulo"));
   if (!hayAlgo) {
     s.append(nodo("p", TEXTOS.revisaFalta, "tarjeta alerta"));

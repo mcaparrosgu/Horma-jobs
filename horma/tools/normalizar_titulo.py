@@ -17,11 +17,22 @@ def _singular(palabra: str) -> str:
 
 
 _MARCA_GENERO = re.compile(
-    r"(?<=[^\W\d_])(?:\s*/\s*(?:as|os|a|o)(?![^\W\d_])|"
+    r"(?<=[^\W\d_])(?:\s*/\s*(?:actriz|waitress|as|os|a|o)(?![^\W\d_])|"
     r"\((?:as|os|a|o)\))", re.IGNORECASE)
 
 
+# Pares del léxico que las reglas no sacan (RF-12.30i), ya normalizados: masculino → femenino.
+_FEMENINO = {"actor": "actriz", "waiter": "waitress", "gobernante": "gobernanta", "juez": "jueza",
+             "matron": "matrona", "aprendiz": "aprendiza"}
+_MASCULINO = {f: m for m, f in _FEMENINO.items()}
+_SOLAS = {"asistente", "asistenta"}  # oficios distintos: una no es el femenino de la otra
+
+
 def _a_femenino(p: str) -> str | None:
+    if p in _FEMENINO:
+        return _FEMENINO[p]
+    if p in _SOLAS or p in _MASCULINO:
+        return None
     if p == "jefe":
         return "jefa"
     if len(p) > 4 and p.endswith("ente"):
@@ -34,6 +45,10 @@ def _a_femenino(p: str) -> str | None:
 
 
 def _a_masculino(p: str) -> str | None:
+    if p in _MASCULINO:
+        return _MASCULINO[p]
+    if p in _SOLAS or p in _FEMENINO:
+        return None
     if p == "jefa":
         return "jefe"
     if len(p) > 5 and p.endswith("enta"):
@@ -75,8 +90,43 @@ def normalizar_titulo(titulo: str | None) -> str:
     return " ".join(_singular(p) for p in palabras)
 
 
-def casa_con_puestos(titulo: str | None, puestos: list[str]) -> bool:
+def canonico(titulo: str) -> str:
+    """La misma clave para las formas de género de un puesto."""
+    return min(variantes_genero(normalizar_titulo(titulo)), default="")
+
+
+# RF-12.9: solos, dicen demasiado poco; casan únicamente con ofertas de la familia del perfil.
+_GENERICOS = {normalizar_titulo(t) for t in (
+    "Manager", "Técnico", "Técnica", "Responsable", "Especialista", "Consultor", "Consultora", "Consultant",
+    "Engineer", "Developer", "Director", "Directora")}
+
+
+def es_generico(puesto: str) -> bool:
+    return normalizar_titulo(puesto) in _GENERICOS
+
+
+# D-038: el nivel mínimo del perfil que pide cada palabra de un título.
+_ESCALONES = {"practicas": 0, "junior": 1, "intermedio": 2, "senior": 3, "direccion": 4}
+_PIDEN = {"senior": 3, "sr": 3, "lead": 3, "jefe": 3, "jefa": 3, "head": 4, "chief": 4, "director": 4,
+          "directora": 4}
+
+
+def supera_nivel(titulo: str, nivel: str) -> bool:
+    """¿El título indica un nivel por encima del perfil (RF-12.8)? Sin nivel conocido, no."""
+    tope = _ESCALONES.get(nivel)
+    return tope is not None and any(_PIDEN.get(p, 0) > tope for p in normalizar_titulo(titulo).split())
+
+
+def casa_con_puestos(titulo: str | None, puestos: list[str], *, familia_perfil: str | None = None,
+                     familia_oferta: str | None = None,
+                     sinonimos: dict[str, list[str]] | None = None) -> bool:
     """¿Algún puesto (o su forma de género) aparece como frase en el título? La misma regla que el filtro
-    de `buscar_ofertas`, en Python."""
+    de `buscar_ofertas`, en Python: un genérico no cuenta si las dos familias se conocen y no coinciden.
+    Cuentan las otras formas de la tabla y las que lleguen en `sinonimos` (puesto → formas, RF-12.4c)."""
+    from horma.tools.sinonimos_puestos import otras_formas  # aquí: la tabla usa `canonico`
+
+    buscados = [f for p in puestos for f in otras_formas(p, (sinonimos or {}).get(p, ()))]
     t = f" {normalizar_titulo(titulo)} "
-    return any(f" {v} " in t for p in puestos for v in variantes_genero(normalizar_titulo(p)))
+    otra_familia = bool(familia_perfil and familia_oferta and familia_perfil != familia_oferta)
+    return any(f" {v} " in t for p in buscados if not (otra_familia and es_generico(p))
+               for v in variantes_genero(normalizar_titulo(p)))

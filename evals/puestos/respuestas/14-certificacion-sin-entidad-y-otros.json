@@ -1,0 +1,230 @@
+{
+  "base": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "junior",
+    "stack": [
+      "excel avanzado"
+    ],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative clerk",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de facturación",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Accounting clerk",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Office assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "junior",
+    "stack": [
+      "excel avanzado"
+    ],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asistente administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Office Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de facturación",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar contable",
+        "idioma": "es",
+        "dato": "Excel avanzado",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Accounts Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Data Entry Clerk",
+        "idioma": "en",
+        "dato": "Excel avanzado",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "servicios_profesionales",
+    "familia": "administracion_oficina",
+    "nivel": "junior",
+    "stack": [
+      "excel avanzado"
+    ],
+    "puestos": [
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asistente administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de oficina",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrativo/a de gestoría",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de contabilidad",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Accounting Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Administrative Clerk",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Office Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Back Office Administrativo/a",
+        "idioma": "es",
+        "dato": "Auxiliar administrativo/a",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

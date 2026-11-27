@@ -1,0 +1,63 @@
+{
+  "perfil": {
+    "nombre": "Óscar Gimeno",
+    "experiencias": [
+      {
+        "puesto": "Electricista",
+        "empresa": "Instalaciones Gimar",
+        "inicio": "2010",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Electricista en Instalaciones Gimar, 2010-2019"
+        }
+      },
+      {
+        "puesto": "Conductor repartidor",
+        "empresa": "Mensajería Express",
+        "inicio": "2019",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Conductor repartidor en Mensajería Express, 2019-2025"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Técnico en Instalaciones Eléctricas y Automáticas",
+        "centro": "IES Faitanar",
+        "inicio": "2008",
+        "fin": "2010",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico en Instalaciones Eléctricas y Automáticas, IES Faitanar, 2008-2010"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "carné de conducir C",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "carné de conducir C"
+        }
+      }
+    ],
+    "certificaciones": [
+      {
+        "nombre": "Carnet de carretillero",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Carnet de carretillero"
+        }
+      }
+    ],
+    "idiomas": []
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "perfil": {
+    "nombre": "Noelia Prat",
+    "experiencias": [
+      {
+        "puesto": "Camarera",
+        "empresa": "Bar Marina",
+        "inicio": "2016",
+        "fin": "2022",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Camarera en Bar Marina, 2016-2022"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado Superior en Desarrollo de Aplicaciones Web",
+        "centro": "IES Serpis",
+        "inicio": "2022",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado Superior en Desarrollo de Aplicaciones Web, IES Serpis, 2022-2024"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "JavaScript",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "JavaScript"
+        }
+      },
+      {
+        "nombre": "HTML",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "HTML"
+        }
+      },
+      {
+        "nombre": "CSS",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "CSS"
+        }
+      },
+      {
+        "nombre": "Git",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Git"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": []
+  }
+}

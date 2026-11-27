@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> **Estado:** fases 0 a 10 cerradas (la entrevista de la 9b pasa a la spec 016) y en `main`. Estado de cada fase: [`specs/index.md`](./specs/index.md).
+> **Estado:** fases 0 a 10 cerradas (la entrevista de la 9b pasa a la spec 016) y en `main`; el paso 1 del PRD (spec 011, parte 1) está fusionado y el paso 2 (spec 012), en construcción. Estado de cada fase: [`specs/index.md`](./specs/index.md).
 > Qué viene y por qué (specs 011 a 017): [`specs/prd.md`](./specs/prd.md). Despliegue local con Docker Compose.
 
 **Recorrido de la usuaria:** Landing → Perfil (sube su CV) → Ofertas (compatibilidad 0-100) → Candidatura
@@ -71,6 +71,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 4. `uv run alembic upgrade head` (migraciones con el rol `horma_migrador`).
 5. `docker compose up -d --build` levanta también la API (http://localhost:8000) y el worker.
 6. `uv run pytest` (los tests de base de datos necesitan el paso 3), `uv run ruff check .` y `uv run lint-imports`.
+   Pantallas a 390 y 1280 px, en claro y oscuro: con la app levantada (paso 5), `node tests/capturas.js` (necesita
+   Node, Chrome y Playwright en la caché de `npx`; usa el puerto 8010 y datos inventados que borra al acabar).
 
 ### Fase 1: fuentes e ingesta
 

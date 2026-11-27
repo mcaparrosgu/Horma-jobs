@@ -463,6 +463,8 @@ def correr_eval(
     raiz: Path = typer.Option(Path("evals"), help="Carpeta de evals."),
     flujo_impl: str | None = typer.Option(None, "--flujo", help="Implementación del flujo `candidatura` "
                                           "(plain o langgraph); por defecto, HORMA_FLOW_IMPL."),
+    grabadas: bool = typer.Option(False, help="`puestos`: repite las respuestas guardadas, sin gasto."),
+    veces: int = typer.Option(1, min=1, help="`puestos`: pasadas por CV, para medir la estabilidad."),
 ) -> None:
     """Corre un set de evals y deja la ejecución en evals/resultados/."""
     from horma.evals import SETS, correr_set
@@ -475,13 +477,21 @@ def correr_eval(
     if conjunto not in SETS:
         typer.echo(f"Set desconocido: {conjunto}", err=True)
         raise typer.Exit(2)
-    if not simulado:
+    if not simulado and not grabadas:
         _sin_clave_de_anthropic()
-    res = correr_set(conjunto, raiz=raiz, solo=solo, simulado=simulado,
-                     tope_coste=tope_coste, flujo=flujo_impl)
+    if veces > 1 and conjunto != "puestos":
+        typer.echo("--veces solo vale para el set `puestos`.", err=True)
+        raise typer.Exit(2)
+    res = correr_set(conjunto, raiz=raiz, solo=solo, simulado=simulado, veces=veces,
+                     tope_coste=tope_coste, flujo=flujo_impl, grabadas=grabadas)
     for campo, valor in res["campos"].items():
         typer.echo(f"{campo:<30}{valor:.2f}")
     typer.echo(f"{'adversarias':<30}{res['adversarias']:.2f}")
+    for nombre, valor in res.get("metricas", {}).items():
+        if nombre != "sin_etiquetar":
+            typer.echo(f"{nombre:<30}{'—' if valor is None else valor}")
+        elif valor:
+            typer.echo(f"{nombre:<30}{len(valor)}")
     typer.echo(f"\n{res['casos_ejecutados']} de {res['casos']} casos · coste {res['coste']:.4f} USD "
                f"(tope {tope_coste:g}) · {'APROBADO' if res['aprobado'] else 'NO APROBADO'}")
     if res["detenido_por_coste"]:

@@ -40,7 +40,7 @@ def test_flujo_listar_incluye_perfilar_y_recomendar():
 
 # --- T22: agente correr con los 4 agentes nuevos --------------------------------------------------
 def test_agente_correr_clasificador_postulante_en_simulado(tmp_path):
-    perfil = {"version": 1, "nombre": "Ana"}
+    perfil = {"experiencias": [{"puesto": "Camarero/a"}]}
     entrada = _json(tmp_path / "e.json", {"perfil": perfil})
     resp = _json(tmp_path / "r.json", TAX)
     r = CliRunner().invoke(cli, ["agente", "correr", "clasificador-postulante", "--entrada",

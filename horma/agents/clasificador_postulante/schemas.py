@@ -2,19 +2,22 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from horma.schemas.perfil import Perfil
+from horma.schemas.perfil_ciego import PerfilCiego
 from horma.schemas.taxonomia import Taxonomia
 
 
 class EntradaClasificadorPostulante(BaseModel):
-    perfil: Perfil
+    perfil: PerfilCiego
 
 
 class PuestoCandidato(BaseModel):
     titulo: str = Field(min_length=1, description="Título de puesto tal como se anuncia.")
     idioma: Literal["es", "en"]
-    dato: str = Field(min_length=1, description="Dato del perfil que lo justifica: un puesto, una "
-                                                "titulación o una habilidad, copiado tal cual.")
+    dato: str = Field(min_length=1, description="Puesto de una experiencia, titulación o certificación "
+                                                "que lo justifica, copiado entero y tal cual.")
+    relacion: Literal["mismo", "afin"] = Field(
+        default="mismo", description="«mismo»: es ese puesto (traducido, otro género, sinónimo o "
+                                     "especialidad); «afin»: un puesto distinto.")
 
 
 class ClasificacionPostulante(Taxonomia):

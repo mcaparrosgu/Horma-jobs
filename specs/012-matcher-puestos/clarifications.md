@@ -62,12 +62,19 @@ Están en los informes F4 (`docs/investigacion/f4-puestos-afines.md`, apartado 8
   OK y su motivo escrito: si no, se maquilla el eval.
 - **S9 · La corrección vale por oferta,** no por versión del perfil, hasta que ella la quite.
 - **S10 · Revisor del eval:** modelo pequeño. No entra en ningún flujo.
+- **S11 · Sin `temperature` (D-048):** los modelos de Horma no la admiten. La respuesta se reutiliza por la huella
+  de la copia y la variación se mide (RF-12.30e).
+- **S12 · La lista blanca se cumple por esquema** (`PerfilCiego`).
+
+## Copia ciega (26-nov)
+Requisito de Mar: el género no influye en los puestos sugeridos ni en la nota (D-047). Decisiones D-043 a D-052.
 
 ## Fuera de alcance
 - ESCO y otras taxonomías (F4-D6). Embeddings, salvo la prueba condicionada de F4-D6.
 - Homónimos («Camarera» casa con «Camarera de pisos»): F4 propone sugerir el término excluido; no está decidido.
   Va a `docs/mejoras-futuras.md`.
-- Quitar nombre, correo y teléfono antes del modelo (F7-D7): paso 4, spec 015.
+- Quitar nombre, correo y teléfono antes del modelo (F7-D7): para el clasificador y el `matcher`, ya en la
+  012 (RF-12.30); para el resto de agentes, paso 4, spec 015.
 - Usar solo el nivel 1 en el envío y gestionar esos puestos en «Configuración» (F4-D8): spec 011, parte 2.
 - El embudo filtros → embeddings → modelo: rechazado por Mar.
 - Que `analizador-oferta` escriba el puesto normalizado de cada oferta: solo si la familia no basta (F4-D3,

@@ -1,0 +1,71 @@
+{
+  "perfil": {
+    "nombre": "Laura Moreno",
+    "experiencias": [],
+    "formacion": [
+      {
+        "titulo": "Grado en Estadística",
+        "centro": "Universidad de Granada",
+        "inicio": "2021",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Estadística, Universidad de Granada, 2021-2025"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "R",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "R"
+        }
+      },
+      {
+        "nombre": "Python",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Python"
+        }
+      },
+      {
+        "nombre": "SQL",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "SQL"
+        }
+      },
+      {
+        "nombre": "Excel",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Excel"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en B2"
+        }
+      }
+    ],
+    "genero_puestos": "femenino"
+  },
+  "variante": {
+    "nombre": "Lorenzo Moreno",
+    "genero_puestos": "masculino",
+    "reemplazos": {}
+  }
+}

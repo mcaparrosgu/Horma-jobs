@@ -1,0 +1,72 @@
+{
+  "perfil": {
+    "nombre": "Alba Ferrándiz",
+    "experiencias": [
+      {
+        "puesto": "Fotógrafa freelance",
+        "empresa": "por cuenta propia",
+        "inicio": "2016",
+        "fin": "actual",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Fotógrafa freelance en por cuenta propia, 2016-actual"
+        }
+      },
+      {
+        "puesto": "Profesora de inglés",
+        "empresa": "Academia Oxford Street",
+        "inicio": "2019",
+        "fin": "actual",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Profesora de inglés en Academia Oxford Street, 2019-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Estudios Ingleses",
+        "centro": "Universidad de Alicante",
+        "inicio": "2012",
+        "fin": "2016",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Estudios Ingleses, Universidad de Alicante, 2012-2016"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Lightroom",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Lightroom"
+        }
+      },
+      {
+        "nombre": "Photoshop",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Photoshop"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "C2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en C2"
+        }
+      }
+    ]
+  }
+}

@@ -22,6 +22,8 @@ from dataclasses import dataclass
 
 from sqlalchemy import Engine
 
+from horma.agents.sinonimos_puestos.agent import SinonimosPuestos
+from horma.agents.sinonimos_puestos.schemas import EntradaSinonimos
 from horma.config import ajustes
 from horma.flows import (
     analizar_estilo,
@@ -61,6 +63,7 @@ from horma.web.services import cv as servicio_cv
 from horma.web.services import estilo as servicio_estilo
 from horma.web.services import ofertas as servicio_ofertas
 from horma.web.services import presupuesto
+from horma.web.services import sinonimos as servicio_sinonimos
 
 log = logging.getLogger("horma.worker")
 
@@ -128,9 +131,9 @@ def _propia_procesada(s, tarea: dict) -> None:
     estaba (RF-10.6h). Las preferencias solo se ven con la sesión de ella (RLS): otra transacción."""
     if (usuaria := repo_ofertas.dueña(s, tarea["entidad_id"])) is not None:
         _encolar_puntuar_propias(s, usuaria)
-        titulo = repo_ofertas.titulo(s, tarea["entidad_id"])
+        titulo, familia = repo_ofertas.titulo_y_familia(s, tarea["entidad_id"])
         with sesion_de(s.get_bind(), usuaria) as su:
-            repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo)
+            repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo, familia)
 
 
 def _puntuar_si_hay_propias(s, tarea: dict) -> None:
@@ -143,11 +146,15 @@ def _estilo_la_primera_vez(s, tarea: dict) -> None:
     servicio_estilo.encolar_si_no_hay_guia(s, tarea["usuaria_id"])  # RF-5.6d
 
 
+def _sinonimos(s, tarea: dict) -> None:
+    servicio_sinonimos.encolar_si_faltan(s, tarea["usuaria_id"])  # RF-12.4c
+
+
 # Qué se encola al terminar cada tarea, en un solo sitio (RF-10.11). Cada paso decide si le toca.
 ENCADENADOS = {
     "procesar_oferta": [_propia_procesada],
-    "perfilar": [_puntuar_si_hay_propias, _estilo_la_primera_vez],
-    "clasificar_perfil": [_puntuar_si_hay_propias],
+    "perfilar": [_puntuar_si_hay_propias, _estilo_la_primera_vez, _sinonimos],
+    "clasificar_perfil": [_puntuar_si_hay_propias, _sinonimos],
 }
 
 
@@ -410,7 +417,27 @@ class _AnalizarEstilo:
         """Sin fila propia: el motivo queda en la tarea."""
 
 
-MANEJADORES = {"procesar_oferta": _ProcesarOferta(),
+class _Sinonimos:
+    """Las otras formas de los puestos marcados que aún no las tienen (entidad = id de la usuaria)."""
+
+    def cargar(self, s, tarea: dict) -> dict:
+        return {"puestos": servicio_sinonimos.pendientes(repo_perfiles.preferencias(s))}
+
+    def ejecutar(self, estado: dict, d: Dependencias) -> dict:
+        if estado["puestos"]:
+            r = SinonimosPuestos.run(EntradaSinonimos(puestos=estado["puestos"]), proveedor=d.proveedor)
+            estado["otras"] = {x.puesto: x.otras for x in r.puestos}
+        return estado
+
+    def guardar(self, s, tarea: dict, estado: dict) -> None:
+        servicio_sinonimos.guardar(s, tarea["usuaria_id"], estado["puestos"], estado.get("otras", {}))
+
+    def marcar_error(self, s, tarea: dict, motivo: str) -> None:
+        """Sin fila propia: la búsqueda sigue con la tabla y el motivo queda en la tarea."""
+
+
+MANEJADORES = {"sinonimos": _Sinonimos(),
+               "procesar_oferta": _ProcesarOferta(),
                "calificar_fuente": _CalificarFuente(), "perfilar": _Perfilar(),
                "clasificar_perfil": _ClasificarPerfil(),
                "recomendar": _Recomendar(), "puntuar_propias": _PuntuarPropias(),

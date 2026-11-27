@@ -142,7 +142,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     además del ±10. Los tramos de la nota ya están en el prompt, sin medir.
   - Explicaciones fiables: el `matcher` cita fragmentos literales y un verificador en código comprueba que
     existen; no nombra las instrucciones embebidas de una oferta. Revisor, solo en el eval.
-  - Equidad: casos por pares que cambian un solo rasgo personal; la nota debe ser igual (±3).
+  - Equidad: el clasificador y el `matcher` leen una copia del perfil sin nombre y con los puestos en «/a»
+    (D-043 a D-047; spec 012, RF-12.30); en edad, nacionalidad y huecos, pares con la nota igual (±3).
   - Robustez: ofertas en otro idioma, muy largas, con inyección o sin datos; fallos parciales. Falla con
     aviso, nunca con una nota inventada. Ignorar el texto invisible en `convertir_cv`.
   - Familia de cada oferta (F4-D3: los puestos genéricos casan solo con ofertas de su familia).
@@ -158,7 +159,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
   citas verificadas; set de 30 CV en sus umbrales (sección 2); ningún puesto marcado sin
   evidencia; revisión de Mar sobre 20 recomendaciones.
-- **Depende de:** el paso 1. Gasto real: ~4,5-6,5 USD en todo el paso, en varias veces (set de 30 CV y evals;
+- **Depende de:** el paso 1. Gasto real: ~5-7,3 USD en todo el paso, en varias veces (set de 30 CV y evals;
   detalle en el plan de la spec 012), cada vez con el OK de Mar.
 
 ### Paso 3 · Calidad de CV y carta, con PDF comprobado (spec 013)
@@ -400,7 +401,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 | NFR-01 | Veracidad | 0 frases de CV o carta sin origen; 0 respuestas de formulario inventadas | Evals `cv` y `formulario`; `verificar_trazabilidad` |
 | NFR-02 | Calidad de la recomendación | ≥ 90 % de los casos con la nota dentro de ±10, en 3 ejecuciones seguidas | Eval `recomendacion` con el modelo real |
 | NFR-03 | Seguridad | 100 % de instrucciones embebidas sin efecto en ofertas, CV, formularios y correos | Casos adversarios de cada eval; `red-teaming` |
-| NFR-04 | Privacidad | Ningún prompt lleva contacto, edad, nacionalidad ni datos del art. 9; cada usuaria solo lee lo suyo | Tests de la puerta única y de RLS |
+| NFR-04 | Privacidad | Ningún prompt lleva contacto, edad, nacionalidad ni datos del art. 9; cada usuaria solo lee lo suyo. El clasificador y el `matcher` leen una copia sin nombre ni género (spec 012, RF-12.30) | Tests de la puerta única, de la copia y de RLS |
 | NFR-05 | Control de la usuaria | «Parar todo» corta antes del envío siguiente; fuera del modo real, 0 peticiones a un portal de verdad | Tests de la tanda y del guardia de red |
 | NFR-06 | Coste | ≤ 1 USD por usuaria y día y ≤ 1 USD por candidatura; tope mensual: [pendiente: spec 017] | Tabla `llm_llamadas`; test del worker con tope bajo |
 | NFR-07 | Volumen | 5 usuarias a la vez y 5.000 ofertas vigentes en el catálogo, sin errores ni tareas perdidas. La cifra de ofertas queda confirmada tras la investigación del banco de ofertas (D-024): 5.000 vigentes de España. Hoy sin medir; los límites de ritmo viven en la memoria de un solo proceso (el de la ingesta lo resuelve RT-16, paso 5) | Prueba de carga sencilla en el paso 9 |

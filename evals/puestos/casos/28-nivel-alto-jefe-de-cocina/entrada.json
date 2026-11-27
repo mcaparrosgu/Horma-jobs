@@ -1,0 +1,71 @@
+{
+  "perfil": {
+    "nombre": "Roberto Marín",
+    "experiencias": [
+      {
+        "puesto": "Cocinero",
+        "empresa": "Restaurante La Huerta",
+        "inicio": "2006",
+        "fin": "2012",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Cocinero en Restaurante La Huerta, 2006-2012"
+        }
+      },
+      {
+        "puesto": "Jefe de cocina",
+        "empresa": "Hotel Palace",
+        "inicio": "2012",
+        "fin": "actual",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Jefe de cocina en Hotel Palace, 2012-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Técnico Superior en Dirección de Cocina",
+        "centro": "CdT Valencia",
+        "inicio": "2004",
+        "fin": "2006",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico Superior en Dirección de Cocina, CdT Valencia, 2004-2006"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "escandallos",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "escandallos"
+        }
+      },
+      {
+        "nombre": "APPCC",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "APPCC"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": [],
+    "genero_puestos": "masculino"
+  },
+  "variante": {
+    "nombre": "Roberta Marín",
+    "genero_puestos": "femenino",
+    "reemplazos": {
+      "Cocinero": "Cocinera",
+      "Jefe de cocina": "Jefa de cocina"
+    }
+  }
+}

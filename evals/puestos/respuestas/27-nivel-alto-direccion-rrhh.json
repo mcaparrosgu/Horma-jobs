@@ -1,0 +1,242 @@
+{
+  "base": {
+    "sector": "industria",
+    "familia": "recursos_humanos",
+    "nivel": "direccion",
+    "stack": [
+      "sap successfactors"
+    ],
+    "puestos": [
+      {
+        "titulo": "Director/a de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "HR Director",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Director/a de Personas",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Head of HR",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Jefe/a de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "HR Manager",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de selección",
+        "idioma": "es",
+        "dato": "Técnico/a de selección",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de selección",
+        "idioma": "es",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Talent Acquisition Specialist",
+        "idioma": "en",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Recruiter",
+        "idioma": "en",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Psicólogo/a laboral",
+        "idioma": "es",
+        "dato": "Licenciatura en Psicología",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "industria",
+    "familia": "recursos_humanos",
+    "nivel": "direccion",
+    "stack": [
+      "sap successfactors"
+    ],
+    "puestos": [
+      {
+        "titulo": "Director/a de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Director/a de RRHH",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "HR Director",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Jefe/a de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "HR Manager",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de Relaciones Laborales",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de selección",
+        "idioma": "es",
+        "dato": "Técnico/a de selección",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de selección",
+        "idioma": "es",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Talent Acquisition Specialist",
+        "idioma": "en",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Especialista en selección de personal",
+        "idioma": "es",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Psicólogo/a organizacional",
+        "idioma": "es",
+        "dato": "Licenciatura en Psicología",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "industria",
+    "familia": "recursos_humanos",
+    "nivel": "direccion",
+    "stack": [
+      "sap successfactors"
+    ],
+    "puestos": [
+      {
+        "titulo": "Director/a de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Director/a de RRHH",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "HR Director",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Human Resources Director",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Jefe/a de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de Recursos Humanos",
+        "idioma": "es",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "HR Business Partner",
+        "idioma": "en",
+        "dato": "Director/a de Recursos Humanos",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a de selección",
+        "idioma": "es",
+        "dato": "Técnico/a de selección",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Recruitment Specialist",
+        "idioma": "en",
+        "dato": "Técnico/a de selección",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de selección",
+        "idioma": "es",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Talent Acquisition Specialist",
+        "idioma": "en",
+        "dato": "Técnico/a de selección",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Psicólogo/a del trabajo",
+        "idioma": "es",
+        "dato": "Licenciatura en Psicología",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

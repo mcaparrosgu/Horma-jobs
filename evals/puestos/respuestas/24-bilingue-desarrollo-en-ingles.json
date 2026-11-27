@@ -1,0 +1,239 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "java",
+      "spring",
+      "postgresql",
+      "aws"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador/a backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ingeniero/a de software",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ingeniero/a backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Software Developer",
+        "idioma": "en",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a de software",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Java Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador/a Java",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista programador/a",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ingeniero/a informático/a",
+        "idioma": "es",
+        "dato": "BSc in Computer Science",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "java",
+      "spring",
+      "postgresql",
+      "aws"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador/a backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ingeniero/a de software",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Software Developer",
+        "idioma": "en",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a de software",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Java Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a Java",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ingeniero/a backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Analista programador/a",
+        "idioma": "es",
+        "dato": "BSc in Computer Science",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "java",
+      "spring",
+      "postgresql",
+      "aws"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador/a backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Backend Engineer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ingeniero/a de software",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a de software",
+        "idioma": "es",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Software Developer",
+        "idioma": "en",
+        "dato": "Software Engineer",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a Java",
+        "idioma": "es",
+        "dato": "Desarrollador/a backend",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Java Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Java Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a backend",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

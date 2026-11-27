@@ -1,0 +1,275 @@
+{
+  "base": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": [
+      "carné de conducir c",
+      "carnet de carretillero/a"
+    ],
+    "puestos": [
+      {
+        "titulo": "Conductor/a repartidor/a",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor/a",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Electricista",
+        "idioma": "es",
+        "dato": "Electricista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Delivery Driver",
+        "idioma": "en",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Courier Driver",
+        "idioma": "en",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Electrician",
+        "idioma": "en",
+        "dato": "Electricista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Carretillero/a",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Operario/a de almacén",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a electricista",
+        "idioma": "es",
+        "dato": "Técnico/a en Instalaciones Eléctricas y Automáticas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de camión",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Warehouse Operative",
+        "idioma": "en",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Forklift Operator",
+        "idioma": "en",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": [
+      "carné de conducir c",
+      "carnet de carretillero/a"
+    ],
+    "puestos": [
+      {
+        "titulo": "Conductor/a repartidor/a",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor/a",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Delivery Driver",
+        "idioma": "en",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Electricista",
+        "idioma": "es",
+        "dato": "Electricista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Electrician",
+        "idioma": "en",
+        "dato": "Electricista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Carretillero/a",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Forklift Operator",
+        "idioma": "en",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Operario/a de almacén",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Mozo/a de almacén",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de logística",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Instalador/a electricista",
+        "idioma": "es",
+        "dato": "Electricista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a electricista",
+        "idioma": "es",
+        "dato": "Técnico/a en Instalaciones Eléctricas y Automáticas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Electrical Technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Instalaciones Eléctricas y Automáticas",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "construccion",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": [
+      "carné de conducir c",
+      "carnet de carretillero/a"
+    ],
+    "puestos": [
+      {
+        "titulo": "Conductor/a repartidor/a",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor/a de paquetería",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Electricista",
+        "idioma": "es",
+        "dato": "Electricista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Electricista de instalaciones",
+        "idioma": "es",
+        "dato": "Electricista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Mozo/a de almacén",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Operario/a de carretilla elevadora",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Electricista de mantenimiento",
+        "idioma": "es",
+        "dato": "Electricista",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a electricista",
+        "idioma": "es",
+        "dato": "Técnico/a en Instalaciones Eléctricas y Automáticas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de furgoneta",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de logística",
+        "idioma": "es",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Operario/a de logística",
+        "idioma": "es",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Delivery driver",
+        "idioma": "en",
+        "dato": "Conductor/a repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Electrician",
+        "idioma": "en",
+        "dato": "Electricista",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Forklift operator",
+        "idioma": "en",
+        "dato": "Carnet de carretillero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Electrical technician",
+        "idioma": "en",
+        "dato": "Técnico/a en Instalaciones Eléctricas y Automáticas",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

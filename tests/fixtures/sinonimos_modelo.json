@@ -1,0 +1,679 @@
+{
+ "Abogado": [
+  "Abogado/a",
+  "Letrado/a",
+  "Jurista",
+  "Licenciado/a en Derecho",
+  "Lawyer",
+  "Attorney",
+  "Attorney-at-law"
+ ],
+ "Account Executive": [
+  "Ejecutivo/a de cuentas",
+  "Ejecutivo comercial de cuentas",
+  "Comercial de cuentas",
+  "Account Executive",
+  "AE",
+  "Ejecutivo/a de ventas de cuentas",
+  "Sales Account Executive"
+ ],
+ "Account Manager": [
+  "Gestor/a de cuentas",
+  "Responsable de cuentas",
+  "Responsable de cuenta",
+  "Gestor/a de clientes",
+  "Account Manager",
+  "Client Account Manager",
+  "Gestor/a de cuentas clave"
+ ],
+ "Agente de atención al cliente": [
+  "Agente de atención al cliente",
+  "Asesor/a de atención al cliente",
+  "Operador/a de atención al cliente",
+  "Teleoperador/a",
+  "Customer Service Agent",
+  "Customer Service Representative",
+  "Customer Support Agent"
+ ],
+ "Analista de datos": [
+  "Analista de datos",
+  "Analista de datos de negocio",
+  "Analista BI",
+  "Analista de Business Intelligence",
+  "Data Analyst",
+  "Business Data Analyst",
+  "BI Analyst"
+ ],
+ "Asesor contable": [
+  "Asesor/a contable",
+  "Consultor/a contable",
+  "Asesor/a de contabilidad",
+  "Consultor/a de contabilidad",
+  "Accounting Advisor",
+  "Accounting Consultant",
+  "Accounting Adviser"
+ ],
+ "Asistente de dirección": [
+  "Asistente de dirección",
+  "Asistente ejecutivo/a",
+  "Secretario/a de dirección",
+  "Asistente de presidencia",
+  "Executive Assistant",
+  "Executive Secretary",
+  "Assistant to the Director"
+ ],
+ "Auxiliar administrativo": [
+  "Auxiliar administrativo/a",
+  "Auxiliar de oficina",
+  "Administrativo/a",
+  "Administrativo/a de oficina",
+  "Office Assistant",
+  "Administrative Assistant",
+  "Administrative Clerk"
+ ],
+ "Auxiliar de enfermería": [
+  "Auxiliar de enfermería",
+  "Técnico/a en cuidados auxiliares de enfermería (TCAE)",
+  "Auxiliar sanitario/a",
+  "Enfermero/a auxiliar",
+  "Nursing Assistant",
+  "Nursing Aide",
+  "Healthcare Assistant"
+ ],
+ "Auxiliar de geriatría": [
+  "Auxiliar de geriatría",
+  "Gerocultor/a",
+  "Auxiliar de gerontología",
+  "Geriatric Assistant",
+  "Geriatric Nursing Assistant",
+  "Geriatric Care Assistant",
+  "Elderly Care Assistant"
+ ],
+ "Ayudante de cocina": [
+  "Ayudante de cocina",
+  "Auxiliar de cocina",
+  "Ayudante de cocinero/a",
+  "Marmitón",
+  "Kitchen Assistant",
+  "Kitchen Helper",
+  "Kitchen Hand"
+ ],
+ "Business Partner": [
+  "Business Partnering",
+  "Partner de negocio",
+  "Business partner corporativo",
+  "Socio de negocio",
+  "Business Partner Specialist",
+  "Business Partnering Specialist",
+  "Business Partner (BP)",
+  "Business Partnership Manager"
+ ],
+ "Cajera": [
+  "Cajero",
+  "Cajero/a",
+  "Cajero de supermercado",
+  "Cajera de tienda",
+  "Operador de caja",
+  "Cajero/a de establecimiento",
+  "Cashier",
+  "Checkout operator"
+ ],
+ "Camarera": [
+  "Camarero",
+  "Camarero/a",
+  "Camarero de sala",
+  "Camarera de sala",
+  "Camarera de restaurante",
+  "Camarero/a de sala",
+  "Waiter",
+  "Waitress"
+ ],
+ "Camarero": [
+  "Camarera",
+  "Camarero/a",
+  "Camarero de sala",
+  "Camarera de sala",
+  "Camarero de restaurante",
+  "Waiter",
+  "Waitress"
+ ],
+ "Camarero de barra": [
+  "Camarera de barra",
+  "Camarero de bar",
+  "Camarera de bar",
+  "Barman",
+  "Barmaid",
+  "Bartender",
+  "Barista de barra"
+ ],
+ "Carretillero": [
+  "Carretillera",
+  "Conductor de carretilla elevadora",
+  "Operario de carretilla elevadora",
+  "Carretillero de almacén",
+  "Mozo de almacén con carretilla",
+  "Operador de carretilla elevadora",
+  "Forklift operator",
+  "Forklift driver"
+ ],
+ "Cocinero": [
+  "Cocinera",
+  "Cocinero/a",
+  "Cocinero de restaurante",
+  "Cocinera de restaurante",
+  "Cocinero de cocina",
+  "Cocinero/a de restaurante",
+  "Cook",
+  "Cook/chef"
+ ],
+ "Conductor de camión": [
+  "Camionero",
+  "Conductor de camiones",
+  "Chófer de camión",
+  "Conductor de vehículo pesado",
+  "Conductor de camión de mercancías",
+  "Truck driver",
+  "HGV driver",
+  "Lorry driver"
+ ],
+ "Conductor de tráiler": [
+  "Conductor de trailer",
+  "Conductor de camión articulado",
+  "Camionero de tráiler",
+  "Conductor de semirremolque",
+  "Semi-trailer driver",
+  "Articulated lorry driver",
+  "Tractor-trailer driver",
+  "Truck driver (articulated)"
+ ],
+ "Consultant": [
+  "Consultor",
+  "Consultora",
+  "Asesor",
+  "Consultor externo",
+  "Business consultant",
+  "Management consultant",
+  "Consultor de negocio",
+  "Consultant advisor"
+ ],
+ "Contable": [
+  "Contador",
+  "Contable generalista",
+  "Técnico de contabilidad",
+  "Técnico contable",
+  "Accountant",
+  "General accountant",
+  "Accounting specialist",
+  "Contador público"
+ ],
+ "Content Creator": [
+  "Creador de contenido",
+  "Creadora de contenido",
+  "Creador de contenidos digitales",
+  "Productor de contenido",
+  "Creador digital",
+  "Digital content creator",
+  "Social media content creator",
+  "Content producer"
+ ],
+ "Content Writer": [
+  "Redactor de contenidos",
+  "Redactora de contenidos",
+  "Redactor web",
+  "Redactor de contenido digital",
+  "Escritor de contenidos",
+  "Web content writer",
+  "Digital content writer",
+  "Content writer"
+ ],
+ "Customer Success Engineer": [
+  "Ingeniero de éxito del cliente",
+  "Ingeniera de éxito del cliente",
+  "Ingeniero de Customer Success",
+  "Técnico de éxito del cliente",
+  "Ingeniero de customer success",
+  "CS Engineer",
+  "Customer Success Engineer",
+  "Customer success technical specialist"
+ ],
+ "Customer Success Manager": [
+  "Gestor de éxito del cliente",
+  "Gestora de éxito del cliente",
+  "Responsable de éxito del cliente",
+  "Responsable de customer success",
+  "Gestor de customer success",
+  "CSM",
+  "Customer Success Manager",
+  "Customer success manager/a"
+ ],
+ "Customer Support": [
+  "Atención al cliente",
+  "Soporte al cliente",
+  "Agente de atención al cliente",
+  "Agente de soporte al cliente",
+  "Customer service representative",
+  "Customer support agent",
+  "Customer support specialist",
+  "Servicio de atención al cliente"
+ ],
+ "Data Analyst": [
+  "Analista de datos",
+  "Analista de datos junior",
+  "Analista de datos de negocio",
+  "Business Data Analyst",
+  "Analista de business intelligence",
+  "Analista de BI",
+  "Analista de información"
+ ],
+ "Data Engineer": [
+  "Ingeniero de datos",
+  "Ingeniera de datos",
+  "Ingeniero/a de datos",
+  "Ingeniero de Big Data",
+  "Ingeniero de pipelines de datos",
+  "Ingeniero de datos en la nube",
+  "Big Data Engineer"
+ ],
+ "Data Scientist": [
+  "Científico de datos",
+  "Científica de datos",
+  "Científico/a de datos",
+  "Especialista en ciencia de datos",
+  "Data Science Specialist",
+  "Científico de datos senior",
+  "Data Science Engineer"
+ ],
+ "Dependienta": [
+  "Dependiente",
+  "Dependienta de tienda",
+  "Dependiente/a de comercio",
+  "Vendedora de tienda",
+  "Shop Assistant",
+  "Sales Assistant",
+  "Sales Associate"
+ ],
+ "Dependiente": [
+  "Dependienta",
+  "Dependiente/a",
+  "Dependiente de tienda",
+  "Dependiente/a de comercio",
+  "Vendedor de tienda",
+  "Shop Assistant",
+  "Sales Assistant"
+ ],
+ "Desarrollador": [
+  "Desarrolladora",
+  "Programador",
+  "Programadora",
+  "Desarrollador de software",
+  "Ingeniero de software",
+  "Software Developer",
+  "Software Engineer"
+ ],
+ "Desarrolladora Python": [
+  "Desarrollador Python",
+  "Programador Python",
+  "Programadora Python",
+  "Python Developer",
+  "Python Engineer",
+  "Ingeniero Python",
+  "Python Software Engineer"
+ ],
+ "Developer": [
+  "Desarrollador",
+  "Desarrolladora",
+  "Programador",
+  "Desarrollador de software",
+  "Software Developer",
+  "Software Engineer",
+  "Ingeniero de software"
+ ],
+ "Director": [
+  "Directora",
+  "Director/a",
+  "Director de área",
+  "Director de departamento",
+  "Director/a de área",
+  "Director/a de departamento"
+ ],
+ "Electricista": [
+  "Electricista de obra",
+  "Electricista industrial",
+  "Electricista instalador",
+  "Instalador electricista",
+  "Electrician",
+  "Electrical Installer",
+  "Electrical Fitter"
+ ],
+ "Empleada de hogar": [
+  "Empleado de hogar",
+  "Empleada doméstica",
+  "Empleado doméstico",
+  "Trabajador del hogar",
+  "Asistenta del hogar",
+  "Domestic Worker",
+  "Domestic Helper",
+  "Housekeeper"
+ ],
+ "Enfermera": [
+  "Enfermero",
+  "Enfermera/o",
+  "Diplomada en enfermería",
+  "Diplomado en enfermería",
+  "Graduada en enfermería",
+  "Nurse",
+  "Registered nurse"
+ ],
+ "Engineer": [
+  "Ingeniero",
+  "Ingeniera",
+  "Ingeniero/a",
+  "Ingeniero titulado",
+  "Engineer (ingeniería)",
+  "Professional engineer",
+  "Graduate engineer"
+ ],
+ "Fotógrafo": [
+  "Fotógrafa",
+  "Fotógrafo/a",
+  "Fotógrafo profesional",
+  "Fotógrafa profesional",
+  "Photographer",
+  "Professional photographer"
+ ],
+ "HR Business Partner": [
+  "HRBP",
+  "HR Business Partner (HRBP)",
+  "Business Partner de Recursos Humanos",
+  "Partner de RRHH",
+  "Socio de negocio de RRHH",
+  "Human Resources Business Partner",
+  "HR Partner",
+  "Business Partner de RRHH"
+ ],
+ "Jefe de cocina": [
+  "Jefa de cocina",
+  "Chef de cocina",
+  "Head chef",
+  "Executive chef",
+  "Chef de cuisine",
+  "Chef ejecutivo",
+  "Cocinero jefe",
+  "Kitchen chef"
+ ],
+ "Jefe de sala": [
+  "Jefa de sala",
+  "Maître",
+  "Maître d'hôtel",
+  "Maître d'",
+  "Head waiter",
+  "Jefe de comedor",
+  "Dining room manager",
+  "Front of house supervisor"
+ ],
+ "Manager": [
+  "Mánager",
+  "Gerente",
+  "Responsable de equipo",
+  "Team manager",
+  "Gestor",
+  "Manager general",
+  "Mánager de equipo",
+  "Responsable"
+ ],
+ "Marketing Director": [
+  "Director de marketing",
+  "Directora de marketing",
+  "Marketing director",
+  "Director of Marketing",
+  "Dirección de marketing",
+  "Director de mercadotecnia",
+  "Head of marketing director",
+  "Marketing Head"
+ ],
+ "Mozo de almacén": [
+  "Mozo/a de almacén",
+  "Operario de almacén",
+  "Auxiliar de almacén",
+  "Almacenero",
+  "Warehouse operative",
+  "Warehouse worker",
+  "Warehouse operator",
+  "Warehouse assistant"
+ ],
+ "Nurse": [
+  "Enfermero",
+  "Enfermera",
+  "Enfermero/a",
+  "Diplomado en Enfermería",
+  "Graduado en Enfermería",
+  "Registered nurse",
+  "Staff nurse",
+  "RN"
+ ],
+ "Operations Manager": [
+  "Jefe de operaciones",
+  "Jefa de operaciones",
+  "Responsable de operaciones",
+  "Gerente de operaciones",
+  "Operations manager",
+  "Manager of operations",
+  "Operations supervisor"
+ ],
+ "Personal de almacén": [
+  "Mozo de almacén",
+  "Mozo/a de almacén",
+  "Almacenero",
+  "Operario de almacén",
+  "Auxiliar de almacén",
+  "Warehouse operative",
+  "Warehouse worker"
+ ],
+ "Personal de limpieza": [
+  "Limpiador",
+  "Limpiadora",
+  "Operario de limpieza",
+  "Auxiliar de limpieza",
+  "Cleaner",
+  "Cleaning operative",
+  "Cleaning staff"
+ ],
+ "Product Manager": [
+  "Jefe de producto",
+  "Responsable de producto",
+  "Gestor de producto",
+  "Product Manager digital",
+  "Gerente de producto",
+  "Responsable de gestión de producto",
+  "Product Manager (PM)"
+ ],
+ "Product Owner": [
+  "Propietario del producto",
+  "Dueño de producto",
+  "PO",
+  "Responsable de producto ágil",
+  "Product Owner ágil",
+  "Scrum Product Owner",
+  "Product Owner (PO)"
+ ],
+ "Profesor de inglés": [
+  "Profesor de idioma inglés",
+  "Docente de inglés",
+  "Profesor de English",
+  "Monitor de inglés",
+  "English teacher",
+  "Teacher of English",
+  "ESL teacher"
+ ],
+ "Profesora de inglés": [
+  "Profesora de idioma inglés",
+  "Docente de inglés",
+  "Monitora de inglés",
+  "Profesora de English",
+  "English teacher",
+  "Teacher of English",
+  "ESL teacher"
+ ],
+ "Programador": [
+  "Desarrollador de software",
+  "Programador informático",
+  "Programador de aplicaciones",
+  "Programador/a",
+  "Software developer",
+  "Programmer",
+  "Developer"
+ ],
+ "Programador web": [
+  "Desarrollador web",
+  "Programador/a web",
+  "Programador de páginas web",
+  "Desarrollador de sitios web",
+  "Web developer",
+  "Web programmer",
+  "Web developer (programador)"
+ ],
+ "Promotora de ventas": [
+  "Promotor de ventas",
+  "Promotor/a de ventas",
+  "Promotora comercial",
+  "Promotor en punto de venta",
+  "Promotor de producto",
+  "Sales promoter",
+  "Promoter"
+ ],
+ "Recepcionista": [
+  "Recepcionista de oficina",
+  "Auxiliar de recepción",
+  "Recepcionista administrativo",
+  "Recepcionista/telefonista",
+  "Front desk agent",
+  "Receptionist",
+  "Front office agent"
+ ],
+ "Reclutador": [
+  "Reclutadora",
+  "Reclutador/a",
+  "Técnico de selección",
+  "Especialista en reclutamiento",
+  "Agente de reclutamiento",
+  "Recruiter",
+  "Talent acquisition specialist"
+ ],
+ "Repartidor": [
+  "Repartidor/a",
+  "Mensajero",
+  "Conductor repartidor",
+  "Auxiliar de reparto",
+  "Delivery driver",
+  "Courier"
+ ],
+ "Responsable de Recursos Humanos": [
+  "Responsable de RRHH",
+  "Responsable de Recursos Humanos",
+  "Jefe de Recursos Humanos",
+  "Human Resources Manager",
+  "HR Manager",
+  "Director de Recursos Humanos",
+  "HR Lead"
+ ],
+ "Responsable de redes sociales": [
+  "Responsable de Redes Sociales",
+  "Community Manager",
+  "Social Media Manager",
+  "Social Media Coordinator",
+  "Responsable de comunicación en redes sociales",
+  "Social media lead"
+ ],
+ "Sales Manager": [
+  "Responsable de ventas",
+  "Jefe de ventas",
+  "Director comercial",
+  "Sales Manager",
+  "Gerente de ventas",
+  "Head of Sales"
+ ],
+ "Scrum Master": [
+  "Scrum Master",
+  "Agile Coach",
+  "Facilitador Scrum",
+  "Técnico Scrum",
+  "Scrum Master certificado",
+  "Agile Delivery Lead"
+ ],
+ "Site Reliability Engineer": [
+  "SRE",
+  "Ingeniero de fiabilidad de sitios",
+  "Ingeniero SRE",
+  "Ingeniero de fiabilidad",
+  "Site Reliability Engineer",
+  "Reliability Engineer"
+ ],
+ "Social Media Manager": [
+  "Responsable de redes sociales",
+  "Community Manager",
+  "Social Media Specialist",
+  "Gestor de redes sociales",
+  "Responsable de social media",
+  "Social Media Coordinator"
+ ],
+ "Software Engineer": [
+  "Ingeniero de software",
+  "Ingeniero/a de software",
+  "Desarrollador de software",
+  "Ingeniero desarrollador",
+  "Software Developer",
+  "Programador de software"
+ ],
+ "Talent Acquisition": [
+  "Talent Acquisition Specialist",
+  "Especialista en selección de talento",
+  "Responsable de selección",
+  "Reclutador",
+  "Talent Acquisition Manager",
+  "Technical Recruiter"
+ ],
+ "Tax Specialist": [
+  "Especialista fiscal",
+  "Técnico fiscal",
+  "Especialista en impuestos",
+  "Asesor fiscal",
+  "Tax Analyst",
+  "Tax Consultant"
+ ],
+ "Teleoperador": [
+  "Teleoperadora",
+  "Operador de telemarketing",
+  "Operadora de telemarketing",
+  "Agente de call center",
+  "Operador de call center",
+  "Telemarketer",
+  "Call center agent"
+ ],
+ "Técnico de climatización": [
+  "Técnica de climatización",
+  "Técnico de aire acondicionado",
+  "Instalador de climatización",
+  "Técnico de mantenimiento de climatización",
+  "Técnico HVAC",
+  "HVAC technician",
+  "Air conditioning technician"
+ ],
+ "Técnico de selección": [
+  "Técnica de selección",
+  "Reclutador",
+  "Reclutadora",
+  "Recruiter",
+  "Especialista en selección de personal",
+  "Técnico de reclutamiento",
+  "Talent acquisition specialist"
+ ],
+ "Técnico de soporte informático": [
+  "Técnica de soporte informático",
+  "Técnico de soporte técnico informático",
+  "Técnico de helpdesk",
+  "Técnico de mesa de ayuda",
+  "Técnico de soporte IT",
+  "IT support technician",
+  "Help desk technician"
+ ]
+}

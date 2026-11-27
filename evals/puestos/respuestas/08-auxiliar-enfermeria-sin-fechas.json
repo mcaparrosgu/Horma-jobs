@@ -1,0 +1,230 @@
+{
+  "base": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar de enfermería",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de enfermería geriátrica",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Técnico/a en cuidados auxiliares de enfermería",
+        "idioma": "es",
+        "dato": "Técnico/a en Cuidados Auxiliares de Enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de geriatría",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Gerocultor/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cuidador/a de personas mayores",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de clínica",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de residencia",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de ayuda a domicilio",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar sanitario/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar de enfermería",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Nursing Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar de enfermería geriátrica",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Técnico/a en cuidados auxiliares de enfermería",
+        "idioma": "es",
+        "dato": "Técnico/a en Cuidados Auxiliares de Enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de geriatría",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Gerocultor/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar sanitario/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Healthcare Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Certified Nursing Assistant",
+        "idioma": "en",
+        "dato": "Técnico/a en Cuidados Auxiliares de Enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de clínica",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cuidador/a de personas mayores",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de ayuda a domicilio",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "sanidad",
+    "familia": "sanidad_cuidados",
+    "nivel": "sin_especificar",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Auxiliar de enfermería",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Nursing Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar sociosanitario/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a en Cuidados Auxiliares de Enfermería",
+        "idioma": "es",
+        "dato": "Técnico/a en Cuidados Auxiliares de Enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Gerocultor/a",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de geriatría",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Cuidador/a de personas mayores",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de residencia",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de ayuda a domicilio",
+        "idioma": "es",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Healthcare Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Care Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Elderly Care Assistant",
+        "idioma": "en",
+        "dato": "Auxiliar de enfermería",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

@@ -9,6 +9,7 @@ from sqlalchemy.exc import DBAPIError
 
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.oferta import Oferta
+from horma.tools.normalizar_titulo import normalizar_titulo
 from horma.web.db import sesion_de, sesion_sin_usuaria, sesion_sistema
 from horma.web.queue import worker
 from horma.web.repositories import ofertas as repo_ofertas
@@ -68,6 +69,7 @@ def _perfilar_hecho(motor, u):
     pid, _ = _perfil_pendiente(motor, u)
     _encolar(motor, u, "perfilar", pid)
     assert worker.procesar_una(motor, ProveedorSimulado([_extraccion(cv_id), TAX])) == "hecha"
+    worker.procesar_una(motor, ProveedorSimulado([]))  # sus sinónimos (RF-12.4c)
     return pid
 
 
@@ -128,6 +130,7 @@ def _oferta_procesada(motor, **campos):
             "sector": "hosteleria_turismo", "familia": "hosteleria_restauracion", "nivel": "junior",
             "fantasma": False, "fraude": False, "salario_publicado": False}
     base.update(campos)
+    base["titulo_norm"] = normalizar_titulo(base["titulo"])  # como la ingesta
     cols = ", ".join(base)
     marcas = ", ".join(f":{k}" for k in base)
     with sesion_sistema(motor) as s:
@@ -178,7 +181,7 @@ def test_perfilar_guarda_version_origenes_y_preferencias_del_cv(motor_app, bd_li
         origenes = s.execute(text("select campo, fragmento from origen where entidad='perfil' "
                                   "and entidad_id=:i order by campo"), {"i": pid}).all()
         prefs = s.execute(text("select familias, sectores, idiomas, origen from preferencias")).one()
-        t = s.execute(text("select estado, coste_acumulado from tareas")).one()
+        t = s.execute(text("select estado, coste_acumulado from tareas where tipo = 'perfilar'")).one()
     assert p.version == 1 and p.estado == "hecha" and "Camarera · Bar Sol" in p.cv_maestro
     assert p.familia == "hosteleria_restauracion" and p.datos["experiencias"][0]["puesto"] == "Camarera"
     assert dict(origenes) == {"experiencias.0": "Camarera en Bar Sol, 2020-2023",
@@ -199,7 +202,7 @@ def test_las_preferencias_que_escribio_la_usuaria_no_se_pisan(motor_app, bd_limp
         prefs = s.execute(text("select familias, sectores, origen from preferencias")).one()
     assert prefs.familias == ["ventas_comercial"] and prefs.sectores == ["hosteleria_turismo"]
     # lo antiguo no se toca
-    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv"}
+    assert prefs.origen == {"familias": "usuaria", "sectores": "cv", "idiomas": "cv", "puestos": "cv"}
 
 
 def test_perfilar_sin_cv_falla_con_motivo(motor_app, bd_limpia):
@@ -249,6 +252,7 @@ def test_clasificar_perfil_rellena_la_taxonomia_de_la_version_copiada(motor_app,
     _encolar(motor_app, a, "clasificar_perfil", pid2)
     nueva = dict(TAX, familia="ventas_comercial", nivel="intermedio")
     assert worker.procesar_una(motor_app, ProveedorSimulado([nueva])) == "hecha"
+    worker.procesar_una(motor_app, ProveedorSimulado([]))  # sus sinónimos (RF-12.4c)
     with sesion_de(motor_app, a) as s:
         filas = s.execute(text("select version, estado, familia, nivel from perfiles order by version")).all()
     assert [tuple(f) for f in filas] == [(1, "hecha", "hosteleria_restauracion", "junior"),

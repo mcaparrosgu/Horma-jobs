@@ -2,8 +2,10 @@
 entra en «Qué buscas» si ninguno de sus puestos lo cubre."""
 import pytest
 
+from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.preferencias import Preferencias
 from horma.tools.normalizar_titulo import casa_con_puestos
+from horma.web.queue import worker
 from tests.test_f5_t13_recomendadas_propias import _entrar, _pegar, app  # noqa: F401 (fixture)
 
 
@@ -24,6 +26,7 @@ def test_la_propia_se_ve_y_su_puesto_se_anade_a_que_buscas(app, motor_app):  # n
     prefs = c.get("/api/preferencias").json()
     assert c.put("/api/preferencias", headers=h,
                  json={**prefs, "puestos": ["Jefe de sala"]}).status_code == 200
+    worker.procesar_una(motor_app, ProveedorSimulado([]))  # los sinónimos del puesto (RF-12.4c)
     ok = {"generica": False, "fraude": False}
     oid = _pegar(c, h, motor_app, "Recepcionista en Hotel Mar. Publicada 2026-11-01",
                  {"titulo": "Recepcionista", "empresa": "Hotel Mar", "fecha_publicacion": "2026-11-01"}, ok)

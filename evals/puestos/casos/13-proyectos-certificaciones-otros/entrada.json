@@ -1,0 +1,65 @@
+{
+  "perfil": {
+    "titular": null,
+    "resumen": null,
+    "habilidades": [],
+    "idiomas": [],
+    "formacion": [],
+    "experiencias": [
+      {
+        "puesto": "Camarera",
+        "empresa": "Café Central",
+        "inicio": "2020",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Camarera en Café Central, Sevilla, 2020-2024"
+        }
+      }
+    ],
+    "proyectos": [
+      {
+        "nombre": "Carta digital con códigos QR",
+        "fecha": "2023",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Carta digital con códigos QR, 2023"
+        }
+      },
+      {
+        "nombre": "Organización de un mercadillo solidario",
+        "fecha": "2022",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Organización de un mercadillo solidario, 2022"
+        }
+      }
+    ],
+    "certificaciones": [
+      {
+        "nombre": "Manipulador de alimentos",
+        "entidad": "Cruz Roja",
+        "fecha": "2022",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Manipulador de alimentos, Cruz Roja, 2022"
+        }
+      }
+    ],
+    "otros": [
+      {
+        "valor": "Carnet de conducir B",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Carnet de conducir B"
+        }
+      }
+    ],
+    "nombre": "Marta Gil"
+  }
+}

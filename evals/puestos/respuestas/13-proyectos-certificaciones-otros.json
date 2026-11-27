@@ -1,0 +1,233 @@
+{
+  "base": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [
+      "carnet de conducir b",
+      "códigos qr"
+    ],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waiter",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waitress",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Barista",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Food Runner",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Dependiente/a de cafetería",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "intermedio",
+    "stack": [
+      "códigos qr",
+      "carnet de conducir b"
+    ],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de cafetería",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waiter/Waitress",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Server",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de cafetería",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Runner de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Manipulador/a de alimentos",
+        "idioma": "es",
+        "dato": "Manipulador/a de alimentos",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "hosteleria_turismo",
+    "familia": "hosteleria_restauracion",
+    "nivel": "junior",
+    "stack": [
+      "carnet de conducir b",
+      "códigos qr"
+    ],
+    "puestos": [
+      {
+        "titulo": "Camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Camarero/a de barra",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waiter",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Waitress",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Server",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Ayudante de camarero/a",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de sala",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de cafetería",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Dependiente/a de cafetería",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Barista",
+        "idioma": "es",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Barista",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Bartender",
+        "idioma": "en",
+        "dato": "Camarero/a",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

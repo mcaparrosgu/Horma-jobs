@@ -19,14 +19,16 @@ Reglas:
 - Puestos y excluidos (RF-9.3c, 9.3d): el título normalizado de la oferta casa con un puesto si lo contiene
   como frase de palabras completas. Con familias o puestos, la oferta pasa si cumple la familia O el título
   casa con un puesto (una oferta de otra familia entra por su título). Un término excluido en el título
-  saca la oferta. Sin familias ni puestos no se filtra por puesto.
+  saca la oferta. Sin familias ni puestos no se filtra por puesto. Un puesto genérico («Manager») solo
+  casa con ofertas de la familia del perfil o sin familia (RF-12.9).
 - Orden «compatibles»: primero la coincidencia de taxonomía con el perfil y con los puestos marcados,
   después la fecha. Orden «recientes»: solo la fecha. No se descarta nada por el orden."""
 from dataclasses import dataclass, field
 
 from horma.schemas.preferencias import Preferencias
 from horma.schemas.taxonomia import Taxonomia
-from horma.tools.normalizar_titulo import normalizar_titulo, variantes_genero
+from horma.tools.normalizar_titulo import es_generico, normalizar_titulo, variantes_genero
+from horma.tools.sinonimos_puestos import otras_formas
 
 
 @dataclass(frozen=True)
@@ -45,13 +47,22 @@ def buscar_ofertas(prefs: Preferencias, taxonomia: Taxonomia | None = None, *,
         return f"CAST(:{nombre} AS text[])"
 
     def frases(nombre: str, terminos: list[str]) -> str | None:
+        """Condición «el título contiene alguno». Los puestos llegan ya con sus otras formas."""
         normalizados = [n for n in dict.fromkeys(normalizar_titulo(t) for t in terminos) if n]
         if not normalizados:
             return None
         p[nombre] = [f"% {v} %" for n in normalizados for v in variantes_genero(n)]
         return f"((' ' || coalesce(titulo_norm, '') || ' ') LIKE ANY(CAST(:{nombre} AS text[])))"
 
-    casa_puesto = frases("puestos", prefs.puestos)
+    # RF-12.4c: también sus otras formas (no las de los excluidos); las genéricas, con RF-12.9.
+    buscados = [f for puesto in prefs.puestos for f in otras_formas(puesto, prefs.sinonimos.get(puesto, ()))]
+    concretos = frases("puestos", [t for t in buscados if not es_generico(t)])
+    genericos = frases("genericos", [t for t in buscados if es_generico(t)])
+    if genericos and taxonomia is not None:
+        p["familia_perfil"] = taxonomia.familia
+        genericos = f"({genericos} AND (familia IS NULL OR familia = :familia_perfil))"
+    casan = [c for c in (concretos, genericos) if c]
+    casa_puesto = f"({' OR '.join(casan)})" if casan else None
     por_puesto = []
     if prefs.familias:
         por_puesto.append(f"(familia IS NULL OR familia = ANY({lista('familias', prefs.familias)}))")

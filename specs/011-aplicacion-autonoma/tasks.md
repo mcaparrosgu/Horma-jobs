@@ -30,7 +30,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** con un catálogo de fixtures, la tabla cuenta bien portal, ofertas y «exige cuenta»; sin sesión
     de admin, la API responde 403.
   - **Navegador:** Admin a 1280 y 390 px, claro y oscuro.
-- [ ] T04 — Cierre de A. 🛑 Mar lee la medición del catálogo real y se anota en la hoja de ruta como decisión; PR.
+- [x] T04 — Cierre de A. 🛑 Mar lee la medición del catálogo real y se anota en la hoja de ruta como decisión; PR. D-028; PR #44 fusionado, 25-nov.
 
 ### M · Mejoras pequeñas (RF-11.25 a 11.30)
 - [x] T05 — El aviso «Hemos quitado un dato personal» se ve.
@@ -84,4 +84,4 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** `tests/test_s11_anadir_url_vacia_al_reabrir.py` (en node). **Navegador:** comprobado en claro y oscuro con la URL de lifeworq ya añadida (sin lectura ni gasto). Mar: 1280 y 390 px, claro y oscuro (25-nov).
 - [x] T08s — La barra de avance avanza según lo que suele tardar cada tarea y cuenta el tiempo que la usuaria pasó en otra pestaña (M17, tercera prueba de Mar: «subida muy lenta» y, al volver de otra pestaña, parecía congelada; RF-10.8c revisado, D-035). Causa comprobada en node: un punto cada 3 s dejaba un CV (37 s de mediana, con el servidor en 0 % casi todo el rato) en ~14 % antes de saltar a 100 %; y al volver se retomaba el valor con el que se fue (10 s dentro y 20 fuera: 5 % al irse y 5 % al volver, frente a 12 % sin irse). Ahora se acerca al 95 % con la duración típica de cada tarea (`DURACION_TIPICA_S` en `comun.js`; a esa duración va por el 60 %) y guarda la hora con el valor.
   - **Test:** `tests/test_s11_barra_ritmo_tiempo_fuera.py` (en node, con reloj de mentira); `tests/test_s11_barra_nunca_parada.py` adaptado a la regla nueva. **Navegador:** simulada en Perfil, sin gasto, en claro y oscuro: 24 % a los 10 s; al irse a Candidaturas con 35 % y volver 22 s después, 62 % (antes, 35 %). Mar: M17 con un CV real, 1280 y 390 px, claro y oscuro (25-nov).
-- [ ] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR. Tercera prueba (25-nov): M12a a M18 funcionan; «a trompicones» era solo M17 (la barra parecía congelada al volver de otra pestaña: T08s) y salen T08o a T08s. Cuarta prueba (25-nov): M17 y M19 a M22 bien, a 1280 y 390 px, en claro y oscuro. Falta el PR.
+- [x] T09 — Cierre de M. 🛑 Prueba manual de Mar; `specs/index.md` al día; PR. Tercera prueba (25-nov): M12a a M18 funcionan; «a trompicones» era solo M17 (la barra parecía congelada al volver de otra pestaña: T08s) y salen T08o a T08s. Cuarta prueba (25-nov): M17 y M19 a M22 bien, a 1280 y 390 px, en claro y oscuro. PR #44 fusionado, 25-nov.

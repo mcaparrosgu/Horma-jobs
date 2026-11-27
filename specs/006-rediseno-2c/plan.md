@@ -127,7 +127,7 @@ horma/web/static/
 - **Manifiesto:** `theme_color` y `background_color` pasan a `#f6f6f2`.
 - **`<meta name="theme-color">`:** dos, una con `media="(prefers-color-scheme: light)"` (`#f6f6f2`) y otra con `dark` (`#0a0a0a`).
 - **`sw.js`:** sube la versión de la caché y precarga `tokens.css`, `estilo.css`, `tema.js` y las 3 fuentes.
-- **Iconos:** se mantienen; el cambio de logotipo queda fuera de alcance.
+- **Iconos:** quedaron fuera de este cambio; el 26-nov pasan al cuadrado de la marca (spec 012, cambios pequeños).
 
 ## Tests (TDD: primero fallan)
 - **Cambian** (marcados en la spec como «cambio declarado»):

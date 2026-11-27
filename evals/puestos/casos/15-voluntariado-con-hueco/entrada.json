@@ -1,0 +1,46 @@
+{
+  "perfil": {
+    "titular": null,
+    "resumen": null,
+    "habilidades": [],
+    "idiomas": [],
+    "formacion": [],
+    "experiencias": [
+      {
+        "puesto": "Dependienta",
+        "empresa": "Moda Sur",
+        "inicio": "2016",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Dependienta en Moda Sur, Málaga, 2016-2019"
+        }
+      },
+      {
+        "puesto": "Auxiliar administrativa",
+        "empresa": "Gestoría Costa",
+        "inicio": "2020",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Auxiliar administrativa en Gestoría Costa, 2020-2024"
+        }
+      }
+    ],
+    "actividades": [
+      {
+        "descripcion": "Voluntariado en el banco de alimentos",
+        "inicio": "2019",
+        "fin": "2020",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Voluntariado en el banco de alimentos, 2019-2020"
+        }
+      }
+    ],
+    "periodos_cubiertos": []
+  }
+}

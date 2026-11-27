@@ -1,0 +1,71 @@
+{
+  "perfil": {
+    "nombre": "Beatriz Lozano",
+    "experiencias": [
+      {
+        "puesto": "Técnica de selección",
+        "empresa": "Talento SA",
+        "inicio": "2008",
+        "fin": "2013",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnica de selección en Talento SA, 2008-2013"
+        }
+      },
+      {
+        "puesto": "Directora de Recursos Humanos",
+        "empresa": "Industrias Turia",
+        "inicio": "2013",
+        "fin": "actual",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Directora de Recursos Humanos en Industrias Turia, 2013-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Licenciatura en Psicología",
+        "centro": "Universidad de Valencia",
+        "inicio": "2002",
+        "fin": "2007",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Licenciatura en Psicología, Universidad de Valencia, 2002-2007"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "negociación colectiva",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "negociación colectiva"
+        }
+      },
+      {
+        "nombre": "SAP SuccessFactors",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "SAP SuccessFactors"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": [],
+    "genero_puestos": "femenino"
+  },
+  "variante": {
+    "nombre": "Benito Lozano",
+    "genero_puestos": "masculino",
+    "reemplazos": {
+      "Directora": "Director",
+      "Técnica": "Técnico"
+    }
+  }
+}

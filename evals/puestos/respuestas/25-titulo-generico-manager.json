@@ -1,0 +1,218 @@
+{
+  "base": {
+    "sector": "otros",
+    "familia": "atencion_cliente",
+    "nivel": "senior",
+    "stack": [
+      "zendesk"
+    ],
+    "puestos": [
+      {
+        "titulo": "Customer Service Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Jefe/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de servicio al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Success Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Experience Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de experiencia de cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Supervisor/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Coordinador/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Service Team Leader",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "otros",
+    "familia": "atencion_cliente",
+    "nivel": "intermedio",
+    "stack": [
+      "zendesk"
+    ],
+    "puestos": [
+      {
+        "titulo": "Customer Service Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de servicio al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Service Team Lead",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Supervisor/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Coordinador/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Success Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Experience Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Responsable de experiencia de cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "otros",
+    "familia": "atencion_cliente",
+    "nivel": "senior",
+    "stack": [
+      "zendesk"
+    ],
+    "puestos": [
+      {
+        "titulo": "Customer Service Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Support Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Jefe/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Responsable de soporte al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Customer Experience Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Success Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Supervisor/a de atención al cliente",
+        "idioma": "es",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Service Team Lead",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Call Center Manager",
+        "idioma": "en",
+        "dato": "Manager",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

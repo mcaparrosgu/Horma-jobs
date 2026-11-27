@@ -1,0 +1,61 @@
+{
+  "perfil": {
+    "titular": null,
+    "resumen": null,
+    "habilidades": [
+      {
+        "nombre": "SQL",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "SQL"
+        }
+      },
+      {
+        "nombre": "Excel",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Excel"
+        }
+      },
+      {
+        "nombre": "Power BI",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Power BI"
+        }
+      }
+    ],
+    "idiomas": [],
+    "formacion": [
+      {
+        "titulo": "Grado en Estadística",
+        "centro": "Universidad de Sevilla",
+        "inicio": "2017",
+        "fin": "2021",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Estadística, Universidad de Sevilla, 2017-2021"
+        }
+      }
+    ],
+    "experiencias": [
+      {
+        "puesto": "Analista de datos",
+        "empresa": "Retail Sur",
+        "inicio": "2021",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Analista de datos en Retail Sur, Sevilla, 2021-2024"
+        }
+      }
+    ],
+    "actividades": [],
+    "periodos_cubiertos": []
+  }
+}

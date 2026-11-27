@@ -118,6 +118,10 @@ def crear_app(engine: Engine | None = None, identidad: Identidad | None = None) 
         return FileResponse(ESTATICOS / "sw.js", media_type="text/javascript",
                             headers={"Cache-Control": "no-cache"})
 
+    @app.get("/favicon.ico", include_in_schema=False)
+    def favicon():
+        return FileResponse(ESTATICOS / "iconos" / "favicon.ico", media_type="image/x-icon")
+
     @app.get("/salud", include_in_schema=False)
     def salud():
         return {"estado": "ok"}  # sin datos: solo dice que la API responde

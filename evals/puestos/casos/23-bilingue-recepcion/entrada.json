@@ -1,0 +1,73 @@
+{
+  "perfil": {
+    "nombre": "Sofia Bennett",
+    "experiencias": [
+      {
+        "puesto": "Front Desk Agent",
+        "empresa": "Harbour Hotel, Bristol",
+        "inicio": "2018",
+        "fin": "2021",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Front Desk Agent en Harbour Hotel, Bristol, 2018-2021"
+        }
+      },
+      {
+        "puesto": "Recepcionista",
+        "empresa": "Hotel Miramar",
+        "inicio": "2021",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Recepcionista en Hotel Miramar, 2021-2025"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "BA in Tourism Management",
+        "centro": "University of Bristol",
+        "inicio": "2015",
+        "fin": "2018",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "BA in Tourism Management, University of Bristol, 2015-2018"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Opera PMS",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Opera PMS"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "nativo",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en nativo"
+        }
+      },
+      {
+        "idioma": "es",
+        "nivel": "C1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "es C1"
+        }
+      }
+    ]
+  }
+}

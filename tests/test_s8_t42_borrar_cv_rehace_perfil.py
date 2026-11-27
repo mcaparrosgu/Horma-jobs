@@ -32,6 +32,7 @@ def _construir(motor, u, *cvs):
     r = _extraccion(*cvs[0]) if len(cvs) == 1 else {"perfil": {"experiencias": [
         e for c in cvs for e in _extraccion(*c)["perfil"]["experiencias"]]}}
     assert worker.procesar_una(motor, ProveedorSimulado([r, TAX])) == "hecha"
+    worker.procesar_una(motor, ProveedorSimulado([]))  # sus sinónimos (RF-12.4c)
 
 
 def _con_archivo(motor, u, nombre, texto, tmp_path, monkeypatch):

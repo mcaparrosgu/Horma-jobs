@@ -1,0 +1,233 @@
+{
+  "base": {
+    "sector": "educacion",
+    "familia": "educacion_formacion",
+    "nivel": "intermedio",
+    "stack": [
+      "lightroom",
+      "photoshop"
+    ],
+    "puestos": [
+      {
+        "titulo": "Profesor/a de inglés",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "English Teacher",
+        "idioma": "en",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Fotógrafo/a freelance",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Freelance Photographer",
+        "idioma": "en",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Fotógrafo/a",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Photographer",
+        "idioma": "en",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Profesor/a de idiomas",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "English Tutor",
+        "idioma": "en",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Tutor/a de inglés",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Fotógrafo/a de producto",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Fotógrafo/a de eventos",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "educacion",
+    "familia": "educacion_formacion",
+    "nivel": "intermedio",
+    "stack": [
+      "lightroom",
+      "photoshop"
+    ],
+    "puestos": [
+      {
+        "titulo": "Fotógrafo/a freelance",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Freelance Photographer",
+        "idioma": "en",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Fotógrafo/a autónomo/a",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Photographer",
+        "idioma": "en",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Profesor/a de inglés",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "English Teacher",
+        "idioma": "en",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Profesor/a de idiomas",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Tutor/a de inglés",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "English Tutor",
+        "idioma": "en",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Profesor/a particular de inglés",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "educacion",
+    "familia": "educacion_formacion",
+    "nivel": "intermedio",
+    "stack": [
+      "lightroom",
+      "photoshop"
+    ],
+    "puestos": [
+      {
+        "titulo": "Profesor/a de inglés",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "English Teacher",
+        "idioma": "en",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Fotógrafo/a freelance",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Freelance Photographer",
+        "idioma": "en",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Profesor/a particular de inglés",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "ESL Teacher",
+        "idioma": "en",
+        "dato": "Profesor/a de inglés",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Fotógrafo/a",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Traductor/a inglés-español",
+        "idioma": "es",
+        "dato": "Grado en Estudios Ingleses",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Fotógrafo/a de producto",
+        "idioma": "es",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Profesor/a de idiomas",
+        "idioma": "es",
+        "dato": "Profesor/a de inglés",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Corrector/a de textos en inglés",
+        "idioma": "es",
+        "dato": "Grado en Estudios Ingleses",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Photo Editor",
+        "idioma": "en",
+        "dato": "Fotógrafo/a freelance",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

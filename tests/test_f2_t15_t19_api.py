@@ -6,6 +6,7 @@ from sqlalchemy import text
 from horma import config
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.perfil import Perfil
+from horma.tools.normalizar_titulo import normalizar_titulo
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.main import crear_app
 from horma.web.queue import worker
@@ -353,6 +354,7 @@ def _oferta(motor, **campos):
             "nivel": "junior", "fantasma": False, "fraude": False, "salario_publicado": False,
             "pais": "ES", "tipo_contrato": "indefinido", "idiomas_norm": ["es"]}
     base.update(campos)
+    base["titulo_norm"] = normalizar_titulo(base["titulo"])  # como la ingesta
     columnas, marcas = ", ".join(base), ", ".join(
         f"cast(:{k} as text[])" if k == "idiomas_norm" else f":{k}" for k in base)
     with sesion_sistema(motor) as s:
@@ -550,6 +552,7 @@ def test_de_la_subida_al_perfil_y_la_recomendacion_con_el_worker(app, motor_app)
         "origen": {"fuente": "cv", "cv_id": cv["id"], "fragmento": "Camarera en Bar Sol, 2020-2023"}}]},
         "cv_maestro": "# Ana\nCamarera en Bar Sol, 2020-2023"}
     assert worker.procesar_una(motor_app, ProveedorSimulado([extraccion, TAX])) == "hecha"
+    worker.procesar_una(motor_app, ProveedorSimulado([]))  # sus sinónimos (RF-12.4c)
     assert c.get("/api/perfil").json()["perfil"]["experiencias"][0]["puesto"] == "Camarera"
     assert c.get("/api/preferencias").json()["familias"] == []   # el área ya no se rellena desde el CV
     oferta = _oferta(motor_app, titulo="Camarera de sala")

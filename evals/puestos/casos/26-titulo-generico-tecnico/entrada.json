@@ -1,0 +1,52 @@
+{
+  "perfil": {
+    "nombre": "Manuel Ortiz",
+    "experiencias": [
+      {
+        "puesto": "Técnico",
+        "empresa": "Climatizaciones Levante, instalación de aire acondicionado",
+        "inicio": "2017",
+        "fin": "2025",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico en Climatizaciones Levante, instalación de aire acondicionado, 2017-2025"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Técnico en Instalaciones Frigoríficas y de Climatización",
+        "centro": "CIPFP Catarroja",
+        "inicio": "2015",
+        "fin": "2017",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico en Instalaciones Frigoríficas y de Climatización, CIPFP Catarroja, 2015-2017"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "carné de conducir B",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "carné de conducir B"
+        }
+      }
+    ],
+    "certificaciones": [
+      {
+        "nombre": "Carné de gases fluorados",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Carné de gases fluorados"
+        }
+      }
+    ],
+    "idiomas": []
+  }
+}

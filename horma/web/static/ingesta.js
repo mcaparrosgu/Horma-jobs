@@ -46,7 +46,7 @@ function tarjetaFuente(f) {
   li.append(nodo("p", textoEjecucion(ejecucion), ejecucion && ejecucion.estado === "error" ? "alerta" : null));
   if (ejecucion && ejecucion.motivo_error) li.append(nodo("p", ejecucion.motivo_error, "alerta"));
 
-  const acciones = nodo("div", null, "fila");
+  const acciones = nodo("div", null, "fila acciones-fuente");
   const limite = nodo("input");
   limite.type = "number";
   limite.min = "1";

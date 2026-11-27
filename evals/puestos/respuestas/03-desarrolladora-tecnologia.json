@@ -1,0 +1,221 @@
+{
+  "base": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "python",
+      "fastapi",
+      "postgresql",
+      "docker"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador/a Python",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Python Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Programador/a Python",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a junior",
+        "idioma": "es",
+        "dato": "Desarrollador/a junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Junior Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a Backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Python Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ingeniero/a de software",
+        "idioma": "es",
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "python",
+      "fastapi",
+      "postgresql",
+      "docker"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador/a Python",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Python Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a junior",
+        "idioma": "es",
+        "dato": "Desarrollador/a junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Junior Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ingeniero/a Python",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador/a web",
+        "idioma": "es",
+        "dato": "Desarrollador/a junior",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ingeniero/a de software",
+        "idioma": "es",
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "tecnologia",
+    "familia": "desarrollo_software",
+    "nivel": "intermedio",
+    "stack": [
+      "python",
+      "fastapi",
+      "postgresql",
+      "docker"
+    ],
+    "puestos": [
+      {
+        "titulo": "Desarrollador/a Python",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Python Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Programador/a Python",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a junior",
+        "idioma": "es",
+        "dato": "Desarrollador/a junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Junior Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a junior",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Desarrollador/a backend",
+        "idioma": "es",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Backend Developer",
+        "idioma": "en",
+        "dato": "Desarrollador/a Python",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Ingeniero/a de software",
+        "idioma": "es",
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Software Engineer",
+        "idioma": "en",
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Desarrollador/a de software",
+        "idioma": "es",
+        "dato": "Ingeniería Informática",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

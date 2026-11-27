@@ -1,0 +1,212 @@
+{
+  "base": {
+    "sector": "finanzas_seguros",
+    "familia": "administracion_oficina",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrativo/a de seguros",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Officer",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asistente administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Insurance Administrator",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Gestor/a administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a administrativo/a",
+        "idioma": "es",
+        "dato": "Grado en Administración de Empresas",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Business Administrator",
+        "idioma": "en",
+        "dato": "Grado en Administración de Empresas",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "finanzas_seguros",
+    "familia": "administracion_oficina",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Clerk",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asistente administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a administrativo/a de seguros",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Insurance Administrator",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Office Administrator",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Gestor/a administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista administrativo/a",
+        "idioma": "es",
+        "dato": "Grado en Administración de Empresas",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "finanzas_seguros",
+    "familia": "administracion_oficina",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrativo/a de seguros",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Officer",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Administrative Assistant",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Insurance Administrator",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Auxiliar administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Técnico/a administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asistente administrativo/a",
+        "idioma": "es",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Office Administrator",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Back Office Administrator",
+        "idioma": "en",
+        "dato": "Administrativo/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Analista administrativo/a",
+        "idioma": "es",
+        "dato": "Grado en Administración de Empresas",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

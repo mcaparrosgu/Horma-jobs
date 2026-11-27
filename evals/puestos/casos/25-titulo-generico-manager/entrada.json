@@ -1,0 +1,57 @@
+{
+  "perfil": {
+    "nombre": "Cristina Valls",
+    "experiencias": [
+      {
+        "puesto": "Manager",
+        "empresa": "Grupo Nube, equipo de atención al cliente",
+        "inicio": "2018",
+        "fin": "2024",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Manager en Grupo Nube, equipo de atención al cliente, 2018-2024"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Psicología",
+        "centro": "UNED",
+        "inicio": "2012",
+        "fin": "2017",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Psicología, UNED, 2012-2017"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Zendesk",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Zendesk"
+        }
+      },
+      {
+        "nombre": "gestión de equipos",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "gestión de equipos"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "idiomas": [],
+    "genero_puestos": "femenino"
+  },
+  "variante": {
+    "nombre": "Cristian Valls",
+    "genero_puestos": "masculino",
+    "reemplazos": {}
+  }
+}

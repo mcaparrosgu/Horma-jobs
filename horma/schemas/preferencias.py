@@ -29,6 +29,10 @@ class PuestoSugerido(BaseModel):
 
     titulo: str = Field(min_length=1)
     dato: str = Field(min_length=1)
+    # Spec 012 (RF-12.10): 1 «lo has sido», 2 «afín». Los guardados sin nivel son de nivel 2.
+    nivel: Literal[1, 2] = 2
+    tipo_dato: Literal["puesto", "titulacion", "certificacion"] | None = None
+    marcado: bool = Field(default=False, description="Llega marcado en «Qué buscas» (RF-12.6, RF-12.7).")
 
 
 class Preferencias(BaseModel):
@@ -37,6 +41,8 @@ class Preferencias(BaseModel):
     familias: list[Familia] = Field(default_factory=list, description="Puestos (familias de la taxonomía).")
     puestos: list[str] = Field(default_factory=list, description="Títulos de puesto marcados (RF-9.3b).")
     puestos_sugeridos: list[PuestoSugerido] = Field(default_factory=list)
+    # Puesto → otras formas que dio el modelo (RF-12.4c); solo las escribe el worker.
+    sinonimos: dict[str, list[str]] = Field(default_factory=dict)
     excluidos: list[str] = Field(default_factory=list, description="Términos que sacan una oferta.")
     sectores: list[Sector] = Field(default_factory=list)
     contratos: list[Contrato] = Field(default_factory=list)

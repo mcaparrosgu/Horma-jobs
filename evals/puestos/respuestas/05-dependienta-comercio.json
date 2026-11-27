@@ -1,0 +1,236 @@
+{
+  "base": {
+    "sector": "comercio_retail",
+    "familia": "ventas_comercial",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Dependiente/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Dependiente/a de moda",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cajero/a",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cajero/a de supermercado",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Sales Assistant",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Retail Sales Associate",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cashier",
+        "idioma": "en",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asesor/a de ventas",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reponedor/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Agente de atención al cliente",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Service Representative",
+        "idioma": "en",
+        "dato": "Cajero/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "comercio_retail",
+    "familia": "ventas_comercial",
+    "nivel": "junior",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Dependiente/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cajero/a",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Sales Assistant",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cashier",
+        "idioma": "en",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Vendedor/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Asesor/a de ventas",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reponedor/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de tienda",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Retail Assistant",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Sales Associate",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Operador/a de caja",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Promotor/a de ventas",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "comercio_retail",
+    "familia": "ventas_comercial",
+    "nivel": "intermedio",
+    "stack": [],
+    "puestos": [
+      {
+        "titulo": "Dependiente/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cajero/a",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cajero/a de supermercado",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Sales Assistant",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Cashier",
+        "idioma": "en",
+        "dato": "Cajero/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Retail Sales Associate",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Vendedor/a",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Reponedor/a",
+        "idioma": "es",
+        "dato": "Cajero/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Asesor/a de ventas",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Auxiliar de tienda",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Agente de atención al cliente",
+        "idioma": "es",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Customer Service Representative",
+        "idioma": "en",
+        "dato": "Dependiente/a",
+        "relacion": "afin"
+      }
+    ]
+  }
+}

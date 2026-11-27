@@ -23,6 +23,8 @@ dependencies = [
   "fpdf2>=2.9.0",
   "langgraph>=1.2.22",
   "langgraph-checkpoint-postgres>=3.2.1",
+  "pypdfium2>=5.15.2",
+  "pillow>=13.0.0",
 ]
 
 [project.scripts]
@@ -71,6 +73,7 @@ allow_indirect_imports = true
 name = "Los agentes no se importan entre sí (RT-13)"
 type = "independence"
 modules = [
+  "horma.agents.sinonimos_puestos",
   "horma.agents.extractor_oferta",
   "horma.agents.auditor_oferta",
   "horma.agents.clasificador_oferta",

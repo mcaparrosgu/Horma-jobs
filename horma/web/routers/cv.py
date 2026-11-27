@@ -10,6 +10,7 @@ from horma.config import ajustes
 from horma.web.auth.sesion import exigir_csrf, usuaria_actual
 from horma.web.limites import limite_subida_cv
 from horma.web.services import cv as servicio
+from horma.web.services import paginas_pdf
 
 router = APIRouter()
 
@@ -144,3 +145,25 @@ def ver(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual))
     cv, ruta = hallado
     medio = "application/pdf" if cv["tipo"] == "pdf" else "text/plain; charset=utf-8"
     return FileResponse(ruta, media_type=medio, content_disposition_type="inline")
+
+
+def _pdf(request: Request, usuaria_id: int, cv_id: int):
+    """La ruta de un PDF de la usuaria; 404 si no es suyo o no es un PDF."""
+    hallado = servicio.archivo(request.app.state.engine, usuaria_id, cv_id)
+    if hallado is None or hallado[0]["tipo"] != "pdf":
+        raise HTTPException(status_code=404, detail="No existe ese CV")
+    return hallado[1]
+
+
+@router.get("/api/cv/{cv_id}/paginas")
+def paginas(cv_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    return {"paginas": paginas_pdf.contar(_pdf(request, usuaria_id, cv_id))}
+
+
+@router.get("/api/cv/{cv_id}/paginas/{numero}")
+def pagina(cv_id: int, numero: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """Una página como imagen, para el visor en el móvil (RF-2.1c). Solo la dueña (RLS)."""
+    imagen = paginas_pdf.png(_pdf(request, usuaria_id, cv_id), numero)
+    if imagen is None:
+        raise HTTPException(status_code=404, detail="No existe esa página")
+    return Response(imagen, media_type="image/png", headers={"Cache-Control": "private, no-store"})

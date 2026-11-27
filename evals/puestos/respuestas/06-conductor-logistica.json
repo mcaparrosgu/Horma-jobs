@@ -1,0 +1,243 @@
+{
+  "base": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": [
+      "carné c+e",
+      "cap en vigor"
+    ],
+    "puestos": [
+      {
+        "titulo": "Conductor/a de camión",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Conductor/a de camión de larga distancia",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor/a",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor/a de paquetería",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Conductor/a de vehículos pesados",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de transporte internacional",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de furgoneta",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de reparto",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Mensajero/a",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Truck Driver",
+        "idioma": "en",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "HGV Driver",
+        "idioma": "en",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Delivery Driver",
+        "idioma": "en",
+        "dato": "Repartidor/a",
+        "relacion": "mismo"
+      }
+    ]
+  },
+  "base_2": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": [
+      "carné c+e"
+    ],
+    "puestos": [
+      {
+        "titulo": "Conductor/a de camión",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Chófer/a de camión",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor/a",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Truck Driver",
+        "idioma": "en",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Delivery Driver",
+        "idioma": "en",
+        "dato": "Repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Conductor/a de reparto",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de distribución",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Mensajero/a",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Transportista",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a profesional",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de furgoneta",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Van Driver",
+        "idioma": "en",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      }
+    ]
+  },
+  "base_3": {
+    "sector": "logistica_transporte",
+    "familia": "logistica_transporte",
+    "nivel": "intermedio",
+    "stack": [
+      "carné c+e"
+    ],
+    "puestos": [
+      {
+        "titulo": "Conductor/a de camión",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Repartidor/a",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Truck Driver",
+        "idioma": "en",
+        "dato": "Conductor/a de camión",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Delivery Driver",
+        "idioma": "en",
+        "dato": "Repartidor/a",
+        "relacion": "mismo"
+      },
+      {
+        "titulo": "Conductor/a de reparto",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Mensajero/a",
+        "idioma": "es",
+        "dato": "Repartidor/a",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de furgoneta",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de tráiler",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de transporte de mercancías",
+        "idioma": "es",
+        "dato": "Conductor/a de camión",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a de vehículos pesados",
+        "idioma": "es",
+        "dato": "CAP en vigor",
+        "relacion": "afin"
+      },
+      {
+        "titulo": "Conductor/a profesional",
+        "idioma": "es",
+        "dato": "CAP en vigor",
+        "relacion": "afin"
+      }
+    ]
+  }
+}
