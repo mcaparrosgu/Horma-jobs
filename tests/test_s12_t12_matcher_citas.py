@@ -8,6 +8,7 @@ from horma.schemas.match import SIN_COMPROBAR
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
 from horma.tools.huella_perfil import huella_compatibilidad
+from horma.tools.verificar_citas import citas_que_no_existen
 from horma.web.services.recomendaciones import en_su_genero
 
 
@@ -113,3 +114,12 @@ def test_una_cita_con_su_nombre_no_existe_y_se_pide_otra_vez():
 
 def test_el_prompt_no_cuenta_un_titulo_o_certificado_como_experiencia():
     assert "no cuenta como experiencia" in " ".join(Matcher.prompt().split())
+
+
+def test_una_habilidad_o_certificacion_se_puede_citar_y_el_nombre_no():
+    perfil = {**_perfil(), "habilidades": [{"nombre": "Figma", "origen": _o("Figma")}],
+              "certificaciones": [{"nombre": "Carné de carretillero", "origen": _o("Carné")}]}
+    for cita in ("Figma", "Carné de carretillero"):
+        prov, r = _recomendar([{"matches": [_match(1, cita_perfil=cita)]}], perfil=perfil)
+        assert len(prov.llamadas) == 1 and not r[1]["retirada"], cita
+    assert citas_que_no_existen("Lucía Ferrer", "sala", perfil, {"titulo": "sala"}) == ["cita_perfil"]

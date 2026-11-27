@@ -4,7 +4,7 @@ Una cita vale si es un fragmento de un solo campo del perfil o de la oferta que 
 mirar mayúsculas, espacios, comillas ni la puntuación de los extremos. Del perfil no se puede citar el
 nombre ni de dónde salió cada dato; de la oferta, ni las instrucciones embebidas ni la auditoría."""
 
-_NO_CITABLES = {"nombre", "version", "origen", "genero_puestos", "taxonomia", "instrucciones_embebidas",
+_NO_CITABLES = {"version", "origen", "genero_puestos", "taxonomia", "instrucciones_embebidas",
                 "preguntas_pendientes"}
 _NO_CITABLES_OFERTA = {"instrucciones_embebidas", "auditoria"}
 
@@ -22,7 +22,8 @@ def _textos(valor, fuera: set[str]) -> list[str]:
 
 
 def textos_perfil(perfil: dict) -> list[str]:
-    return _textos(perfil, _NO_CITABLES)
+    # «nombre» solo se excluye en la raíz: el de una habilidad o una certificación sí se cita.
+    return _textos({k: v for k, v in perfil.items() if k != "nombre"}, _NO_CITABLES)
 
 
 def _plano(texto: str) -> str:

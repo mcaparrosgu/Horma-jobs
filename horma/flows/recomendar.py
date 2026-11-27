@@ -28,7 +28,7 @@ from horma.llm.proveedor import Proveedor
 from horma.schemas.match import SIN_COMPROBAR, Marca, Match, frase_de_franja, sin_frase_de_franja
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
-from horma.tools.acotar_nota import acotar_nota
+from horma.tools.acotar_nota import acotar_nota, relacion_que_cuenta
 from horma.tools.copia_ciega import copia_ciega
 from horma.tools.evaluar_condiciones import evaluar_condiciones
 from horma.tools.rasgos_personales import rasgos_personales
@@ -78,9 +78,13 @@ def crear(proveedor: Proveedor | None = None,
             # RF-12.35: el código acota; RF-12.18: la frase de franja, con la nota ya acotada.
             oferta = ofertas[m["oferta_id"]]
             m["nota_modelo"] = m["nota"]
+            relacion = relacion_que_cuenta(
+                m["relacion"], oferta.titulo, prefs,
+                perfil.taxonomia.familia if perfil.taxonomia else None, oferta.taxonomia.familia)
             m["nota"] = acotar_nota(
-                m["nota"], [Marca.model_validate(x) for x in m["marcas"]], m["relacion"], oferta.requisitos,
-                oferta.taxonomia.nivel, perfil.taxonomia.nivel if perfil.taxonomia else None)
+                m["nota"], [Marca.model_validate(x) for x in m["marcas"]], relacion, oferta.requisitos,
+                oferta.taxonomia.nivel, perfil.taxonomia.nivel if perfil.taxonomia else None,
+                bool(perfil.experiencias))
             if not m["retirada"]:
                 m["explicacion"] = f"{frase_de_franja(m['nota'])} {sin_frase_de_franja(m['explicacion'])}"
         e["matches"] += nuevas

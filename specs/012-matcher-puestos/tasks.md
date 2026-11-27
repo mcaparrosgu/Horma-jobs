@@ -105,6 +105,8 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   sin condiciones, con la misma nota (RF-12.14, 0 USD).
   - **Test:** ningún `motivo` nombra sueldo, contrato, remoto ni ciudad; los ocho esperados nuevos.
   - Volver a puntuar las salidas grabadas de T14: nota ~0,76-0,80 y orden 0,50. SI da otra cosa, se para.
+- [x] Corrección (27-nov, 0 USD): las habilidades y las certificaciones no se podían citar (el verificador excluía
+  toda clave `nombre`, no solo la de la persona; RF-12.19). Test: `tests/test_s12_t12_matcher_citas.py`.
 - [x] T14b — Guardar en la traza del eval las citas que fallan; nada en la base (RF-12.19, 0 USD).
   - **Test:** una explicación retirada por sus citas deja las dos citas de cada intento.
 - [x] T14c — Marcas y relación en la salida y el prompt del `matcher`; la frase de franja, en código (RF-12.34,
@@ -118,18 +120,28 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Navegador:** 1280 y 390 px, claro y oscuro.
   Hecho (0 USD): la migración 0033 de `matches` se adelanta desde T14h (D-090). Sin veredicto todavía (T18), la
   línea va bajo la barra de compatibilidad. Comprobado en las capturas `ofertas-aviso`; la landing no cambia.
-- [ ] T14f — 🛑 OK al gasto (~0,35, tope 0,45 USD). Los 21 casos que fallan y los 6 de orden, una pasada; se graban
+- [x] T14f — 🛑 OK al gasto (~0,35, tope 0,45 USD). Los 21 casos que fallan y los 6 de orden, una pasada; se graban
   nota del modelo, marcas y citas fallidas.
   - **Seguir** con ≥ 17 de 21 dentro de ±10 y 6 de 6 en orden. SI falla el código, se ajustan suelos y topes sobre
     lo grabado (0 USD); SI el marcado falla en más de 4 casos, se corrigen las definiciones del prompt y **una**
     tanda más; las citas, según lo que muestren.
+  Primera tanda (27-nov, 0,36 USD): 16 de 21 y 3 de 6 en orden; citas, sin fallos. Corregidas cuatro reglas y las
+  definiciones del prompt (D-091; sobre lo grabado, 19 y 4).
+  Segunda tanda (27-nov, 0,37 USD): 18 de 21 y 5 de 6; con D-092 sobre lo grabado, 18 y 6. Se sigue.
+  Antes de T14g, las ofertas sin requisitos solo suben a 80 con el mismo puesto (D-093, 0 USD).
 - [ ] T14g — 🛑 OK al gasto (~2,3-2,8, tope 3,0 USD). 60 casos, 3 pasadas y revisor, con las respuestas grabadas
   (RF-12.12, 12.13, 12.19, 12.21 y 12.22). SI pasa todo, T14 y T15 hechas (D-086). SI no, no se toca más el prompt:
   se simula a 0 USD la nota entera por código y se traen a Mar los casos que queden.
-- [ ] T14h — «Qué buscas» quita la franja de otro oficio, recalculando desde lo guardado en T14e; pruebas de Mar en
+  Medida el 27-nov (2,36 USD): **no llega**. Nota 0,85-0,87 (pide 0,90), orden 0,67-1,0 (100 %), citas 0,97 y
+  revisor 0,92-0,97 (100 %); equidad, rasgos, condiciones y segunda persona, 1,0. Las citas que fallaban eran un
+  fallo del verificador (corregido). Simulado: la nota entera por código queda peor (44-45 de 54; orden 5 de 6) y
+  ajustando solo valores el techo es 48 de 54. **Pendiente de la decisión de Mar.**
+- [x] T14h — «Qué buscas» quita la franja de otro oficio, recalculando desde lo guardado en T14e; pruebas de Mar en
   el plan de pruebas (RF-12.37; D-085; 0 USD). Va tras T14g.
   - **Test:** marcar «Teleoperador/a» quita la franja a las ofertas que casan y desmarcarlo la devuelve; sin llamar
     al modelo y con la misma huella.
+  Hecho (27-nov, 0 USD): `relacion_que_cuenta` y `recalcular_notas`; se recalcula al guardar «Qué buscas», al llegar
+  los sinónimos y al cambiar los puestos desde el CV o una oferta añadida. Pruebas de Mar, B9 y B10 del plan.
 - [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor. Vale la ejecución
   completa de T14g si pasa todos los umbrales (D-086).
 - [ ] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).

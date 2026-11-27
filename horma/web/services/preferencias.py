@@ -7,6 +7,7 @@ from horma.tools.sinonimos_puestos import otras_formas
 from horma.web.db import sesion_de
 from horma.web.repositories import ofertas as repo_ofertas
 from horma.web.repositories import perfiles
+from horma.web.services import recalcular_notas
 from horma.web.services import sinonimos as servicio_sinonimos
 
 
@@ -28,6 +29,7 @@ def guardar(engine: Engine, usuaria_id: int, nuevas: Preferencias) -> Preferenci
                                            "sinonimos": actual.sinonimos})
         perfiles.guardar_preferencias(s, usuaria_id, nuevas)
         servicio_sinonimos.encolar_si_faltan(s, usuaria_id)
+        recalcular_notas.recalcular(s)
     return nuevas
 
 

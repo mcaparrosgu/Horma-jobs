@@ -201,25 +201,31 @@ pauta de Mar.
   - una marca por cada requisito de la oferta, identificado por su posición: `tipo` (exigido, valorable o no
     aplica) y `cubierto` (sí, a medias o no). Un requisito sobre un rasgo personal o una condición es «no aplica»:
     los rasgos personales los fuerza además el código; las condiciones, solo el prompt (D-088).
-    «A medias» es el mismo puesto sin la especialidad, o la formación sin la experiencia pedida (RF-12.33);
+    «Sí» incluye lo que forma parte del trabajo diario de un puesto del perfil. «A medias» es el mismo puesto sin
+    la especialidad (nunca «no»), la formación sin la experiencia pedida (RF-12.33), la experiencia sin los años
+    o la duración que se piden, o algo muy cercano. «No» es que nada lo cubre; un título o puesto superior del
+    mismo ámbito nunca es «no» (D-091);
   - la `relacion` con el puesto: mismo puesto, afín u otro oficio.
 
   SI falta la marca de algún requisito, ENTONCES esa salida DEBERÁ rechazarse. La explicación NO DEBERÁ nombrar
   como carencia algo que la oferta no pide, opinar del nivel, deducir lo que no consta (se dice «no consta») ni
-  calcular años de experiencia («desde 2019»).
+  calcular años de experiencia («desde 2019»), ni decir que algo «se acerca», «se relaciona» o «cubre en parte»
+  un requisito (D-094).
 - **RF-12.35** (D-080, D-081, D-085) El código DEBERÁ acotar la nota del `matcher` con las marcas, la relación y
   la taxonomía, sin llamar al modelo. Un requisito «no aplica» NO DEBERÁ cambiar la nota y dos perfiles gemelos
   (RF-12.30d) con las mismas marcas DEBERÁN recibir la misma. El veredicto y la franja usan la nota acotada.
   Reglas de partida, con sus valores en un solo sitio:
-  1. Todos los exigidos «sí» y mismo puesto o afín: mínimo 90.
-  2. Ningún exigido que aplique y mismo puesto o afín: mínimo 80.
+  1. Todos los exigidos «sí» y mismo puesto o afín: mínimo 90; con cuatro o más exigidos, 95 (D-092).
+  2. Ningún exigido que aplique y mismo puesto o afín: mínimo 80. SI la oferta no trae ningún requisito, solo
+     el mismo puesto (D-093).
   3. Todos los exigidos «sí» y algún valorable «no»: mínimo 85. Manda sobre la 1 (D-089).
-  4. Mismo puesto, la titulación exigida «sí» y el resto «a medias»: mínimo 70. Es titulación el requisito que
+  4. Mismo puesto, la titulación exigida «sí» y sin mayoría de exigidos «no»: mínimo 70 (D-091). Es titulación el requisito que
      empieza por grado, máster, licenciatura, ingeniería, diplomatura, doctorado, ciclo, bachillerato, FP o
      título (D-089).
-  5. La mayoría de los exigidos «no»: máximo 30; si además la oferta es de un nivel superior al del perfil o de
-     otro oficio: máximo 20.
-  6. Otro oficio con todos los exigidos «sí»: entre 30 y 55, salvo RF-12.37.
+  5. La mayoría de los exigidos «no», o la mitad y ninguno «sí»: máximo 30. Si además la oferta es de un nivel
+     superior al del perfil o de otro oficio: máximo 20; de nivel superior y sin ser el mismo puesto: 10 (D-091).
+  6. Otro oficio con todos los exigidos «sí»: entre 30 y 55, salvo RF-12.37 o un perfil sin ninguna experiencia
+     (D-091).
   7. Un nivel de la oferta inferior al del perfil no cambia la nota.
 
   Los valores solo DEBERÁN ajustarse sobre respuestas grabadas, de 5 en 5 y sin pasar de siete reglas.

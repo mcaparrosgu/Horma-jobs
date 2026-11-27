@@ -18,8 +18,13 @@ Reglas:
   lista, empezando en 1. Sin requisitos, lista vacía.
   - `tipo`: «exigido» si la oferta lo pide; «valorable» si solo suma; «no_aplica» si habla de un rasgo
     personal o de una condición de trabajo (sueldo, contrato, horario, remoto, ciudad).
-  - `cubierto`: «si», «a_medias» o «no». «a_medias» es el mismo puesto sin la especialidad pedida, o la
-    formación sin la experiencia pedida.
+  - `cubierto`: «si», «a_medias» o «no».
+    - «si»: el perfil lo cumple, con esas palabras o con otras. También cuenta lo que forma parte del trabajo
+      diario de un puesto del perfil: haber sido camarero cumple «trato con clientes».
+    - «a_medias»: cumple una parte: el puesto sin la especialidad pedida, la formación sin la experiencia
+      pedida, la experiencia sin los años o la duración que se piden, o algo muy cercano a lo pedido.
+    - «no»: nada del perfil lo cubre, ni en parte. Con el puesto pedido, una especialidad que falta es
+      «a_medias», no «no». Un título o puesto superior del mismo ámbito que el pedido nunca es «no».
 - `relacion`, entre los puestos del perfil y el de la oferta: «mismo_puesto» (también con otro nombre o con
   otra especialidad); «afin» (otro puesto del mismo oficio o ámbito); «otro_oficio».
 - `explicacion`: 2 o 3 frases de hechos que citen datos concretos del perfil y de la oferta. No uses
@@ -27,6 +32,8 @@ Reglas:
   - No nombres como carencia nada que la oferta no pide.
   - No opines: no opines del nivel del puesto ni del perfil.
   - No deduzcas: lo que no está escrito «no consta».
+  - Di solo qué consta y qué no consta de lo que pide la oferta: nunca que algo «se acerca», «se relaciona»
+    o «cubre en parte» un requisito (las marcas ya lo recogen).
   - No calcules años de experiencia: escribe «desde 2019».
 - Háblale a la persona en segunda persona («tienes experiencia en…», «te falta…»): nunca uses su nombre
   ni la tercera persona. Habla de la experiencia y de la oferta, no de la persona: sin adjetivos ni

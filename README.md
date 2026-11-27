@@ -127,8 +127,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 7. Guardarraíles: la entrada se vigila por código (marca, no bloquea) y el set `evals/red-teaming/` debe pasar
    al 100 %. La revisión de cada prompt frente a las líneas rojas está en `docs/revision-lineas-rojas.md`.
 8. **Antes de abrir Horma a usuarias reales:** el `matcher` debe pasar la puerta de salida del paso 2 del PRD
-   (`specs/prd.md`, spec 012); hoy su `nota` mide 0,67 y la recomendación está fuera de
-   `evals-reales`.
+   (`specs/prd.md`, spec 012); hoy su `nota` mide 0,85-0,87 (pide 0,90; 27-nov, 60 casos) y la recomendación
+   está fuera de `evals-reales`.
 
 ## Consola
 

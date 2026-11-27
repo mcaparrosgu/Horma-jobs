@@ -42,7 +42,8 @@ y descarga. Corre en local, con datos inventados y 9 agentes en uso.
 - Tiempo y candidaturas por usuaria: [pendiente: no hay medición propia; sale de la prueba con cinco personas].
 
 **Qué falla hoy en Horma.**
-- La compatibilidad no es fiable: 0,67-0,71 de los casos dentro de ±10 puntos (15 y 16-nov, 21 casos).
+- La compatibilidad no es fiable: 0,67-0,71 de los casos dentro de ±10 puntos (15 y 16-nov, 21 casos); 0,85-0,87
+  tras la spec 012 (27-nov, 60 casos), aún bajo el 0,90.
 - Pocas ofertas de España: dos fuentes activas (Jobicy y Himalayas) más las que pega la usuaria.
 - Nadie comprueba el PDF final, que es lo que lee la empresa.
 - No hay textos legales, ni borrar la cuenta, ni descargar los datos: no puede entrar ninguna usuaria real.
@@ -119,7 +120,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 
 ### Paso 2 · `matcher` y puestos afines (spec 012)
 
-- **Por qué va ahí:** es el mayor fallo de hoy (0,67 frente a 0,90). Todo lo de después —redactar, avisar y
+- **Por qué va ahí:** es el mayor fallo (0,67 al decidirlo, frente a 0,90). Todo lo de después —redactar, avisar y
   enviar— se apoya en la nota y en los puestos.
 - **Historia — US-002 [MUST HAVE / Riesgo Alto]: Compatibilidad y puestos en los que puedo confiar.**
   Como candidata, quiero que la nota y los puestos sugeridos salgan de lo que he hecho de verdad, para no

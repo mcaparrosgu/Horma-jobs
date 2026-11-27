@@ -62,7 +62,7 @@ from horma.web.repositories import tareas as repo_tareas
 from horma.web.services import cv as servicio_cv
 from horma.web.services import estilo as servicio_estilo
 from horma.web.services import ofertas as servicio_ofertas
-from horma.web.services import presupuesto
+from horma.web.services import presupuesto, recalcular_notas
 from horma.web.services import sinonimos as servicio_sinonimos
 
 log = logging.getLogger("horma.worker")
@@ -133,7 +133,8 @@ def _propia_procesada(s, tarea: dict) -> None:
         _encolar_puntuar_propias(s, usuaria)
         titulo, familia = repo_ofertas.titulo_y_familia(s, tarea["entidad_id"])
         with sesion_de(s.get_bind(), usuaria) as su:
-            repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo, familia)
+            if repo_perfiles.anadir_puesto_de_oferta(su, usuaria, titulo, familia):
+                recalcular_notas.recalcular(su)
 
 
 def _puntuar_si_hay_propias(s, tarea: dict) -> None:
@@ -218,6 +219,7 @@ class _Perfilar:
                                      estado["cv_maestro"])
         repo_perfiles.aplicar_preferencias_del_cv(
             s, tarea["usuaria_id"], Preferencias.model_validate(estado["preferencias"]))
+        recalcular_notas.recalcular(s)
         _encadenar(s, "perfilar", tarea)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
@@ -238,6 +240,7 @@ class _ClasificarPerfil:
         perfil = Perfil.model_validate({**estado["perfil"], "taxonomia": estado["taxonomia"]})
         repo_perfiles.guardar_perfil(s, tarea["usuaria_id"], tarea["entidad_id"], perfil)
         repo_perfiles.aplicar_puestos_del_cv(s, tarea["usuaria_id"], estado.get("puestos") or [])
+        recalcular_notas.recalcular(s)
         _encadenar(s, "clasificar_perfil", tarea)
 
     def marcar_error(self, s, tarea: dict, motivo: str) -> None:
