@@ -2,6 +2,7 @@
 from sqlalchemy import Engine
 
 from horma.schemas.preferencias import GRUPOS_CON_ORIGEN, Preferencias
+from horma.tools.puestos_del_perfil import porque
 from horma.tools.sinonimos_puestos import otras_formas
 from horma.web.db import sesion_de
 from horma.web.repositories import ofertas as repo_ofertas
@@ -37,12 +38,14 @@ def titulos(engine: Engine, usuaria_id: int, q: str) -> list[str]:
 
 
 def _puestos_con_cuenta(s, prefs: Preferencias) -> list[dict]:
-    """Los sugeridos (con el dato que los justifica) y los que escribió ella, con cuántas ofertas casan."""
-    dato = {p.titulo: p.dato for p in prefs.puestos_sugeridos}
-    titulos = list(dict.fromkeys([*dato, *prefs.puestos]))
+    """Los sugeridos (con su nivel y su porqué) y los que escribió ella, con cuántas ofertas casan."""
+    sugeridos = {p.titulo: p for p in prefs.puestos_sugeridos}
+    titulos = list(dict.fromkeys([*sugeridos, *prefs.puestos]))
     fila = perfiles.vigente(s)
     cuentas = repo_ofertas.contar_por_puesto(s, titulos, fila and fila["familia"], prefs.sinonimos)
-    return [{"valor": t, "dato": dato.get(t), "n": cuentas.get(t, 0), "marcado": t in prefs.puestos,
+    return [{"valor": t, "nivel": sugeridos[t].nivel if t in sugeridos else None,
+             "porque": porque(sugeridos[t]) if t in sugeridos else None,
+             "n": cuentas.get(t, 0), "marcado": t in prefs.puestos,
              # RF-12.4d: «También busco: …», solo en los marcados.
              "tambien": otras_formas(t, prefs.sinonimos.get(t, ()))[1:] if t in prefs.puestos else []}
             for t in titulos]

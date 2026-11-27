@@ -61,6 +61,10 @@ pauta de Mar.
   - **Fuera:** el `dato` es solo una habilidad, el titular, el resumen o un trozo de un campo.
 - **RF-12.6** En «Qué buscas», solo el nivel 1 DEBERÁ llegar marcado. El nivel 2 DEBERÁ llegar sin marcar y con
   su porqué a la vista («Por tu grado en Estadística»). Lo de fuera NO DEBERÁ enseñarse. *(Cambia RF-9.3b.)*
+- **RF-12.6c** (D-063) El porqué de cada puesto sugerido DEBERÁ decir de dónde sale: «Lo has sido: <puesto>» (nivel
+  1), «Parecido a tu puesto: <puesto>», «Por tu certificación: <nombre>» o, si es una titulación, «Por tu <titulación>»
+  cuando empieza por grado, máster, licenciatura, ingeniería, diplomatura, doctorado, ciclo o bachillerato, y «Por tu
+  titulación: <titulación>» en los demás casos. El de RF-12.7 lleva delante «Para empezar, ».
 - **RF-12.6b** Los puestos de las experiencias del perfil DEBERÁN sugerirse siempre, de nivel 1 y marcados,
   puestos por código aunque el modelo no los devuelva (D-052).
 - **RF-12.7** SI el CV no tiene ninguna experiencia, ENTONCES los puestos por titulación DEBERÁN llegar marcados,

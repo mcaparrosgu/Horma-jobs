@@ -67,9 +67,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   en el worker al clasificar y al guardar un puesto escrito a mano. Con T08: «También busco: …» bajo cada puesto
   marcado, sin editar.
   - **Test:** guardar «Peluquera» pide sus formas una vez y la búsqueda las usa; la API las enseña.
-- [ ] T08 — «Qué buscas»: nivel 1 marcado, nivel 2 sin marcar con su porqué y junior sin experiencia (RF-12.7).
+- [x] T08 — «Qué buscas»: nivel 1 marcado, nivel 2 sin marcar con su porqué y junior sin experiencia (RF-12.7).
   - **Test:** la API devuelve nivel y porqué; un CV sin experiencia trae marcados los de titulación.
-  - **Navegador:** 1280 y 390 px, claro y oscuro.
+  - **Navegador:** 1280 y 390 px, claro y oscuro (`tests/capturas.js`, 27-nov). El porqué de cada puesto, D-063.
 - [ ] T09 — Cierre de P: set `puestos` en umbral, suite verde, `specs/index.md` al día y PR.
 
 ### N · Nota y explicación (RF-12.11 a 12.24, 12.31 y 12.32)

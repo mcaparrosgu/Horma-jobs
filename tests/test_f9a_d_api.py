@@ -187,7 +187,7 @@ def test_opciones_trae_los_sugeridos_con_su_dato_y_cuantas_ofertas_casan(app, mo
         perfiles.aplicar_puestos_del_cv(s, u, [
             {"titulo": "Data Analyst", "dato": "Analista de datos", "marcado": True}])
     puestos = c.get("/api/preferencias/opciones").json()["puestos"]
-    assert puestos[0]["valor"] == "Data Analyst" and puestos[0]["dato"] == "Analista de datos"
+    assert puestos[0]["valor"] == "Data Analyst" and puestos[0]["porque"] == "Por tu perfil: Analista de datos"
     assert puestos[0]["n"] == 1 and puestos[0]["marcado"] is True
 
 

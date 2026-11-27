@@ -484,6 +484,7 @@ ol.pasos > li::before{ content: counter(paso); display: inline-grid; place-items
 /* «Qué buscas»: Puestos y Términos excluidos en dos columnas del mismo alto. */
 fieldset.grupo.grupo-puestos{ display: flex; flex-direction: column; }
 fieldset.grupo.grupo-puestos > .casillas{ flex: 1 1 auto; }
+.casilla-puesto{ padding-block: 6px; }
 .casilla-puesto .dato-puesto{ display: block; color: var(--muted); font-size: 0.85rem; }
 .anadir-termino{ margin-top: 12px; flex-wrap: nowrap; }
 .anadir-termino input{ flex: 1 1 0; min-width: 0; }

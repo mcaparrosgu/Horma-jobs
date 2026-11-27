@@ -17,6 +17,29 @@ from horma.tools.normalizar_titulo import canonico, supera_nivel
 from horma.tools.visibilidad_cv import normalizar
 
 MAX_PUESTOS = 15
+# Titulaciones que se dejan decir con «Por tu …» (RF-12.6c).
+_SE_DICEN = ("grado", "máster", "licenciatura", "ingeniería", "diplomatura", "doctorado", "ciclo",
+             "bachillerato")
+
+
+def porque(p: PuestoSugerido) -> str:
+    """Lo que se lee bajo la casilla: de dónde sale el puesto (RF-12.6c, RF-12.7)."""
+    if p.tipo_dato == "puesto":
+        return f"{'Lo has sido' if p.nivel == 1 else 'Parecido a tu puesto'}: {p.dato}"
+    if p.tipo_dato == "certificacion":
+        return f"Por tu certificación: {p.dato}"
+    if p.tipo_dato != "titulacion":
+        return f"Por tu perfil: {p.dato}"
+    primera, _, resto = p.dato.partition(" ")
+    if primera.lower() in _SE_DICEN:
+        for grado in ("Superior", "Medio"):
+            if resto.startswith(f"{grado} "):
+                resto = grado.lower() + resto[len(grado):]
+        frase = f"por tu {primera.lower()} {resto}".rstrip()
+    else:
+        frase = f"por tu titulación: {p.dato}"
+    # Marcado y de titulación solo ocurre sin ninguna experiencia.
+    return f"Para empezar, {frase}" if p.marcado else frase[0].upper() + frase[1:]
 
 
 def _campos(perfil: Perfil) -> dict[str, tuple[str, str]]:

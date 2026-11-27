@@ -9,6 +9,7 @@ from itsdangerous import TimestampSigner
 from sqlalchemy import create_engine, text
 
 from horma.schemas.perfil import Perfil
+from horma.schemas.preferencias import Preferencias
 from horma.web.db import sesion_de, sesion_sin_usuaria
 from horma.web.repositories import cv, matches, perfiles
 from horma.web.services.cv import carpeta
@@ -48,6 +49,13 @@ with sesion_de(motor, u) as s:
                                   "pregunta": "¿Qué nivel de inglés tienes?"}],
     }
     perfiles.guardar_perfil(s, u, pid, Perfil.model_validate(perfil), "# Ana Prueba\n\n" + CV)
+    perfiles.guardar_preferencias(s, u, Preferencias(
+        puestos=["Camarera de sala y barra"], sinonimos={"Camarera de sala y barra": ["Waitress", "Mesera"]},
+        puestos_sugeridos=[
+            {"titulo": "Camarera de sala y barra", "dato": "Camarera de sala y barra", "nivel": 1,
+             "tipo_dato": "puesto", "marcado": True},
+            {"titulo": "Responsable de atención al cliente en establecimientos de restauración",
+             "dato": "Grado Superior en Dirección de Servicios de Restauración", "tipo_dato": "titulacion"}]))
     ofertas = list(s.execute(text(
         "select id from ofertas where estado = 'procesada' order by id desc limit 6")).scalars())
     matches.guardar(s, u, version, [

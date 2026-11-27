@@ -545,7 +545,7 @@ async function retomarOLanzar() {
 }
 
 // --- «Qué buscas» (RF-8.4) ---------------------------------------------------------------------
-let puestos = [];     // {valor, dato, n, marcado}: los sugeridos y los que escribe ella (RF-9.3b)
+let puestos = [];     // {valor, porque, tambien, n, marcado}: los sugeridos y los que escribe ella (RF-9.3b)
 let excluidos = [];
 
 function casillaPuesto(p) {
@@ -556,7 +556,9 @@ function casillaPuesto(p) {
   i.checked = p.marcado;
   i.addEventListener("change", () => { p.marcado = i.checked; });
   const texto = nodo("span", `${p.valor} (${p.n})`);
-  if (p.dato) texto.append(nodo("span", `Por tu perfil: ${p.dato}`, "dato-puesto"));
+  if (p.porque) texto.append(nodo("span", p.porque, "dato-puesto"));
+  // RF-12.4d: sus otras formas, sin editar; la API solo las da en los marcados.
+  if (p.tambien?.length) texto.append(nodo("span", `También busco: ${p.tambien.join(", ")}`, "dato-puesto"));
   l.append(i, texto);
   return l;
 }
@@ -602,7 +604,7 @@ function anadirTermino(entrada, lista, alAnadir) {
 }
 
 $("anadir-puesto").addEventListener("click", () => anadirTermino($("nuevo-puesto"), puestos, (t) => {
-  puestos.push({ valor: t, dato: null, n: 0, marcado: true });
+  puestos.push({ valor: t, n: 0, marcado: true });
   pintarPuestos();
 }));
 $("anadir-excluido").addEventListener("click", () => anadirTermino($("nuevo-excluido"), excluidos, (t) => {
@@ -628,7 +630,7 @@ for (const [id, boton] of [["nuevo-puesto", "anadir-puesto"], ["nuevo-excluido",
 function pintarQueBuscas() {
   puestos = (opciones.puestos || []).map((p) => ({ ...p }));
   for (const t of guardadas.puestos || []) {   // los que ella escribió y ya no son sugeridos
-    if (!puestos.some((p) => p.valor === t)) puestos.push({ valor: t, dato: null, n: 0, marcado: true });
+    if (!puestos.some((p) => p.valor === t)) puestos.push({ valor: t, n: 0, marcado: true });
   }
   excluidos = [...(guardadas.excluidos || [])];
   pintarPuestos();
@@ -787,7 +789,7 @@ async function traerPuestosNuevos() {
   guardadas.puestos = r.datos.puestos;
   guardadas.origen = r.datos.origen;
   for (const t of nuevos) {
-    if (!puestos.some((p) => p.valor === t)) puestos.push({ valor: t, dato: null, n: 0, marcado: true });
+    if (!puestos.some((p) => p.valor === t)) puestos.push({ valor: t, n: 0, marcado: true });
   }
   if (!nuevos.length) return;
   pintarPuestos();
