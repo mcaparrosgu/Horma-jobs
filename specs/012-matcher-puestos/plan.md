@@ -12,8 +12,8 @@ stale_after: null
 
 # matcher-puestos — Plan
 
-Sin tablas ni pantallas nuevas. Un agente de producto nuevo, `sinonimos-puestos` (modelo pequeño, D-061; sin eval
-propio todavía), con una columna en `preferencias` (migración 0031), y un agente solo para el eval (el
+Sin tablas ni pantallas nuevas. Un agente de producto nuevo, `sinonimos-puestos` (modelo pequeño, D-061; su set de
+evals, en el bloque N, D-068), con una columna en `preferencias` (migración 0031), y un agente solo para el eval (el
 revisor). Las rutas son las del 25-nov: se comprueban antes de tocar.
 
 **Simple primero.** Descartado: ESCO (medido en F4: 0,41 de cobertura), embeddings como puerta (MAP ~0,5 en

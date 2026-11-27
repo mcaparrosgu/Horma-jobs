@@ -73,7 +73,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T09 — Cierre de P: set `puestos` en umbral, suite verde, `specs/index.md` al día y PR. Hecho (27-nov): set en
   umbral y en la CI con las respuestas grabadas (D-064), suite verde; PR #46 fusionado.
 
-### N · Nota y explicación (RF-12.11 a 12.24, 12.31 y 12.32)
+### N · Nota y explicación (RF-12.11 a 12.24, 12.31 y 12.32; y RF-12.4e)
 - [ ] T10 — Eval `recomendacion` a ~60 casos, con orden y pares de equidad (0 USD). 🛑 Mar repasa los casos con más
   de 10 puntos entre etiquetadores y cualquier cambio de una nota esperada existente (RF-12.14).
 - [ ] T11 — Harness: `--veces 3`, variación por caso, `orden`, `equidad`, `citas` y el revisor, en simulado.
@@ -99,6 +99,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
     de la usuaria no existe y se pide otra vez.
 - [ ] T30 — Con T11: pares de RF-12.22 solo para edad, hueco y nacionalidad.
   - **Test:** dos medianas a más de 3 puntos hacen fallar la equidad.
+- [ ] T31 — Set de evals de `sinonimos-puestos` (RF-12.4e, D-068), con su harness en simulado. 🛑 Mar fija el umbral.
+  🛑 OK al gasto antes de medir con el modelo real; entra en la CI sin gasto.
+  - **Test:** una forma que sea otro puesto hace fallar el set.
 - [ ] T17 — `recomendacion` de vuelta en `evals-reales`. Cierre de N: suite verde, `specs/index.md` al día y PR.
 
 ### V · Lo que ve la usuaria (RF-12.25 a 12.29)
