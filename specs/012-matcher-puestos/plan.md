@@ -61,7 +61,8 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
   gana las métricas `orden`, `equidad`, `citas` y `revisor`, y `horma eval correr` gana `--veces 3`, con la
   variación por caso en el resultado.
 - **Revisor:** `agents/revisor_explicacion/` (prompt, esquemas y `run`, modelo pequeño), llamado solo por el
-  harness. Su propio control: casos sembrados con una explicación que no se apoya en su cita.
+  harness. Ve la copia del perfil y la oferta enteras (D-078). Su propio control: casos sembrados con afirmaciones
+  que no están en ellas, también entre otras ciertas.
 - **Prompt del `matcher`:** la frase por franjas (RF-12.18), no nombrar las instrucciones embebidas y citas
   literales. Los tramos de la nota que ya están no cambian.
 - **Citas verificadas:** `tools/verificar_citas.py` (código: texto normalizado, la cita dentro del perfil o de la
@@ -95,7 +96,7 @@ suelen costar más de lo estimado: cada gasto se confirma con Mar antes.
 | Set `puestos`: pasada actual (30 CV y 10 pares de equidad) | pequeño | ~0,1 USD |
 | Set `puestos`: segunda pasada con `relacion` | pequeño | ~0,1 USD |
 | Eval `perfil`, regresión del clasificador (18 casos) | mayor y pequeño | ~0,3-0,6 USD |
-| Eval `recomendacion`, una ejecución entera (~60 casos y revisor) | mayor y pequeño | ~0,8-1 USD |
+| Eval `recomendacion`, una ejecución entera (60 casos, 3 pasadas y revisor; D-077) | mayor y pequeño | ~2,4-3 USD |
 | Repetir solo los casos que fallan, 3 a 5 veces | mayor | ~0,5-1,5 USD |
 | Puerta: 3 ejecuciones seguidas | mayor | ~2,4-3 USD |
 | Modelo pequeño: 3 ejecuciones | pequeño | ~0,15-0,3 USD |

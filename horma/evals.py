@@ -366,9 +366,12 @@ def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
     return sorted((fallos - {"nota"}) | set(comunes))
 
 
-def _revisar(cita_perfil: str, cita_oferta: str, explicacion: str, prov: Proveedor | None) -> bool:
+def _revisar(cita_perfil: str, cita_oferta: str, explicacion: str, perfil: dict, oferta: dict,
+             prov: Proveedor | None) -> bool:
     return RevisorExplicacion.run(EntradaRevisor(
-        explicacion=explicacion, cita_perfil=cita_perfil, cita_oferta=cita_oferta), proveedor=prov).apoyada
+        explicacion=explicacion, cita_perfil=cita_perfil, cita_oferta=cita_oferta, perfil=perfil,
+        oferta={k: v for k, v in oferta.items() if k != "instrucciones_embebidas"}),
+        proveedor=prov).apoyada
 
 
 def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
@@ -378,11 +381,13 @@ def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
         "candidatas": [{"oferta_id": i, "oferta": o} for i, o in enumerate(ofertas, 1)]})
     por_id = {m["oferta_id"]: m for m in e["recomendaciones"]}
     resultados = [por_id.get(i, {}) for i in range(1, len(ofertas) + 1)]
-    for m in resultados:
+    copia = copia_ciega(Perfil.model_validate(estado["perfil"]), con_taxonomia=True).model_dump(mode="json")
+    for oferta, m in zip(ofertas, resultados, strict=True):
         # El flujo ya comprueba las citas y reintenta (RF-12.19): aquí cuenta lo que sale al final.
         m["citas_mal"] = m.get("explicacion") == SIN_COMPROBAR
         if m.get("explicacion") and not m["citas_mal"]:
-            m["sin_apoyo"] = not _revisar(m["cita_perfil"], m["cita_oferta"], m["explicacion"], prov)
+            m["sin_apoyo"] = not _revisar(m["cita_perfil"], m["cita_oferta"], m["explicacion"], copia,
+                                         oferta, prov)
     base = {"ofertas": resultados} if "ofertas" in estado else resultados[0]
     return {**base, "_nombre_perfil": estado["perfil"].get("nombre")}
 
@@ -442,8 +447,8 @@ def _control_revisor(raiz: Path, prov: Proveedor | None, simulado: bool) -> floa
     sembrados = json.loads(ruta.read_text(encoding="utf-8"))
     if simulado:
         prov = ProveedorSimulado([{"apoyada": s["apoyada"], "motivo": "Simulado."} for s in sembrados])
-    bien = sum(_revisar(s["cita_perfil"], s["cita_oferta"], s["explicacion"], prov) == s["apoyada"]
-               for s in sembrados)
+    bien = sum(_revisar(s["cita_perfil"], s["cita_oferta"], s["explicacion"], s["perfil"], s["oferta"], prov)
+               == s["apoyada"] for s in sembrados)
     return round(bien / len(sembrados), 4)
 
 

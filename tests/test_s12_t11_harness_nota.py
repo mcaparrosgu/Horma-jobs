@@ -121,3 +121,22 @@ def test_la_consola_acepta_tres_pasadas_de_recomendacion(tmp_path):
                                  "--raiz", str(tmp_path)])
     assert r.exit_code == 0, r.output
     assert "APROBADO" in r.output and "variación máxima" in r.output
+
+
+def test_el_revisor_ve_la_copia_del_perfil_y_la_oferta_enteras(tmp_path):
+    # D-078: juzga contra todo, no solo contra las dos citas; y nunca recibe el nombre.
+    entrada = _json(RAIZ / "recomendacion" / "casos" / UNA / "entrada.json")
+    prov = ProveedorSimulado([_matches(UNA), APOYADA])
+    correr_set("recomendacion", raiz=_raiz(tmp_path, UNA), proveedor=prov)
+    visto = prov.llamadas[1]["usuario"]
+    copia = copia_ciega(Perfil.model_validate(entrada["perfil"]), con_taxonomia=True)
+    assert all(x.empresa in visto for x in copia.experiencias)
+    assert all(i.nivel in visto for i in copia.idiomas if i.nivel)
+    assert entrada["oferta"]["empresa"] in visto
+    assert entrada["perfil"]["nombre"] not in visto
+
+
+def test_el_control_del_revisor_trae_perfil_oferta_y_afirmaciones_inventadas_entre_ciertas():
+    sembrados = _json(RAIZ / "recomendacion" / "revisor.json")
+    assert all(s["perfil"] and s["oferta"] for s in sembrados)
+    assert len(sembrados) >= 8
