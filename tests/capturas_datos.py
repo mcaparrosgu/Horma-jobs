@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, text
 
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
+from horma.tools.buscar_ofertas import buscar_ofertas
 from horma.web.db import sesion_de, sesion_sin_usuaria
 from horma.web.repositories import cv, matches, perfiles
 from horma.web.services.cv import carpeta
@@ -50,14 +51,14 @@ with sesion_de(motor, u) as s:
     }
     perfiles.guardar_perfil(s, u, pid, Perfil.model_validate(perfil), "# Ana Prueba\n\n" + CV)
     perfiles.guardar_preferencias(s, u, Preferencias(
-        puestos=["Camarera de sala y barra"], sinonimos={"Camarera de sala y barra": ["Waitress", "Mesera"]},
+        puestos=["Camarera de sala y barra", "Camarera"], sinonimos={"Camarera de sala y barra": ["Waitress", "Mesera"]},
         puestos_sugeridos=[
             {"titulo": "Camarera de sala y barra", "dato": "Camarera de sala y barra", "nivel": 1,
              "tipo_dato": "puesto", "marcado": True},
             {"titulo": "Responsable de atención al cliente en establecimientos de restauración",
              "dato": "Grado Superior en Dirección de Servicios de Restauración", "tipo_dato": "titulacion"}]))
-    ofertas = list(s.execute(text(
-        "select id from ofertas where estado = 'procesada' order by id desc limit 6")).scalars())
+    # Solo ofertas que pasan «Qué buscas»; con otras, la pantalla saldría vacía.
+    ofertas = matches.ids_candidatas(s, buscar_ofertas(perfiles.preferencias(s)))[:6]
     matches.guardar(s, u, version, [
         {"oferta_id": o, "nota": 88 - 9 * i, "condiciones": "medio",
          "explicacion": "Tu experiencia en sala encaja con lo que piden. Falta acreditar el inglés.",
