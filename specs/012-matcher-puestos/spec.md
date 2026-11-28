@@ -114,6 +114,8 @@ pauta de Mar.
   de la CI.
 - **RF-12.16** El `matcher` DEBERÁ medirse también con el modelo pequeño, con el mismo eval. SI pasa la puerta,
   ENTONCES Mar decide si se cambia (F1-E6) y la decisión se anota como D-NNN.
+  (D-117) Medido el 28-nov: no pasa (nota 0,72-0,78). Sigue el modelo mayor y F1-E6 queda abierta para volver a
+  probarlo más adelante.
 
 ### D · Explicación fiable (PRD RF-007)
 - **RF-12.17** Junto a la nota, Horma DEBERÁ enseñar un veredicto en palabras, puesto por código (F7-D5, S5):

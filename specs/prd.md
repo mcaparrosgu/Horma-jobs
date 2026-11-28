@@ -163,7 +163,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     (D-081).
   - Otro oficio (D-084 y D-085): cumplir lo pedido desde otro oficio deja la nota entre 30 y 55; lo afín no se
     acota, y una oferta que casa con un puesto marcado por ella en «Qué buscas» no cuenta como otro oficio.
-  - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6) [pendiente: se decide con la medición].
+  - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6). Medido el 28-nov: no pasa (nota 0,72-0,78);
+    sigue el modelo mayor y se vuelve a probar más adelante (D-117).
 - **Puerta de salida:** eval `recomendacion` ≥ 0,90 dentro de ±10, estable en 3 ejecuciones (NFR-02) y de
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
   citas verificadas; revisor con al menos el 95 % sin rechazo confirmado por pasada y 0 graves (D-098, D-112 y D-115); set de

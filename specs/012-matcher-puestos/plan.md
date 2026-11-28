@@ -102,7 +102,7 @@ suelen costar más de lo estimado: cada gasto se confirma con Mar antes.
 | Eval `recomendacion`, una ejecución entera (60 casos, 3 pasadas y revisor; D-077) | mayor y pequeño | ~2,4-3 USD |
 | Repetir solo los casos que fallan, 3 a 5 veces | mayor | ~0,5-1,5 USD |
 | Puerta: 3 ejecuciones seguidas | mayor | ~2,4-3 USD |
-| Modelo pequeño: 3 ejecuciones | pequeño | ~0,15-0,3 USD |
+| Modelo pequeño: 3 ejecuciones | pequeño | ~0,15-0,3 USD (T16: 0,305, cortada por el tope en 56 de 60 casos) |
 | Set `puestos`, 3 pasadas (estabilidad, T27) | pequeño | ~0,15 USD |
 | Eval `perfil`, regresión con la copia (T27) | mayor y pequeño | ~0,35-0,45 USD |
 | Prueba de la corrección: 27 casos, dos tandas como mucho (T14f) | mayor | hasta 0,45 USD cada una |

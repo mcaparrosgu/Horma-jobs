@@ -217,7 +217,12 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor. Valen las tres pasadas
   de T14t y T14u si pasan todos los umbrales (D-086, D-113); si T14 se cierra como «medida», T15 no se da por hecha.
   No se da por hecha (28-nov, D-115): T14 se cerró como «medida». El examen pasa a ser la revisión a ciegas (T21).
-- [ ] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).
+- [x] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).
+  Medida el 28-nov (0,305 USD; el tope de 0,30 la cortó en 56 de 60 casos, sin los pares 57 a 60): **no pasa**.
+  Nota 0,72 · 0,78 · 0,76, orden 1,0 · 0,83 · 0,83, adversarias 0,50, condiciones 0,95, rasgos, segunda persona y
+  citas 0,96, revisor 0,987 · 1,0 · 1,0 y equidad 1,0; variación máxima, 65 puntos (43). En 06 y 25 devuelve
+  `matches` como texto y la salida se rechaza. **D-117:** el `matcher` sigue con el modelo mayor y F1-E6 queda abierta
+  para volver a probarlo más adelante.
 - [x] T28 — Con T12 y antes de T14: el `matcher` con la copia y sin condiciones (RF-12.31), RF-12.32 en el prompt y
   `huella_compatibilidad` sobre la copia, con una migración que reescriba las huellas guardadas (sin ella se
   vuelve a puntuar todo).
@@ -236,6 +241,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   Hecho (27-nov, 0,022 USD): la primera pasada dio 22 formas ajenas; prompt corregido (D-075) y umbral de reserva
   (D-076): 3 de 213 ajenas (0,014) y cobertura 0,60. En la CI con las respuestas grabadas.
 - [ ] T17 — `recomendacion` de vuelta en `evals-reales`. Cierre de N: suite verde, `specs/index.md` al día y PR.
+  Con T14 «medida» la puerta no ha pasado: `recomendacion` no vuelve a `evals-reales` (RF-12.15). Queda el cierre de N.
 
 ### V · Lo que ve la usuaria (RF-12.25 a 12.29)
 - [ ] T18 — Veredicto en palabras y línea de condiciones, con el orden de empate. Primero en la guía.
