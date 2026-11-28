@@ -259,10 +259,12 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   Hecho (28-nov, 0 USD; D-118, D-119, D-121, D-122 y D-125): `tests/test_s12_t19_nota_usuaria.py`; capturas miradas.
 - [x] T20 — Landing revisada: promete solo lo que funciona.
   Revisada (28-nov): lo que dice de la compatibilidad ya funciona; sin cambios.
-- [ ] T21 — Cierre del paso. 🛑 Revisión de Mar sobre 20 recomendaciones (a ciegas si T14 se cierra como «medida»:
+- [ ] T21 — **No se da por hecha (28-nov, D-127):** B11 sin aprobar (15 de 20 en la misma franja (mínimo 17), 3 a dos franjas o más y 0 datos inventados); quedan sin hacer B4 y V1 a V6,
+  y el PR #48 sin fusionar. El paso se cierra como «medido»; se vuelve al `matcher` antes de que entren usuarias reales.
+  Cierre del paso. 🛑 Revisión de Mar sobre 20 recomendaciones (a ciegas si T14 se cierra como «medida»:
   apunta la franja antes de ver la nota; D-113; aprueba con 17 de 20 en su franja, ninguna a dos y 0 datos
   inventados, D-116) y prueba manual (lote 2, con B4, D-124; al prepararlo, puntuar 26 ofertas agotó los 60 s de espera del
-  modelo: sube a 240 s, D-126; hoja 1 de B11 rellenada el 28-nov, sin comparar; sección en
+  modelo: sube a 240 s, D-126; hoja 1 de B11 rellenada y comparada el 28-nov; sección en
   `docs/plan-pruebas-manuales.md`); `specs/index.md`, PRD y pauta al día; PR.
 
 ### Cambios pequeños
