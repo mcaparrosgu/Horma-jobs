@@ -135,7 +135,37 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   Medida el 27-nov (2,36 USD): **no llega**. Nota 0,85-0,87 (pide 0,90), orden 0,67-1,0 (100 %), citas 0,97 y
   revisor 0,92-0,97 (100 %); equidad, rasgos, condiciones y segunda persona, 1,0. Las citas que fallaban eran un
   fallo del verificador (corregido). Simulado: la nota entera por código queda peor (44-45 de 54; orden 5 de 6) y
-  ajustando solo valores el techo es 48 de 54. **Pendiente de la decisión de Mar.**
+  ajustando solo valores el techo es 48 de 54. **Decidido cómo cerrar (D-098 a D-100; F4, apartado 12):** T14i a T14n,
+  en este orden. Tope de gasto: 2,6 USD. No se repite una tanda solo con los casos que fallan.
+- [x] T14i — Revisor (D-098; RF-12.21; 0 USD): el eval guarda el `motivo` de cada juicio; cada rechazo se juzga dos
+  veces más y cuenta si lo confirman 2 de 3; la métrica `revisor` es, por pasada, la parte de explicaciones sin
+  rechazo confirmado (umbral 0,95) y el resultado lista los confirmados para Mar.
+  - **Test:** un rechazo que confirma uno de los dos juicios nuevos suspende; uno que no confirma ninguno, no; los
+    tres motivos quedan en la salida.
+- [x] T14j — Etiquetas (D-099; RF-12.14; 0 USD): 10, 25 → 15 y 03, 35 → 20, con D-099 en el `motivo`.
+  - **Test:** las dos notas nuevas y su D-099.
+- [x] T14k — `acotar_nota`: tope 10 → 15 y fuera el 95 de D-092 (D-100; RF-12.35; 0 USD). `horma eval repuntuar`
+  vuelve a puntuar lo grabado (RF-12.12) y se vuelve a puntuar T14g.
+  - **Test:** las reglas con los valores nuevos; volver a puntuar lo grabado con el código de hoy da las mismas notas
+    y junta dos ejecuciones como tres pasadas.
+  - SI T14g no da nota 0,907 · 0,926 · 0,926 y orden 4 · 4 · 4 (de 6), se para.
+  Hecho (28-nov, 0 USD): T14g vuelto a puntuar da justo eso; su revisor, con un solo juicio, 0,939.
+- T14l — Prompt del `matcher`, un solo cambio (D-100; RF-12.34; 0 USD, simulado): las marcas no siguen la regla
+  de «no consta»; «N años» con las fechas; «desde 2019» solo si el puesto sigue, si no «de 2015 a 2025»; no contar
+  los requisitos.
+  - **Test:** el prompt pide las cuatro cosas y ya no pide «desde 2019» sin más.
+  Retirada tras T14m (D-100): el prompt vuelve al de T14g, y su test con él.
+- [x] T14m — 🛑 Pasada 1 (~0,79-0,81 USD; tope de la ejecución 0,90, para que los juicios extra no la corten; el
+  total sigue en 2,6): 60 casos, una vez, con revisor. SI pasa todo, T14n sin parar; SI no,
+  se para, se vuelve al prompt de T14g y se trae el resultado a Mar.
+  Medida el 28-nov (0,76 USD): **no llega**. Nota 0,889 (48 de 54; pide 0,90) y orden 4 de 6 (100 %); citas 1,0;
+  revisor 0,988 (1 confirmado, sin dato inventado); equidad, rasgos, condiciones y segunda persona, 1,0. Fallan
+  14, 15, 20, 32, 37 y 41 en la nota y 45 y 46 en el orden. El prompt arregla las marcas literales («3 años», SQL)
+  pero 41 sube a 50 (espera 30) y 37 sale «afín» sin requisitos (60; espera 85). Sobre lo grabado, ninguna
+  variante de reglas pasa de 0,889 (0 USD). Prompt de T14g repuesto. **Antes de gastar más, encargo a Fable sobre
+  la pasada 1 (D-108).**
+- [ ] T14n — 🛑 Pasadas 2 y 3 sin tocar nada (~1,6 USD; tope total 2,6) y unión de las tres con `horma eval repuntuar`.
+  SI las tres pasan y Mar no ve graves en el revisor, T14 y T15 hechas (D-086). No se corre: T14m no pasó.
 - [x] T14h — «Qué buscas» quita la franja de otro oficio, recalculando desde lo guardado en T14e; pruebas de Mar en
   el plan de pruebas (RF-12.37; D-085; 0 USD). Va tras T14g.
   - **Test:** marcar «Teleoperador/a» quita la franja a las ofertas que casan y desmarcarlo la devuelve; sin llamar

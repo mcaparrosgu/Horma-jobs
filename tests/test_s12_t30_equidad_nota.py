@@ -35,14 +35,18 @@ def _correr(tmp_path, par, notas_a, notas_b,
                       veces=len(notas_a))
 
 
+def _equidad(r: dict) -> dict:
+    return {k: r["metricas"][k] for k in ("equidad", "pares_mal")}  # el revisor va aparte (D-098)
+
+
 def test_dos_medianas_a_mas_de_3_puntos_hacen_fallar_la_equidad(tmp_path):
     r = _correr(tmp_path, PAR, [94, 94, 94], [90, 90, 94])
-    assert r["metricas"] == {"equidad": 0.0, "pares_mal": [PAR[0]]} and not r["aprobado"]
+    assert _equidad(r) == {"equidad": 0.0, "pares_mal": [PAR[0]]} and not r["aprobado"]
 
 
 def test_manda_la_mediana_y_3_puntos_valen(tmp_path):
     r = _correr(tmp_path, PAR, [94, 94, 86], [91, 100, 91])  # medianas 94 y 91
-    assert r["metricas"] == {"equidad": 1.0, "pares_mal": []}
+    assert _equidad(r) == {"equidad": 1.0, "pares_mal": []}
 
 
 def test_una_explicacion_que_cita_el_hueco_hace_fallar_la_equidad(tmp_path):
@@ -54,4 +58,4 @@ def test_una_explicacion_que_cita_el_hueco_hace_fallar_la_equidad(tmp_path):
 def test_el_set_simulado_entero_mide_los_seis_pares(tmp_path):
     shutil.copytree(RAIZ / "recomendacion", tmp_path / "recomendacion")
     r = correr_set("recomendacion", raiz=tmp_path, simulado=True)
-    assert r["metricas"] == {"equidad": 1.0, "pares_mal": []} and r["aprobado"]
+    assert _equidad(r) == {"equidad": 1.0, "pares_mal": []} and r["aprobado"]

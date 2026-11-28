@@ -31,7 +31,8 @@
   "recomendacion": {
     "campos": 0.9,
     "metricas": {
-      "equidad": 1.0
+      "equidad": 1.0,
+      "revisor": 0.95
     }
   },
   "cv": {

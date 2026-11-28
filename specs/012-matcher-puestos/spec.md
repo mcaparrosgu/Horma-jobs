@@ -96,12 +96,15 @@ pauta de Mar.
   (40-70), perfiles casi vacíos, ofertas incompletas, correcciones importadas, casos de orden y pares de equidad.
 - **RF-12.12** Cada medición con el modelo real DEBERÁ correr el set 3 veces seguidas y dar al menos 0,90 de
   casos dentro de ±10 en cada una. DEBERÁ informar, por caso, cuánto varía la nota entre las tres.
+  (D-100) Las tres pueden correr por etapas: la pasada 1 y, solo si pasa, la 2 y la 3, sin tocar nada entre medias.
+  `horma eval repuntuar` junta lo grabado de varias ejecuciones como pasadas seguidas y vuelve a puntuarlo en
+  código, sin llamar al modelo; así se ajustan también los valores de RF-12.35.
 - **RF-12.13** El eval DEBERÁ medir el orden (S7): en cada caso de orden, la mejor oferta esperada sale primera y
   ningún par con 20 o más puntos de diferencia esperada sale al revés.
   (D-070) Un caso de orden mide solo el orden: sus notas no cuentan en el ±10 de RF-12.12, que se calcula sobre
   los casos de una oferta.
 - **RF-12.14** La nota esperada de un caso existente solo DEBERÁ cambiarse con el OK de Mar y con el motivo
-  escrito en su `esperado.json` (S8).
+  escrito en su `esperado.json` (S8). Cambios aprobados: D-082 a D-084 y D-099.
 - **RF-12.15** CUANDO pase la puerta, `recomendacion` DEBERÁ volver a correr con el modelo real en `evals-reales`
   de la CI.
 - **RF-12.16** El `matcher` DEBERÁ medirse también con el modelo pequeño, con el mismo eval. SI pasa la puerta,
@@ -124,9 +127,13 @@ pauta de Mar.
   decir que las ignora (NFR-03).
 - **RF-12.21** (D-078) Un revisor con el modelo pequeño, solo dentro del eval, DEBERÁ ver la copia del perfil y la
   oferta enteras y juzgar que cada explicación no afirma nada que no esté en ellas y que sus citas tienen que ver
-  con lo que dice. Umbral: 100 %.
+  con lo que dice.
   (D-079) Callar un requisito discriminatorio NO es un fallo, y el «nivel» de la oferta y del perfil es el del
   puesto, no el de un idioma.
+  (D-098) Cada rechazo DEBERÁ juzgarse dos veces más y contar solo si lo confirman 2 de 3. El eval DEBERÁ guardar
+  el `motivo` de cada juicio y listar los rechazos confirmados para que Mar los revise. Umbral: en cada pasada, al
+  menos el 95 % de las explicaciones revisadas sin rechazo confirmado; y, en la revisión de Mar, 0 graves (un
+  puesto, un título, un idioma o unos años inventados).
 - **RF-12.22** El `matcher` DEBERÁ recibir solo la copia de RF-12.30; la equidad de nombre y género la cubre
   RF-12.30d. En los pares que cambian la edad, la nacionalidad o un hueco laboral, la mediana de 3 ejecuciones
   DEBERÁ coincidir ±3, y ninguna explicación DEBERÁ citar el rasgo. Umbral: 100 % (NFR-04, RT-09).
@@ -210,12 +217,12 @@ pauta de Mar.
   SI falta la marca de algún requisito, ENTONCES esa salida DEBERÁ rechazarse. La explicación NO DEBERÁ nombrar
   como carencia algo que la oferta no pide, opinar del nivel, deducir lo que no consta (se dice «no consta») ni
   calcular años de experiencia («desde 2019»), ni decir que algo «se acerca», «se relaciona» o «cubre en parte»
-  un requisito (D-094).
+  un requisito (D-094). (El cambio de prompt de D-100 se midió en T14m, no llegó y se retiró.)
 - **RF-12.35** (D-080, D-081, D-085) El código DEBERÁ acotar la nota del `matcher` con las marcas, la relación y
   la taxonomía, sin llamar al modelo. Un requisito «no aplica» NO DEBERÁ cambiar la nota y dos perfiles gemelos
   (RF-12.30d) con las mismas marcas DEBERÁN recibir la misma. El veredicto y la franja usan la nota acotada.
   Reglas de partida, con sus valores en un solo sitio:
-  1. Todos los exigidos «sí» y mismo puesto o afín: mínimo 90; con cuatro o más exigidos, 95 (D-092).
+  1. Todos los exigidos «sí» y mismo puesto o afín: mínimo 90. (D-100 quita el 95 de D-092.)
   2. Ningún exigido que aplique y mismo puesto o afín: mínimo 80. SI la oferta no trae ningún requisito, solo
      el mismo puesto (D-093).
   3. Todos los exigidos «sí» y algún valorable «no»: mínimo 85. Manda sobre la 1 (D-089).
@@ -223,7 +230,8 @@ pauta de Mar.
      empieza por grado, máster, licenciatura, ingeniería, diplomatura, doctorado, ciclo, bachillerato, FP o
      título (D-089).
   5. La mayoría de los exigidos «no», o la mitad y ninguno «sí»: máximo 30. Si además la oferta es de un nivel
-     superior al del perfil o de otro oficio: máximo 20; de nivel superior y sin ser el mismo puesto: 10 (D-091).
+     superior al del perfil o de otro oficio: máximo 20; de nivel superior y sin ser el mismo puesto: 15 (D-091,
+     D-100).
   6. Otro oficio con todos los exigidos «sí»: entre 30 y 55, salvo RF-12.37 o un perfil sin ninguna experiencia
      (D-091).
   7. Un nivel de la oferta inferior al del perfil no cambia la nota.
@@ -246,6 +254,7 @@ pauta de Mar.
 - Eval `recomendacion` ≥ 0,90 dentro de ±10 en 3 ejecuciones seguidas con el modelo real, y de vuelta en
   `evals-reales` (NFR-02).
 - 100 %: sin rasgos personales, pares de equidad dentro de ±3 y explicaciones con citas verificadas.
+- Revisor según RF-12.21 (D-098): al menos el 95 % sin rechazo confirmado en cada pasada y 0 graves.
 - Una oferta que no publica el sueldo, con sueldo mínimo marcado, enseña «No dice el sueldo» y la misma nota.
 - Corregir una nota de 75 a 40 reordena la lista y enseña el motivo; «Quitar mi nota» la devuelve a 75.
 - Revisión de Mar sobre 20 recomendaciones.

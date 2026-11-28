@@ -16,8 +16,9 @@ Sets:
   condiciones}. Mide la nota (±10), el nivel de condiciones y que la explicación no cite rasgos. Un caso
   de orden lleva `ofertas` y una nota y un nivel por cada una (RF-12.13); un caso de equidad, `pareja` y el
   `rasgo` que cambia (RF-12.22). La nota se mide en los casos de una oferta y el `orden` en los de orden
-  (D-070); además, `citas` literales (RF-12.19), un revisor con el modelo pequeño (`revisor`, RF-12.21) y
-  su control con explicaciones sembradas (`recomendacion/revisor.json`). Con `veces`, manda la peor pasada
+  (D-070); además, `citas` literales (RF-12.19), un revisor con el modelo pequeño (RF-12.21; métrica
+  `revisor`: por pasada, explicaciones sin un rechazo que confirmen 2 de 3 juicios, D-098) y su control con
+  explicaciones sembradas (`recomendacion/revisor.json`). Con `veces`, manda la peor pasada
   y se informa cuánto varía la nota de cada caso (RF-12.12). `equidad`, al 100 %: en cada pareja, las
   medianas de las notas coinciden ±3 y ninguna explicación cita el rasgo que cambia (RF-12.22).
 - `cv` (fase 3): tres modos en `casos/<id>/entrada.json` (`modo`), con la usuaria de prueba de
@@ -51,11 +52,12 @@ y, en `cv`, `cobertura_ats_media`. Un set sin entrada en el archivo da error.
 Tope de coste (RF-2.17): `correr_set(tope_coste=…)` suma el coste de las llamadas al modelo
 (`metricas.capturar()`); al superarlo deja de correr casos y lo anota en el resultado.
 """
+import copy
 import functools
 import json
 import re
 import statistics
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -87,9 +89,11 @@ from horma.llm.vigilancia import fuga_prompt, senales_entrada
 from horma.schemas.candidatura import TipoProblema
 from horma.schemas.estilo import GuiaEstilo
 from horma.schemas.fuente import CalificacionFuente
-from horma.schemas.match import SIN_COMPROBAR, sin_frase_de_franja
+from horma.schemas.match import SIN_COMPROBAR, frase_de_franja, sin_frase_de_franja
 from horma.schemas.oferta import Auditoria, Oferta, OfertaExtraida, Taxonomia
 from horma.schemas.perfil import Perfil
+from horma.schemas.preferencias import Preferencias
+from horma.tools.acotar_nota import nota_acotada
 from horma.tools.copia_ciega import copia_ciega
 from horma.tools.depurar_guia import motivos_de_rechazo
 from horma.tools.estructura_carta import errores_estructura_carta
@@ -354,8 +358,8 @@ def _bien_ordenadas(obtenidas: list, esperadas: list[int]) -> bool:
 def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
     nombre = obtenido.get("_nombre_perfil")
     resultados = obtenido.get("ofertas") or [obtenido]
-    comunes = [campo for campo, clave in (("citas", "citas_mal"), ("revisor", "sin_apoyo"))
-               if any(o.get(clave) for o in resultados)]
+    # El revisor se mide por explicación y por pasada, en `metricas` (D-098).
+    comunes = ["citas"] if any(o.get("citas_mal") for o in resultados) else []
     if esperado.get("notas") is None:
         return _fallos_oferta(obtenido, esperado["nota"], esperado["condiciones"], nombre) + comunes
     fallos = {f for o, nota, nivel in zip(obtenido["ofertas"], esperado["notas"], esperado["condiciones"],
@@ -367,11 +371,23 @@ def _comparar_recomendacion(obtenido: dict, esperado: dict) -> list[str]:
 
 
 def _revisar(cita_perfil: str, cita_oferta: str, explicacion: str, perfil: dict, oferta: dict,
-             prov: Proveedor | None) -> bool:
+             prov: Proveedor | None) -> dict:
+    """Un juicio del revisor: {apoyada, motivo}."""
     return RevisorExplicacion.run(EntradaRevisor(
         explicacion=explicacion, cita_perfil=cita_perfil, cita_oferta=cita_oferta, perfil=perfil,
         oferta={k: v for k, v in oferta.items() if k != "instrucciones_embebidas"}),
-        proveedor=prov).apoyada
+        proveedor=prov).model_dump(mode="json")
+
+
+JUICIOS_MAS = 2  # D-098: cada rechazo se juzga dos veces más…
+CONFIRMAN = 2    # …y cuenta si lo confirman 2 de 3
+
+
+def _juicios(revisar: Callable[[], dict]) -> list[dict]:
+    juicios = [revisar()]
+    if not juicios[0]["apoyada"]:
+        juicios += [revisar() for _ in range(JUICIOS_MAS)]
+    return juicios
 
 
 def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
@@ -387,12 +403,40 @@ def _correr_recomendacion(estado: dict, prov: Proveedor | None) -> dict:
         m["citas_mal"] = m.get("explicacion") == SIN_COMPROBAR
         if m.get("explicacion") and not m["citas_mal"]:
             # La frase de franja es del código: el revisor juzga solo lo que escribió el modelo.
-            m["sin_apoyo"] = not _revisar(m["cita_perfil"], m["cita_oferta"],
-                                         sin_frase_de_franja(m["explicacion"]), copia, oferta, prov)
+            m["revisor"] = _juicios(functools.partial(
+                _revisar, m["cita_perfil"], m["cita_oferta"], sin_frase_de_franja(m["explicacion"]), copia,
+                oferta, prov))
+            m["sin_apoyo"] = sum(not j["apoyada"] for j in m["revisor"]) >= CONFIRMAN
     base = {"ofertas": resultados} if "ofertas" in estado else resultados[0]
     fallidas = [{"oferta_id": i, "intentos": x} for i, x in (e.get("citas_fallidas") or {}).items()]
     return {**base, "_nombre_perfil": estado["perfil"].get("nombre"),
             **({"_citas_fallidas": fallidas} if fallidas else {})}
+
+
+def _salidas_grabadas(grabado: list[dict], caso: str) -> Iterator[dict]:
+    """Las salidas de un caso en varias ejecuciones grabadas, una por pasada y en orden (RF-12.12, D-100)."""
+    salidas = []
+    for res in grabado:
+        d = next((x for x in res["detalle"] if x["caso"] == caso), {})
+        if "salidas" not in d:
+            raise LookupError(f"{caso}: sin salidas grabadas en la ejecución del {res.get('fecha')}")
+        salidas += d["salidas"]
+    return iter(salidas)
+
+
+def _reacotar(estado: dict, grabadas: Iterator[dict]) -> dict:
+    """La siguiente pasada grabada, con cada nota acotada otra vez desde la nota del modelo (RF-12.35)."""
+    salida = copy.deepcopy(next(grabadas))
+    ofertas = estado.get("ofertas") or [estado["oferta"]]
+    perfil = copia_ciega(Perfil.model_validate(estado["perfil"]), con_taxonomia=True)
+    prefs = Preferencias.model_validate(estado.get("preferencias") or {})
+    for oferta, m in zip(ofertas, salida.get("ofertas") or [salida], strict=True):
+        if "nota_modelo" not in m:  # sin resultado, o grabada antes de T14c
+            continue
+        m["nota"] = nota_acotada(m, Oferta.model_validate(oferta), perfil, prefs)
+        if m.get("explicacion") and not m.get("retirada"):
+            m["explicacion"] = f"{frase_de_franja(m['nota'])} {sin_frase_de_franja(m['explicacion'])}"
+    return salida
 
 
 def marcas_de(oferta: dict) -> list[dict]:
@@ -427,7 +471,33 @@ def _cita_el_rasgo(rasgo: str, resultado: dict) -> bool:
     return bool(rasgos_personales(texto) or (rasgo == "hueco" and _HUECO.search(texto)))
 
 
+def _medir_revisor(medibles: list[tuple[str, dict, dict]]) -> dict:
+    """RF-12.21 (D-098): por pasada, la parte de explicaciones revisadas sin rechazo confirmado; y los
+    confirmados, con sus motivos, para que Mar los revise."""
+    revisadas: dict[int, int] = {}
+    confirmados = []
+    for nombre, o, _ in medibles:
+        for i, salida in enumerate(o["pasadas"], 1):
+            for m in salida.get("ofertas") or [salida]:
+                if "sin_apoyo" not in m:
+                    continue
+                revisadas[i] = revisadas.get(i, 0) + 1
+                if m["sin_apoyo"]:
+                    confirmados.append({"caso": nombre, "pasada": i, "oferta_id": m.get("oferta_id"),
+                                        "explicacion": m.get("explicacion"),
+                                        "motivos": [j["motivo"] for j in m.get("revisor") or []]})
+    if not revisadas:
+        return {}
+    pasadas = [round(1 - sum(c["pasada"] == i for c in confirmados) / revisadas[i], 4)
+               for i in sorted(revisadas)]
+    return {"revisor": min(pasadas), "revisor_pasadas": pasadas, "revisor_confirmados": confirmados}
+
+
 def _medir_recomendacion(medibles: list[tuple[str, dict, dict]]) -> dict:
+    return {**_medir_equidad(medibles), **_medir_revisor(medibles)}
+
+
+def _medir_equidad(medibles: list[tuple[str, dict, dict]]) -> dict:
     por_caso = {nombre: (o["pasadas"], e) for nombre, o, e in medibles}
     pares = [(a, e["pareja"]) for a, (_, e) in por_caso.items()
              if e.get("pareja") and a < e["pareja"] and e["pareja"] in por_caso]
@@ -445,7 +515,8 @@ def _medir_recomendacion(medibles: list[tuple[str, dict, dict]]) -> dict:
 
 
 def _cumple_recomendacion(medidas: dict, umbrales: dict) -> bool:
-    return medidas.get("equidad", 1.0) >= umbrales["equidad"]
+    return (medidas.get("equidad", 1.0) >= umbrales["equidad"]
+            and medidas.get("revisor", 1.0) >= umbrales["revisor"])
 
 
 def _control_revisor(raiz: Path, prov: Proveedor | None, simulado: bool) -> float | None:
@@ -457,7 +528,7 @@ def _control_revisor(raiz: Path, prov: Proveedor | None, simulado: bool) -> floa
     if simulado:
         prov = ProveedorSimulado([{"apoyada": s["apoyada"], "motivo": "Simulado."} for s in sembrados])
     bien = sum(_revisar(s["cita_perfil"], s["cita_oferta"], s["explicacion"], s["perfil"], s["oferta"], prov)
-               == s["apoyada"] for s in sembrados)
+               ["apoyada"] == s["apoyada"] for s in sembrados)
     return round(bien / len(sembrados), 4)
 
 
@@ -886,9 +957,9 @@ NUEVOS: dict[str, SetEval] = {
     ),
     "recomendacion": SetEval(
         esperado=EsperadoRecomendacion,
-        campos=["nota", "condiciones", "sin_rasgos", "segunda_persona", "orden", "citas", "revisor"],
+        campos=["nota", "condiciones", "sin_rasgos", "segunda_persona", "orden", "citas"],
         entrada=_leer_json, correr=_correr_recomendacion, simuladas=_respuestas_recomendacion,
-        comparar=_comparar_recomendacion, exigidos=frozenset({"sin_rasgos", "orden", "citas", "revisor"}),
+        comparar=_comparar_recomendacion, exigidos=frozenset({"sin_rasgos", "orden", "citas"}),
         aplica=_aplica_recomendacion, por_pasada=True, control=_control_revisor,
         medir=_medir_recomendacion, cumple=_cumple_recomendacion,
     ),
@@ -985,10 +1056,14 @@ def casos_de(raiz: Path, nombre: str, solo: str | None = None) -> list[Path]:
 def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                solo: str | None = None, simulado: bool = False, tope_coste: float | None = None,
                flujo: str | None = None, ruta_umbrales: Path | None = None,
-               grabadas: bool = False, veces: int = 1) -> dict:
+               grabadas: bool = False, veces: int = 1, grabado: list[dict] | None = None) -> dict:
     """Con `simulado`, cada caso responde con su propio esperado: solo prueba el harness.
     Con `tope_coste` (en USD), deja de correr casos en cuanto el coste acumulado lo supera.
-    Con `grabadas`, cada caso repite las respuestas guardadas en `<set>/respuestas/` (0 USD)."""
+    Con `grabadas`, cada caso repite las respuestas guardadas en `<set>/respuestas/` (0 USD).
+    Con `grabado` (resultados ya guardados de `recomendacion`), no llama al modelo: junta sus pasadas,
+    seguidas, y vuelve a acotar cada nota con el código de hoy (RF-12.12 y 12.35, D-100; 0 USD)."""
+    if grabado is not None and nombre != "recomendacion":
+        raise ValueError("solo `recomendacion` guarda sus salidas para volver a puntuarlas")
     s = SETS[nombre]
     umbrales = cargar_umbrales(nombre, ruta_umbrales)
     umbral = umbrales["campos"]
@@ -996,6 +1071,8 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
     if veces > 1 and not s.por_pasada:  # `puestos` repite dentro del caso (RF-12.30e)
         correr = functools.partial(correr, veces=veces)
     pasadas = veces if s.por_pasada else 1
+    if grabado is not None:
+        correr, pasadas = _reacotar, sum(len(g.get("pasadas") or [None]) for g in grabado)
     casos = casos_de(raiz, nombre, solo)
     aciertos = [dict.fromkeys(s.campos, 0) for _ in range(pasadas)]
     medidos = [dict.fromkeys(s.campos, 0) for _ in range(pasadas)]
@@ -1017,6 +1094,8 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
                 if grabadas:
                     guardada = json.loads((respuestas / f"{caso.name}.json").read_text(encoding="utf-8"))
                     prov = ProveedorSimulado(list(guardada.values()))
+                elif grabado is not None:
+                    prov = _salidas_grabadas(grabado, caso.name)
                 else:
                     prov = (ProveedorSimulado(s.simuladas(esperado, entrada) * pasadas) if simulado
                             else proveedor)
@@ -1063,8 +1142,12 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
             if tope_coste is not None and sum(x.coste for x in llamadas) > tope_coste:
                 detenido = True
                 break
-        control = s.control(raiz, proveedor, simulado) if s.control else None
-        coste = 0.0 if simulado or grabadas else round(sum(x.coste for x in llamadas), 6)  # T67
+        if grabado is not None:  # manda el peor control de las ejecuciones grabadas
+            control = min((g["control_revisor"] for g in grabado if "control_revisor" in g), default=None)
+        else:
+            control = s.control(raiz, proveedor, simulado) if s.control else None
+        sin_gasto = simulado or grabadas or grabado is not None
+        coste = 0.0 if sin_gasto else round(sum(x.coste for x in llamadas), 6)  # T67
     n = len(detalle)
     # Sin ningún caso que mida un campo (p. ej. con `solo`), no hay nada que suspender.
     fracciones = [{c: round(a[c] / m[c], 4) if m[c] else (1.0 if n else 0.0) for c in s.campos}
@@ -1089,7 +1172,8 @@ def correr_set(nombre: str, *, raiz: Path, proveedor: Proveedor | None = None,
            "umbral_cobertura_ats_media": umbrales.get("cobertura_ats_media"),
            "detalle": detalle, **({"metricas": medidas_set} if medidas_set else {}),
            **({"control_revisor": control} if control is not None else {}),
-           **({"pasadas": fracciones} if pasadas > 1 else {})}
+           **({"pasadas": fracciones} if pasadas > 1 else {}),
+           **({"grabado": [g.get("fecha") for g in grabado]} if grabado is not None else {})}
     destino = raiz / "resultados"
     destino.mkdir(parents=True, exist_ok=True)
     (destino / f"{datetime.now():%Y-%m-%dT%H%M%S}-{nombre}.json").write_text(

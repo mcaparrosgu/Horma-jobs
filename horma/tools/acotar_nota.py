@@ -7,19 +7,19 @@ import re
 import unicodedata
 
 from horma.schemas.match import Marca
+from horma.schemas.oferta import Oferta
+from horma.schemas.perfil_ciego import PerfilCiego
 from horma.schemas.preferencias import Preferencias
 from horma.tools.nivel_pedido import por_encima
 from horma.tools.normalizar_titulo import casa_con_puestos
 
-SUELO_TODO_CUBIERTO = 90   # regla 1
-SUELO_CUBIERTO_Y_PIDE_MUCHO = 95  # regla 1, con `MUCHOS_EXIGIDOS` o más (D-092)
-MUCHOS_EXIGIDOS = 4
+SUELO_TODO_CUBIERTO = 90   # regla 1 (D-100 quita el 95 de D-092)
 SUELO_SIN_EXIGIDOS = 80    # regla 2
 SUELO_FALTA_VALORABLE = 85  # regla 3: manda sobre la 1
 SUELO_TITULACION = 70      # regla 4
 TOPE_SIN_LO_EXIGIDO = 30   # regla 5
 TOPE_ADEMAS_LEJOS = 20     # regla 5, nivel superior u otro oficio
-TOPE_SUPERIOR_Y_DISTINTO = 10  # regla 5, nivel superior y no es el mismo puesto (D-091)
+TOPE_SUPERIOR_Y_DISTINTO = 15  # regla 5, nivel superior y no es el mismo puesto (D-091; 10 → 15, D-100)
 OTRO_OFICIO = (30, 55)     # regla 6
 
 _TITULACION = re.compile(r"(grado|master|licenciatura|ingenieria|diplomatura|doctorado|ciclo|bachillerato|"
@@ -54,8 +54,7 @@ def acotar_nota(nota: int, marcas: list[Marca], relacion: str, requisitos: list[
         nota = max(nota, SUELO_SIN_EXIGIDOS)
     if cercano and todo:
         falta = any(m.tipo == "valorable" and m.cubierto == "no" for m in marcas)
-        suelo = SUELO_CUBIERTO_Y_PIDE_MUCHO if len(exigidos) >= MUCHOS_EXIGIDOS else SUELO_TODO_CUBIERTO
-        nota = max(nota, SUELO_FALTA_VALORABLE if falta else suelo)
+        nota = max(nota, SUELO_FALTA_VALORABLE if falta else SUELO_TODO_CUBIERTO)
     if relacion == "mismo_puesto" and not mayoria and any(
             m.cubierto == "si" and _es_titulacion(requisitos[m.requisito - 1]) for m in exigidos):
         nota = max(nota, SUELO_TITULACION)
@@ -72,3 +71,14 @@ def acotar_nota(nota: int, marcas: list[Marca], relacion: str, requisitos: list[
         minimo, maximo = OTRO_OFICIO
         nota = min(max(nota, minimo), maximo)
     return nota
+
+
+def nota_acotada(m: dict, oferta: Oferta, perfil: PerfilCiego, prefs: Preferencias) -> int:
+    """La nota de un resultado del `matcher` (`nota_modelo`, `marcas` y `relacion`) para esa oferta, ese
+    perfil y lo que ella busca. La usan el flujo y el eval al volver a puntuar lo grabado (RF-12.12)."""
+    tax = perfil.taxonomia
+    relacion = relacion_que_cuenta(m["relacion"], oferta.titulo, prefs, tax.familia if tax else None,
+                                   oferta.taxonomia.familia)
+    return acotar_nota(m["nota_modelo"], [Marca.model_validate(x) for x in m["marcas"]], relacion,
+                       oferta.requisitos, oferta.taxonomia.nivel, tax.nivel if tax else None,
+                       bool(perfil.experiencias))

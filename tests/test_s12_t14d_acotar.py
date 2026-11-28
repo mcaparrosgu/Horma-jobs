@@ -31,8 +31,8 @@ def test_regla_1_todos_los_exigidos_cubiertos_y_puesto_cercano(relacion):
     assert _nota(62, ["es", "va"], relacion) == 90
 
 
-def test_regla_1_con_cuatro_o_mas_exigidos_cubiertos_sube_a_95():
-    assert _nota(85, ["es"] * 4) == 95  # D-092: cumplir más de lo pedido desempata
+def test_regla_1_con_cuatro_o_mas_exigidos_cubiertos_ya_no_sube_a_95():
+    assert _nota(85, ["es"] * 4) == 90  # D-100 quita el 95 de D-092
     assert _nota(85, ["es"] * 3) == 90
     assert _nota(60, ["es"] * 4 + ["vn"]) == 85  # la regla 3 sigue mandando
     assert _nota(82, ["es"] * 4, "otro_oficio") == 55
@@ -72,8 +72,8 @@ def test_regla_5_sin_lo_exigido():
     assert _nota(50, ["en", "ea"]) == 30  # la mitad en «no» y ningún «sí» (D-091)
     assert _nota(50, ["en", "en", "es"], "otro_oficio") == 20
     assert _nota(50, ["en"], oferta="senior", perfil="junior") == 20
-    assert _nota(50, ["en"], "afin", oferta="senior", perfil="junior") == 10  # D-091
-    assert _nota(50, ["en"], "otro_oficio", oferta="senior", perfil="junior") == 10
+    assert _nota(50, ["en"], "afin", oferta="senior", perfil="junior") == 15  # D-091; 10 → 15 (D-100)
+    assert _nota(50, ["en"], "otro_oficio", oferta="senior", perfil="junior") == 15
     assert _nota(50, ["en"], oferta="sin_especificar", perfil="junior") == 30
     assert _nota(50, ["en"], oferta="senior", perfil=None) == 30
     assert _nota(12, ["en"]) == 12  # un tope no sube

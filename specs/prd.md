@@ -143,7 +143,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     vacíos, ofertas incompletas y correcciones importadas), 3 ejecuciones por caso y el orden de la lista
     además del ±10. Los tramos de la nota ya están en el prompt, sin medir.
   - Explicaciones fiables: el `matcher` cita fragmentos literales y un verificador en código comprueba que
-    existen; no nombra las instrucciones embebidas de una oferta. Revisor, solo en el eval.
+    existen; no nombra las instrucciones embebidas de una oferta. Revisor, solo en el eval: cada rechazo se
+    juzga dos veces más y cuenta si lo confirman 2 de 3; Mar revisa los confirmados (D-098).
   - Equidad: el clasificador y el `matcher` leen una copia del perfil sin nombre y con los puestos en «/a»
     (D-043 a D-047; spec 012, RF-12.30); en edad, nacionalidad y huecos, pares con la nota igual (±3).
   - Robustez: ofertas en otro idioma, muy largas, con inyección o sin datos; fallos parciales. Falla con
@@ -165,11 +166,13 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6) [pendiente: se decide con la medición].
 - **Puerta de salida:** eval `recomendacion` ≥ 0,90 dentro de ±10, estable en 3 ejecuciones (NFR-02) y de
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
-  citas verificadas; set de 30 CV en sus umbrales (sección 2); ningún puesto marcado sin
-  evidencia; revisión de Mar sobre 20 recomendaciones.
+  citas verificadas; revisor con al menos el 95 % sin rechazo confirmado por pasada y 0 graves (D-098); set de
+  30 CV en sus umbrales (sección 2); ningún puesto marcado sin evidencia; revisión de Mar sobre 20
+  recomendaciones.
 - **Depende de:** el paso 1. Gasto real: ~5-7,3 USD en todo el paso, en varias veces (set de 30 CV y evals;
   detalle en el plan de la spec 012), cada vez con el OK de Mar. Corregir la nota (T14a a T14h) añade hasta
   3,9 USD y puede superar esa cifra; su ejecución completa vale como la de la puerta si pasa todo (D-086).
+  Cerrarla por etapas (D-100) tiene un tope de 2,6 USD: la pasada 1 y, solo si pasa, la 2 y la 3.
 
 ### Paso 5 · Ingesta y vigilancia (spec 014)
 

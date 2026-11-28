@@ -26,3 +26,9 @@ def test_los_ocho_esperados_nuevos_citan_su_decision():
         assert decision in esperados[caso]["motivo"], caso
     assert esperados["48"]["notas"] == [85, 35, 2, 45, 95]
     assert "D-084" in esperados["48"]["motivo"]
+
+
+def test_t14j_las_dos_etiquetas_de_d099():
+    esperados = _esperados()
+    for caso, nota in (("03", 20), ("10", 15)):
+        assert esperados[caso]["nota"] == nota and "D-099" in esperados[caso]["motivo"], caso

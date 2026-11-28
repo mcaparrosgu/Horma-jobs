@@ -236,8 +236,8 @@ def test_eval_recomendacion_simulado_pasa_al_100():
     r = correr_set("recomendacion", raiz=RAIZ, simulado=True)
     assert r["aprobado"] and r["casos"] == 60 and r["adversarias"] == 1.0
     assert r["campos"] == dict.fromkeys(
-        ["nota", "condiciones", "sin_rasgos", "segunda_persona", "orden", "citas", "revisor"], 1.0)
-    assert r["control_revisor"] == 1.0
+        ["nota", "condiciones", "sin_rasgos", "segunda_persona", "orden", "citas"], 1.0)
+    assert r["control_revisor"] == 1.0 and r["metricas"]["revisor"] == 1.0  # D-098: por explicación
 
 
 def _match(esperado, oferta, **cambios):

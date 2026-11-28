@@ -25,10 +25,10 @@ from horma.agents.matcher.agent import Matcher
 from horma.agents.matcher.schemas import MAX_OFERTAS, EntradaMatcher, OfertaCandidata
 from horma.flows.plain import PlainFlow
 from horma.llm.proveedor import Proveedor
-from horma.schemas.match import SIN_COMPROBAR, Marca, Match, frase_de_franja, sin_frase_de_franja
+from horma.schemas.match import SIN_COMPROBAR, Match, frase_de_franja, sin_frase_de_franja
 from horma.schemas.perfil import Perfil
 from horma.schemas.preferencias import Preferencias
-from horma.tools.acotar_nota import acotar_nota, relacion_que_cuenta
+from horma.tools.acotar_nota import nota_acotada
 from horma.tools.copia_ciega import copia_ciega
 from horma.tools.evaluar_condiciones import evaluar_condiciones
 from horma.tools.rasgos_personales import rasgos_personales
@@ -76,15 +76,8 @@ def crear(proveedor: Proveedor | None = None,
         ofertas = {c.oferta_id: c.oferta for c in lote_modelo}
         for m in nuevas:
             # RF-12.35: el código acota; RF-12.18: la frase de franja, con la nota ya acotada.
-            oferta = ofertas[m["oferta_id"]]
             m["nota_modelo"] = m["nota"]
-            relacion = relacion_que_cuenta(
-                m["relacion"], oferta.titulo, prefs,
-                perfil.taxonomia.familia if perfil.taxonomia else None, oferta.taxonomia.familia)
-            m["nota"] = acotar_nota(
-                m["nota"], [Marca.model_validate(x) for x in m["marcas"]], relacion, oferta.requisitos,
-                oferta.taxonomia.nivel, perfil.taxonomia.nivel if perfil.taxonomia else None,
-                bool(perfil.experiencias))
+            m["nota"] = nota_acotada(m, ofertas[m["oferta_id"]], perfil, prefs)
             if not m["retirada"]:
                 m["explicacion"] = f"{frase_de_franja(m['nota'])} {sin_frase_de_franja(m['explicacion'])}"
         e["matches"] += nuevas

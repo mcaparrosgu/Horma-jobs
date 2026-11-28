@@ -107,10 +107,12 @@ suelen costar más de lo estimado: cada gasto se confirma con Mar antes.
 | Eval `perfil`, regresión con la copia (T27) | mayor y pequeño | ~0,35-0,45 USD |
 | Prueba de la corrección: 27 casos, dos tandas como mucho (T14f) | mayor | hasta 0,45 USD cada una |
 | Ejecución completa de la corrección (T14g; vale como T15, D-086) | mayor y pequeño | ~2,3-2,8 USD (tope 3,0) |
+| Cierre de T14 por etapas (D-100): pasada 1 y, si pasa, pasadas 2 y 3 (T14m y T14n) | mayor y pequeño | ~0,79 + ~1,6 USD (tope 2,6) |
 | **Total del paso** | | **~5-7,3 USD, en varias veces** |
 
 - **Corrección de T14 (D-086):** hasta 3,9 USD más, sobre 2,19 ya gastados en T14. El total del paso puede pasar de
   lo previsto (gastado en T14f y T14g: 3,09 USD; T14g no pasó); si T14g pasa, se ahorran los ~2,4-3 USD de T15.
+  El cierre de D-100 tiene su propio tope: 2,6 USD (los 0,81 que quedaban y 1,8 más).
 - **El tope de 1 USD por ejecución (RF-2.17) queda justo** para ~60 casos. Si salta, el eval se para sin daño y
   se pide a Mar subirlo para esa ejecución.
 - **`evals-reales` en la CI** pasa de ~2 a ~3 USD por ejecución manual.

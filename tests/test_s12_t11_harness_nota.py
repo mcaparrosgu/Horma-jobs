@@ -91,8 +91,8 @@ def test_sin_nada_que_citar_la_cita_vacia_vale():
 
 def test_el_revisor_detecta_una_explicacion_que_no_se_apoya_en_su_cita(tmp_path):
     inventada = _matches(UNA, explicacion="Hablas francés. La oferta pide francés.")
-    r = _correr(tmp_path, UNA, [inventada, NO_APOYADA])
-    assert r["detalle"][0]["fallos"] == ["revisor"] and not r["aprobado"]
+    r = _correr(tmp_path, UNA, [inventada, NO_APOYADA, NO_APOYADA, NO_APOYADA])  # D-098: 2 de 3 lo confirman
+    assert r["metricas"]["revisor"] == 0.0 and not r["aprobado"]
 
 
 def test_control_del_revisor_con_explicaciones_sembradas(tmp_path):
