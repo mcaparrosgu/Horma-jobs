@@ -137,8 +137,10 @@ def _copiar_evals(tmp_path: Path) -> Path:
 
 # --- T22: eval importar-correccion ----------------------------------------------------------------
 CASO = {"entrada": {"perfil": {}, "preferencias": {}, "oferta": {"titulo": "Camarera"}},
-        "esperado": {"nota": 35, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [], "motivo": "El sueldo queda por debajo."},
-        "modelo": {"nota": 80, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [], "explicacion": "Encaja."}}
+        "esperado": {"nota": 35, "condiciones": "medio",
+                     "relacion": "otro_oficio", "marcas": [], "motivo": "El sueldo queda por debajo."},
+        "modelo": {"nota": 80, "condiciones": "medio",
+                   "relacion": "otro_oficio", "marcas": [], "explicacion": "Encaja."}}
 
 
 def test_importar_correccion_no_copia_nada_sin_confirmar(tmp_path):

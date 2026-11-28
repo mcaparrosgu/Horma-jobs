@@ -9,8 +9,7 @@ from horma.tools.nivel_pedido import pide_menos
 from horma.web.db import sesion_de
 from horma.web.queue import worker
 from horma.web.services import recomendaciones
-from tests.test_f2_t13_t14_bd_worker import (_encolar, _match, _oferta_procesada, _perfilar_hecho,
-                                             _usuarias)
+from tests.test_f2_t13_t14_bd_worker import _encolar, _match, _oferta_procesada, _perfilar_hecho, _usuarias
 
 ESTATICOS = Path(__file__).resolve().parent.parent / "horma" / "web" / "static"
 TEXTO = "Pide menos de lo que tienes"

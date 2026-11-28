@@ -83,7 +83,8 @@ def recalculables(s: Session) -> list[dict]:
     return [dict(f) for f in s.execute(text(
         "select m.oferta_id, m.perfil_version, m.nota, m.nota_modelo, m.marcas, m.relacion, m.explicacion, "
         "m.retirada, o.titulo, o.requisitos, o.familia, o.nivel "
-        "from matches m join ofertas o on o.id = m.oferta_id where m.marcas is not null and m.nota_modelo is not null")).mappings()]
+        "from matches m join ofertas o on o.id = m.oferta_id "
+        "where m.marcas is not null and m.nota_modelo is not null")).mappings()]
 
 
 def cambiar_nota(s: Session, oferta_id: int, perfil_version: int, nota: int, explicacion: str) -> None:

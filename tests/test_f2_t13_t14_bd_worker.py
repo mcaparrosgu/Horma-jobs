@@ -263,7 +263,8 @@ def test_clasificar_perfil_rellena_la_taxonomia_de_la_version_copiada(motor_app,
 
 
 def _match(i, nota=80):
-    return {"oferta_id": i, "nota": nota, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [], "explicacion": EXPLICACION,
+    return {"oferta_id": i, "nota": nota, "condiciones": "medio",
+            "relacion": "otro_oficio", "marcas": [], "explicacion": EXPLICACION,
             "cita_perfil": "Bar Sol", "cita_oferta": "camarera"}
 
 

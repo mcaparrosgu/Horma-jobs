@@ -441,7 +441,8 @@ def _reacotar(estado: dict, grabadas: Iterator[dict]) -> dict:
 
 
 def marcas_de(oferta: dict) -> list[dict]:
-    """Respuesta simulada (RF-12.34): con `otro_oficio` y todo «a medias», ningún suelo ni tope toca la nota."""
+    """Respuesta simulada (RF-12.34): con `otro_oficio` y todo «a medias», ningún suelo ni tope toca la
+    nota."""
     return [{"requisito": n, "tipo": "exigido", "cubierto": "a_medias"}
             for n in range(1, len(oferta.get("requisitos") or []) + 1)]
 

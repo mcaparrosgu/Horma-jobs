@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from horma.evals import correr_set, marcas_de
+from horma.evals import correr_set
 from horma.flows.recomendar import crear
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.match import Marca
@@ -94,7 +94,8 @@ def test_regla_6_otro_oficio_que_cumple_todo_queda_entre_30_y_55():
     assert _nota(82, ["es", "es"], "otro_oficio") == 55
     assert _nota(10, ["es"], "otro_oficio") == 30
     assert _nota(45, ["es"], "otro_oficio") == 45
-    assert _nota(82, ["es"], "otro_oficio", con_experiencia=False) == 82  # sin experiencia no hay oficio (D-091)
+    # sin experiencia no hay oficio (D-091)
+    assert _nota(82, ["es"], "otro_oficio", con_experiencia=False) == 82
 
 
 def test_regla_7_pedir_menos_nivel_no_cambia_la_nota():
@@ -117,7 +118,8 @@ def _recomendar(puesto, nota=55):
               "taxonomia": {"sector": "hosteleria_turismo", "familia": "hosteleria_restauracion",
                             "nivel": "junior"}}
     match = {"oferta_id": 1, "nota": nota, "condiciones": "medio", "relacion": "mismo_puesto",
-             "marcas": [{"requisito": 1, "tipo": "exigido", "cubierto": "si"}], "cita_perfil": "Camarero/a", "cita_oferta": "sala",
+             "marcas": [{"requisito": 1, "tipo": "exigido", "cubierto": "si"}],
+             "cita_perfil": "Camarero/a", "cita_oferta": "sala",
              "explicacion": "Tienes experiencia en sala. La oferta pide experiencia en sala."}
     perfil = {"experiencias": [{"puesto": puesto, "origen": {"fuente": "cv", "cv_id": 1,
                                                              "fragmento": puesto}}]}

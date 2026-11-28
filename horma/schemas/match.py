@@ -3,8 +3,8 @@
 La nota (0-100) mide solo experiencia y formación; `condiciones` mide solo las condiciones de
 trabajo. La explicación tiene 2 o 3 frases de hechos que citan datos del perfil y de la oferta, y el código
 le antepone la frase de su franja (RF-12.18). `marcas` y `relacion` dicen qué requisitos cubre y cuánto se
-parece el puesto (RF-12.34). Una explicación retirada queda marcada: vacía si mencionaba un rasgo personal; con el aviso `SIN_COMPROBAR` si sus citas
-no existen (spec 012, RF-12.19)."""
+parece el puesto (RF-12.34). Una explicación retirada queda marcada: vacía si mencionaba un rasgo personal;
+con el aviso `SIN_COMPROBAR` si sus citas no existen (spec 012, RF-12.19)."""
 import re
 from typing import Literal
 

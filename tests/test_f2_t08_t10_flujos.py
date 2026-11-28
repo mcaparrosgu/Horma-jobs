@@ -191,7 +191,8 @@ def _cand(i):
 
 def _match(i, nota=80,
            explicacion="Tiene experiencia en sala. La oferta pide camarera con experiencia."):
-    return {"oferta_id": i, "nota": nota, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [], "explicacion": explicacion,
+    return {"oferta_id": i, "nota": nota, "condiciones": "medio",
+            "relacion": "otro_oficio", "marcas": [], "explicacion": explicacion,
             "cita_perfil": "Bar Sol", "cita_oferta": "camarera"}
 
 

@@ -111,5 +111,6 @@ def test_matcher_no_admite_mas_de_30_ofertas_ni_explicaciones_de_una_frase():
         EntradaMatcher(perfil=PerfilCiego(),
                        ofertas=[OfertaCandidata(oferta_id=i, oferta=_oferta()) for i in range(31)])
     with pytest.raises(ValueError):
-        SalidaMatcher.model_validate({"matches": [{"oferta_id": 1, "nota": 50, "condiciones": "bajo", "relacion": "otro_oficio", "marcas": [],
+        SalidaMatcher.model_validate({"matches": [{"oferta_id": 1, "nota": 50, "condiciones": "bajo",
+                                                   "relacion": "otro_oficio", "marcas": [],
                                                    "explicacion": "Solo una frase."}]})
