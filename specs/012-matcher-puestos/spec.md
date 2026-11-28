@@ -159,10 +159,22 @@ pauta de Mar.
   corta con cada condición marcada por la usuaria que la oferta no dice o no cumple («No dice el sueldo»,
   «Contrato temporal»). Con la misma nota, DEBERÁ ir antes la oferta que cumple todo. Se calcula al pedir la
   lista, sin llamar al modelo. *(Amplía RF-5.2 y RF-6.5.)*
+  (D-120) Textos, unidos con « · » y sin repetir: si la oferta no lo dice, «No dice el contrato», «… el país», «… el
+  idioma», «… el sueldo» o «No dice si es remoto»; si no cumple, «Contrato temporal» (el que ponga), «En Francia»,
+  «Pide francés», «No es remoto» o «El sueldo es inferior a tu mínimo».
+- **RF-12.25b** (D-123) El sueldo DEBERÁ enseñarse siempre con la moneda del anuncio y, SI la frase del anuncio
+  dice que es por hora, con «por hora». SI no se puede comparar con el sueldo mínimo (por hora u otra moneda),
+  ENTONCES la línea dirá «Sueldo que no se puede comparar: <sueldo>», nunca «No dice el sueldo».
 - **RF-12.26** CUANDO la usuaria corrija la nota de una oferta, su lista DEBERÁ usar su nota para ordenar, para
-  el rango y para el veredicto, y enseñar «Tu nota: 40 · Horma: 75» con el motivo que escribió, legible sin abrir
-  nada más. La corrección vale para esa oferta aunque cambie su perfil, hasta que pulse «Quitar mi nota» (S9).
+  el rango y para el veredicto, y enseñar «La tuya: 40 · Horma: 75» (D-125) con el motivo que escribió, legible sin abrir
+  nada más. La corrección vale para esa oferta aunque cambie su perfil, hasta que pulse «Quitar la mía» (S9, D-125).
   No llama al modelo. *(Cambia RF-10.15e.)*
+  (D-118) «Quitar la mía» borra la corrección entera de esa oferta: nota, motivo e información nueva. (D-119) Otra
+  corrección con la nota vacía conserva su nota y, si el motivo va vacío, también su motivo.
+- **RF-12.26b** (D-121) CUANDO su nota quede fuera del rango elegido, la oferta DEBERÁ seguir en la lista hasta que
+  cambie los filtros o el orden, o recargue.
+- **RF-12.26c** (D-122) Con nota suya, el detalle DEBERÁ titularse «Lo que vio Horma (<nota de Horma>)» y enseñar la
+  explicación sin la frase de franja.
 - **RF-12.36** (D-081) SI el nivel de la oferta es inferior al del perfil (taxonomía) y la relación es mismo puesto
   o afín, ENTONCES Horma DEBERÁ enseñar junto al veredicto «Pide menos de lo que tienes», puesto por código. La
   nota NO DEBERÁ cambiar.
@@ -270,7 +282,7 @@ pauta de Mar.
 - 100 %: sin rasgos personales, pares de equidad dentro de ±3 y explicaciones con citas verificadas.
 - Revisor según RF-12.21 (D-098, D-112 y D-115): al menos el 95 % sin rechazo confirmado en cada pasada y 0 graves.
 - Una oferta que no publica el sueldo, con sueldo mínimo marcado, enseña «No dice el sueldo» y la misma nota.
-- Corregir una nota de 75 a 40 reordena la lista y enseña el motivo; «Quitar mi nota» la devuelve a 75.
+- Corregir una nota de 75 a 40 reordena la lista y enseña el motivo; «Quitar la mía» la devuelve a 75.
 - Revisión de Mar sobre 20 recomendaciones (a ciegas si T14 se cierra como «medida», D-113): al menos 17 de 20 en
   su misma franja, ninguna a dos franjas y 0 datos inventados (D-116).
 - Pantallas comprobadas a 1280 y 390 px, en claro y en oscuro; suite verde.

@@ -34,13 +34,15 @@ class Correccion(BaseModel):
 
 
 def _salario(f: dict) -> str | None:
-    """El texto tal como lo dice la oferta (P17): nunca el valor convertido."""
-    if f["salario_rango"]:
-        return f["salario_rango"]
-    if f["salario_minimo"] is None and f["salario_maximo"] is None:
-        return None
-    partes = [f"{float(v):g}" for v in (f["salario_minimo"], f["salario_maximo"]) if v is not None]
-    return " - ".join(dict.fromkeys(partes)) + (f" {f['salario_moneda']}" if f["salario_moneda"] else "")
+    """El texto tal como lo dice la oferta (P17): nunca convertido. Con «por hora» si lo es (D-123)."""
+    texto = f["salario_rango"]
+    if not texto:
+        if f["salario_minimo"] is None and f["salario_maximo"] is None:
+            return None
+        partes = [f"{float(v):g}" for v in (f["salario_minimo"], f["salario_maximo"]) if v is not None]
+        moneda = f" {f['salario_moneda']}" if f["salario_moneda"] else ""
+        texto = " - ".join(dict.fromkeys(partes)) + moneda
+    return f"{texto} por hora" if f.get("salario_por_hora") else texto
 
 
 
@@ -119,10 +121,20 @@ def corregir(oferta_id: int, datos: Correccion, request: Request,
              usuaria_id: int = Depends(usuaria_actual)):
     """Se guarda junto al match. No entra en `evals/` hasta que Mar lo revise con un comando (P4)."""
     try:
-        servicio.corregir(request.app.state.engine, usuaria_id, oferta_id, datos.model_dump())
+        guardada = servicio.corregir(request.app.state.engine, usuaria_id, oferta_id, datos.model_dump())
     except servicio.SinNota as e:
         raise HTTPException(status_code=404, detail="Esa oferta aún no tiene nota.") from e
-    return {"oferta_id": oferta_id, **datos.model_dump()}
+    return {"oferta_id": oferta_id, **guardada}
+
+
+@router.delete("/api/matches/{oferta_id}/correccion", dependencies=[Depends(exigir_csrf)])
+def quitar_correccion(oferta_id: int, request: Request, usuaria_id: int = Depends(usuaria_actual)):
+    """«Quitar la mía» (spec 012, RF-12.26, D-118): borra la corrección entera. No llama al modelo."""
+    try:
+        servicio.quitar_correccion(request.app.state.engine, usuaria_id, oferta_id)
+    except servicio.SinNota as e:
+        raise HTTPException(status_code=404, detail="Esa oferta no tiene ninguna corrección.") from e
+    return {"oferta_id": oferta_id, "correccion": None}
 
 
 @router.post("/api/matches/{oferta_id}/informacion/perfil", status_code=201,

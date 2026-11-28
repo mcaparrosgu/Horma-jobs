@@ -84,9 +84,10 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
   calcula con las preferencias actuales. El orden de empate se hace en `ofertas.js`.
 - **Corrección de la usuaria:** `listar` toma la última corrección de esa oferta, de cualquier versión del perfil
   (columna `matches.correccion`, sin migración), y devuelve `nota_usuaria` y su motivo. `ofertas.js` ordena,
-  filtra y pone el veredicto con ella. «Quitar mi nota» borra la corrección por la API. El texto de ayuda de
+  filtra y pone el veredicto con ella. «Quitar la mía» borra por la API la corrección de la oferta en todas sus
+  versiones (D-118); una corrección sin número hereda la nota anterior (D-119). El texto de ayuda de
   «Corregir explicación» cambia (RF-10.15e).
-- **Pantalla:** fila y detalle de Ofertas (`ofertas.js`, `estilo.css`). La línea de condiciones y «Tu nota»,
+- **Pantalla:** fila y detalle de Ofertas (`ofertas.js`, `estilo.css`). La línea de condiciones y «La tuya»,
   primero en la guía.
 - **Landing:** se revisa lo que dice de la compatibilidad.
 

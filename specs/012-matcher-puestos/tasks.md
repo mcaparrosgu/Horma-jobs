@@ -212,6 +212,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   el plan de pruebas (RF-12.37; D-085; 0 USD). Va tras T14g.
   - **Test:** marcar «Teleoperador/a» quita la franja a las ofertas que casan y desmarcarlo la devuelve; sin llamar
     al modelo y con la misma huella.
+  Probado por Mar (lote 1, 28-nov): B9 y B10 pasan.
   Hecho (27-nov, 0 USD): `relacion_que_cuenta` y `recalcular_notas`; se recalcula al guardar «Qué buscas», al llegar
   los sinónimos y al cambiar los puestos desde el CV o una oferta añadida. Pruebas de Mar, B9 y B10 del plan.
 - [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor. Valen las tres pasadas
@@ -246,18 +247,21 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   (ruff); a la espera de fusionar.
 
 ### V · Lo que ve la usuaria (RF-12.25 a 12.29)
-- [ ] T18 — Veredicto en palabras y línea de condiciones, con el orden de empate. Primero en la guía.
+- [x] T18 — Veredicto en palabras y línea de condiciones, con el orden de empate. Primero en la guía.
   - **Test:** 70 da «Muy compatible» y 69 «Compatible»; con sueldo mínimo marcado, una oferta sin sueldo dice «No
     dice el sueldo» y conserva su nota; a igual nota, la que cumple todo va antes.
   - **Navegador:** lista y detalle de Ofertas, 1280 y 390 px, claro y oscuro.
-- [ ] T19 — La nota corregida manda en su lista, con su motivo y «Quitar mi nota»; texto de ayuda de RF-10.15e.
+  Hecho (28-nov, 0 USD; D-120 y D-123): `veredicto`, `faltas` y `tests/test_s12_t18_veredicto.py`; capturas miradas.
+- [x] T19 — La nota corregida manda en su lista, con su motivo y «Quitar la mía»; texto de ayuda de RF-10.15e.
   - **Test:** corregir de 75 a 40 cambia orden, rango y veredicto; la corrección sigue tras una versión nueva del
-    perfil; «Quitar mi nota» devuelve el 75. Ninguna llamada al modelo.
+    perfil; «Quitar la mía» devuelve el 75. Ninguna llamada al modelo.
   - **Navegador:** 1280 y 390 px, claro y oscuro.
-- [ ] T20 — Landing revisada: promete solo lo que funciona.
+  Hecho (28-nov, 0 USD; D-118, D-119, D-121, D-122 y D-125): `tests/test_s12_t19_nota_usuaria.py`; capturas miradas.
+- [x] T20 — Landing revisada: promete solo lo que funciona.
+  Revisada (28-nov): lo que dice de la compatibilidad ya funciona; sin cambios.
 - [ ] T21 — Cierre del paso. 🛑 Revisión de Mar sobre 20 recomendaciones (a ciegas si T14 se cierra como «medida»:
   apunta la franja antes de ver la nota; D-113; aprueba con 17 de 20 en su franja, ninguna a dos y 0 datos
-  inventados, D-116) y prueba manual (sección en
+  inventados, D-116) y prueba manual (lote 2, con B4, D-124; sección en
   `docs/plan-pruebas-manuales.md`); `specs/index.md`, PRD y pauta al día; PR.
 
 ### Cambios pequeños

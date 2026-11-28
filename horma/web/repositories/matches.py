@@ -39,7 +39,7 @@ def listado(s: Session, ids: list[int], huella: str | None = None) -> list[dict]
         "o.procesada_en as analizada_en, o.fantasma, o.motivos_fantasma, o.fraude, o.senales_fraude, "
         "(o.salario_anual_eur_min is not null or o.salario_anual_eur_max is not null) "
         "as sueldo_comparable, m.nota, m.condiciones, m.explicacion, m.cita_perfil, m.cita_oferta, "
-        "m.retirada, m.correccion, m.perfil_version, m.relacion, "
+        "m.retirada, k.correccion, m.perfil_version, m.relacion, "
         "case when m.huella_perfil is null or cast(:h as text) is null then "
         "m.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
         "else m.huella_perfil <> cast(:h as text) end as desfasado, d.oferta_id is not null as descartada, "
@@ -52,6 +52,10 @@ def listado(s: Session, ids: list[int], huella: str | None = None) -> list[dict]
         "left join lateral (select * from matches x where x.oferta_id = o.id "
         "order by (x.huella_perfil is not distinct from cast(:h as text)) desc, "
         "x.perfil_version desc limit 1) m on true "
+        # La corrección vale para la oferta aunque la nota se haya recalculado después (RF-12.26).
+        "left join lateral (select x.correccion from matches x where x.oferta_id = o.id "
+        "and x.correccion is not null "
+        "order by x.corregido_en desc nulls last, x.perfil_version desc limit 1) k on true "
         "where o.id = any(cast(:ids as int[]))"), {"ids": list(ids), "h": huella}).mappings().all()
     por_id = {}
     for f in filas:
@@ -76,6 +80,21 @@ def guardar_correccion(s: Session, oferta_id: int, perfil_version: int, correcci
     s.execute(text("update matches set correccion = cast(:c as jsonb), corregido_en = now() "
                    "where oferta_id = :o and perfil_version = :v"),
               {"o": oferta_id, "v": perfil_version, "c": correccion})
+
+
+def corregida(s: Session, oferta_id: int) -> dict | None:
+    """La fila con la última corrección de esa oferta, sea de la versión del perfil que sea."""
+    fila = s.execute(text(
+        "select * from matches where oferta_id = :o and correccion is not null "
+        "order by corregido_en desc nulls last, perfil_version desc limit 1"), {"o": oferta_id}
+    ).mappings().first()
+    return dict(fila) if fila else None
+
+
+def quitar_correccion(s: Session, oferta_id: int) -> int:
+    """Borra la corrección entera en todas las versiones (D-118). Devuelve cuántas filas la tenían."""
+    return s.execute(text("update matches set correccion = null, corregido_en = null "
+                          "where oferta_id = :o and correccion is not null"), {"o": oferta_id}).rowcount
 
 
 def recalculables(s: Session) -> list[dict]:

@@ -31,6 +31,7 @@ const pantallas = (candidatura) => [
   ['perfil-ver-cv', '/perfil', { accion: pulsar('#cvs-subidos button:has-text("Ver")'), ventana: true }],
   ['ofertas', '/ofertas'],
   ['ofertas-aviso', '/ofertas', { aviso: true }],
+  ['ofertas-corregir', '/ofertas', { aviso: true, accion: pulsar('button:has-text("Corregir explicación")') }],
   ['ofertas-que-buscas', '/ofertas', { accion: pulsar('#que-buscas > summary') }],
   ['ofertas-anadir', '/ofertas', { accion: pulsar('#abrir-anadir'), ventana: true }],
   ['candidaturas', '/candidaturas'],
@@ -64,11 +65,20 @@ const pantallas = (candidatura) => [
             isMobile: ancho < 900, hasTouch: ancho < 900, serviceWorkers: 'block' });
           await ctx.route('**/*', (r) => (r.request().method() === 'GET' ? r.continue() : r.abort()));
           if (!anonima) await ctx.addCookies([{ name: 'horma_sesion', value: cookie, url: BASE }]);
-          // La línea «Pide menos de lo que tienes» (RF-12.36) se fuerza en la respuesta: el catálogo no se toca.
+          // «Pide menos de lo que tienes», las condiciones que faltan y «La tuya» (RF-12.25, 12.26 y 12.36) se
+          // fuerzan en la respuesta: el catálogo no se toca.
           if (aviso) await ctx.route('**/api/recomendaciones', async (r) => {
             const respuesta = await r.fetch();
             const datos = await respuesta.json();
-            for (const o of datos.recomendaciones) o.pide_menos = true;
+            for (const o of datos.recomendaciones) {
+              o.pide_menos = true;
+              o.faltas = ['No dice el contrato', 'Sueldo que no se puede comparar: 12 EUR por hora'];
+              o.salario = '12 EUR por hora';
+            }
+            const primera = datos.recomendaciones.filter((o) => !o.sin_puntuar && !o.candidatura && !o.descartada)
+              .sort((a, b) => new Date(b.creada_en) - new Date(a.creada_en) || b.id - a.id)[0];
+            if (primera) Object.assign(primera, { nota_usuaria: 40, veredicto: 'Poco compatible',
+              correccion: { nota: 40, comentario: 'Piden carné de conducir y disponibilidad de fines de semana que no tengo.' } });
             await r.fulfill({ response: respuesta, json: datos });
           });
           const p = await ctx.newPage();

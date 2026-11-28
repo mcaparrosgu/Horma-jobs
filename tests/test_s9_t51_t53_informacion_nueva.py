@@ -104,7 +104,7 @@ def test_el_formulario_de_corregir_tiene_el_campo_y_la_ayuda():
                   "informacion:"):
         assert pieza in js, pieza
     ayuda = textos.split("corregirAyuda:")[1].split("\n")[0]
-    for idea in ("no cambian la compatibilidad", "candidaturas nuevas de esta oferta", "confirmes"):
+    for idea in ("tu lista usa la tuya", "candidaturas nuevas de esta oferta", "confirmes"):
         assert idea in ayuda, idea
 
 

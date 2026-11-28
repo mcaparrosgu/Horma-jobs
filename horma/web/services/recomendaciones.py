@@ -4,11 +4,14 @@ import json
 from sqlalchemy import Engine
 
 from horma.config import ajustes
+from horma.schemas.match import sin_frase_de_franja, veredicto
 from horma.schemas.perfil import CAMPO_PROPUESTA, PreguntaPendiente
 from horma.tools.buscar_ofertas import buscar_ofertas
+from horma.tools.evaluar_condiciones import faltas
 from horma.tools.huella_perfil import huella_compatibilidad
 from horma.tools.lexico_genero import en_genero
 from horma.tools.nivel_pedido import pide_menos
+from horma.tools.normalizar_oferta import por_hora
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import candidaturas as repo_candidaturas
 from horma.web.repositories import descartes, perfiles, tareas
@@ -102,8 +105,19 @@ def listar(engine: Engine, usuaria_id: int) -> list[dict]:
         ids = repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia))
         huella = huella_compatibilidad(perfil) if perfil else None
         filas = en_su_genero(repo.listado(s, ids, huella), perfil.genero_puestos if perfil else None)
-        for f in filas:  # RF-12.36: al pedir la lista, sin guardar nada ni tocar la nota
+        completas = repo_ofertas.completas(s, ids)
+        frases = repo_ofertas.frases_de_sueldo(s, ids)
+        for f in filas:  # RF-12.17, 12.25 y 12.36: al pedir la lista, sin guardar nada ni tocar la nota
             f["pide_menos"] = pide_menos(f["relacion"], f["nivel"], taxonomia.nivel if taxonomia else None)
+            tuya = (f["correccion"] or {}).get("nota")
+            f["nota_usuaria"] = tuya   # su nota manda en su lista (RF-12.26)
+            nota = f["nota"] if tuya is None else tuya
+            f["veredicto"] = None if f["nota"] is None else veredicto(nota)
+            if tuya is not None and f["explicacion"]:   # la explicación es de Horma, sin su frase (D-122)
+                f["explicacion"] = sin_frase_de_franja(f["explicacion"])
+            frase = frases.get(f["id"], "")
+            f["salario_por_hora"] = por_hora(frase)
+            f["faltas"] = faltas(completas[f["id"]], prefs, frase) if f["id"] in completas else []
     with sesion_sistema(engine) as s:
         repo_ofertas.marcar_fuente_desconocida(filas, s)
     return filas
@@ -123,14 +137,27 @@ def recuperar(engine: Engine, usuaria_id: int, oferta_id: int) -> None:
         descartes.recuperar(s, oferta_id)
 
 
-def corregir(engine: Engine, usuaria_id: int, oferta_id: int, correccion: dict) -> None:
-    """Se guarda junto al match; no entra en `evals/` hasta que Mar lo revise (P4)."""
+def corregir(engine: Engine, usuaria_id: int, oferta_id: int, correccion: dict) -> dict:
+    """Se guarda junto al match; no entra en `evals/` hasta que Mar lo revise (P4). Sin número, conserva la
+    nota que ya había puesto y, si el motivo va vacío, también su motivo (D-119). Devuelve lo guardado."""
     with sesion_de(engine, usuaria_id) as s:
         m = repo.uno(s, oferta_id)
         if m is None:
             raise SinNota
+        antes = (repo.corregida(s, oferta_id) or {}).get("correccion") or {}
+        if correccion["nota"] is None and antes.get("nota") is not None:
+            correccion = {**correccion, "nota": antes["nota"],
+                          "comentario": correccion["comentario"] or antes["comentario"]}
         repo.guardar_correccion(s, oferta_id, m["perfil_version"],
                                 json.dumps(correccion, ensure_ascii=False))
+    return correccion
+
+
+def quitar_correccion(engine: Engine, usuaria_id: int, oferta_id: int) -> None:
+    """«Quitar la mía» (D-118): vuelve la de Horma."""
+    with sesion_de(engine, usuaria_id) as s:
+        if not repo.quitar_correccion(s, oferta_id):
+            raise SinNota
 
 
 PREGUNTA_PROPUESTA = "Añadiste esta información en una oferta. ¿La guardas también en tu perfil?"
@@ -158,8 +185,8 @@ def proponer_al_perfil(engine: Engine, usuaria_id: int, oferta_id: int) -> None:
 def exportar(engine: Engine, usuaria_id: int, oferta_id: int) -> dict:
     """El caso corregido, con el formato de `evals/recomendacion/casos/` (entrada y esperado)."""
     with sesion_de(engine, usuaria_id) as s:
-        m = repo.uno(s, oferta_id)
-        if m is None or m["correccion"] is None:
+        m = repo.corregida(s, oferta_id)
+        if m is None:
             raise SinNota
         fila = perfiles.por_version(s, m["perfil_version"])
         oferta = repo_ofertas.completas(s, [oferta_id]).get(oferta_id)
