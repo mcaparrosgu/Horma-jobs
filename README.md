@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> **Estado:** fases 0 a 10 cerradas (la entrevista de la 9b pasa a la spec 016) y en `main`; el paso 1 del PRD (spec 011, parte 1) está fusionado y el paso 2 (spec 012), en construcción: los puestos sugeridos ya están; faltan la nota y la explicación. Estado de cada fase: [`specs/index.md`](./specs/index.md).
+> **Estado:** fases 0 a 10 cerradas (la entrevista de la 9b pasa a la spec 016) y en `main`; el paso 1 del PRD (spec 011, parte 1) está fusionado y el paso 2 (spec 012), en construcción: los puestos sugeridos ya están; faltan la nota y la explicación. Después viene la ampliación de la ingesta de ofertas (paso 5). Estado de cada fase: [`specs/index.md`](./specs/index.md).
 > Qué viene y por qué (specs 011 a 017): [`specs/prd.md`](./specs/prd.md). Despliegue local con Docker Compose.
 
 **Recorrido de la usuaria:** Landing → Perfil (sube su CV) → Ofertas (compatibilidad 0-100) → Candidatura

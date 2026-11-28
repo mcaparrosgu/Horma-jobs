@@ -137,7 +137,7 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
   «Suele ser eliminatorio: la oferta pide inglés C1 y no consta en tu perfil». No se repiten en «No consta en tu CV».
   El permiso de trabajo nunca se deduce: «La oferta pide permiso de trabajo en España. Horma no lo sabe:
   confírmalo tú». *(D-058)* Los eliminatorios avisan y NO DEBERÁN frenar: ella puede aprobar, descargar y, cuando
-  Horma envíe (paso 5), enviar la candidatura igual.
+  Horma envíe (paso 7), enviar la candidatura igual.
 - **RF-13.23** El detalle de una oferta en Ofertas DEBERÁ enseñar la misma línea junto a las condiciones
   (RF-12.25), calculada al pedirla, sin modelo. No impide pedir la candidatura.
 

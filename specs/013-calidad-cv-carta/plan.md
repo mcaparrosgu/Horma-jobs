@@ -13,7 +13,7 @@ stale_after: null
 # calidad-cv-carta — Plan
 
 Dos agentes nuevos de modelo pequeño (`lector-ia` e `ideas-logros`), sin tablas nuevas y sin pantallas nuevas. Las rutas son las del
-26-nov: se comprueban antes de tocar. Se construye al cerrar el paso 2 (spec 012 fusionada); la prueba propia del PDF
+26-nov: se comprueban antes de tocar. Se construye después del paso 5 (D-095), con el paso 2 cerrado (spec 012 fusionada); la prueba propia del PDF
 (DEP-05) está hecha (26-nov).
 
 **Simple primero.** Descartado: tres agentes nuevos para el panel (F2-D1: el programa es código y la persona es el
