@@ -164,6 +164,11 @@ def _periodo(texto: str) -> str | None:
     return m.lastgroup if m else None
 
 
+def por_hora(frase: str) -> bool:
+    """Si la frase del anuncio dice que el sueldo es por hora (RF-12.25b)."""
+    return _periodo(frase) == "hora"
+
+
 def _sueldo(oferta: OfertaExtraida, texto: str) -> tuple[float | None, float | None]:
     s = oferta.salario
     if s is None or (s.minimo is None and s.maximo is None):

@@ -18,7 +18,7 @@ class Ajustes(BaseSettings):
     # por petición (0,50 / 2,50 por encima); nuestras peticiones son siempre más cortas.
     precio_pequeno: tuple[float, float] = (0.10, 0.50)
     precio_mayor: tuple[float, float] = (2.0, 10.0)
-    llm_timeout_s: float = 60.0
+    llm_timeout_s: float = 240.0  # una tanda con marcas por requisito pasa de 60 s (spec 012, D-126)
     llm_reintentos: int = 3
 
     database_url: str = ""

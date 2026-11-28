@@ -261,6 +261,15 @@ def completas(s: Session, ids: list[int]) -> dict[int, Oferta]:
     return salida
 
 
+def frases_de_sueldo(s: Session, ids: list[int]) -> dict[int, str]:
+    """La línea del anuncio de la que salió el sueldo (RT-08): dice si es por hora, al mes o al año."""
+    filas = s.execute(text(
+        "select entidad_id, string_agg(distinct fragmento, ' ') from origen where entidad = 'oferta' "
+        "and campo in ('salario_minimo', 'salario_maximo') and entidad_id = any(cast(:ids as int[])) "
+        "group by entidad_id"), {"ids": list(ids)}).all()
+    return {i: f for i, f in filas}
+
+
 def dueña(s: Session, oferta_id: int) -> int | None:
     """La usuaria que añadió la oferta, o None si es del catálogo común."""
     return s.execute(text("select usuaria_id from ofertas where id=:i"),

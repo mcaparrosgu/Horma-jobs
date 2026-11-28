@@ -21,6 +21,8 @@ let barra = null;          // barra de avance del cálculo de compatibilidad en 
 let ultimoAvance = -1;
 let dejarDeSeguir = null;
 let descarteReciente = null;   // id de la última oferta descartada: su aviso queda en su sitio de la lista
+const corregidas = new Set();  // recién corregidas: siguen a la vista aunque salgan del rango (RF-12.26b)
+let preguntarPerfil = null;    // id de la oferta con «¿Guardarla también en tu perfil?» pendiente
 let abiertas = null;       // ids de las filas desplegadas; null hasta el primer pintado (entonces, solo la primera)
 
 // Mapeo fijo familia → tono (.tono-0…5, RF-6.4): la misma familia sale siempre del mismo color.
@@ -57,7 +59,7 @@ function formularioCorreccion(o, alTerminar) {
   valor.min = 0;
   valor.max = 100;
   valor.className = "corto";
-  valor.placeholder = String(o.nota);
+  valor.placeholder = String(notaVista(o));
   const motivo = nodo("textarea");
   motivo.rows = 3;
   motivo.maxLength = 1000;
@@ -70,7 +72,7 @@ function formularioCorreccion(o, alTerminar) {
   const enviar = nodo("button", "Enviar corrección");
   const cancelar = nodo("button", "Cancelar", "secundario");
   cancelar.type = "button";
-  cancelar.addEventListener("click", () => alTerminar(false));
+  cancelar.addEventListener("click", () => alTerminar());
   const fila = nodo("div", null, "fila");
   fila.append(enviar, cancelar);
   f.append(nodo("p", TEXTOS.corregirAyuda, "suave"), campo(TEXTOS.corregirNota, valor), campo(TEXTOS.corregirMotivo, motivo),
@@ -82,8 +84,10 @@ function formularioCorreccion(o, alTerminar) {
     const r = await api(`/api/matches/${o.id}/correccion`, { metodo: "POST", cuerpo });
     if (!r.ok) return avisar(r.estado === 422 ? TEXTOS.correccionRango : r.motivo, true);
     avisar(TEXTOS.correccionGuardada);
-    o.correccion = r.datos;
-    alTerminar(true, r.datos.informacion);
+    corregidas.add(o.id);
+    if (r.datos.informacion) preguntarPerfil = o.id;
+    alTerminar();
+    await cargarLista();   // la lista se reordena con su nota (RF-12.26)
   });
   return f;
 }
@@ -102,6 +106,7 @@ function preguntaGuardarEnPerfil(o) {
   fila.append(si, no);
   caja.append(texto, fila);
   const cerrar = (mensaje, enlace) => {
+    preguntarPerfil = null;
     texto.textContent = mensaje;
     fila.replaceChildren();
     if (enlace) {
@@ -185,7 +190,12 @@ function enVista(o, cual = vista.estado) {
 
 // Las propias solo llegan si ella las incluye, y entonces se ven siempre (RF-10.6g).
 function enRango(o) {
-  return o.propia || o.sin_puntuar || (o.nota >= vista.min && o.nota <= vista.max);
+  const nota = o.nota_usuaria ?? o.nota;   // la suya manda (RF-12.26)
+  return o.propia || o.sin_puntuar || (nota >= vista.min && nota <= vista.max);
+}
+
+function aLaVista(o) {
+  return enRango(o) || corregidas.has(o.id);
 }
 
 // «Más recientes» = las que llegaron a Horma hace menos, del catálogo o añadidas por ella (RF-11.32, D-034). No se usa
@@ -194,10 +204,16 @@ function fechaOrden(o) {
   return new Date(o.creada_en || 0).getTime() || 0;
 }
 
+function notaVista(o) {
+  return o.nota_usuaria ?? o.nota;
+}
+
 function ordenar(lista) {
   const porFecha = (a, b) => fechaOrden(b) - fechaOrden(a) || b.id - a.id;
   if (vista.orden === "compatibles") {   // lo puntuado primero, de más a menos nota; el resto, al final
-    return [...lista].sort((a, b) => (b.sin_puntuar ? -1 : b.nota) - (a.sin_puntuar ? -1 : a.nota) || porFecha(a, b));
+    const nota = (o) => (o.sin_puntuar ? -1 : o.nota_usuaria ?? o.nota);   // la suya manda (RF-12.26)
+    const completa = (o) => (o.faltas?.length ? 0 : 1);   // a igual nota, antes la que cumple todo (RF-12.25)
+    return [...lista].sort((a, b) => nota(b) - nota(a) || completa(b) - completa(a) || porFecha(a, b));
   }
   return [...lista].sort(porFecha);
 }
@@ -209,7 +225,7 @@ function pintarVista() {
   $("nota-max").value = vista.max;
   pintarRango();
   $("orden").value = vista.orden;
-  const visibles = todas.filter(enRango);
+  const visibles = todas.filter(aLaVista);
   $("estado").replaceChildren(...ESTADOS_VISTA.map(([valor, texto]) => {
     const op = nodo("option", `${texto} (${visibles.filter((o) => enVista(o, valor)).length})`);
     op.value = valor;
@@ -225,6 +241,7 @@ function leerCamposVista() {
     return Number.isFinite(x) ? Math.max(0, Math.min(100, Math.round(x))) : defecto;
   };
   descarteReciente = null;
+  corregidas.clear();
   vista = { min: num("nota-min", 0), max: num("nota-max", 100), orden: $("orden").value, estado: $("estado").value };
   if (vista.min > vista.max) [vista.min, vista.max] = [vista.max, vista.min];
   guardarVista();
@@ -239,7 +256,8 @@ function detalle(o) {
   const dch = nodo("div", null, "acciones");
   cont.append(izq);
   const pintar = () => {
-    izq.replaceChildren(nodo("span", "Por qué te la recomendamos", "etiqueta-mono"));
+    const tuya = o.nota_usuaria !== null && o.nota_usuaria !== undefined;
+    izq.replaceChildren(nodo("span", tuya ? TEXTOS.loQueVioHorma(o.nota) : "Por qué te la recomendamos", "etiqueta-mono"));
     if (o.sin_puntuar) {
       izq.append(nodo("p", TEXTOS.sinNota));
       return;
@@ -254,8 +272,7 @@ function detalle(o) {
     if (o.desfasado) izq.append(nodo("p", TEXTOS.desfasada, "suave"));
     if (o.correccion) {
       const c = o.correccion;
-      const propuesta = c.nota !== null && c.nota !== undefined ? TEXTOS.propuesta(c.nota) : "";
-      izq.append(nodo("p", `Tu corrección${propuesta}: ${c.comentario}`, "origen"));
+      if (c.comentario && !tuya) izq.append(nodo("p", `Tu corrección: ${c.comentario}`, "origen"));   // con nota, en la fila
       if (c.informacion) izq.append(nodo("p", TEXTOS.informacionTuya(c.informacion), "origen"));
     }
   };
@@ -274,15 +291,15 @@ function detalle(o) {
     corregir.addEventListener("click", (e) => {
       e.stopPropagation();
       corregir.hidden = true;
-      const f = formularioCorreccion(o, (guardada, informacion) => {
-        if (guardada) pintar();
+      const f = formularioCorreccion(o, () => {
         f.remove();
         corregir.hidden = false;
-        if (guardada && informacion) izq.append(preguntaGuardarEnPerfil(o));
       });
       izq.append(f);
     });
     dch.append(corregir);
+    if (o.nota_usuaria !== null && o.nota_usuaria !== undefined) dch.append(botonQuitarNota(o));
+    if (preguntarPerfil === o.id) izq.append(preguntaGuardarEnPerfil(o));
     if (!o.descartada) dch.append(accionCandidatura(o, dch));
     dch.append(original);
   }
@@ -290,6 +307,24 @@ function detalle(o) {
   if (descarte) dch.append(descarte);
   if (!o.sin_puntuar && !o.descartada) dch.append(nodo("p", TEXTOS.eligeCv, "suave"));
   return cont;
+}
+
+// «Quitar la mía» (RF-12.26, D-118 y D-125): borra su corrección y vuelve la de Horma.
+function botonQuitarNota(o) {
+  const b = nodo("button", TEXTOS.quitarNota, "secundario");
+  b.type = "button";
+  b.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    b.disabled = true;
+    const r = await api(`/api/matches/${o.id}/correccion`, { metodo: "DELETE" });
+    if (!r.ok) {
+      b.disabled = false;
+      return avisar(r.motivo, true);
+    }
+    corregidas.add(o.id);
+    await cargarLista();
+  });
+  return b;
 }
 
 // «Puntuar ahora» (RF-8.5e): puntúa solo esta oferta; sin presupuesto hoy, desactivado con su texto (RF-10.9c).
@@ -414,16 +449,22 @@ function filaOferta(o) {
   } else {
     const barraCompat = nodo("div", null, "barra-compat");
     barraCompat.setAttribute("role", "meter");
-    barraCompat.setAttribute("aria-valuenow", String(o.nota));
+    barraCompat.setAttribute("aria-valuenow", String(notaVista(o)));
     barraCompat.setAttribute("aria-valuemin", "0");
     barraCompat.setAttribute("aria-valuemax", "100");
     barraCompat.setAttribute("aria-label", "Compatibilidad");
     const relleno = nodo("span");
-    relleno.style.width = `${Math.max(0, Math.min(100, o.nota))}%`;   // por CSSOM: la CSP no permite style= en el HTML
+    relleno.style.width = `${Math.max(0, Math.min(100, notaVista(o)))}%`;   // por CSSOM: la CSP no permite style= en el HTML
     barraCompat.append(relleno);
     const fila = nodo("div", null, "nota");
-    fila.append(barraCompat, nodo("span", String(o.nota), "numero"));
+    fila.append(barraCompat, nodo("span", String(notaVista(o)), "numero"));
     comp.append(fila);
+    if (o.veredicto) comp.append(nodo("p", o.veredicto, "linea-compat veredicto"));
+    if (o.nota_usuaria !== null && o.nota_usuaria !== undefined) {   // las dos notas y su motivo, sin abrir nada
+      comp.append(nodo("p", TEXTOS.tuNota(o.nota_usuaria, o.nota), "linea-compat"));
+      if (o.correccion?.comentario) comp.append(nodo("p", o.correccion.comentario, "linea-compat"));
+    }
+    if (o.faltas?.length) comp.append(nodo("p", o.faltas.join(" · "), "linea-compat"));
     if (o.pide_menos) comp.append(nodo("p", TEXTOS.pideMenos, "linea-compat"));
   }
   tr.append(comp);
@@ -470,11 +511,11 @@ function filaOferta(o) {
 // --- Lista --------------------------------------------------------------------------------------
 function pintarLista() {
   pintarVista();
-  const lista = ordenar(todas.filter((o) => enRango(o) && enVista(o)));
+  const lista = ordenar(todas.filter((o) => aLaVista(o) && enVista(o)));
   if (abiertas === null) abiertas = new Set(lista.slice(0, 1).map((o) => o.id));   // la primera, abierta
   // La oferta recién descartada sigue en su sitio como aviso; no cuenta como oferta.
   const conAviso = descarteReciente === null ? lista
-    : ordenar(todas.filter((o) => (enRango(o) && enVista(o)) || (o.id === descarteReciente && o.descartada)));
+    : ordenar(todas.filter((o) => (aLaVista(o) && enVista(o)) || (o.id === descarteReciente && o.descartada)));
   $("filas").replaceChildren(...conAviso.flatMap((o) => (o.id === descarteReciente && o.descartada ? filaDescartada(o) : filaOferta(o))));
   $("calificar-todas").hidden = !todas.some((o) => o.sin_puntuar && !o.descartada) || barra !== null || !$("sin-perfil").hidden;
   $("vacio").hidden = lista.length > 0 || conAviso.length > 0;
@@ -659,6 +700,7 @@ $("formulario-busca").addEventListener("submit", async (e) => {
   nuevas.incluir_propias = $("incluir-propias").checked;
   const sueldo = $("sueldo-minimo").value.trim();
   nuevas.sueldo_minimo = sueldo === "" ? null : Number(sueldo);
+  corregidas.clear();
   $("guardar-busca").disabled = true;
   const r = await api("/api/preferencias", { metodo: "PUT", cuerpo: nuevas });
   $("guardar-busca").disabled = false;

@@ -35,6 +35,15 @@ def frase_de_franja(nota: int) -> str:
     return next(frase for minimo, frase in FRANJAS if nota >= minimo)
 
 
+# RF-12.17 (F7-D5): el veredicto en palabras, con los mismos cortes que las franjas.
+VEREDICTOS = ((70, "Muy compatible"), (50, "Compatible"), (30, "Poco compatible"),
+              (0, "No te la recomendamos"))
+
+
+def veredicto(nota: int) -> str:
+    return next(texto for minimo, texto in VEREDICTOS if nota >= minimo)
+
+
 def sin_frase_de_franja(explicacion: str) -> str:
     for _, frase in FRANJAS:
         if explicacion.startswith(frase):
