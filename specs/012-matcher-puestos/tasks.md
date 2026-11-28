@@ -240,8 +240,10 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   - **Test:** una forma que sea otro puesto hace fallar el set.
   Hecho (27-nov, 0,022 USD): la primera pasada dio 22 formas ajenas; prompt corregido (D-075) y umbral de reserva
   (D-076): 3 de 213 ajenas (0,014) y cobertura 0,60. En la CI con las respuestas grabadas.
-- [ ] T17 — `recomendacion` de vuelta en `evals-reales`. Cierre de N: suite verde, `specs/index.md` al día y PR.
-  Con T14 «medida» la puerta no ha pasado: `recomendacion` no vuelve a `evals-reales` (RF-12.15). Queda el cierre de N.
+- [x] T17 — `recomendacion` de vuelta en `evals-reales`. Cierre de N: suite verde, `specs/index.md` al día y PR.
+  Con T14 «medida» la puerta no ha pasado: `recomendacion` no vuelve a `evals-reales` (RF-12.15).
+  Hecho (28-nov): suite verde (1.975 tests y 2 saltados), PR #47 abierto y su CI en verde, tras un commit de estilo
+  (ruff); a la espera de fusionar.
 
 ### V · Lo que ve la usuaria (RF-12.25 a 12.29)
 - [ ] T18 — Veredicto en palabras y línea de condiciones, con el orden de empate. Primero en la guía.
