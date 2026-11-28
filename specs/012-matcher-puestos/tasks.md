@@ -262,7 +262,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [ ] T21 — Cierre del paso. 🛑 Revisión de Mar sobre 20 recomendaciones (a ciegas si T14 se cierra como «medida»:
   apunta la franja antes de ver la nota; D-113; aprueba con 17 de 20 en su franja, ninguna a dos y 0 datos
   inventados, D-116) y prueba manual (lote 2, con B4, D-124; al prepararlo, puntuar 26 ofertas agotó los 60 s de espera del
-  modelo: sube a 240 s, D-126; sección en
+  modelo: sube a 240 s, D-126; hoja 1 de B11 rellenada el 28-nov, sin comparar; sección en
   `docs/plan-pruebas-manuales.md`); `specs/index.md`, PRD y pauta al día; PR.
 
 ### Cambios pequeños
