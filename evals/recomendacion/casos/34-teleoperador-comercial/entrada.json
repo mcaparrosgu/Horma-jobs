@@ -1,0 +1,88 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Marcos León",
+    "experiencias": [
+      {
+        "puesto": "Teleoperador",
+        "empresa": "Contacta 360",
+        "inicio": "2020",
+        "fin": "2025",
+        "descripcion": "Atención de incidencias de telefonía",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Teleoperador en Contacta 360, 2020-2025"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en B1"
+        }
+      }
+    ],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "servicios_profesionales",
+      "familia": "atencion_cliente",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Comercial de campo",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Experiencia en venta a puerta fría",
+      "Carné B y vehículo",
+      "Objetivos comerciales"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "comercio_retail",
+      "familia": "ventas_comercial",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

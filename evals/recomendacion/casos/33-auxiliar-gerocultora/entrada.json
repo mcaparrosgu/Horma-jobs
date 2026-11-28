@@ -1,0 +1,86 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Rosa Vidal",
+    "experiencias": [
+      {
+        "puesto": "Auxiliar de ayuda a domicilio",
+        "empresa": "Cuidamos S.L.",
+        "inicio": "2017",
+        "fin": "actual",
+        "descripcion": "Personas mayores dependientes",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Auxiliar de ayuda a domicilio en Cuidamos S.L., 2017-actual"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [
+      {
+        "nombre": "Certificado de profesionalidad en atención sociosanitaria",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Certificado de profesionalidad en atención sociosanitaria"
+        }
+      }
+    ],
+    "otros": [],
+    "taxonomia": {
+      "sector": "sanidad",
+      "familia": "sanidad_cuidados",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Gerocultora en residencia",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 17000,
+      "maximo": 18000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Certificado de atención sociosanitaria",
+      "Experiencia con personas mayores"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "17000–18000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "sanidad",
+      "familia": "sanidad_cuidados",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

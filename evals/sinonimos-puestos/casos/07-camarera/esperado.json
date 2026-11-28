@@ -1,0 +1,15 @@
+{
+  "titulos": [
+    "Mesera"
+  ],
+  "otros_puestos": [],
+  "etiquetas": {
+    "Camarera de sala": "mismo",
+    "Auxiliar de sala": "otro",
+    "Ayudante de camarero": "otro",
+    "Server": "otro",
+    "Waiter": "mismo",
+    "Camarera de restaurante": "mismo",
+    "Restaurant server": "mismo"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Conductor de camión",
+        "otras": [
+          "Camionero",
+          "Camionera",
+          "Conductor de camiones",
+          "Chófer de camión",
+          "Conductor de tráiler",
+          "Truck driver",
+          "Truck driver CE",
+          "HGV driver"
+        ]
+      }
+    ]
+  }
+}

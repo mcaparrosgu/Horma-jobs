@@ -1,0 +1,16 @@
+{
+  "titulos": [
+    "Registered Nurse",
+    "DUE"
+  ],
+  "otros_puestos": [],
+  "etiquetas": {
+    "Enfermera titulada": "mismo",
+    "Diplomado en Enfermería": "mismo",
+    "Graduate Nurse": "mismo",
+    "RN": "mismo",
+    "Staff Nurse": "mismo",
+    "Graduada en enfermería": "mismo",
+    "Nurse": "otro"
+  }
+}

@@ -88,7 +88,7 @@ def _cand(i, titulo="Camarera"):
 
 
 def _match(i, nota):
-    return {"oferta_id": i, "nota": nota, "condiciones": "medio",
+    return {"oferta_id": i, "nota": nota, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [],
             "explicacion": "Tiene experiencia en sala. La oferta pide camarera.",
             "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "camarera"}
 
@@ -137,8 +137,10 @@ def _copiar_evals(tmp_path: Path) -> Path:
 
 # --- T22: eval importar-correccion ----------------------------------------------------------------
 CASO = {"entrada": {"perfil": {}, "preferencias": {}, "oferta": {"titulo": "Camarera"}},
-        "esperado": {"nota": 35, "condiciones": "medio", "motivo": "El sueldo queda por debajo."},
-        "modelo": {"nota": 80, "condiciones": "medio", "explicacion": "Encaja."}}
+        "esperado": {"nota": 35, "condiciones": "medio",
+                     "relacion": "otro_oficio", "marcas": [], "motivo": "El sueldo queda por debajo."},
+        "modelo": {"nota": 80, "condiciones": "medio",
+                   "relacion": "otro_oficio", "marcas": [], "explicacion": "Encaja."}}
 
 
 def test_importar_correccion_no_copia_nada_sin_confirmar(tmp_path):

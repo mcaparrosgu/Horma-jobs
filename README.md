@@ -4,7 +4,7 @@ Asistente de búsqueda de empleo: ingiere y audita ofertas de fuentes registrada
 
 Es una sola aplicación. Los agentes son código Python que se prueba uno a uno desde la consola `horma`.
 
-> **Estado:** fases 0 a 10 cerradas (la entrevista de la 9b pasa a la spec 016) y en `main`; el paso 1 del PRD (spec 011, parte 1) está fusionado y el paso 2 (spec 012), en construcción. Estado de cada fase: [`specs/index.md`](./specs/index.md).
+> **Estado:** fases 0 a 10 cerradas (la entrevista de la 9b pasa a la spec 016) y en `main`; el paso 1 del PRD (spec 011, parte 1) está fusionado y el paso 2 (spec 012), en construcción: los puestos sugeridos ya están; faltan la nota y la explicación. Después viene la ampliación de la ingesta de ofertas (paso 5). Estado de cada fase: [`specs/index.md`](./specs/index.md).
 > Qué viene y por qué (specs 011 a 017): [`specs/prd.md`](./specs/prd.md). Despliegue local con Docker Compose.
 
 **Recorrido de la usuaria:** Landing → Perfil (sube su CV) → Ofertas (compatibilidad 0-100) → Candidatura
@@ -97,7 +97,7 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 
 ### Fase 3: candidatura y seguimiento
 
-1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0030`).
+1. `uv run alembic upgrade head` aplica todas las migraciones pendientes (hoy, hasta la `0033`).
 2. En `/ofertas`, «Preparar candidatura» crea la candidatura (si la oferta ya tuvo una cerrada, avisa y pide
    confirmar); el worker parte del CV maestro, sin CV base (RF-10.3), y redacta CV y carta. En `/candidaturas`
    las ves por estado: revisas, editas, apruebas, descargas los PDF y sigues el proceso (enviada, entrevista,
@@ -127,8 +127,8 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 7. Guardarraíles: la entrada se vigila por código (marca, no bloquea) y el set `evals/red-teaming/` debe pasar
    al 100 %. La revisión de cada prompt frente a las líneas rojas está en `docs/revision-lineas-rojas.md`.
 8. **Antes de abrir Horma a usuarias reales:** el `matcher` debe pasar la puerta de salida del paso 2 del PRD
-   (`specs/prd.md`, spec 012); hoy su `nota` mide 0,67 y la recomendación está fuera de
-   `evals-reales`.
+   (`specs/prd.md`, spec 012); hoy su `nota` mide 0,907-0,926 y el orden, 6 de 6, en tres pasadas (piden 0,90 y 6 de 6; 28-nov, 60 casos), pero no pasa la puerta por un rechazo grave del revisor; queda la revisión a ciegas de 20 recomendaciones, y la recomendación
+   está fuera de `evals-reales`.
 
 ## Consola
 
@@ -159,14 +159,15 @@ Las specs son markdown con frontmatter YAML (Open Knowledge Format).
 - **Aparcados (RF-10.11d):** `clasificador-respuesta` y `generador-cv-base` (y sus flujos y sus evals
   `respuestas` y `cv-base`) conservan el código, pero la consola avisa de que no se usan y la CI no los corre.
 - `uv run horma eval correr ofertas|fuentes` y, de la fase 2, `horma eval correr perfil`,
+  `horma eval correr puestos` (`--grabadas --veces 3` repite las respuestas guardadas, sin gasto)
   y `horma eval correr recomendacion` corren los casos de
   `evals/<set>/casos/` y dejan la ejecución en `evals/resultados/`. Con `--simulado` solo prueban
   el harness: no miden el modelo. Sin `--simulado` llaman al modelo real y **gastan saldo de
   Anthropic**; `--tope-coste` (1 USD por defecto) detiene el eval al superarlo y lo deja anotado.
   Los umbrales viven en `evals/umbrales.json` (no se rebajan desde la consola; `cv` exige además
   cobertura ATS media ≥ 0,75). `--flujo plain|langgraph` elige la implementación de `candidatura`.
-- CI: `secretos` y `calidad` (tests, estilo y todos los evals en simulado) corren en cada push y PR, y no
-  gastan. `evals-reales` mide el modelo (langgraph, 1 USD por set; `recomendacion` queda fuera hasta mejorar
+- CI: `secretos` y `calidad` (tests, estilo y los evals sin llamar al modelo: en simulado, y `puestos` con las
+  respuestas grabadas) corren en cada push y PR, y no gastan. `evals-reales` mide el modelo (langgraph, 1 USD por set; `recomendacion` queda fuera hasta mejorar
   el `matcher`) **solo a mano**: Actions → CI → Run workflow con la casilla `con_modelo_real` (~2 USD).
   Reactivarlo antes de abrir a usuarias reales. Un push nuevo cancela la ejecución anterior. `main` está
   protegida: solo se cambia con PR y con `secretos` y `calidad` en verde.

@@ -1,0 +1,19 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Personal de limpieza",
+        "otras": [
+          "Limpiador",
+          "Limpiadora",
+          "Operario de limpieza",
+          "Operaria de limpieza",
+          "Trabajador de limpieza",
+          "Cleaner",
+          "Cleaning operative",
+          "Cleaning staff"
+        ]
+      }
+    ]
+  }
+}

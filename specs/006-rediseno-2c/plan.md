@@ -5,7 +5,7 @@ description: Archivos, tokens, componentes CSS y cambios de tests que cubren cad
 tags: [plan, frontend, diseno, tokens, css, accesibilidad]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-19 }
+generated: { at: 2026-11-19 }
 verified: { by: human, at: 2026-11-19 }
 stale_after: null
 ---

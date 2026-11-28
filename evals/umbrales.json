@@ -21,8 +21,19 @@
       "equidad": 1.0
     }
   },
+  "sinonimos-puestos": {
+    "campos": 0,
+    "metricas": {
+      "ajenas": 0.05,
+      "cobertura": 0.6
+    }
+  },
   "recomendacion": {
-    "campos": 0.9
+    "campos": 0.9,
+    "metricas": {
+      "equidad": 1.0,
+      "revisor": 0.95
+    }
   },
   "cv": {
     "campos": 0.9,

@@ -1,0 +1,94 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Pilar Ramos",
+    "experiencias": [
+      {
+        "puesto": "Encargada de tienda",
+        "empresa": "Moda Sur",
+        "inicio": "2019",
+        "fin": "actual",
+        "descripcion": "Equipo de 5, caja y pedidos",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Encargada de tienda en Moda Sur, 2019-actual"
+        }
+      },
+      {
+        "puesto": "Dependienta",
+        "empresa": "Moda Sur",
+        "inicio": "2014",
+        "fin": "2019",
+        "descripcion": null,
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Dependienta en Moda Sur, 2014-2019"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "A2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en A2"
+        }
+      }
+    ],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "comercio_retail",
+      "familia": "ventas_comercial",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Dependiente/a",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": null,
+    "salario": null,
+    "idiomas": [],
+    "requisitos": [
+      "Ganas de vender"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": false,
+      "salario_rango": null,
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "comercio_retail",
+      "familia": "ventas_comercial",
+      "nivel": "junior",
+      "stack": []
+    }
+  }
+}

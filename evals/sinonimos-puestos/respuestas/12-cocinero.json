@@ -1,0 +1,14 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Cocinero",
+        "otras": [
+          "Cocinera",
+          "Cocinero/a",
+          "Cook"
+        ]
+      }
+    ]
+  }
+}

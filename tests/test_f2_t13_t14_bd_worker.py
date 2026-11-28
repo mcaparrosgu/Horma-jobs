@@ -263,8 +263,9 @@ def test_clasificar_perfil_rellena_la_taxonomia_de_la_version_copiada(motor_app,
 
 
 def _match(i, nota=80):
-    return {"oferta_id": i, "nota": nota, "condiciones": "medio", "explicacion": EXPLICACION,
-            "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "camarera"}
+    return {"oferta_id": i, "nota": nota, "condiciones": "medio",
+            "relacion": "otro_oficio", "marcas": [], "explicacion": EXPLICACION,
+            "cita_perfil": "Bar Sol", "cita_oferta": "camarera"}
 
 
 def test_recomendar_filtra_puntua_guarda_y_no_repite_lo_ya_puntuado(motor_app, bd_limpia):

@@ -63,6 +63,8 @@ jobs:
           done
           # `puestos` repite lo que contestó el modelo real: mide la puerta de hoy sin gasto (D-064).
           uv run horma eval correr puestos --grabadas --veces 3
+          # Lo mismo con `sinonimos-puestos` (spec 012, T31).
+          uv run horma eval correr sinonimos-puestos --grabadas
           uv run horma eval correr cv --simulado --flujo plain
           uv run horma eval correr cv --simulado --flujo langgraph
       - uses: actions/upload-artifact@v4

@@ -37,6 +37,7 @@ const textoNoConstaVarios = (requisitos) => {
 const TEXTOS = {
   compatibilidad: "Número de 0 a 100 de lo bien que encajan tu experiencia y formación con lo que pide la oferta. Orienta, no decide. Despliega la fila para ver por qué.",
   sinCompatibilidad: "Sin compatibilidad",
+  pideMenos: "Pide menos de lo que tienes",
   sinPerfil: "Sube tu CV para ver qué ofertas encajan contigo",
   sinPerfilBoton: "Subir mi CV",
   // Al quitar un dato personal (RF-11.25): sale junto a lo que ella ve, sin ventana emergente.

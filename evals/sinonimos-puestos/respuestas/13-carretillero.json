@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Carretillero",
+        "otras": [
+          "Carretillera",
+          "Conductor de carretilla elevadora",
+          "Operario de carretilla elevadora",
+          "Conductor de carretilla",
+          "Forklift driver",
+          "Forklift operator",
+          "Lift truck operator"
+        ]
+      }
+    ]
+  }
+}

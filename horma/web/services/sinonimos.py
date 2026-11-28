@@ -5,6 +5,7 @@ from horma.config import ajustes
 from horma.schemas.preferencias import Preferencias
 from horma.web.repositories import perfiles
 from horma.web.repositories import tareas as repo_tareas
+from horma.web.services import recalcular_notas
 
 _MAX_FORMAS, _MAX_LARGO = 8, 80
 
@@ -26,3 +27,4 @@ def guardar(s: Session, usuaria_id: int, pedidos: list[str], respuesta: dict[str
         formas = [f.strip() for f in respuesta.get(puesto, []) if 0 < len(f.strip()) <= _MAX_LARGO]
         prefs.sinonimos[puesto] = formas[:_MAX_FORMAS]
     perfiles.guardar_preferencias(s, usuaria_id, prefs)
+    recalcular_notas.recalcular(s)

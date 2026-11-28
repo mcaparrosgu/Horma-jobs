@@ -1,0 +1,17 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Marketing Director",
+        "otras": [
+          "Director de Marketing",
+          "Director de Marketing y Comunicación",
+          "Head of Marketing",
+          "Jefe de Marketing",
+          "Responsable de Marketing",
+          "Director Marketing"
+        ]
+      }
+    ]
+  }
+}

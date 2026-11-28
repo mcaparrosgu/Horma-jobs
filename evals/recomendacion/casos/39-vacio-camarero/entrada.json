@@ -1,0 +1,63 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Dani Roca",
+    "experiencias": [],
+    "formacion": [],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "otros",
+      "familia": "otros",
+      "nivel": "sin_especificar",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Camarero/a de sala",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "1 año de experiencia en sala"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "hosteleria_turismo",
+      "familia": "hosteleria_restauracion",
+      "nivel": "junior",
+      "stack": []
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Repartidor",
+        "otras": [
+          "Repartidor a domicilio",
+          "Repartidor de paquetería",
+          "Mensajero a domicilio",
+          "Rider de reparto",
+          "Delivery driver",
+          "Delivery rider",
+          "Courier",
+          "Delivery courier"
+        ]
+      }
+    ]
+  }
+}

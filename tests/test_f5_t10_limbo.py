@@ -77,6 +77,7 @@ def _pegar(c, h, textos):
 
 def _matches(ids):
     return {"matches": [{"oferta_id": i, "nota": 85, "condiciones": "alto",
+                         "relacion": "otro_oficio", "marcas": [],
                          "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "Camarera de sala",
                          "explicacion": "Tiene experiencia en sala. La oferta pide camarera de sala."}
                         for i in ids]}

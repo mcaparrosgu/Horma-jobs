@@ -5,7 +5,7 @@ description: Piezas, archivos y costes de la spec 013 (paso 3 del PRD) — varia
 tags: [plan, cv, carta, pdf, panel, evals]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-26 }
+generated: { at: 2026-11-26 }
 verified: { by: human, at: 2026-11-26 }
 stale_after: null
 ---
@@ -13,7 +13,7 @@ stale_after: null
 # calidad-cv-carta — Plan
 
 Dos agentes nuevos de modelo pequeño (`lector-ia` e `ideas-logros`), sin tablas nuevas y sin pantallas nuevas. Las rutas son las del
-26-nov: se comprueban antes de tocar. Se construye al cerrar el paso 2 (spec 012 fusionada); la prueba propia del PDF
+26-nov: se comprueban antes de tocar. Se construye después del paso 5 (D-095), con el paso 2 cerrado (spec 012 fusionada); la prueba propia del PDF
 (DEP-05) está hecha (26-nov).
 
 **Simple primero.** Descartado: tres agentes nuevos para el panel (F2-D1: el programa es código y la persona es el
@@ -100,7 +100,7 @@ concreto por ~0,001 USD).
 - **Editor:** `static/editor.js` (sin librerías): zona editable, botones Negrita, Lista y Título en el CV, ninguno en
   la carta; pegar sin formato; Ctrl+B; conversión al Markdown de siempre (`#`, `##`, `-`, `**`). Sustituye al cuadro
   de texto de `candidatura.js`. Primero en la guía, con 44 px y uso con teclado.
-- **Landing** (`index.html`): el mensaje que decida Mar (F7-D1) y solo lo que funciona.
+- **Landing** (`index.html`): solo lo que funciona; el mensaje (F7-D1) pasa al paso 9 (D-066).
 
 ## Costes
 Base: el eval `cv` real del 22-nov (33 casos, 1,74 USD: ~0,053 por caso). Con el lector y la relectura, ~0,06-0,065

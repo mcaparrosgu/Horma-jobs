@@ -245,7 +245,7 @@ function detalle(o) {
       return;
     }
     if (o.retirada) {
-      izq.append(nodo("p", TEXTOS.explicacionRetirada, "suave"));
+      izq.append(nodo("p", o.explicacion || TEXTOS.explicacionRetirada, "suave"));
     } else {
       izq.append(nodo("p", o.explicacion));
       if (o.cita_perfil) izq.append(nodo("p", `De tu perfil: «${o.cita_perfil}»`, "suave"));
@@ -424,6 +424,7 @@ function filaOferta(o) {
     const fila = nodo("div", null, "nota");
     fila.append(barraCompat, nodo("span", String(o.nota), "numero"));
     comp.append(fila);
+    if (o.pide_menos) comp.append(nodo("p", TEXTOS.pideMenos, "linea-compat"));
   }
   tr.append(comp);
 

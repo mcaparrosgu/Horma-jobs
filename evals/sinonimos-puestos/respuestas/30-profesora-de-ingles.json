@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Profesora de inglés",
+        "otras": [
+          "Profesor de inglés",
+          "Docente de inglés",
+          "Profesor/a de inglés",
+          "English teacher",
+          "Teacher of English",
+          "EFL teacher",
+          "English instructor"
+        ]
+      }
+    ]
+  }
+}

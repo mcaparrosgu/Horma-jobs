@@ -1,0 +1,15 @@
+{
+  "titulos": [
+    "Photographer"
+  ],
+  "otros_puestos": [],
+  "etiquetas": {
+    "Fotoperiodista": "mismo",
+    "Reportero gráfico": "mismo",
+    "Camarógrafo": "otro",
+    "Photojournalist": "mismo",
+    "Photo specialist": "otro",
+    "Imaging specialist": "otro",
+    "Fotógrafo profesional": "mismo"
+  }
+}

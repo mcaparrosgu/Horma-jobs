@@ -1,4 +1,6 @@
 """SQL de las notas del matcher. La tabla `matches` es la caché: lo ya puntuado no se vuelve a pedir."""
+import json
+
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -37,7 +39,7 @@ def listado(s: Session, ids: list[int], huella: str | None = None) -> list[dict]
         "o.procesada_en as analizada_en, o.fantasma, o.motivos_fantasma, o.fraude, o.senales_fraude, "
         "(o.salario_anual_eur_min is not null or o.salario_anual_eur_max is not null) "
         "as sueldo_comparable, m.nota, m.condiciones, m.explicacion, m.cita_perfil, m.cita_oferta, "
-        "m.retirada, m.correccion, m.perfil_version, "
+        "m.retirada, m.correccion, m.perfil_version, m.relacion, "
         "case when m.huella_perfil is null or cast(:h as text) is null then "
         "m.perfil_version < coalesce((select max(version) from perfiles where estado = 'hecha'), 0) "
         "else m.huella_perfil <> cast(:h as text) end as desfasado, d.oferta_id is not null as descartada, "
@@ -76,6 +78,21 @@ def guardar_correccion(s: Session, oferta_id: int, perfil_version: int, correcci
               {"o": oferta_id, "v": perfil_version, "c": correccion})
 
 
+def recalculables(s: Session) -> list[dict]:
+    """Las notas de la usuaria con lo necesario para volver a acotarlas sin modelo (RF-12.37)."""
+    return [dict(f) for f in s.execute(text(
+        "select m.oferta_id, m.perfil_version, m.nota, m.nota_modelo, m.marcas, m.relacion, m.explicacion, "
+        "m.retirada, o.titulo, o.requisitos, o.familia, o.nivel "
+        "from matches m join ofertas o on o.id = m.oferta_id "
+        "where m.marcas is not null and m.nota_modelo is not null")).mappings()]
+
+
+def cambiar_nota(s: Session, oferta_id: int, perfil_version: int, nota: int, explicacion: str) -> None:
+    s.execute(text("update matches set nota = :n, explicacion = :e "
+                   "where oferta_id = :o and perfil_version = :v"),
+              {"o": oferta_id, "v": perfil_version, "n": nota, "e": explicacion})
+
+
 def informacion_de(s: Session, oferta_id: int) -> str | None:
     """La «información nueva» de la última corrección de esa oferta (RF-10.15), aunque la compatibilidad se
     haya vuelto a calcular después con otra versión del perfil."""
@@ -90,12 +107,14 @@ def guardar(s: Session, usuaria_id: int, perfil_version: int, matches: list[dict
     for m in matches:
         s.execute(text(
             "insert into matches (usuaria_id, oferta_id, perfil_version, nota, condiciones, explicacion, "
-            "cita_perfil, cita_oferta, retirada, huella_perfil) "
-            "values (:u, :o, :v, :n, :c, :e, :cp, :co, :r, :h) "
+            "cita_perfil, cita_oferta, retirada, huella_perfil, nota_modelo, marcas, relacion) "
+            "values (:u, :o, :v, :n, :c, :e, :cp, :co, :r, :h, :nm, cast(:ma as jsonb), :rel) "
             "on conflict (usuaria_id, oferta_id, perfil_version) do update set nota = excluded.nota, "
             "condiciones = excluded.condiciones, explicacion = excluded.explicacion, "
             "cita_perfil = excluded.cita_perfil, cita_oferta = excluded.cita_oferta, "
-            "retirada = excluded.retirada, huella_perfil = excluded.huella_perfil"),
+            "retirada = excluded.retirada, huella_perfil = excluded.huella_perfil, "
+            "nota_modelo = excluded.nota_modelo, marcas = excluded.marcas, relacion = excluded.relacion"),
             {"u": usuaria_id, "o": m["oferta_id"], "v": perfil_version, "n": m["nota"],
              "c": m["condiciones"], "e": m["explicacion"], "cp": m["cita_perfil"],
-             "co": m["cita_oferta"], "r": m["retirada"], "h": huella})
+             "co": m["cita_oferta"], "r": m["retirada"], "h": huella, "nm": m.get("nota_modelo"),
+             "ma": None if m.get("marcas") is None else json.dumps(m["marcas"]), "rel": m.get("relacion")})

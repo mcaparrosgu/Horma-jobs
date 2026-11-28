@@ -1,0 +1,73 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Amparo Ruiz",
+    "experiencias": [
+      {
+        "puesto": "Limpiadora",
+        "empresa": "Limpiezas Albufera",
+        "inicio": "2022",
+        "fin": "actual",
+        "descripcion": "Oficinas y comunidades",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Limpiadora en Limpiezas Albufera, 2022-actual"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "servicios_profesionales",
+      "familia": "otros",
+      "nivel": "junior",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Camarera de pisos",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "temporal",
+    "salario": null,
+    "idiomas": [],
+    "requisitos": [
+      "Experiencia en limpieza",
+      "Valorable experiencia en hoteles"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": false,
+      "salario_rango": null,
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "hosteleria_turismo",
+      "familia": "hosteleria_restauracion",
+      "nivel": "junior",
+      "stack": []
+    }
+  }
+}

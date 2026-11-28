@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Camarero",
+        "otras": [
+          "Camarera",
+          "Camarero de sala",
+          "Mesero",
+          "Mesera",
+          "Waiter",
+          "Waitress",
+          "Restaurant waiter"
+        ]
+      }
+    ]
+  }
+}

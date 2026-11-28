@@ -1,0 +1,77 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Óscar Nieto",
+    "experiencias": [
+      {
+        "puesto": "Camarero",
+        "empresa": null,
+        "inicio": null,
+        "fin": null,
+        "descripcion": null,
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Camarero en varias empresas, ?-?"
+        }
+      }
+    ],
+    "formacion": [],
+    "idiomas": [],
+    "habilidades": [],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "hosteleria_turismo",
+      "familia": "hosteleria_restauracion",
+      "nivel": "junior",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Camarero de barra",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "2 años de experiencia en barra",
+      "Coctelería"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "hosteleria_turismo",
+      "familia": "hosteleria_restauracion",
+      "nivel": "junior",
+      "stack": []
+    }
+  }
+}

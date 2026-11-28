@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Personal de almacén",
+        "otras": [
+          "Mozo de almacén",
+          "Operario de almacén",
+          "Almacenero",
+          "Warehouse operative",
+          "Warehouse worker",
+          "Warehouse associate",
+          "Warehouse operator"
+        ]
+      }
+    ]
+  }
+}

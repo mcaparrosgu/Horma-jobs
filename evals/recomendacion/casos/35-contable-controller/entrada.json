@@ -1,0 +1,109 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Teresa Cano",
+    "experiencias": [
+      {
+        "puesto": "Auxiliar contable",
+        "empresa": "Gestoría Marín",
+        "inicio": "2019",
+        "fin": "actual",
+        "descripcion": "Asientos, IVA y conciliaciones",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Auxiliar contable en Gestoría Marín, 2019-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado Superior en Administración y Finanzas",
+        "centro": "IES Abastos",
+        "inicio": "2017",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado Superior en Administración y Finanzas"
+        }
+      }
+    ],
+    "idiomas": [],
+    "habilidades": [
+      {
+        "nombre": "A3",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "A3"
+        }
+      },
+      {
+        "nombre": "Excel",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Excel"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "finanzas_seguros",
+      "familia": "finanzas_contabilidad",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Controller financiero",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 42000,
+      "maximo": 50000,
+      "moneda": "EUR"
+    },
+    "idiomas": [
+      "inglés"
+    ],
+    "requisitos": [
+      "Grado en ADE o Economía",
+      "5 años en control de gestión",
+      "Inglés C1"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "42000–50000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "finanzas_seguros",
+      "familia": "finanzas_contabilidad",
+      "nivel": "senior",
+      "stack": []
+    }
+  }
+}

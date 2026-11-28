@@ -5,7 +5,7 @@ description: Requisitos funcionales de la fase 1 (ofertas vivas, auditadas y cla
 tags: [spec, ofertas]
 status: active
 sources: [./clarifications.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-12 }
+generated: { at: 2026-11-12 }
 verified: { by: human, at: 2026-11-14 }
 stale_after: null
 ---

@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables de la parte 1 de la spec 011 (paso 
 tags: [tareas, envio, medicion, frontend]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---

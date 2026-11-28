@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables de la parte 9a. Cada una empieza co
 tags: [tareas, perfil, preferencias, agentes, frontend]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-21 }
+generated: { at: 2026-11-21 }
 verified: { by: human, at: 2026-11-21 }
 stale_after: null
 ---

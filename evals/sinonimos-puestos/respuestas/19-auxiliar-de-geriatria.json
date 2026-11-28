@@ -1,0 +1,18 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Auxiliar de geriatría",
+        "otras": [
+          "Gerocultor",
+          "Gerocultora",
+          "Geriatric assistant",
+          "Geriatric nursing assistant",
+          "Geriatric care assistant",
+          "Geriatric aide",
+          "Elderly care assistant"
+        ]
+      }
+    ]
+  }
+}

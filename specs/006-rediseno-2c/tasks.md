@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables del rediseño 2c. Cada una empieza 
 tags: [tareas, frontend, diseno, tokens, accesibilidad]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-19 }
+generated: { at: 2026-11-19 }
 verified: { by: human, at: 2026-11-19 }
 stale_after: null
 ---

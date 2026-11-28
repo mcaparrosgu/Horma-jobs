@@ -1,0 +1,19 @@
+{
+  "titulos": [
+    "Delivery Driver",
+    "Mensajero"
+  ],
+  "otros_puestos": [],
+  "etiquetas": {
+    "Repartidor a domicilio": "mismo",
+    "Chofer de reparto": "mismo",
+    "Conductor repartidor": "mismo",
+    "Courier": "mismo",
+    "Delivery rider": "mismo",
+    "Driver de reparto": "mismo",
+    "Repartidor de paquetería": "mismo",
+    "Mensajero a domicilio": "mismo",
+    "Rider de reparto": "mismo",
+    "Delivery courier": "mismo"
+  }
+}

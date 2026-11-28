@@ -82,6 +82,7 @@ modules = [
   "horma.agents.clasificador_postulante",
   "horma.agents.generador_cv_base",
   "horma.agents.matcher",
+  "horma.agents.revisor_explicacion",
   "horma.agents.redactor_cv",
   "horma.agents.redactor_carta",
   "horma.agents.juez_candidatura",

@@ -5,7 +5,7 @@ description: Arquitectura, contratos y modelo de datos que cubren cada requisito
 tags: [plan, candidatura, seguimiento]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../002-perfil-recomendacion/plan.md]
-generated: { by: claude-code, at: 2026-11-16 }
+generated: { at: 2026-11-16 }
 verified: { by: human, at: 2026-11-16 }
 stale_after: null
 ---

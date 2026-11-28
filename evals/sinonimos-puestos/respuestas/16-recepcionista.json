@@ -1,0 +1,16 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Recepcionista",
+        "otras": [
+          "Receptionist",
+          "Front desk agent",
+          "Front desk clerk",
+          "Recepcionista de hotel",
+          "Recepcionista/a"
+        ]
+      }
+    ]
+  }
+}

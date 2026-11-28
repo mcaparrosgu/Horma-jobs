@@ -464,7 +464,7 @@ def correr_eval(
     flujo_impl: str | None = typer.Option(None, "--flujo", help="Implementación del flujo `candidatura` "
                                           "(plain o langgraph); por defecto, HORMA_FLOW_IMPL."),
     grabadas: bool = typer.Option(False, help="`puestos`: repite las respuestas guardadas, sin gasto."),
-    veces: int = typer.Option(1, min=1, help="`puestos`: pasadas por CV, para medir la estabilidad."),
+    veces: int = typer.Option(1, min=1, help="Pasadas por caso, en `puestos` y `recomendacion`."),
 ) -> None:
     """Corre un set de evals y deja la ejecución en evals/resultados/."""
     from horma.evals import SETS, correr_set
@@ -479,21 +479,46 @@ def correr_eval(
         raise typer.Exit(2)
     if not simulado and not grabadas:
         _sin_clave_de_anthropic()
-    if veces > 1 and conjunto != "puestos":
-        typer.echo("--veces solo vale para el set `puestos`.", err=True)
+    if veces > 1 and conjunto not in ("puestos", "recomendacion"):
+        typer.echo("--veces solo vale para `puestos` y `recomendacion`.", err=True)
         raise typer.Exit(2)
     res = correr_set(conjunto, raiz=raiz, solo=solo, simulado=simulado, veces=veces,
                      tope_coste=tope_coste, flujo=flujo_impl, grabadas=grabadas)
+    _mostrar_eval(res, f"coste {res['coste']:.4f} USD (tope {tope_coste:g})")
+
+
+@evals.command("repuntuar")
+def repuntuar_eval(
+    archivos: list[Path] = typer.Argument(..., help="Resultados de `recomendacion` en evals/resultados/, "
+                                                    "en orden: sus pasadas cuentan seguidas."),
+    raiz: Path = typer.Option(Path("evals"), help="Carpeta de evals."),
+) -> None:
+    """Vuelve a puntuar en código lo grabado de `recomendacion`, sin llamar al modelo (RF-12.12 y 12.35)."""
+    from horma.evals import correr_set
+
+    grabado = [json.loads(a.read_text(encoding="utf-8")) for a in archivos]
+    _mostrar_eval(correr_set("recomendacion", raiz=raiz, grabado=grabado), "sin llamar al modelo")
+
+
+def _mostrar_eval(res: dict, gasto: str) -> None:
     for campo, valor in res["campos"].items():
         typer.echo(f"{campo:<30}{valor:.2f}")
     typer.echo(f"{'adversarias':<30}{res['adversarias']:.2f}")
+    if "control_revisor" in res:
+        typer.echo(f"{'control del revisor':<30}{res['control_revisor']:.2f}")
+    if "pasadas" in res:
+        for i, pasada in enumerate(res["pasadas"], 1):
+            orden = f" · orden {pasada['orden']:.2f}" if "orden" in pasada else ""
+            typer.echo(f"pasada {i}: nota {pasada.get('nota', 0):.2f}{orden}")
+        peor = max(res["detalle"], key=lambda d: d.get("variacion", 0))
+        typer.echo(f"{'variación máxima de nota':<30}{peor.get('variacion', 0)} ({peor['caso']})")
     for nombre, valor in res.get("metricas", {}).items():
-        if nombre != "sin_etiquetar":
+        if not isinstance(valor, list) or nombre == "revisor_pasadas":
             typer.echo(f"{nombre:<30}{'—' if valor is None else valor}")
-        elif valor:
+        elif valor:  # el detalle de cada lista va en el resultado guardado
             typer.echo(f"{nombre:<30}{len(valor)}")
-    typer.echo(f"\n{res['casos_ejecutados']} de {res['casos']} casos · coste {res['coste']:.4f} USD "
-               f"(tope {tope_coste:g}) · {'APROBADO' if res['aprobado'] else 'NO APROBADO'}")
+    typer.echo(f"\n{res['casos_ejecutados']} de {res['casos']} casos · {gasto} · "
+               f"{'APROBADO' if res['aprobado'] else 'NO APROBADO'}")
     if res["detenido_por_coste"]:
         typer.echo("El eval se detuvo al superar el tope de coste: el resultado no es completo.")
     raise typer.Exit(0 if res["aprobado"] else 1)
@@ -611,7 +636,7 @@ def recomendar_cmd(
         typer.echo(f"{m['nota']:>3}  {titulos.get(m['oferta_id'], m['oferta_id'])}  "
                    f"· condiciones {m['condiciones']}")
         if m["retirada"]:
-            typer.echo("     (explicación retirada: mencionaba un rasgo personal)")
+            typer.echo(f"     ({m['explicacion'] or 'explicación retirada: mencionaba un rasgo personal'})")
         elif m["explicacion"]:
             typer.echo(f"     {m['explicacion']}")
     typer.echo(f"\n{len(en_rango)} de {len(estado['recomendaciones'])} ofertas en el rango "

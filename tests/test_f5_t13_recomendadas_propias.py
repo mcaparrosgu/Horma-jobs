@@ -54,6 +54,7 @@ def _perfil(motor, motor_migrador):
 
 def _matches(ids, nota=85):
     return {"matches": [{"oferta_id": i, "nota": nota, "condiciones": "alto",
+                         "relacion": "otro_oficio", "marcas": [],
                          "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "Camarera de sala",
                          "explicacion": "Tiene experiencia en sala. La oferta pide camarera de sala."}
                         for i in ids]}

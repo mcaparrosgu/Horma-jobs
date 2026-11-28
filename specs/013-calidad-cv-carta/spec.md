@@ -5,7 +5,7 @@ description: Requisitos en notación EARS de la spec 013 (paso 3 del PRD) — he
 tags: [spec, cv, carta, pdf, panel, eliminatorios, evals]
 status: active
 sources: [./clarifications.md, ../prd.md, ../system.md, ../003-candidatura/spec.md, ../010-simplificacion/spec.md, ../012-matcher-puestos/spec.md]
-generated: { by: claude-code, at: 2026-11-26 }
+generated: { at: 2026-11-26 }
 verified: { by: human, at: 2026-11-26 }
 stale_after: null
 ---
@@ -137,7 +137,7 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
   «Suele ser eliminatorio: la oferta pide inglés C1 y no consta en tu perfil». No se repiten en «No consta en tu CV».
   El permiso de trabajo nunca se deduce: «La oferta pide permiso de trabajo en España. Horma no lo sabe:
   confírmalo tú». *(D-058)* Los eliminatorios avisan y NO DEBERÁN frenar: ella puede aprobar, descargar y, cuando
-  Horma envíe (paso 5), enviar la candidatura igual.
+  Horma envíe (paso 7), enviar la candidatura igual.
 - **RF-13.23** El detalle de una oferta en Ofertas DEBERÁ enseñar la misma línea junto a las condiciones
   (RF-12.25), calculada al pedirla, sin modelo. No impide pedir la candidatura.
 
@@ -191,8 +191,8 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
 - **RF-13.34** Los cambios de Candidatura, Perfil y Ofertas DEBERÁN usar componentes de la guía (uno nuevo se añade
   antes a la guía, RF-6.9), sin las palabras de RF-6.8, y comprobarse a 1280 y 390 px, en claro y en oscuro, mirando
   alineación y simetría (RF-6.4b).
-- **RF-13.35** Al cerrar el paso, Mar DEBERÁ decidir el mensaje de Horma (F7-D1) y la landing DEBERÁ prometer solo lo
-  que ya funciona.
+- **RF-13.35** *(D-066: el mensaje de Horma, F7-D1, pasa al paso 9.)* Al cerrar el paso, la landing DEBERÁ prometer
+  solo lo que ya funciona.
 
 ## Criterios de aceptación (puerta de salida del paso 3)
 - Una línea que dice con más fuerza lo que la descripción respalda («nivel medio» → «B2») pasa; una cifra, una fecha
@@ -209,7 +209,7 @@ Decisiones y supuestos: [clarifications.md](./clarifications.md); las D-NNN, en 
 - Eval `cv` con 0 frases sin origen y sembrados al 100 % (NFR-01); eval `perfil` y set `lector-ia` en sus umbrales;
   panel en los umbrales de RF-13.32.
 - Editor, diseños y bloques nuevos comprobados a 1280 y 390 px, en claro y en oscuro; suite verde.
-- Mar decide el mensaje (F7-D1) y hace la prueba manual del paso.
+- La landing promete solo lo que funciona, y Mar hace la prueba manual del paso.
 
 ## Riesgos
 - **Los evals reales cuestan más de lo estimado** (el `cv` llegó a 2,7 USD). Estimación y OK de Mar antes de cada

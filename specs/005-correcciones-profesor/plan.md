@@ -5,7 +5,7 @@ description: Arquitectura, contratos y modelo de datos que cubren cada requisito
 tags: [plan, perfil, cv-maestro, ofertas, scrapeo, validacion-cv, fuentes, estilo]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md, ../004-langgraph-salida/plan.md]
-generated: { by: claude-code, at: 2026-11-17 }
+generated: { at: 2026-11-17 }
 verified: { by: human, at: 2026-11-17 }
 stale_after: null
 ---

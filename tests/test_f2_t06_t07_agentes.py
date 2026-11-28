@@ -17,7 +17,7 @@ from horma.agents.registry import AGENTES, APARCADOS
 from horma.llm.simulado import ProveedorSimulado
 from horma.schemas.oferta import Auditoria, Oferta
 from horma.schemas.perfil import Perfil
-from horma.schemas.preferencias import Preferencias
+from horma.schemas.perfil_ciego import PerfilCiego
 from horma.schemas.taxonomia import Taxonomia
 from horma.tools.copia_ciega import copia_ciega
 
@@ -93,10 +93,10 @@ def _oferta(titulo="Camarera") -> Oferta:
 
 def test_matcher_devuelve_matches_y_el_prompt_exige_citas_y_prohibe_rasgos():
     prov = ProveedorSimulado([{"matches": [{
-        "oferta_id": 7, "nota": 82, "condiciones": "medio",
+        "oferta_id": 7, "nota": 82, "condiciones": "medio", "relacion": "otro_oficio", "marcas": [],
         "explicacion": "Tiene dos años de camarera en Bar Sol. La oferta pide experiencia en sala.",
-        "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "experiencia en sala"}]}])
-    r = Matcher.run(EntradaMatcher(perfil=Perfil.model_validate(PERFIL), condiciones=Preferencias(),
+        "cita_perfil": "Bar Sol", "cita_oferta": "Camarera"}]}])
+    r = Matcher.run(EntradaMatcher(perfil=copia_ciega(Perfil.model_validate(PERFIL)),
                                    ofertas=[OfertaCandidata(oferta_id=7, oferta=_oferta())]),
                     proveedor=prov)
     assert isinstance(r, SalidaMatcher) and r.matches[0].nota == 82
@@ -108,8 +108,9 @@ def test_matcher_devuelve_matches_y_el_prompt_exige_citas_y_prohibe_rasgos():
 
 def test_matcher_no_admite_mas_de_30_ofertas_ni_explicaciones_de_una_frase():
     with pytest.raises(ValueError):
-        EntradaMatcher(perfil=Perfil(), condiciones=Preferencias(),
+        EntradaMatcher(perfil=PerfilCiego(),
                        ofertas=[OfertaCandidata(oferta_id=i, oferta=_oferta()) for i in range(31)])
     with pytest.raises(ValueError):
         SalidaMatcher.model_validate({"matches": [{"oferta_id": 1, "nota": 50, "condiciones": "bajo",
+                                                   "relacion": "otro_oficio", "marcas": [],
                                                    "explicacion": "Solo una frase."}]})

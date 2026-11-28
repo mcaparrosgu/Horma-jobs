@@ -5,7 +5,7 @@ description: Decisiones que sostienen la spec 013 (paso 3 del PRD) — las ya to
 tags: [clarify, cv, carta, pdf, panel, eliminatorios]
 status: active
 sources: [../prd.md, ../003-candidatura/clarifications.md, ../010-simplificacion/spec.md, ../012-matcher-puestos/spec.md]
-generated: { by: claude-code, at: 2026-11-26 }
+generated: { at: 2026-11-26 }
 verified: { by: human, at: 2026-11-26 }
 stale_after: null
 ---
@@ -28,7 +28,7 @@ Están en los informes F2 (`docs/investigacion/f2-cv-carta-ideales.md`, apartado
 | F2-D8 | Tú o usted, espejo de la oferta; la guía de estilo de la usuaria manda |
 | F2-D9 | Eliminatorias a la vista, sin modelo, desde los huecos |
 | F7-D3 | Puerta de hechos sin modelo antes del PDF (cifras, cargos, deriva de verbos), tras ver qué cubre `verificar_trazabilidad`. Cambiada por D-054: sin listas de verbos ni de cargos |
-| F7-D1 | Mensaje de Horma: lo decide Mar al cerrar este paso, con la calidad ya medida |
+| F7-D1 | Mensaje de Horma: ya no es de este paso; se decide mientras se construye el paso 8, para la landing del paso 9 (D-066) |
 | F9-D7 | Marca de «generado con IA»: solo si la asesoría legal confirma que obliga |
 
 ## Preguntas a Mar (26-nov)

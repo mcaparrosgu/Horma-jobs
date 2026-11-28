@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables derivadas del plan de la fase 5. Ca
 tags: [tareas, perfil, cv-maestro, ofertas, scrapeo, validacion-cv, fuentes, estilo]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-17 }
+generated: { at: 2026-11-17 }
 verified: { by: human, at: 2026-11-17 }
 stale_after: null
 ---

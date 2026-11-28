@@ -5,7 +5,7 @@ description: Requisitos funcionales de la fase 5 (correcciones del profesor del 
 tags: [spec, perfil, cv-maestro, ofertas, ingesta, scrapeo, validacion-cv, fuentes, estilo]
 status: active
 sources: [./clarifications.md, ../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/spec.md, ../004-langgraph-salida/spec.md]
-generated: { by: claude-code, at: 2026-11-17 }
+generated: { at: 2026-11-17 }
 verified: { by: human, at: 2026-11-17 }
 stale_after: null
 ---

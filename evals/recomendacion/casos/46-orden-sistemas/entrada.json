@@ -1,0 +1,270 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Hugo Ferri",
+    "experiencias": [
+      {
+        "puesto": "Técnico de sistemas",
+        "empresa": "Redes Mediterráneo",
+        "inicio": "2019",
+        "fin": "actual",
+        "descripcion": "Windows Server, redes y soporte",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnico de sistemas en Redes Mediterráneo, 2019-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado Superior en ASIR",
+        "centro": "IES La Senia",
+        "inicio": "2017",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado Superior en ASIR"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en B2"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Linux",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Linux"
+        }
+      },
+      {
+        "nombre": "Azure",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Azure"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "tecnologia",
+      "familia": "sistemas_redes",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "ofertas": [
+    {
+      "titulo": "Técnico de soporte N1",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "Soporte a usuarios",
+        "Windows"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "tecnologia",
+        "familia": "sistemas_redes",
+        "nivel": "intermedio",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Desarrollador Java senior",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "6 años con Java y Spring"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "tecnologia",
+        "familia": "desarrollo_software",
+        "nivel": "senior",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Administrador de sistemas",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "Windows Server",
+        "Linux",
+        "Redes",
+        "3 años"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "tecnologia",
+        "familia": "sistemas_redes",
+        "nivel": "intermedio",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Arquitecto de ciberseguridad",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "8 años en seguridad",
+        "CISSP"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "tecnologia",
+        "familia": "sistemas_redes",
+        "nivel": "senior",
+        "stack": []
+      }
+    },
+    {
+      "titulo": "Dependiente de informática",
+      "empresa": "Empresa Ejemplo",
+      "ubicacion": "Valencia",
+      "remoto": null,
+      "modalidad": null,
+      "contrato": "indefinido",
+      "salario": {
+        "minimo": 20000,
+        "maximo": 24000,
+        "moneda": "EUR"
+      },
+      "idiomas": [],
+      "requisitos": [
+        "Venta de hardware"
+      ],
+      "fecha_publicacion": "2026-11-10",
+      "url": null,
+      "instrucciones_embebidas": [],
+      "auditoria": {
+        "fantasma": false,
+        "motivos_fantasma": [],
+        "fraude": false,
+        "senales_fraude": [],
+        "dominio_empresa": null,
+        "empresa_validada": null,
+        "salario_publicado": true,
+        "salario_rango": "20000–24000 EUR",
+        "frase_pedir_salario": null
+      },
+      "taxonomia": {
+        "sector": "comercio_retail",
+        "familia": "ventas_comercial",
+        "nivel": "intermedio",
+        "stack": []
+      }
+    }
+  ]
+}

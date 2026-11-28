@@ -5,7 +5,7 @@ description: Preguntas abiertas de la fase 5 (correcciones del profesor del 17-n
 tags: [clarify, perfil, cv-maestro, ofertas, ingesta, condiciones, validacion-cv]
 status: active
 sources: [../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../004-langgraph-salida/spec.md]
-generated: { by: claude-code, at: 2026-11-17 }
+generated: { at: 2026-11-17 }
 verified: { by: human, at: 2026-11-17 }
 stale_after: null
 ---

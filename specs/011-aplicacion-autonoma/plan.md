@@ -5,7 +5,7 @@ description: Piezas y archivos de la parte 1 de la spec 011 — medición de des
 tags: [plan, envio, medicion, frontend]
 status: active
 sources: [./spec.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---

@@ -30,6 +30,7 @@ const pantallas = (candidatura) => [
   ['perfil', '/perfil'],
   ['perfil-ver-cv', '/perfil', { accion: pulsar('#cvs-subidos button:has-text("Ver")'), ventana: true }],
   ['ofertas', '/ofertas'],
+  ['ofertas-aviso', '/ofertas', { aviso: true }],
   ['ofertas-que-buscas', '/ofertas', { accion: pulsar('#que-buscas > summary') }],
   ['ofertas-anadir', '/ofertas', { accion: pulsar('#abrir-anadir'), ventana: true }],
   ['candidaturas', '/candidaturas'],
@@ -58,11 +59,18 @@ const pantallas = (candidatura) => [
     navegador = await chromium.launch({ channel: 'chrome' });
     for (const ancho of [390, 1280]) {
       for (const tema of ['light', 'dark']) {
-        for (const [nombre, ruta, { anonima, accion, ventana } = {}] of pantallas(candidatura)) {
+        for (const [nombre, ruta, { anonima, accion, ventana, aviso } = {}] of pantallas(candidatura)) {
           const ctx = await navegador.newContext({ viewport: { width: ancho, height: 844 }, colorScheme: tema,
             isMobile: ancho < 900, hasTouch: ancho < 900, serviceWorkers: 'block' });
           await ctx.route('**/*', (r) => (r.request().method() === 'GET' ? r.continue() : r.abort()));
           if (!anonima) await ctx.addCookies([{ name: 'horma_sesion', value: cookie, url: BASE }]);
+          // La línea «Pide menos de lo que tienes» (RF-12.36) se fuerza en la respuesta: el catálogo no se toca.
+          if (aviso) await ctx.route('**/api/recomendaciones', async (r) => {
+            const respuesta = await r.fetch();
+            const datos = await respuesta.json();
+            for (const o of datos.recomendaciones) o.pide_menos = true;
+            await r.fulfill({ response: respuesta, json: datos });
+          });
           const p = await ctx.newPage();
           const archivo = `${nombre}-${ancho}-${tema}.png`;
           try {

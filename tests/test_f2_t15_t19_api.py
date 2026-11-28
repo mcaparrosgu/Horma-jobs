@@ -415,7 +415,8 @@ def test_los_contadores_de_las_casillas_coinciden_con_el_catalogo(app, motor_app
 
 # --- T19: recomendaciones ----------------------------------------------------------------------
 def _match(oferta, version, nota, condiciones="medio", explicacion="Una frase. Dos frases."):
-    return {"oferta_id": oferta, "nota": nota, "condiciones": condiciones, "explicacion": explicacion,
+    return {"oferta_id": oferta, "nota": nota, "condiciones": condiciones,
+            "relacion": "otro_oficio", "marcas": [], "explicacion": explicacion,
             "cita_perfil": "Camarera en Bar Sol", "cita_oferta": "camarera", "retirada": False}
 
 
@@ -557,7 +558,8 @@ def test_de_la_subida_al_perfil_y_la_recomendacion_con_el_worker(app, motor_app)
     assert c.get("/api/preferencias").json()["familias"] == []   # el área ya no se rellena desde el CV
     oferta = _oferta(motor_app, titulo="Camarera de sala")
     assert c.post("/api/recomendar", headers=h).json()["tarea_id"]
-    match = {"oferta_id": oferta, "nota": 88, "condiciones": "alto", "cita_perfil": "Camarera en Bar Sol",
+    match = {"oferta_id": oferta, "nota": 88, "condiciones": "alto",
+             "relacion": "otro_oficio", "marcas": [], "cita_perfil": "Camarera en Bar Sol",
              "cita_oferta": "camarera", "explicacion": "Tiene experiencia en sala. La oferta pide camarera."}
     assert worker.procesar_una(motor_app, ProveedorSimulado([{"matches": [match]}])) == "hecha"
     r = c.get("/api/recomendaciones").json()["recomendaciones"]

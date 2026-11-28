@@ -5,7 +5,7 @@ description: Preguntas abiertas resueltas con la persona antes de escribir la sp
 tags: [clarify, cimientos]
 status: active
 sources: [https://claude.ai/artifact/XgsxiP5gLvaR34W8QeqDoj]
-generated: { by: claude-code, at: 2026-11-11 }
+generated: { at: 2026-11-11 }
 verified: { by: human, at: 2026-11-11 }
 stale_after: null
 ---

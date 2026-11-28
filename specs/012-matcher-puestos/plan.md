@@ -5,14 +5,15 @@ description: Piezas, archivos y costes de la spec 012 (paso 2 del PRD) — set d
 tags: [plan, matcher, puestos, recomendacion, evals]
 status: active
 sources: [./spec.md, ./clarifications.md, ../system.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
 
 # matcher-puestos — Plan
 
-Sin agentes de producto nuevos, sin tablas nuevas y sin pantallas nuevas. Un agente solo para el eval (el
+Sin tablas ni pantallas nuevas. Un agente de producto nuevo, `sinonimos-puestos` (modelo pequeño, D-061; su set de
+evals, en el bloque N, D-068), con una columna en `preferencias` (migración 0031), y un agente solo para el eval (el
 revisor). Las rutas son las del 25-nov: se comprueban antes de tocar.
 
 **Simple primero.** Descartado: ESCO (medido en F4: 0,41 de cobertura), embeddings como puerta (MAP ~0,5 en
@@ -37,6 +38,8 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
 - **Tope de nivel y genéricos:** listas cortas en código, en `tools/normalizar_titulo.py`. El genérico se filtra
   con la familia en `tools/buscar_ofertas.py` (SQL) y en `casa_con_puestos`, que hoy hacen la frase completa.
 - **Set de 9a:** `tests/fixtures/titulos_puestos.json`, con ~50 pares nuevos y la firma de Mar en los dudosos.
+- **Sinónimos (D-061):** tabla en `tools/sinonimos_puestos.py` y agente `sinonimos-puestos`, pedido en el worker.
+- **CI (D-064):** `puestos` se repite con las respuestas reales grabadas, sin gasto.
 - **Pantalla «Qué buscas»** (`ofertas.html`, `ofertas.js`): el nivel 2 sin marcar, con su porqué en texto suave
   bajo la casilla. Primero en la guía.
 
@@ -58,15 +61,19 @@ de la usuaria se calculan al pedir la lista, sin guardar nada nuevo.
   gana las métricas `orden`, `equidad`, `citas` y `revisor`, y `horma eval correr` gana `--veces 3`, con la
   variación por caso en el resultado.
 - **Revisor:** `agents/revisor_explicacion/` (prompt, esquemas y `run`, modelo pequeño), llamado solo por el
-  harness. Su propio control: casos sembrados con una explicación que no se apoya en su cita.
-- **Prompt del `matcher`:** la frase por franjas (RF-12.18), no nombrar las instrucciones embebidas y citas
-  literales. Los tramos de la nota que ya están no cambian.
+  harness. Ve la copia del perfil y la oferta enteras (D-078). Su propio control: casos sembrados con afirmaciones
+  que no están en ellas, también entre otras ciertas.
+- **Prompt del `matcher`:** no escribe la frase por franjas (la antepone el código, RF-12.18, D-080), marca cada
+  requisito y la relación con el puesto (RF-12.34), no nombra las instrucciones embebidas y cita literal. Los tramos
+  de la nota no cambian, salvo que sale «De 90 a 100 solo si además encaja en nivel y sector».
+- **Nota acotada (RF-12.35 a 12.37):** función pura `acotar_nota`; el aviso de nivel, por código; `matches` guarda
+  nota del modelo, marcas y relación (migración 0033, D-090).
 - **Citas verificadas:** `tools/verificar_citas.py` (código: texto normalizado, la cita dentro del perfil o de la
   oferta). En `flows/recomendar.py`, tras cada tanda: las ofertas con una cita que no existe se piden otra vez
   en una sola llamada; si vuelven a fallar, `retirada` con su motivo, como ya se hace con los rasgos personales.
-- **Texto invisible:** en `tools/convertir_cv.py`, PDF con los visitantes de `pypdf` (color de relleno y tamaño
-  de letra) y DOCX con `w:vanish` y el color blanco. Sin dependencias nuevas; si no basta, se dice antes de
-  añadir una.
+- **Texto invisible:** `tools/texto_invisible.py`. PDF: se dibuja la página con `pypdfium2` (ya instalado) y se quita la
+  letra cuyo recuadro sale de un solo color; así el blanco sobre una banda de color se conserva. DOCX: marcas de
+  oculto, tamaño 0 y blanco sin fondo. Sin dependencias nuevas.
 - **Modelo pequeño:** el eval se corre con `modelo = "pequeño"` sin tocar el agente (opción del harness).
 - **CI:** al pasar la puerta, `recomendacion` vuelve a la lista de `evals-reales` en `.github/workflows/ci.yml`.
 
@@ -92,14 +99,21 @@ suelen costar más de lo estimado: cada gasto se confirma con Mar antes.
 | Set `puestos`: pasada actual (30 CV y 10 pares de equidad) | pequeño | ~0,1 USD |
 | Set `puestos`: segunda pasada con `relacion` | pequeño | ~0,1 USD |
 | Eval `perfil`, regresión del clasificador (18 casos) | mayor y pequeño | ~0,3-0,6 USD |
-| Eval `recomendacion`, una ejecución entera (~60 casos y revisor) | mayor y pequeño | ~0,8-1 USD |
+| Eval `recomendacion`, una ejecución entera (60 casos, 3 pasadas y revisor; D-077) | mayor y pequeño | ~2,4-3 USD |
 | Repetir solo los casos que fallan, 3 a 5 veces | mayor | ~0,5-1,5 USD |
 | Puerta: 3 ejecuciones seguidas | mayor | ~2,4-3 USD |
-| Modelo pequeño: 3 ejecuciones | pequeño | ~0,15-0,3 USD |
+| Modelo pequeño: 3 ejecuciones | pequeño | ~0,15-0,3 USD (T16: 0,305, cortada por el tope en 56 de 60 casos) |
 | Set `puestos`, 3 pasadas (estabilidad, T27) | pequeño | ~0,15 USD |
 | Eval `perfil`, regresión con la copia (T27) | mayor y pequeño | ~0,35-0,45 USD |
+| Prueba de la corrección: 27 casos, dos tandas como mucho (T14f) | mayor | hasta 0,45 USD cada una |
+| Ejecución completa de la corrección (T14g; vale como T15, D-086) | mayor y pequeño | ~2,3-2,8 USD (tope 3,0) |
+| Cierre de T14 por etapas (D-100): pasada 1 (T14m, 0,76 USD; no llegó) | mayor y pequeño | ~0,79 USD |
+| Cierre de T14, tres pasadas nuevas (D-113): pasada 1 y, si pasa, pasadas 2 y 3 (T14t y T14u) | mayor y pequeño | ~0,76 + ~1,52 USD (tope del cierre, 3,1; gastado: 0,755 + 1,522) |
 | **Total del paso** | | **~5-7,3 USD, en varias veces** |
 
+- **Corrección de T14 (D-086):** hasta 3,9 USD más, sobre 2,19 ya gastados en T14. El total del paso puede pasar de
+  lo previsto (gastado en T14f y T14g: 3,09 USD; T14g no pasó); si T14g pasa, se ahorran los ~2,4-3 USD de T15.
+  El cierre de T14 tiene su propio tope: 3,1 USD (D-113; era 2,6 con D-100). Gastado: 3,04 (T14m, T14t y T14u).
 - **El tope de 1 USD por ejecución (RF-2.17) queda justo** para ~60 casos. Si salta, el eval se para sin daño y
   se pide a Mar subirlo para esa ejecución.
 - **`evals-reales` en la CI** pasa de ~2 a ~3 USD por ejecución manual.

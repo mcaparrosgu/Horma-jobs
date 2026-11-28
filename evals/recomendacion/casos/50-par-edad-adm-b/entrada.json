@@ -1,0 +1,108 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Julia Mas",
+    "experiencias": [
+      {
+        "puesto": "Administrativa",
+        "empresa": "Seguros Norte",
+        "inicio": "2019",
+        "fin": "actual",
+        "descripcion": "Facturación, archivo y atención a proveedores",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Administrativa en Seguros Norte, 2019-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado Superior en Administración",
+        "centro": "IES Abastos",
+        "inicio": "1989",
+        "fin": "1991",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado Superior en Administración"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B1",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en B1"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Excel",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Excel"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "servicios_profesionales",
+      "familia": "administracion_oficina",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Administrativo/a",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "3 años de experiencia administrativa",
+      "Excel"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "servicios_profesionales",
+      "familia": "administracion_oficina",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

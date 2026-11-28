@@ -5,7 +5,7 @@ description: Guía de producto de la ampliación de Horma, por pasos de construc
 tags: [prd, producto, sdd]
 status: active
 sources: [./constitution.md, ./system.md, ./index.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---
@@ -42,7 +42,8 @@ y descarga. Corre en local, con datos inventados y 9 agentes en uso.
 - Tiempo y candidaturas por usuaria: [pendiente: no hay medición propia; sale de la prueba con cinco personas].
 
 **Qué falla hoy en Horma.**
-- La compatibilidad no es fiable: 0,67-0,71 de los casos dentro de ±10 puntos (15 y 16-nov, 21 casos).
+- La compatibilidad no es fiable: 0,67-0,71 de los casos dentro de ±10 puntos (15 y 16-nov, 21 casos); 0,85-0,87
+  tras la spec 012 (27-nov, 60 casos), aún bajo el 0,90.
 - Pocas ofertas de España: dos fuentes activas (Jobicy y Himalayas) más las que pega la usuaria.
 - Nadie comprueba el PDF final, que es lo que lee la empresa.
 - No hay textos legales, ni borrar la cuenta, ni descargar los datos: no puede entrar ninguna usuaria real.
@@ -85,17 +86,17 @@ usuaria real.
 **v1.0:** Horma web, en español y para España, abierta a las primeras usuarias reales.
 
 **Cómo se lee.** El alcance va por **pasos de construcción**, en el orden en que se construyen. Se llaman
-«paso» y no «fase» para no chocar con las fases 0 a 10, ya hechas. El número de spec es un nombre fijo, no el
-orden. Cada paso dice: por qué va ahí, historia, qué incluye, puerta de salida y de qué depende. Quién hace
+«paso» y no «fase» para no chocar con las fases 0 a 10, ya hechas. El número de spec y el de paso son nombres
+fijos, no el orden: desde el 28-nov, tras el paso 2 va el 5 (D-095). Cada paso dice: por qué va ahí, historia, qué incluye, puerta de salida y de qué depende. Quién hace
 qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la confirmó Mar el 25-nov.
 
 | Paso | Qué | Spec | Historia |
 |---|---|---|---|
 | 1 | Medición de destinos y mejoras pequeñas | 011 (parte 1) | US-001 (solo medir) |
 | 2 | `matcher` y puestos afines | 012 | US-002 |
+| 5 | Ingesta y vigilancia | 014 | US-005 |
 | 3 | Calidad de CV y carta, con PDF comprobado | 013 | US-004 |
 | 4 | Privacidad y cuenta | 015 | US-003 |
-| 5 | Ingesta y vigilancia | 014 | US-005 |
 | 6 | Entrevista por texto | 016 | US-008 |
 | 7 | Envío y correo, en modo prueba | 011 (parte 2) | US-001, US-007 |
 | 8 | Gasto por usuaria | 017 | US-006 |
@@ -119,7 +120,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 
 ### Paso 2 · `matcher` y puestos afines (spec 012)
 
-- **Por qué va ahí:** es el mayor fallo de hoy (0,67 frente a 0,90). Todo lo de después —redactar, avisar y
+- **Por qué va ahí:** es el mayor fallo (0,67 al decidirlo, frente a 0,90). Todo lo de después —redactar, avisar y
   enviar— se apoya en la nota y en los puestos.
 - **Historia — US-002 [MUST HAVE / Riesgo Alto]: Compatibilidad y puestos en los que puedo confiar.**
   Como candidata, quiero que la nota y los puestos sugeridos salgan de lo que he hecho de verdad, para no
@@ -135,13 +136,15 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Puestos afines según el informe F4 (F4-D1 a D9, decididas). Primero se mide con un set de 30 CV (F4-D5);
     junior sin experiencia: puestos por titulación, marcados (F4-D7); set de la 9a repasado y con ~50
     sinónimos (F4-D9).
-  - Embeddings para sinónimos de puestos (F4-D6): solo si el set ampliado da cobertura < 0,90 y solo para
-    proponer candidatos. ESCO, descartado por lo medido.
+  - Sinónimos de puestos (F4-D6): la cobertura bajó a 0,58, se midieron tres vías y entran una tabla en código y
+    las formas que da el modelo pequeño (D-053, D-061; 0,68 en puestos nuevos). Embeddings y ESCO, descartados
+    por lo medido.
   - Medir mejor: eval `recomendacion` de 21 a unos 60 casos (más sectores, notas intermedias, perfiles casi
     vacíos, ofertas incompletas y correcciones importadas), 3 ejecuciones por caso y el orden de la lista
     además del ±10. Los tramos de la nota ya están en el prompt, sin medir.
   - Explicaciones fiables: el `matcher` cita fragmentos literales y un verificador en código comprueba que
-    existen; no nombra las instrucciones embebidas de una oferta. Revisor, solo en el eval.
+    existen; no nombra las instrucciones embebidas de una oferta. Revisor, solo en el eval: cada rechazo se
+    juzga dos veces más y cuenta si lo confirman 2 de 3; Mar revisa los confirmados (D-098).
   - Equidad: el clasificador y el `matcher` leen una copia del perfil sin nombre y con los puestos en «/a»
     (D-043 a D-047; spec 012, RF-12.30); en edad, nacionalidad y huecos, pares con la nota igual (±3).
   - Robustez: ofertas en otro idioma, muy largas, con inyección o sin datos; fallos parciales. Falla con
@@ -153,19 +156,74 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     la condición que falta o no se cumple y, a igual nota, va antes la que cumple todo (D-026).
   - Veredicto en palabras junto a la nota, puesto por código y por franjas (F7-D5): «Muy compatible»,
     «Compatible», «Poco compatible», «No te la recomendamos». La frase de la nota por franjas (70-100, 50-69,
-    30-49, 0-29) toca el prompt y, por tanto, los evals.
-  - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6) [pendiente: se decide con la medición].
+    30-49, 0-29) la pone el código, con la nota ya acotada (D-080).
+  - Nota acotada por código (D-080): el `matcher` marca cada requisito de la oferta (cubierto, a medias o no) y
+    su relación con el puesto, sigue dando la nota y el código le pone suelos y topes.
+  - Tener más de lo que pide la oferta no resta; se avisa junto al veredicto: «Pide menos de lo que tienes»
+    (D-081).
+  - Otro oficio (D-084 y D-085): cumplir lo pedido desde otro oficio deja la nota entre 30 y 55; lo afín no se
+    acota, y una oferta que casa con un puesto marcado por ella en «Qué buscas» no cuenta como otro oficio.
+  - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6). Medido el 28-nov: no pasa (nota 0,72-0,78);
+    sigue el modelo mayor y se vuelve a probar más adelante (D-117).
 - **Puerta de salida:** eval `recomendacion` ≥ 0,90 dentro de ±10, estable en 3 ejecuciones (NFR-02) y de
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
-  citas verificadas; set de 30 CV en sus umbrales (sección 2); ningún puesto marcado sin
-  evidencia; revisión de Mar sobre 20 recomendaciones.
+  citas verificadas; revisor con al menos el 95 % sin rechazo confirmado por pasada y 0 graves (D-098, D-112 y D-115); set de
+  30 CV en sus umbrales (sección 2); ningún puesto marcado sin evidencia; revisión de Mar sobre 20
+  recomendaciones.
 - **Depende de:** el paso 1. Gasto real: ~5-7,3 USD en todo el paso, en varias veces (set de 30 CV y evals;
-  detalle en el plan de la spec 012), cada vez con el OK de Mar.
+  detalle en el plan de la spec 012), cada vez con el OK de Mar. Corregir la nota (T14a a T14h) añade hasta
+  3,9 USD y puede superar esa cifra; su ejecución completa vale como la de la puerta si pasa todo (D-086).
+  Cerrarla por etapas tiene un tope de 3,1 USD (D-113; era 2,6 con D-100): tres pasadas nuevas, la 1 y, solo si
+  pasa, la 2 y la 3. Si una no llega, T14 se cierra como «medida» y el examen es la revisión a ciegas de Mar sobre
+  20 recomendaciones reales: aprueba con 17 de 20 en su franja, ninguna a dos y 0 datos inventados (D-116).
+
+### Paso 5 · Ingesta y vigilancia (spec 014)
+
+- **Por qué va ahí:** justo después del paso 2 (D-095): más ofertas solo sirven cuando ya se puntúan bien. Espera a la investigación
+  del banco de ofertas (DEP-01), entregada el 25-nov, y a su ampliación sobre ingesta robusta (F10), entregada y
+  decidida el 28-nov (D-101 a D-107); falta la prueba práctica.
+- **Historia — US-005 [MUST HAVE / Riesgo Medio]: Más ofertas de España y vigentes.**
+  Como candidata, quiero ver muchas ofertas de España que sigan abiertas, para tener donde elegir.
+
+  Scenario: Oferta cerrada
+  Given una oferta del catálogo ya no está publicada
+  When Horma va a puntuarla o a redactar su candidatura
+  Then lo comprueba antes, no gasta en ella y la retira
+
+- **Qué incluye** (RF-010, RF-011):
+  - Ingesta programada, sin la administradora. El programador de tareas se crea aquí y lo reutiliza el paso 7.
+  - Ritmo y buenas prácticas (bloque A; se construye en este paso, no antes): el ingestor cumple RT-15 a RT-19 de `system.md`
+    (pausa por dominio, `Retry-After` y reintentos con espera, extracción incremental, sin datos personales
+    de terceros). El estado incremental y el ritmo por dominio se guardan en Postgres, a través de la API.
+  - Comprobar con código que la oferta sigue abierta antes de puntuarla, redactar o enviar (F7-D4).
+  - Cómo ampliar las ofertas (F7-D2, decidida el 25-nov): solo vías gratuitas, es decir, feeds documentados de
+    ATS y datos abiertos públicos. La compra de ofertas queda para el futuro.
+  - Webs de empleo españolas con Playwright (D-096): solo las que pasen el análisis previo; primero se mide en la
+    prueba práctica cuántas ofertas nuevas aportan, en Nortempo, Lidl y McDonald's (D-101). Sin proxies, disfraces
+    ni saltar bloqueos.
+  - ETT y grandes empleadores que se leen sin JavaScript (D-102): Imán, Eurofirms, Grupo Crit y Ananda;
+    SuccessFactors (Meliá, Mapfre y Vithas); y el JSON público de Murcia. Un conector por plataforma.
+  - Señales de IA al calificar una fuente (D-104): no apta si su `robots.txt` veta a agentes de IA o dice
+    `ai-input=no`; un dato abierto con licencia expresa vale aunque el `robots.txt` vete (Lanbide, D-103).
+  - Tope de gasto propio de la ingesta: 2 USD al día, con filtro por código antes del modelo (D-107).
+  - Workday (D-020): por el sitemap y el marcado `JobPosting` del tablón público de cada empresa y por sus
+    webs de empleo propias. Nunca por su API interna.
+  - Fuentes nuevas (punto 14; D-025): Feina Activa, Lanbide, ECyL (si se confirma su conjunto de datos) y,
+    al final, Manfred, además de los ATS de F1. Solo con permiso escrito del portal: Welcome to the Jungle,
+    Turijobs, Infoempleo y Tecnoempleo. InfoJobs no: su API es solo para empresas constituidas (D-067). Fuera: Jooble, Adzuna, Careerjet y EURES; SEPE, en vigilancia.
+    Ninguna se activa sin calificación apta. Con ella, cada fuente entra como cambio pequeño: conector, test
+    y una línea en las tareas de la 014. Punto 8: todas las empresas de Greenhouse y, después, Lever.
+  - Vigía semanal de portales nuevos; clasificar solas las fuentes que no están en Horma.
+  - Enseñar el texto de la oferta según las condiciones de cada fuente.
+  - Corrección: Admin › Fuentes enseña «sin límite» en arbeitnow.
+- **Puerta de salida:** la ingesta corre sola 7 días seguidos, sin la administradora; 5.000 ofertas vigentes de
+  España en el catálogo (D-024); una oferta cerrada se retira sin gastar (test); tests de RT-15 a RT-19 en verde.
+- **Depende de:** DEP-01 (F5) y el paso 2.
 
 ### Paso 3 · Calidad de CV y carta, con PDF comprobado (spec 013)
 
 - **Por qué va ahí:** lo que lee la empresa tiene que ser bueno y estar comprobado antes de que Horma pueda
-  enviarlo. Va después del paso 2 porque el aviso de eliminatorios se apoya en la compatibilidad.
+  enviarlo. Va tras el paso 5 (D-095) y necesita el 2 porque el aviso de eliminatorios se apoya en la compatibilidad.
 - **Historia — US-004 [MUST HAVE / Riesgo Medio]: Un CV y una carta que pasan a quien los lee.**
   Como candidata, quiero que mi CV y mi carta pasen el ATS, la IA de selección y a la recruiter sin inventar
   nada, para llegar a la entrevista.
@@ -197,8 +255,7 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Editor tipo procesador de texto (negrita, listas, títulos), sin Markdown a la vista.
   - Del cruce del 22-nov: falsos «Dato dudoso», recortes del extractor (eval `perfil`) y «manejo de
     ordenador» como hueco (F2-D3).
-  - Mensaje de Horma (F7-D1): [pendiente: lo decide Mar en este paso]. Propuesta: «CV y carta con cita, en
-    español y para cualquier sector».
+  - Landing: solo promete lo que ya funciona. El mensaje de Horma (F7-D1) pasa al paso 9 (D-066).
   - Marca de «generado con IA» en el PDF (F9-D7): [pendiente: solo si la asesoría legal confirma que obliga].
   - Las fechas MM-AAAA no cambian: en la prueba propia del PDF (DEP-05, 26-nov), guion y barra dieron lo mismo.
 - **Puerta de salida:** eval `cv` con 0 frases sin origen (NFR-01); el PDF, comprobado en el 100 % de las
@@ -236,44 +293,10 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 - **Depende de:** el paso 3. La evaluación de impacto (DEP-03) y la asesoría legal (DEP-04) no bloquean
   construir: bloquean el paso 9.
 
-### Paso 5 · Ingesta y vigilancia (spec 014)
-
-- **Por qué va ahí:** más ofertas solo sirven cuando ya se puntúan bien (paso 2). Espera a la investigación
-  del banco de ofertas (DEP-01), entregada el 25-nov; falta su prueba práctica.
-- **Historia — US-005 [MUST HAVE / Riesgo Medio]: Más ofertas de España y vigentes.**
-  Como candidata, quiero ver muchas ofertas de España que sigan abiertas, para tener donde elegir.
-
-  Scenario: Oferta cerrada
-  Given una oferta del catálogo ya no está publicada
-  When Horma va a puntuarla o a redactar su candidatura
-  Then lo comprueba antes, no gasta en ella y la retira
-
-- **Qué incluye** (RF-010, RF-011):
-  - Ingesta programada, sin la administradora. El programador de tareas se crea aquí y lo reutiliza el paso 7.
-  - Ritmo y buenas prácticas (bloque A; se construye en este paso, no antes): el ingestor cumple RT-15 a RT-19 de `system.md`
-    (pausa por dominio, `Retry-After` y reintentos con espera, extracción incremental, sin datos personales
-    de terceros). El estado incremental y el ritmo por dominio se guardan en Postgres, a través de la API.
-  - Comprobar con código que la oferta sigue abierta antes de puntuarla, redactar o enviar (F7-D4).
-  - Cómo ampliar las ofertas (F7-D2, decidida el 25-nov): solo vías gratuitas, es decir, feeds documentados de
-    ATS y datos abiertos públicos. La compra de ofertas queda para el futuro.
-  - Workday (D-020): por el sitemap y el marcado `JobPosting` del tablón público de cada empresa y por sus
-    webs de empleo propias. Nunca por su API interna.
-  - Fuentes nuevas (punto 14; D-025): Feina Activa, Lanbide, ECyL (si se confirma su conjunto de datos) y,
-    al final, Manfred, además de los ATS de F1. Solo con permiso escrito del portal: InfoJobs, Welcome to the
-    Jungle, Turijobs, Infoempleo y Tecnoempleo. Fuera: Jooble, Adzuna, Careerjet y EURES; SEPE, en vigilancia.
-    Ninguna se activa sin calificación apta. Con ella, cada fuente entra como cambio pequeño: conector, test
-    y una línea en las tareas de la 014. Punto 8: todas las empresas de Greenhouse y, después, Lever.
-  - Vigía semanal de portales nuevos; clasificar solas las fuentes que no están en Horma.
-  - Enseñar el texto de la oferta según las condiciones de cada fuente.
-  - Corrección: Admin › Fuentes enseña «sin límite» en arbeitnow.
-- **Puerta de salida:** la ingesta corre sola 7 días seguidos, sin la administradora; 5.000 ofertas vigentes de
-  España en el catálogo (D-024); una oferta cerrada se retira sin gastar (test); tests de RT-15 a RT-19 en verde.
-- **Depende de:** DEP-01 (F5) y el paso 2.
-
 ### Paso 6 · Entrevista por texto (spec 016; sustituye a la parte 9b de la 009)
 
 - **Por qué va ahí:** usa los consentimientos del paso 4 y deja lista la tabla de respuestas que comparte con
-  el envío (paso 7). Es de riesgo bajo: puede adelantarse al paso 5.
+  el envío (paso 7). Es de riesgo bajo.
 - **Historia — US-008 [SHOULD HAVE / Riesgo Bajo]: Entrevista por texto.**
   Como candidata, quiero responder por escrito o dictando a preguntas de recruiter, para resolver huecos de mi
   perfil y que mis CV y cartas suenen a mí.
@@ -356,6 +379,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
     la medición final de la fase 5 (~1,8 USD), solo si Mar la pide.
   - Red-teaming (PR #8, aparcado: se rehace en una rama nueva desde `main`). Umbral: [pendiente: 100 % o ~95 %
     con el modelo real; consulta al profesor].
+  - Mensaje de Horma en la landing (F7-D1): [pendiente: lo decide Mar mientras se construye el paso 8, D-066].
+    Propuesta de partida: «CV y carta con cita, en español y para cualquier sector».
   - Prueba con cinco personas y repaso de Mar a 390 px.
   - Límites de ritmo: hoy viven en la memoria de un proceso; con varios, pasan a Postgres (NFR-07).
 - **Puerta de salida:** `evals-reales` en verde y obligatorio; red-teaming en su umbral (NFR-03); prueba con
@@ -450,7 +475,8 @@ estructuradas, como un indexador de ofertas públicas.
 
 1. **No hay lado empresas ni recruiters.** Abrirlo convertiría a Horma en sistema de alto riesgo.
 2. **No usa LinkedIn ni Indeed,** ni como fuente ni para enviar. InfoJobs y Welcome to the Jungle sí están en
-   alcance, como fuente (7.1) y para enviar, con las mismas reglas que cualquier portal (puntos 3 y 4).
+   alcance, como fuente (7.1) y para enviar, con las mismas reglas que cualquier portal (puntos 3 y 4). InfoJobs,
+   como fuente, solo por su API, que es para empresas constituidas (D-067).
 3. **No resuelve captchas, no rota IP, no disfraza el navegador, no crea cuentas y no entra en áreas privadas.**
 4. **No guarda contraseñas de portales.** Los portales con cuenta quedan como «Envíala tú».
 5. **No envía en Greenhouse ni por la API de Recruitee.**
@@ -463,7 +489,7 @@ No son exclusiones de principio: no entran ahora.
 
 - Servidor MCP, extensión de navegador y aplicación nativa.
 - Fuera de España y otros idiomas.
-- Embeddings y taxonomías externas, salvo la excepción condicionada de los sinónimos de puestos.
+- Embeddings y taxonomías externas.
 - Precio y planes de pago: esperan a su estudio de mercado.
 - Alojamiento en la UE y despliegue fuera de local.
 - Compra de ofertas a proveedores.
@@ -486,11 +512,12 @@ Entrar en alcance desde 7.2 o 7.3 exige cambiar este PRD.
 
 ## 9. Dependencias Críticas
 
-- DEP-01: investigación del banco de ofertas (Fable) y prueba práctica de ingesta (Sonnet); desbloquean el paso 5 y RF-010.
+- DEP-01: investigación del banco de ofertas (Fable: F5 y su ampliación F10, entregadas y decididas; D-101 a D-107) y prueba práctica de ingesta (Sonnet); desbloquean el paso 5 y RF-010.
 - DEP-02: investigación de los límites de gasto en la competencia (entregada el 25-nov) y estudio de precio,
   pendiente (Fable); desbloquean el paso 8 y NFR-06.
-- DEP-03: evaluación de impacto en Gestiona RGPD (Mar); desbloquea los pasos 9 y 10.
-- DEP-04: asesoría legal (agente de abogacía, por crear); cierra la casilla de privacidad, la marca de
+- DEP-03: evaluación de impacto en Gestiona RGPD (Mar), mientras se construye el paso 8 (D-066); desbloquea los
+  pasos 9 y 10.
+- DEP-04: asesoría legal (agente de abogacía, que se crea mientras se construye el paso 8, D-066); cierra la casilla de privacidad, la marca de
   «generado con IA» y el modo real.
 - DEP-05: prueba propia del PDF en cuatro formularios reales (Mar, 30 min): hecha (26-nov); ya no frena el paso 3.
 - DEP-06: dominio y correo entrante (Mar, ~10-15 € al año); desbloquea RF-005 y da la dirección de contacto del `User-Agent` del ingestor (RT-15).

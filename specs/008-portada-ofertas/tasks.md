@@ -5,7 +5,7 @@ description: Tareas pequeñas y comprobables de la fase 8. Cada una empieza con 
 tags: [tareas, frontend, worker, flujos]
 status: active
 sources: [./plan.md]
-generated: { by: claude-code, at: 2026-11-20 }
+generated: { at: 2026-11-20 }
 verified: { by: human, at: 2026-11-20 }
 stale_after: null
 ---

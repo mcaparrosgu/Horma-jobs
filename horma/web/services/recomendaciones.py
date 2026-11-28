@@ -7,6 +7,8 @@ from horma.config import ajustes
 from horma.schemas.perfil import CAMPO_PROPUESTA, PreguntaPendiente
 from horma.tools.buscar_ofertas import buscar_ofertas
 from horma.tools.huella_perfil import huella_compatibilidad
+from horma.tools.lexico_genero import en_genero
+from horma.tools.nivel_pedido import pide_menos
 from horma.web.db import sesion_de, sesion_sistema
 from horma.web.repositories import candidaturas as repo_candidaturas
 from horma.web.repositories import descartes, perfiles, tareas
@@ -81,15 +83,27 @@ def puntuar_ahora(engine: Engine, usuaria_id: int, oferta_id: int) -> int:
                                    a.tope_reintentos_tarea)
 
 
+def en_su_genero(filas: list[dict], genero: str | None) -> list[dict]:
+    """Lo que el modelo escribió sobre la copia («/a») se enseña en su género (RF-12.19, RF-12.30f)."""
+    for f in filas:
+        for campo in ("explicacion", "cita_perfil"):
+            if f.get(campo):
+                f[campo] = en_genero(f[campo], genero)
+    return filas
+
+
 def listar(engine: Engine, usuaria_id: int) -> list[dict]:
     """Todo lo que pasa «Qué buscas», con su nota (o «sin puntuar»), su candidatura y si está descartada."""
     with sesion_de(engine, usuaria_id) as s:
         prefs = perfiles.preferencias(s)
         vigente = perfiles.vigente(s)
-        taxonomia = perfiles.perfil_modelo(vigente).taxonomia if vigente else None
+        perfil = perfiles.perfil_modelo(vigente) if vigente else None
+        taxonomia = perfil.taxonomia if perfil else None
         ids = repo.ids_candidatas(s, buscar_ofertas(prefs, taxonomia))
-        huella = huella_compatibilidad(perfiles.perfil_modelo(vigente)) if vigente else None
-        filas = repo.listado(s, ids, huella)
+        huella = huella_compatibilidad(perfil) if perfil else None
+        filas = en_su_genero(repo.listado(s, ids, huella), perfil.genero_puestos if perfil else None)
+        for f in filas:  # RF-12.36: al pedir la lista, sin guardar nada ni tocar la nota
+            f["pide_menos"] = pide_menos(f["relacion"], f["nivel"], taxonomia.nivel if taxonomia else None)
     with sesion_sistema(engine) as s:
         repo_ofertas.marcar_fuente_desconocida(filas, s)
     return filas

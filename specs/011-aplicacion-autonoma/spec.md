@@ -5,7 +5,7 @@ description: Requisitos en notación EARS de la spec 011. Parte 1 (paso 1 del PR
 tags: [spec, envio, medicion, frontend]
 status: active
 sources: [../prd.md, ../constitution.md, ../system.md, ../006-rediseno-2c/spec.md, ../008-portada-ofertas/spec.md]
-generated: { by: claude-code, at: 2026-11-25 }
+generated: { at: 2026-11-25 }
 verified: { by: human, at: 2026-11-25 }
 stale_after: null
 ---

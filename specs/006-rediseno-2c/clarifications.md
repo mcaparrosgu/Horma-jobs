@@ -5,7 +5,7 @@ description: Preguntas abiertas del rediseño visual «Editorial» (dirección 2
 tags: [clarify, frontend, diseno, accesibilidad, tokens]
 status: active
 sources: [../system.md, ../constitution.md, ../002-perfil-recomendacion/spec.md, ../003-candidatura/clarifications.md, ../005-correcciones-profesor/spec.md]
-generated: { by: claude-code, at: 2026-11-19 }
+generated: { at: 2026-11-19 }
 verified: { by: human, at: 2026-11-19 }
 stale_after: null
 ---

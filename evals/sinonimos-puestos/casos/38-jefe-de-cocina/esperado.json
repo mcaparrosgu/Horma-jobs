@@ -1,0 +1,14 @@
+{
+  "titulos": [
+    "Head Chef"
+  ],
+  "otros_puestos": [],
+  "etiquetas": {
+    "Chef de cocina": "mismo",
+    "Chef ejecutivo": "otro",
+    "Executive chef": "otro",
+    "Chef de partie": "otro",
+    "Jefe de partida": "otro",
+    "Responsable de cocina": "mismo"
+  }
+}

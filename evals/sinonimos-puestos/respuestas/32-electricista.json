@@ -1,0 +1,16 @@
+{
+  "base": {
+    "puestos": [
+      {
+        "puesto": "Electricista",
+        "otras": [
+          "Oficial electricista",
+          "Instalador electricista",
+          "Electricista de obra",
+          "Electrician",
+          "Electrical installer"
+        ]
+      }
+    ]
+  }
+}

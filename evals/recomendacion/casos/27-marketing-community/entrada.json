@@ -1,0 +1,125 @@
+{
+  "perfil": {
+    "version": 1,
+    "nombre": "Nuria Gil",
+    "experiencias": [
+      {
+        "puesto": "Técnica de marketing digital",
+        "empresa": "Agencia Faro",
+        "inicio": "2020",
+        "fin": "actual",
+        "descripcion": "Campañas en Google Ads y redes",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Técnica de marketing digital en Agencia Faro, 2020-actual"
+        }
+      }
+    ],
+    "formacion": [
+      {
+        "titulo": "Grado en Publicidad y Relaciones Públicas",
+        "centro": "UCM",
+        "inicio": "2015",
+        "fin": "2019",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Grado en Publicidad y Relaciones Públicas"
+        }
+      }
+    ],
+    "idiomas": [
+      {
+        "idioma": "en",
+        "nivel": "B2",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "en B2"
+        }
+      }
+    ],
+    "habilidades": [
+      {
+        "nombre": "Google Analytics",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Google Analytics"
+        }
+      },
+      {
+        "nombre": "SEO",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "SEO"
+        }
+      },
+      {
+        "nombre": "Google Ads",
+        "origen": {
+          "fuente": "cv",
+          "cv_id": 1,
+          "fragmento": "Google Ads"
+        }
+      }
+    ],
+    "certificaciones": [],
+    "otros": [],
+    "taxonomia": {
+      "sector": "medios_marketing",
+      "familia": "marketing_comunicacion",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  },
+  "preferencias": {
+    "contratos": [
+      "indefinido"
+    ],
+    "paises": [
+      "ES"
+    ]
+  },
+  "oferta": {
+    "titulo": "Community manager",
+    "empresa": "Empresa Ejemplo",
+    "ubicacion": "Valencia",
+    "remoto": null,
+    "modalidad": null,
+    "contrato": "indefinido",
+    "salario": {
+      "minimo": 20000,
+      "maximo": 24000,
+      "moneda": "EUR"
+    },
+    "idiomas": [],
+    "requisitos": [
+      "Gestión de redes sociales",
+      "Diseño básico de piezas",
+      "2 años de experiencia"
+    ],
+    "fecha_publicacion": "2026-11-10",
+    "url": null,
+    "instrucciones_embebidas": [],
+    "auditoria": {
+      "fantasma": false,
+      "motivos_fantasma": [],
+      "fraude": false,
+      "senales_fraude": [],
+      "dominio_empresa": null,
+      "empresa_validada": null,
+      "salario_publicado": true,
+      "salario_rango": "20000–24000 EUR",
+      "frase_pedir_salario": null
+    },
+    "taxonomia": {
+      "sector": "medios_marketing",
+      "familia": "marketing_comunicacion",
+      "nivel": "intermedio",
+      "stack": []
+    }
+  }
+}

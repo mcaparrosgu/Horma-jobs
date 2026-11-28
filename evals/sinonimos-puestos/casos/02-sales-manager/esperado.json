@@ -1,0 +1,25 @@
+{
+  "titulos": [
+    "Head of Sales, SMB"
+  ],
+  "otros_puestos": [
+    "AI & Automation Operations Manager",
+    "Consulting Manager (m/f/d) Data & AI Strategy",
+    "Customer Success Manager",
+    "Growth Partner Account Manager",
+    "Key Account Manager",
+    "National Account Executive - Outside Sales",
+    "Paid Advertising Manager"
+  ],
+  "etiquetas": {
+    "Jefe de ventas": "mismo",
+    "Responsable de ventas": "mismo",
+    "Director comercial": "mismo",
+    "Gerente de ventas": "mismo",
+    "Sales Director": "mismo",
+    "Head of Sales": "mismo",
+    "Responsable comercial": "mismo",
+    "Jefe comercial": "mismo",
+    "Director de ventas": "mismo"
+  }
+}
