@@ -17,8 +17,8 @@ SUELO_TODO_CUBIERTO = 90   # regla 1 (D-100 quita el 95 de D-092)
 SUELO_SIN_EXIGIDOS = 80    # regla 2
 SUELO_FALTA_VALORABLE = 85  # regla 3: manda sobre la 1
 SUELO_TITULACION = 70      # regla 4
-TOPE_SIN_LO_EXIGIDO = 30   # regla 5
-TOPE_ADEMAS_LEJOS = 20     # regla 5, nivel superior u otro oficio
+TOPE_SIN_LO_EXIGIDO = 30   # regla 5; también si cubre algún exigido (D-111)
+TOPE_ADEMAS_LEJOS = 20     # regla 5, nivel superior u otro oficio, sin ningún exigido «sí»
 TOPE_SUPERIOR_Y_DISTINTO = 15  # regla 5, nivel superior y no es el mismo puesto (D-091; 10 → 15, D-100)
 OTRO_OFICIO = (30, 55)     # regla 6
 
@@ -60,7 +60,9 @@ def acotar_nota(nota: int, marcas: list[Marca], relacion: str, requisitos: list[
         nota = max(nota, SUELO_TITULACION)
     if mayoria or (ninguno and sin_cubrir and sin_cubrir * 2 == len(exigidos)):
         superior = por_encima(nivel_oferta, nivel_perfil)
-        if superior and relacion != "mismo_puesto":
+        if not ninguno:  # D-111: los topes 20 y 15 solo si ningún exigido sale «sí»
+            tope = TOPE_SIN_LO_EXIGIDO
+        elif superior and relacion != "mismo_puesto":
             tope = TOPE_SUPERIOR_Y_DISTINTO
         elif superior or relacion == "otro_oficio":
             tope = TOPE_ADEMAS_LEJOS

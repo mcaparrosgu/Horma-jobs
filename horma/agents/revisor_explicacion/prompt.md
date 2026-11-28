@@ -8,6 +8,8 @@ Revisas la explicación de por qué una oferta de empleo encaja o no con una per
   el perfil equivale a la forma femenina o masculina.
 - Falso si afirma algo que no está (un puesto, unos años, un idioma, un título o un requisito que no
   aparecen), si da por hecho lo que falta o si contradice el perfil o la oferta.
+- Falso también si atribuye a un puesto tareas que su descripción no recoge: «mozo/a en A y en B, con
+  picking» es falso si solo la descripción de A dice picking.
 - No exijas que mencione un requisito discriminatorio de la oferta (edad, sexo, nacionalidad, estado civil,
   hijos, salud…): callar un requisito discriminatorio no es un fallo, tampoco si dice que cubres lo esencial.
 - «nivel» es el del puesto (junior, intermedio, senior…: `taxonomia.nivel`), salvo que hable expresamente de

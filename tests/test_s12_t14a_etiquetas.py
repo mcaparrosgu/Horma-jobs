@@ -32,3 +32,9 @@ def test_t14j_las_dos_etiquetas_de_d099():
     esperados = _esperados()
     for caso, nota in (("03", 20), ("10", 15)):
         assert esperados[caso]["nota"] == nota and "D-099" in esperados[caso]["motivo"], caso
+
+
+def test_t14p_recepcionista_del_45_pasa_a_15_con_d110():
+    e = _esperados()["45"]
+    assert e["notas"] == [15, 80, 90, 2, 10]  # solo cambia la recepcionista (35 → 15)
+    assert "D-110" in e["motivo"].split(" | ")[0]

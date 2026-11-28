@@ -346,12 +346,13 @@ def _aplica_recomendacion(campo: str, esperado: dict) -> bool:
 
 
 def _bien_ordenadas(obtenidas: list, esperadas: list[int]) -> bool:
-    """S7: la mejor esperada sale primera y ningún par con 20 o más puntos de diferencia sale al revés."""
+    """S7: la mejor esperada sale primera frente a las que esperan más de 10 puntos menos (D-109: la nota ya
+    tolera ±10) y ningún par con 20 o más puntos de diferencia sale al revés."""
     if any(n is None for n in obtenidas):
         return False
     pares = list(zip(obtenidas, esperadas, strict=True))
     mejor = max(esperadas)
-    primera = all(a > b for a, x in pares if x == mejor for b, y in pares if y < mejor)
+    primera = all(a > b for a, x in pares if x == mejor for b, y in pares if mejor - y > MARGEN_NOTA)
     return primera and not any(a < b for a, x in pares for b, y in pares if x - y >= DIFERENCIA_DE_ORDEN)
 
 

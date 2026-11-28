@@ -70,13 +70,24 @@ def test_regla_5_sin_lo_exigido():
     assert _nota(50, ["en", "en", "es"]) == 30
     assert _nota(50, ["en", "es"]) == 50  # la mitad no es mayoría
     assert _nota(50, ["en", "ea"]) == 30  # la mitad en «no» y ningún «sí» (D-091)
-    assert _nota(50, ["en", "en", "es"], "otro_oficio") == 20
+    assert _nota(50, ["en", "en", "es"], "otro_oficio") == 30  # cubre uno: tope 30 (D-111)
+    assert _nota(50, ["en", "en"], "otro_oficio") == 20
     assert _nota(50, ["en"], oferta="senior", perfil="junior") == 20
     assert _nota(50, ["en"], "afin", oferta="senior", perfil="junior") == 15  # D-091; 10 → 15 (D-100)
     assert _nota(50, ["en"], "otro_oficio", oferta="senior", perfil="junior") == 15
     assert _nota(50, ["en"], oferta="sin_especificar", perfil="junior") == 30
     assert _nota(50, ["en"], oferta="senior", perfil=None) == 30
     assert _nota(12, ["en"]) == 12  # un tope no sube
+
+
+@pytest.mark.parametrize("relacion, oferta", [("afin", "senior"), ("otro_oficio", "senior"),
+                                              ("otro_oficio", "junior"), ("mismo_puesto", "senior")])
+def test_t14q_con_algun_exigido_si_el_tope_es_30(relacion, oferta):
+    """D-111: los topes 15 y 20 solo si ningún exigido sale «sí» (caso 32: cubre Figma, 1 de 3)."""
+    assert _nota(45, ["en", "en", "es"], relacion, oferta=oferta) == 30
+    assert _nota(45, ["en", "en", "en", "ea", "es"], relacion, oferta=oferta) == 30
+    sin_ninguno = _nota(45, ["en", "en", "ea"], relacion, oferta=oferta)
+    assert sin_ninguno == (15 if oferta == "senior" and relacion != "mismo_puesto" else 20)
 
 
 def test_regla_6_otro_oficio_que_cumple_todo_queda_entre_30_y_55():

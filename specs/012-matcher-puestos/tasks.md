@@ -89,8 +89,12 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
 - [x] T13 — `convertir_cv` ignora el texto invisible.
   - **Test:** un PDF y un DOCX con una instrucción en blanco o de tamaño 0 no la devuelven en el texto.
   Hecho (27-nov): en PDF se dibuja cada página con `pypdfium2` (ya instalado), en vez de leer colores con `pypdf`.
-- [ ] T14 — 🛑 OK al gasto (~2,4-3 USD, D-077). Una ejecución real entera, con las 3 pasadas de RF-12.12; después, solo los casos que fallan
-  (🛑 OK a cada tanda, ~0,1-0,3 USD), hasta que el `matcher` llegue.
+- [x] T14 — 🛑 OK al gasto (~2,4-3 USD, D-077). Una ejecución real entera, con las 3 pasadas de RF-12.12; después, solo los casos que fallan
+  (🛑 OK a cada tanda, ~0,1-0,3 USD), hasta que el `matcher` llegue. (D-113) Ya no hay tandas parciales: se cierra con
+  tres pasadas nuevas o como «medida» (T14t y T14u).
+  **Cerrada como «medida» (28-nov, D-113 y D-115).** Las tres pasadas nuevas llegan a los umbrales (nota 0,907 ·
+  0,926 · 0,926; orden 6 de 6; revisor 0,988 · 0,988 · 1,0), pero Mar ve un grave entre los rechazos confirmados
+  (47): la puerta no pasa. Gasto total de T14: 8,32 USD (el cierre, con T14m, 3,04 de 3,1).
   Primera ejecución (27-nov, 1,87 USD): **no llega**. Nota 0,63 (pide 0,90), orden 0,50 (100 %), citas 0,88 y
   revisor 0,10 (100 %; su control, 1,0); condiciones, rasgos, segunda persona y equidad, en 1,0. Decidido
   cómo corregir tras investigarlo (D-080 a D-086; T14a a T14h).
@@ -154,7 +158,7 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   de «no consta»; «N años» con las fechas; «desde 2019» solo si el puesto sigue, si no «de 2015 a 2025»; no contar
   los requisitos.
   - **Test:** el prompt pide las cuatro cosas y ya no pide «desde 2019» sin más.
-  Retirada tras T14m (D-100): el prompt vuelve al de T14g, y su test con él.
+  Retirada tras T14m (D-100): el prompt vuelve al de T14g, y su test con él. Vuelve en T14s (D-113).
 - [x] T14m — 🛑 Pasada 1 (~0,79-0,81 USD; tope de la ejecución 0,90, para que los juicios extra no la corten; el
   total sigue en 2,6): 60 casos, una vez, con revisor. SI pasa todo, T14n sin parar; SI no,
   se para, se vuelve al prompt de T14g y se trae el resultado a Mar.
@@ -162,18 +166,57 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
   revisor 0,988 (1 confirmado, sin dato inventado); equidad, rasgos, condiciones y segunda persona, 1,0. Fallan
   14, 15, 20, 32, 37 y 41 en la nota y 45 y 46 en el orden. El prompt arregla las marcas literales («3 años», SQL)
   pero 41 sube a 50 (espera 30) y 37 sale «afín» sin requisitos (60; espera 85). Sobre lo grabado, ninguna
-  variante de reglas pasa de 0,889 (0 USD). Prompt de T14g repuesto. **Antes de gastar más, encargo a Fable sobre
-  la pasada 1 (D-108).**
-- [ ] T14n — 🛑 Pasadas 2 y 3 sin tocar nada (~1,6 USD; tope total 2,6) y unión de las tres con `horma eval repuntuar`.
-  SI las tres pasan y Mar no ve graves en el revisor, T14 y T15 hechas (D-086). No se corre: T14m no pasó.
+  variante de reglas pasa de 0,889 (0 USD). Prompt de T14g repuesto. Investigado y decidido (D-108 a D-113; F4,
+  13.7): el rechazo del 58 es grave (D-112) y esta pasada no vale para la puerta. **Cierre (D-109 a D-113):** T14o a
+  T14u, en este orden y en una sola ronda. Tope de gasto: 3,1 USD (quedan 2,34).
+- T14n — Retirada (D-112, D-113): la pasada 1 de T14m no vale; van tres pasadas nuevas (T14t y T14u).
+- [x] T14o — Orden con margen de 10 (D-109; RF-12.13; 0 USD): «la mejor, primera» solo frente a las que esperan más
+  de 10 puntos menos; los pares con 20 o más de diferencia, igual.
+  - **Test:** 95 frente a 92 puede salir al revés; 95 frente a 84, no; un par a 20 puntos invertido sigue fallando.
+  Hecho (28-nov, 0 USD): `tests/test_s12_t14o_orden.py`.
+- [x] T14p — Etiqueta (D-110; RF-12.14; 0 USD): 45-recepcionista, 35 → 15, con D-110 en el `motivo`.
+  - **Test:** la nota nueva y su D-110.
+  Hecho (28-nov, 0 USD).
+- [x] T14q — `acotar_nota` (D-111; RF-12.35; 0 USD): los topes 15 y 20 solo si ningún exigido sale «sí»; con alguno,
+  30. Volver a puntuar T14g y la pasada 1 de T14m con `horma eval repuntuar`.
+  - **Test:** con mayoría de «no» y algún «sí», tope 30; sin ningún «sí», 15 y 20 como antes.
+  - SI no da nota 0,926 · 0,944 · 0,944 · 0,907 y orden 6 de 6 en las cuatro pasadas, se para.
+  Hecho (28-nov, 0 USD): da justo eso (indicio, no prueba: medido sobre los mismos casos).
+- [x] T14r — Revisor (D-112; RF-12.21; 0 USD): rechaza atribuir a un puesto tareas que su descripción no recoge.
+  - **Test:** el prompt lo pide; el 58 de la pasada 1 queda como ejemplo en el control (`revisor.json`), no apoyado.
+  Hecho (28-nov, 0 USD): el control pasa de 9 a 10 explicaciones.
+- [x] T14s — Prompt del `matcher` (D-100 y D-113; RF-12.34; 0 USD, simulado): el cambio de D-100 tal como está en
+  `encargos.md` (T14m) y, en la explicación, «Las tareas de un puesto se citan solo con ese puesto: no las juntes con
+  otro». Recupera T14l.
+  - **Test:** el prompt pide las cinco cosas y ya no pide «desde 2019» sin más.
+  Hecho (28-nov, 0 USD; sin medir: lo mide T14t). Suite verde: 1.975 tests y 2 saltados.
+- [x] T14t — 🛑 Pasada 1 nueva (~0,76 USD; tope de la ejecución 0,90): 60 casos, una vez, con revisor. SI pasa todo,
+  se traen a Mar los rechazos confirmados y, si no ve graves, T14u. SI no pasa, regla de parada.
+  Medida el 28-nov (0,755 USD): **pasa**. Nota 0,907 (49 de 54; fallan 14, 15, 20, 29 y 37), orden 6 de 6, citas
+  1,0, revisor 0,988 (1 confirmado de 84) y control del revisor 1,0; equidad, rasgos, condiciones y segunda
+  persona, 1,0. El confirmado (04: «un puesto que incluye trato diario con clientes», sin descripción) no es grave
+  para Mar: es lo que RF-12.34 da por cubierto, no un dato inventado. El tope diario del `.env` no limita el eval
+  (solo la web): se deja en 1.0, con el OK de Mar.
+- [x] T14u — Pasadas 2 y 3 sin tocar nada (~1,52 USD) y unión de las tres con `horma eval repuntuar`. SI las tres
+  pasan, T14 y T15 hechas (D-086). SI no, regla de parada.
+  Medida el 28-nov (1,522 USD; tope de la ejecución 1,58): las dos pasan. Nota 0,926 y 0,926 (fallan 14, 20, 29, 37
+  y 40; el 29 varía 30 puntos), orden 6 de 6, citas 1,0 y revisor 0,988 y 1,0; equidad, rasgos, condiciones y
+  segunda persona, 1,0. La unión de las tres con `repuntuar` aprueba. Un confirmado nuevo (47, oferta 2: «la oferta
+  pide experiencia … de cuidado de personas mayores», que solo está en su título) **es grave para Mar (D-115)**:
+  se aplica la regla de parada.
+  - **Regla de parada (D-113):** si una pasada no llega, no se gasta más. T14 se cierra como «medida», con las cifras
+    de cada pasada aquí, y T15 no se da por hecha. Se quedan T14o a T14s; no hay más cambios de reglas, prompt ni
+    etiquetas sobre estos 60 casos, ni tandas parciales, ni otro encargo. El examen pasa a ser la revisión de Mar
+    de 20 recomendaciones reales, a ciegas (T21), y se sigue con T16 y el bloque V.
 - [x] T14h — «Qué buscas» quita la franja de otro oficio, recalculando desde lo guardado en T14e; pruebas de Mar en
   el plan de pruebas (RF-12.37; D-085; 0 USD). Va tras T14g.
   - **Test:** marcar «Teleoperador/a» quita la franja a las ofertas que casan y desmarcarlo la devuelve; sin llamar
     al modelo y con la misma huella.
   Hecho (27-nov, 0 USD): `relacion_que_cuenta` y `recalcular_notas`; se recalcula al guardar «Qué buscas», al llegar
   los sinónimos y al cambiar los puestos desde el CV o una oferta añadida. Pruebas de Mar, B9 y B10 del plan.
-- [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor. Vale la ejecución
-  completa de T14g si pasa todos los umbrales (D-086).
+- [ ] T15 — 🛑 OK al gasto (~2,4-3 USD). Puerta: 3 ejecuciones seguidas con el modelo mayor. Valen las tres pasadas
+  de T14t y T14u si pasan todos los umbrales (D-086, D-113); si T14 se cierra como «medida», T15 no se da por hecha.
+  No se da por hecha (28-nov, D-115): T14 se cerró como «medida». El examen pasa a ser la revisión a ciegas (T21).
 - [ ] T16 — 🛑 OK al gasto (~0,15-0,3 USD). 3 ejecuciones con el modelo pequeño. 🛑 Mar decide F1-E6 (D-NNN).
 - [x] T28 — Con T12 y antes de T14: el `matcher` con la copia y sin condiciones (RF-12.31), RF-12.32 en el prompt y
   `huella_compatibilidad` sobre la copia, con una migración que reescriba las huellas guardadas (sin ella se
@@ -204,7 +247,9 @@ El estado está en [specs/index.md](../index.md); aquí solo van las casillas.
     perfil; «Quitar mi nota» devuelve el 75. Ninguna llamada al modelo.
   - **Navegador:** 1280 y 390 px, claro y oscuro.
 - [ ] T20 — Landing revisada: promete solo lo que funciona.
-- [ ] T21 — Cierre del paso. 🛑 Revisión de Mar sobre 20 recomendaciones y prueba manual (sección en
+- [ ] T21 — Cierre del paso. 🛑 Revisión de Mar sobre 20 recomendaciones (a ciegas si T14 se cierra como «medida»:
+  apunta la franja antes de ver la nota; D-113; aprueba con 17 de 20 en su franja, ninguna a dos y 0 datos
+  inventados, D-116) y prueba manual (sección en
   `docs/plan-pruebas-manuales.md`); `specs/index.md`, PRD y pauta al día; PR.
 
 ### Cambios pequeños

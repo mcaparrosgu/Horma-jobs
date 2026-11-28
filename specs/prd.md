@@ -166,13 +166,15 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Ahorro: puntuar con el modelo pequeño si pasa el eval (F1-E6) [pendiente: se decide con la medición].
 - **Puerta de salida:** eval `recomendacion` ≥ 0,90 dentro de ±10, estable en 3 ejecuciones (NFR-02) y de
   vuelta en `evals-reales`; 100 % sin rasgos personales ni diferencias por pares; 100 % de explicaciones con
-  citas verificadas; revisor con al menos el 95 % sin rechazo confirmado por pasada y 0 graves (D-098); set de
+  citas verificadas; revisor con al menos el 95 % sin rechazo confirmado por pasada y 0 graves (D-098, D-112 y D-115); set de
   30 CV en sus umbrales (sección 2); ningún puesto marcado sin evidencia; revisión de Mar sobre 20
   recomendaciones.
 - **Depende de:** el paso 1. Gasto real: ~5-7,3 USD en todo el paso, en varias veces (set de 30 CV y evals;
   detalle en el plan de la spec 012), cada vez con el OK de Mar. Corregir la nota (T14a a T14h) añade hasta
   3,9 USD y puede superar esa cifra; su ejecución completa vale como la de la puerta si pasa todo (D-086).
-  Cerrarla por etapas (D-100) tiene un tope de 2,6 USD: la pasada 1 y, solo si pasa, la 2 y la 3.
+  Cerrarla por etapas tiene un tope de 3,1 USD (D-113; era 2,6 con D-100): tres pasadas nuevas, la 1 y, solo si
+  pasa, la 2 y la 3. Si una no llega, T14 se cierra como «medida» y el examen es la revisión a ciegas de Mar sobre
+  20 recomendaciones reales: aprueba con 17 de 20 en su franja, ninguna a dos y 0 datos inventados (D-116).
 
 ### Paso 5 · Ingesta y vigilancia (spec 014)
 

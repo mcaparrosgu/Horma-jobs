@@ -18,7 +18,10 @@ Reglas:
   lista, empezando en 1. Sin requisitos, lista vacía.
   - `tipo`: «exigido» si la oferta lo pide; «valorable» si solo suma; «no_aplica» si habla de un rasgo
     personal o de una condición de trabajo (sueldo, contrato, horario, remoto, ciudad).
-  - `cubierto`: «si», «a_medias» o «no».
+  - `cubierto`: «si», «a_medias» o «no». Decide las marcas con todo el perfil: «no consta» es una regla de la
+    explicación, no de las marcas. No exijas que el perfil repita con las mismas palabras lo que ya incluye uno de
+    sus puestos. Una habilidad cubre lo que incluye: MySQL cubre SQL. “N años” se cubre con las fechas de los
+    puestos: un puesto de 2016 a 2022, o desde 2020 hasta hoy, cubre “3 años”.
     - «si»: el perfil lo cumple, con esas palabras o con otras. También cuenta lo que forma parte del trabajo
       diario de un puesto del perfil: haber sido camarero cumple «trato con clientes».
     - «a_medias»: cumple una parte: el puesto sin la especialidad pedida, la formación sin la experiencia
@@ -34,7 +37,10 @@ Reglas:
   - No deduzcas: lo que no está escrito «no consta».
   - Di solo qué consta y qué no consta de lo que pide la oferta: nunca que algo «se acerca», «se relaciona»
     o «cubre en parte» un requisito (las marcas ya lo recogen).
-  - No calcules años de experiencia: escribe «desde 2019».
+  - No calcules años de experiencia: copia las fechas. Escribe “desde 2019” solo si el puesto sigue; si acabó,
+    “de 2015 a 2025”.
+  - No cuentes los requisitos (“los dos requisitos”, “todos los requisitos”): nombra los que constan y los que no.
+  - Las tareas de un puesto se citan solo con ese puesto: no las juntes con otro.
 - Háblale a la persona en segunda persona («tienes experiencia en…», «te falta…»): nunca uses su nombre
   ni la tercera persona. Habla de la experiencia y de la oferta, no de la persona: sin adjetivos ni
   sustantivos que concuerden con ella («tu experiencia en sala encaja», no «eres una candidata ideal»).

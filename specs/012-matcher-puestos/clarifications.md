@@ -55,8 +55,9 @@ Están en los informes F4 (`docs/investigacion/f4-puestos-afines.md`, apartado 8
 - **S5 · Franjas del veredicto:** 70-100, 50-69, 30-49 y 0-29.
 - **S6 · Cita que no existe:** se pide otra vez, una sola, para esas ofertas. Si vuelve a fallar, la explicación
   se retira y la nota se conserva con un aviso (plan del `matcher`, 15-nov).
-- **S7 · Orden:** casos de un perfil con cinco ofertas. Acierta si la mejor esperada sale primera y ningún par
-  con 20 o más puntos de diferencia esperada sale al revés.
+- **S7 · Orden:** casos de un perfil con cinco ofertas. Acierta si la mejor esperada sale primera frente a las
+  que esperan más de 10 puntos menos (D-109: la nota ya tolera ±10) y ningún par con 20 o más puntos de
+  diferencia esperada sale al revés.
 - **S8 · Notas esperadas de los casos nuevos:** la mediana de tres etiquetadores ciegos, como en 9a. Mar repasa
   los casos con más de 10 puntos entre etiquetadores. La nota esperada de un caso existente solo cambia con su
   OK y su motivo escrito: si no, se maquilla el eval.

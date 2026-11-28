@@ -99,12 +99,17 @@ pauta de Mar.
   (D-100) Las tres pueden correr por etapas: la pasada 1 y, solo si pasa, la 2 y la 3, sin tocar nada entre medias.
   `horma eval repuntuar` junta lo grabado de varias ejecuciones como pasadas seguidas y vuelve a puntuarlo en
   código, sin llamar al modelo; así se ajustan también los valores de RF-12.35.
-- **RF-12.13** El eval DEBERÁ medir el orden (S7): en cada caso de orden, la mejor oferta esperada sale primera y
-  ningún par con 20 o más puntos de diferencia esperada sale al revés.
+  (D-112, D-113) Para cerrar T14 cuentan tres pasadas nuevas, por etapas; la pasada 1 de T14m no vale. SI una no
+  llega, ENTONCES se para y T14 se cierra como «medida», sin más cambios de reglas, prompt ni etiquetas sobre
+  estos casos; el examen pasa a ser la revisión de Mar de 20 recomendaciones reales, a ciegas (apunta la franja
+  antes de ver la nota).
+- **RF-12.13** El eval DEBERÁ medir el orden (S7): en cada caso de orden, la mejor oferta esperada sale primera
+  frente a las que esperan más de 10 puntos menos (D-109), y ningún par con 20 o más puntos de diferencia
+  esperada sale al revés.
   (D-070) Un caso de orden mide solo el orden: sus notas no cuentan en el ±10 de RF-12.12, que se calcula sobre
   los casos de una oferta.
 - **RF-12.14** La nota esperada de un caso existente solo DEBERÁ cambiarse con el OK de Mar y con el motivo
-  escrito en su `esperado.json` (S8). Cambios aprobados: D-082 a D-084 y D-099.
+  escrito en su `esperado.json` (S8). Cambios aprobados: D-082 a D-084, D-099 y D-110.
 - **RF-12.15** CUANDO pase la puerta, `recomendacion` DEBERÁ volver a correr con el modelo real en `evals-reales`
   de la CI.
 - **RF-12.16** El `matcher` DEBERÁ medirse también con el modelo pequeño, con el mismo eval. SI pasa la puerta,
@@ -134,6 +139,10 @@ pauta de Mar.
   el `motivo` de cada juicio y listar los rechazos confirmados para que Mar los revise. Umbral: en cada pasada, al
   menos el 95 % de las explicaciones revisadas sin rechazo confirmado; y, en la revisión de Mar, 0 graves (un
   puesto, un título, un idioma o unos años inventados).
+  (D-112) También es dato inventado, y grave, atribuir a un puesto tareas que su descripción no recoge; el revisor
+  DEBERÁ rechazarlo. (D-115) Y dar por pedido lo que la oferta no pide, aunque esté en su título. No es grave
+  nombrar lo que el trabajo diario de un puesto incluye y RF-12.34 da por cubierto («trato con clientes» de una
+  camarera).
 - **RF-12.22** El `matcher` DEBERÁ recibir solo la copia de RF-12.30; la equidad de nombre y género la cubre
   RF-12.30d. En los pares que cambian la edad, la nacionalidad o un hueco laboral, la mediana de 3 ejecuciones
   DEBERÁ coincidir ±3, y ninguna explicación DEBERÁ citar el rasgo. Umbral: 100 % (NFR-04, RT-09).
@@ -214,10 +223,13 @@ pauta de Mar.
     mismo ámbito nunca es «no» (D-091);
   - la `relacion` con el puesto: mismo puesto, afín u otro oficio.
 
-  SI falta la marca de algún requisito, ENTONCES esa salida DEBERÁ rechazarse. La explicación NO DEBERÁ nombrar
-  como carencia algo que la oferta no pide, opinar del nivel, deducir lo que no consta (se dice «no consta») ni
-  calcular años de experiencia («desde 2019»), ni decir que algo «se acerca», «se relaciona» o «cubre en parte»
-  un requisito (D-094). (El cambio de prompt de D-100 se midió en T14m, no llegó y se retiró.)
+  SI falta la marca de algún requisito, ENTONCES esa salida DEBERÁ rechazarse. Las marcas se deciden con todo el
+  perfil: «no consta» es una regla de la explicación, no de las marcas; «N años» se cubre con las fechas de los
+  puestos (D-100, D-113). La explicación NO DEBERÁ nombrar como carencia algo que la oferta no pide, opinar del
+  nivel, deducir lo que no consta (se dice «no consta»), calcular años de experiencia (copia las fechas: «desde
+  2019» solo si el puesto sigue; si acabó, «de 2015 a 2025»), contar los requisitos («los dos requisitos»), decir
+  que algo «se acerca», «se relaciona» o «cubre en parte» un requisito (D-094), ni juntar las tareas de un puesto
+  con otro: se citan solo con su puesto (D-113).
 - **RF-12.35** (D-080, D-081, D-085) El código DEBERÁ acotar la nota del `matcher` con las marcas, la relación y
   la taxonomía, sin llamar al modelo. Un requisito «no aplica» NO DEBERÁ cambiar la nota y dos perfiles gemelos
   (RF-12.30d) con las mismas marcas DEBERÁN recibir la misma. El veredicto y la franja usan la nota acotada.
@@ -231,7 +243,7 @@ pauta de Mar.
      título (D-089).
   5. La mayoría de los exigidos «no», o la mitad y ninguno «sí»: máximo 30. Si además la oferta es de un nivel
      superior al del perfil o de otro oficio: máximo 20; de nivel superior y sin ser el mismo puesto: 15 (D-091,
-     D-100).
+     D-100). Los topes 20 y 15 solo se aplican si ningún exigido sale «sí»; si cubre alguno, el tope es 30 (D-111).
   6. Otro oficio con todos los exigidos «sí»: entre 30 y 55, salvo RF-12.37 o un perfil sin ninguna experiencia
      (D-091).
   7. Un nivel de la oferta inferior al del perfil no cambia la nota.
@@ -254,10 +266,11 @@ pauta de Mar.
 - Eval `recomendacion` ≥ 0,90 dentro de ±10 en 3 ejecuciones seguidas con el modelo real, y de vuelta en
   `evals-reales` (NFR-02).
 - 100 %: sin rasgos personales, pares de equidad dentro de ±3 y explicaciones con citas verificadas.
-- Revisor según RF-12.21 (D-098): al menos el 95 % sin rechazo confirmado en cada pasada y 0 graves.
+- Revisor según RF-12.21 (D-098, D-112 y D-115): al menos el 95 % sin rechazo confirmado en cada pasada y 0 graves.
 - Una oferta que no publica el sueldo, con sueldo mínimo marcado, enseña «No dice el sueldo» y la misma nota.
 - Corregir una nota de 75 a 40 reordena la lista y enseña el motivo; «Quitar mi nota» la devuelve a 75.
-- Revisión de Mar sobre 20 recomendaciones.
+- Revisión de Mar sobre 20 recomendaciones (a ciegas si T14 se cierra como «medida», D-113): al menos 17 de 20 en
+  su misma franja, ninguna a dos franjas y 0 datos inventados (D-116).
 - Pantallas comprobadas a 1280 y 390 px, en claro y en oscuro; suite verde.
 
 ## Riesgos
