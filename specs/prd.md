@@ -177,8 +177,8 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
 ### Paso 5 · Ingesta y vigilancia (spec 014)
 
 - **Por qué va ahí:** justo después del paso 2 (D-095): más ofertas solo sirven cuando ya se puntúan bien. Espera a la investigación
-  del banco de ofertas (DEP-01), entregada el 25-nov; faltan su ampliación sobre ingesta robusta (F10, D-097) y la
-  prueba práctica.
+  del banco de ofertas (DEP-01), entregada el 25-nov, y a su ampliación sobre ingesta robusta (F10), entregada y
+  decidida el 28-nov (D-101 a D-107); falta la prueba práctica.
 - **Historia — US-005 [MUST HAVE / Riesgo Medio]: Más ofertas de España y vigentes.**
   Como candidata, quiero ver muchas ofertas de España que sigan abiertas, para tener donde elegir.
 
@@ -196,7 +196,13 @@ qué y cuándo: la hoja de ruta (documento de trabajo). La prioridad MoSCoW la c
   - Cómo ampliar las ofertas (F7-D2, decidida el 25-nov): solo vías gratuitas, es decir, feeds documentados de
     ATS y datos abiertos públicos. La compra de ofertas queda para el futuro.
   - Webs de empleo españolas con Playwright (D-096): solo las que pasen el análisis previo; primero se mide en la
-    prueba práctica cuántas ofertas nuevas aportan. Sin proxies, disfraces ni saltar bloqueos.
+    prueba práctica cuántas ofertas nuevas aportan, en Nortempo, Lidl y McDonald's (D-101). Sin proxies, disfraces
+    ni saltar bloqueos.
+  - ETT y grandes empleadores que se leen sin JavaScript (D-102): Imán, Eurofirms, Grupo Crit y Ananda;
+    SuccessFactors (Meliá, Mapfre y Vithas); y el JSON público de Murcia. Un conector por plataforma.
+  - Señales de IA al calificar una fuente (D-104): no apta si su `robots.txt` veta a agentes de IA o dice
+    `ai-input=no`; un dato abierto con licencia expresa vale aunque el `robots.txt` vete (Lanbide, D-103).
+  - Tope de gasto propio de la ingesta: 2 USD al día, con filtro por código antes del modelo (D-107).
   - Workday (D-020): por el sitemap y el marcado `JobPosting` del tablón público de cada empresa y por sus
     webs de empleo propias. Nunca por su API interna.
   - Fuentes nuevas (punto 14; D-025): Feina Activa, Lanbide, ECyL (si se confirma su conjunto de datos) y,
@@ -503,7 +509,7 @@ Entrar en alcance desde 7.2 o 7.3 exige cambiar este PRD.
 
 ## 9. Dependencias Críticas
 
-- DEP-01: investigación del banco de ofertas (Fable: F5, entregada, y su ampliación F10, D-097) y prueba práctica de ingesta (Sonnet); desbloquean el paso 5 y RF-010.
+- DEP-01: investigación del banco de ofertas (Fable: F5 y su ampliación F10, entregadas y decididas; D-101 a D-107) y prueba práctica de ingesta (Sonnet); desbloquean el paso 5 y RF-010.
 - DEP-02: investigación de los límites de gasto en la competencia (entregada el 25-nov) y estudio de precio,
   pendiente (Fable); desbloquean el paso 8 y NFR-06.
 - DEP-03: evaluación de impacto en Gestiona RGPD (Mar), mientras se construye el paso 8 (D-066); desbloquea los
